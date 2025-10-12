@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import TopAlert from "@/components/home/TopAlert";
+import LoginandCart from "@/components/home/LoginandCart";
+import BarScaffold from "@/components/menubar/BarScaffold";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +30,29 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="max-w-6xl m-auto">
+              <TopAlert/>
+              <LoginandCart/>
+              <div className='flex'>
+                <div className='flex'>
+                  <a href="">
+                    <img src="#" alt="deals" />
+                    <p>DEALS!</p>
+                  </a>
+                  <a href="#">
+                    <img src="#" alt="Vendor" />
+                    <p>VENDORS!</p>
+                  </a>
+                </div>
+                <div className='flex justify-center w-full'>
+                  <a href="#">
+                    <img src="#" alt="home logo" />
+                  </a>
+                </div>
+              </div>
+              <BarScaffold/>
+              {children}
+      </div>
       </body>
     </html>
   );
