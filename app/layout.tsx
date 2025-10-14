@@ -4,6 +4,7 @@ import "./globals.css";
 import TopAlert from "@/components/home/TopAlert";
 import LoginandCart from "@/components/home/LoginandCart";
 import BarScaffold from "@/components/menubar/BarScaffold";
+import { Navbar1 } from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="max-w-6xl m-auto">
+          <Navbar1/>
               <TopAlert/>
               <LoginandCart/>
               <div className='flex'>
