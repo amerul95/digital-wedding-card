@@ -6,9 +6,16 @@ import Footers from '@/components/Footers'
 export default function page() {
   return (
     <div >
-      <div className='w-full h-[576px]'>
-        <img src="#" alt="main-image" />
-      </div>
+<div
+  className="w-full h-[60vh] md:h-[80vh] bg-cover bg-center bg-no-repeat"
+  style={{ backgroundImage: "url('https://nikahsatu.com/wp-content/uploads/2024/12/ns-banner-min-scaled-1.webp')" }}
+>
+  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+    <h1 className="text-white text-4xl font-bold">Welcome to NikahSatu</h1>
+  </div>
+</div>
+
+
       <TryCard/>
       <div>
         <div>
