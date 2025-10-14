@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useOptimistic } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CartItem } from "./Cart-item";
 import { CouponSection } from "./CouponSection";
 import { OrderSummary } from "./OrderSummary";
+
 
 type CartItem = {
     id:string
@@ -66,22 +67,48 @@ const cartData = [
 export default function Cart() {
     const router = useRouter()
     const goNext = () => router.back()
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [optimisticCart,updateOptimisticCart] = useOptimistic<CartItem[],{type:string;id?:string;quantity?:number}>(
+    cartData,//initial cart
+    (state,action) => {
+      switch (action.type){
+        case "updateQuantity":
+          return state.map((item) => 
+             item.id === action.id ? {...item,quantity:action.quantity ?? item.quantity} : item
+          );
+        case "remove":
+          return state.filter((item)=> item.id !== action.id);
+        case "clear" :
+          return [];
+        default:
+          return state
+      }
+    }
+  )
 
-  const updateQuantity = (id: string, quantity: number) => {
-    setCartItems((items) => items.map((item) => (item.id === id ? { ...item, quantity } : item)));
+  const updateQuantity = async (id: string, quantity: number) => {
+    updateOptimisticCart({type:"updateQuantity",id,quantity})
+
+    // simulate call from api
+    await new Promise((r) =>setTimeout(r,500))
   };
 
-  const removeItem = (id: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
+  const removeItem =async (id: string) => {
+    useOptimistic({type:"remove",id})
+        // simulate call from api
+    await new Promise((r) =>setTimeout(r,500))
   };
+
+  const clearCart = async () => {
+  updateOptimisticCart({ type: "clear" });
+  await new Promise((r) => setTimeout(r, 500));
+};
 
   const handleApplyCoupon = (code: string) => {
     console.log("Applying coupon:", code);
     // Implement coupon logic here
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = optimisticCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = 0;
   const delivery = 29.99;
   const tax = 39.99;
@@ -102,9 +129,9 @@ export default function Cart() {
               </div> */}
 
               {/* Cart Items */}
-              {cartItems.length > 0 ? 
+              {optimisticCart.length > 0 ? 
                <div className="space-y-4">
-                {cartItems.map((item) => (
+                {optimisticCart.map((item) => (
                   <CartItem
                     key={item.id}
                     {...item}
@@ -122,7 +149,7 @@ export default function Cart() {
               
 
               <div className="w-full flex justify-end">
-              <Button variant="outline" className={`mt-3 hover:cursor-pointer text ${cartItems.length > 0 ? "block" : "hidden"}`} onClick={()=> setCartItems([])}>
+              <Button variant="outline" className={`mt-3 hover:cursor-pointer text ${optimisticCart.length > 0 ? "block" : "hidden"}`} onClick={clearCart}>
                 Empty Cart
               </Button>
               </div>

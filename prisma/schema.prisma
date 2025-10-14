@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  roleId    Int?
+  createdAt DateTime  @default(now())
+  role      Role?     @relation(fields: [roleId], references: [id])
+  weddings  Wedding[]
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
+
+model Theme {
+  id              String    @id @default(uuid())
+  name            String
+  primaryColor    String?
+  secondaryColor  String?
+  fontFamily      String?
+  previewImageUrl String?
+  createdAt       DateTime  @default(now())
+  weddings        Wedding[]
+}
+
+model Song {
+  id        String    @id @default(uuid())
+  title     String?
+  fileUrl   String
+  createdAt DateTime  @default(now())
+  weddings  Wedding[]
+}
+
+model Wedding {
+  id                String         @id @default(uuid())
+  userId            String
+  slug              String         @unique
+  groomName         String
+  brideName         String
+  eventDate         DateTime
+  venueName         String?
+  venueAddress      String?
+  googleMapLink     String?
+  invitationMessage String?
+  coverImageUrl     String?
+  themeId           String?
+  songId            String?
+  createdAt         DateTime       @default(now())
+  donations         Donation[]
+  galleryImages     GalleryImage[]
+  rsvps             Rsvp[]
+  song              Song?          @relation(fields: [songId], references: [id])
+  theme             Theme?         @relation(fields: [themeId], references: [id])
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Rsvp {
+  id         String   @id @default(uuid())
+  weddingId  String
+  guestName  String
+  guestPhone String?
+  guestEmail String?
+  attendance String?
+  message    String?
+  createdAt  DateTime @default(now())
+  wedding    Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+model Donation {
+  id             String        @id @default(uuid())
+  weddingId      String
+  transferTypeId Int?
+  qrImageUrl     String?
+  bankName       String?
+  accountNumber  String?
+  accountHolder  String?
+  note           String?
+  createdAt      DateTime      @default(now())
+  transferType   TransferType? @relation(fields: [transferTypeId], references: [id])
+  wedding        Wedding       @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+model TransferType {
+  id        Int        @id @default(autoincrement())
+  typeName  String
+  donations Donation[]
+}
+
+model GalleryImage {
+  id        String   @id @default(uuid())
+  weddingId String
+  imageUrl  String
+  caption   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
