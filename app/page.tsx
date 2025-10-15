@@ -7,7 +7,7 @@ export default function page() {
   return (
     <div >
 <div
-  className="w-full h-[60vh] md:h-[80vh] bg-cover bg-center bg-no-repeat"
+  className="w-full h-[60vh] md:h-[80vh] bg-cover bg-center bg-no-repeat relative"
   style={{ backgroundImage: "url('https://nikahsatu.com/wp-content/uploads/2024/12/ns-banner-min-scaled-1.webp')" }}
 >
   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
