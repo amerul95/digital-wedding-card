@@ -1,21 +1,15 @@
 import React from 'react'
 import TryCard from '@/components/home/TryCard'
 import PreviewScaffold from '@/components/PreviewScaffold'
-import Footers from '@/components/Footers'
+import FootersLayout from '@/components/FootersLayout'
+import Image from 'next/image'
 
 export default function page() {
   return (
     <div >
-<div
-  className="w-full h-[60vh] md:h-[80vh] bg-cover bg-center bg-no-repeat relative"
-  style={{ backgroundImage: "url('https://nikahsatu.com/wp-content/uploads/2024/12/ns-banner-min-scaled-1.webp')" }}
->
-  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-    <h1 className="text-white text-4xl font-bold">Welcome to NikahSatu</h1>
-  </div>
-</div>
-
-
+      <div className='relative w-full h-[700px]'>
+       <Image src="/assets/web-banner.jpg" alt="image background" fill className='object-cover' priority/>
+      </div>
       <TryCard/>
       <div>
         <div>
@@ -39,8 +33,7 @@ export default function page() {
           <PreviewScaffold/>
         </div>
       </div>
-      <Footers/>
-     
+      <FootersLayout/>
     </div>
   )
 }

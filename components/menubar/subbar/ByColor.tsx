@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ByCategory() {
+export default function ByColor() {
   const categories = [
     "BLACK",
     "BLUE",

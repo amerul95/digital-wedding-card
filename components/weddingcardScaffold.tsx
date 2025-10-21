@@ -3,7 +3,7 @@ import EventInfo from "@/components/EventInfo";
 import PrayerSection from "@/components/PrayerSection"; 
 import GuestBook from "@/components/GuestBook"; 
 import SlotTracker from "@/components/SlotTracker"; 
-import Footer from "@/components/Footer"; 
+import Footer from "@/components/FooterCard"; 
 
 export default function WeedingcardScaffold() {
   return (
