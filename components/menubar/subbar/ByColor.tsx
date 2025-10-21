@@ -23,7 +23,7 @@ export default function ByColor() {
     absolute left-0 mt-1 w-48 rounded-lg bg-white shadow-lg border
     opacity-0 invisible
     group-hover:visible group-hover:opacity-100
-    transition-all duration-200
+    transition-all duration-200 z-100
         "
       >
         <p className="px-4 py-2 text-sm font-semibold text-gray-500 border-b">

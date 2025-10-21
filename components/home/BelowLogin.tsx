@@ -1,15 +1,16 @@
 import React from 'react'
+import Image from 'next/image'
 
 export default function BelowLogin() {
   return (
                    <div className='flex'>
                  <div className='flex'>
                   <a href="">
-                    <img src="#" alt="deals" />
+                    <Image src="/assets/deal.png" alt="deals" width={39} height={32}/>
                      <p>DEALS!</p>
                    </a>
                    <a href="#">
-                     <img src="#" alt="Vendor" />
+                     <Image src="/assets/vendor.png" alt="deals" width={39} height={32}/>
                      <p>VENDORS!</p>
                    </a>
                  </div>
