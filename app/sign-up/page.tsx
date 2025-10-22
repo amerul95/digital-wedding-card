@@ -1,10 +1,10 @@
 import React from 'react'
-import { LoginForm } from '@/app/features/LoginForm'
+import { SignUpForm } from '../features/SignUpForm'
 
 export default function page() {
   return (
     <div>
-        <LoginForm/>
+        <SignUpForm/>
     </div>
   )
 }

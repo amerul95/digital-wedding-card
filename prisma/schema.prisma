@@ -8,6 +8,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Session {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  token      String   @unique
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordReset {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  resetToken String   @unique @map("reset_token")
+  expiresAt  DateTime @map("expires_at")
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model User {
   id        String    @id @default(uuid())
   name      String
@@ -15,8 +36,12 @@ model User {
   password  String
   roleId    Int?
   createdAt DateTime  @default(now())
+
+  // Relations
   role      Role?     @relation(fields: [roleId], references: [id])
   weddings  Wedding[]
+  sessions  Session[]
+  passwordsResets  PasswordReset[]
 }
 
 model Role {
