@@ -1,5 +1,7 @@
+"use client"
+
 import React from 'react'
-import { LoginForm } from '@/app/features/LoginForm'
+// import { LoginForm } from '@/app/features/LoginForm'
 import LoginForms from '@/app/features/LoginForm'
 
 export default function page() {
