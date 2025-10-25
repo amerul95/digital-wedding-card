@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from 'next/server'
 
-const protectedRoute = ['/cart']
+const protectedRoute = '/cart'
 
 export function middleware(req:NextRequest){
     
     const token = req.cookies.get('accessToken')?.value
     const url = req.nextUrl.pathname
 
-    if(url === protectedRoute[0]){
+    if(url === protectedRoute){
         if(!token){
             const loginUrl = new URL('/login',req.url)
 
