@@ -45,8 +45,6 @@ export function LoginForm({
   const redirect = searchParams.get("redirect")
   const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/"
 
-  console.log("redirect",redirect)
-  console.log("redirect",decodedRedirect)
 
   const form = useForm<z.infer<typeof formSchema>>({
         resolver:zodResolver(formSchema),

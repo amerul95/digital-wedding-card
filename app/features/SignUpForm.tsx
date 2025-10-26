@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -7,10 +9,18 @@ import {
   FieldGroup,
   FieldLabel,
   FieldSeparator,
+  FieldError
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { email, z } from "zod"
 
+import { z } from "zod"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm,Controller } from "react-hook-form"
+import React from "react"
+import axios from "axios"
+import { useRouter,useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
 const SignUpFormSchema = z.object({
   email:z.string().min(2,{
@@ -19,7 +29,7 @@ const SignUpFormSchema = z.object({
   password:z.string().min(6,{
     message:"Please insert your password"
   }),
-  confirmPassword:z.string().nonempty({
+  confirmPassword:z.string().min(6,{
     message:"Please use same as Password"
   })
 })
@@ -28,47 +38,111 @@ const SignUpFormSchema = z.object({
   path:["confirmPassword"]
 })
 
+type SignupProps = React.ComponentProps<"div"> & {
+  signUpRoute:string
+}
 export function SignUpForm({
   className,
+  signUpRoute,
   ...props
-}: React.ComponentProps<"div">) {
+}: SignupProps) {
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get("redirect")
+  const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/"
+
+
+  const form = useForm<z.infer<typeof SignUpFormSchema>>({
+        resolver:zodResolver(SignUpFormSchema),
+        defaultValues:{
+            email:"",
+            password:"",
+            confirmPassword:""
+
+        }
+    })
+
+    // define a submit handler
+    async function onSubmit(value:z.infer<typeof SignUpFormSchema>){
+
+
+      try {
+        const response = await axios.post("http://localhost:3000/api/sign-up",value,{
+          headers:{"Content-Type":"application/json"}
+        })
+        if(response.status === 200){
+          console.log("response api",response)
+          toast.success(response.data.message || "User Created successfully")
+        } else {
+          toast.error("Unexpected error , Please contact ")
+        }
+
+        
+      } catch (error:any) {
+
+        const message = error.response?.data?.message || "Something went wrong"
+        toast.error(message)
+        
+        if(axios.isAxiosError(error)){
+          console.error("Axios error",error.response?.data || error.message)
+        } else {
+          console.error("Unexpected error",error)
+        }
+      }
+    }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" id="form-rhf-login" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-muted-foreground text-balance">
-                  Login to your Acme Inc account
+                  Create Your Account
                 </p>
               </div>
+<Controller
+  name="email"
+  control={form.control}
+  render={({ field, fieldState }) => (
+    <Field data-invalid={fieldState.invalid}>
+      <FieldLabel htmlFor={field.name}>Your Email</FieldLabel>
+      <Input {...field} id={field.name} aria-invalid={fieldState.invalid} autoComplete="email"/>
+      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+    </Field>
+  )}
+/>
+<Controller
+  name="password"
+  control={form.control}
+  render={({ field, fieldState }) => (
+    <Field data-invalid={fieldState.invalid}>
+      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+      <Input type="password" {...field} id={field.name} aria-invalid={fieldState.invalid} autoComplete="current-password"/>
+      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+    </Field>
+  )}
+/>
+<Controller
+  name="confirmPassword"
+  control={form.control}
+  render={({ field, fieldState }) => (
+    <Field data-invalid={fieldState.invalid}>
+      <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+      <Input type="password" {...field} id={field.name} aria-invalid={fieldState.invalid} autoComplete="current-password"/>
+      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+    </Field>
+  )}
+/>
+
+
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
+                <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Sign Up..." : "Sign Up"}</Button>
               </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password" required />
-              </Field>
-              <Field>
-                <Button type="submit">Login</Button>
-              </Field>
-              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+              {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator>
               <Field className="grid grid-cols-3 gap-4">
@@ -99,15 +173,12 @@ export function SignUpForm({
                   </svg>
                   <span className="sr-only">Login with Meta</span>
                 </Button>
-              </Field>
-              <FieldDescription className="text-center">
-                Don&apos;t have an account? <a href="#">Sign up</a>
-              </FieldDescription>
+              </Field> */}
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src="/placeholder.svg"
+              src="/assets/placeholder.svg"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
@@ -121,3 +192,5 @@ export function SignUpForm({
     </div>
   )
 }
+
+

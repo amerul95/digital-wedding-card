@@ -8,6 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// user administration
 model Session {
   id         String   @id @default(uuid())
   userId     String   @map("user_id")
@@ -25,13 +26,13 @@ model PasswordReset {
   expiresAt  DateTime @map("expires_at")
   used       Boolean  @default(false)
   createdAt  DateTime @default(now()) @map("created_at")
-
+  
+  // Relation
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
   id        String    @id @default(uuid())
-  name      String
   email     String    @unique
   password  String
   roleId    Int?
@@ -42,32 +43,16 @@ model User {
   weddings  Wedding[]
   sessions  Session[]
   passwordsResets  PasswordReset[]
+  cart      Cart[]
 }
-
+// 
 model Role {
   id    Int    @id @default(autoincrement())
   name  String @unique
   users User[]
 }
 
-model Theme {
-  id              String    @id @default(uuid())
-  name            String
-  primaryColor    String?
-  secondaryColor  String?
-  fontFamily      String?
-  previewImageUrl String?
-  createdAt       DateTime  @default(now())
-  weddings        Wedding[]
-}
-
-model Song {
-  id        String    @id @default(uuid())
-  title     String?
-  fileUrl   String
-  createdAt DateTime  @default(now())
-  weddings  Wedding[]
-}
+// wedding section
 
 model Wedding {
   id                String         @id @default(uuid())
@@ -84,13 +69,40 @@ model Wedding {
   themeId           String?
   songId            String?
   createdAt         DateTime       @default(now())
+
+  // relations
   donations         Donation[]
   galleryImages     GalleryImage[]
   rsvps             Rsvp[]
+  cart              Cart[]
   song              Song?          @relation(fields: [songId], references: [id])
   theme             Theme?         @relation(fields: [themeId], references: [id])
   user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Theme {
+  id              String    @id @default(uuid())
+  name            String
+  primaryColor    String?
+  secondaryColor  String?
+  fontFamily      String?
+  previewImageUrl String?
+  createdAt       DateTime  @default(now())
+  weddings        Wedding[]
+  products        Product[]   
+}
+
+model Song {
+  id        String    @id @default(uuid())
+  title     String?
+  fileUrl   String
+  createdAt DateTime  @default(now())
+  weddings  Wedding[]
+
+  // 
+  products  Product[]
+}
+
 
 model Rsvp {
   id         String   @id @default(uuid())
@@ -132,4 +144,67 @@ model GalleryImage {
   order     Int      @default(0)
   createdAt DateTime @default(now())
   wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+// PRODUCT: abstract purchasable item
+model Product {
+  id           String       @id @default(uuid())
+  type         ProductType
+  name         String
+  price        Decimal       @default(0.00)
+  description  String?
+  imageUrl     String?
+  createdAt    DateTime      @default(now())
+
+  // Relations
+  theme        Theme?        @relation(fields: [themeId], references: [id])
+  themeId      String?
+  song         Song?         @relation(fields: [songId], references: [id])
+  songId       String?
+  cartItems    CartItem[]
+
+  @@map("products")
+}
+
+enum ProductType {
+  THEME
+  SONG
+  ADDON
+}
+
+// cart system
+model Cart {
+  id         String      @id @default(uuid())
+  userId     String
+  weddingId  String?
+  status     CartStatus  @default(PENDING)
+  total      Decimal     @default(0.00)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wedding    Wedding?    @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  items      CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id         String   @id @default(uuid())
+  cartId     String
+  productId  String
+  quantity   Int      @default(1)
+  price      Decimal  @default(0.00)
+  createdAt  DateTime @default(now())
+
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("cart_items")
+}
+
+enum CartStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }
