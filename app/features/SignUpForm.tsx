@@ -72,7 +72,7 @@ export function SignUpForm({
           headers:{"Content-Type":"application/json"}
         })
         if(response.status === 200){
-          console.log("response api",response)
+          console.log("response api",response.data.message)
           toast.success(response.data.message || "User Created successfully")
         } else {
           toast.error("Unexpected error , Please contact ")
@@ -81,14 +81,10 @@ export function SignUpForm({
         
       } catch (error:any) {
 
-        const message = error.response?.data?.message || "Something went wrong"
+        const message = error?.response.data.error || "Something went error"
+        console.log(message)
         toast.error(message)
         
-        if(axios.isAxiosError(error)){
-          console.error("Axios error",error.response?.data || error.message)
-        } else {
-          console.error("Unexpected error",error)
-        }
       }
     }
 
@@ -141,6 +137,7 @@ export function SignUpForm({
 
               <Field>
                 <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Sign Up..." : "Sign Up"}</Button>
+
               </Field>
               {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with

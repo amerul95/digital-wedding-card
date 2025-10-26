@@ -5,6 +5,7 @@ import TopAlert from "@/components/home/TopAlert";
 import LoginandCart from "@/components/home/LoginandCart";
 import BarScaffold from "@/components/menubar/BarScaffold";
 import BelowLogin from "@/components/home/BelowLogin";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster position="top-center"/>
         <div className="max-w-6xl m-auto">
-          <TopAlert/>
+          <TopAlert />
               <LoginandCart/>
               <BelowLogin/>
               <BarScaffold/>
