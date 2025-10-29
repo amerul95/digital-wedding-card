@@ -69,6 +69,7 @@ model Wedding {
   themeId           String?
   songId            String?
   createdAt         DateTime       @default(now())
+  isExpired         Boolean        @default(false)
 
   // relations
   donations         Donation[]
