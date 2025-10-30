@@ -100,7 +100,7 @@ export default function StepOne() {
                     id="form-rhf-demo-title"
                     aria-invalid={fieldState.invalid}
                     placeholder="Please insert Bride Name"
-                    autoComplete="off"
+                    autoComplete="of"
                   />
                 </Field>
               )}
