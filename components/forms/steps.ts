@@ -1,19 +1,27 @@
-import StepOne from "./components/stepOne";
-import StepTwo from "./components/StepTwo";
-import StepThree from "./components/StepThree";
+import StepOne from "./features/stepOne";
+import StepTwo from "./features/StepTwo";
+import StepThree from "./features/StepThree";
+import { WeddingFormSchema } from "@/lib/schema/schema";
 
 
-export const steps = [
+export const steps : {
+    id:number,
+    component:React.FC,
+    fields:(keyof WeddingFormSchema)[]
+}[] = [
     {
         id:1,
-        components:StepOne
+        component:StepOne,
+        fields:["groomName","brideName","choosedPackage"]
     },
     {
         id:2,
-        components:StepTwo
+        component:StepTwo,
+        fields:["eventDate","themeColor"]
     },
     {
         id:3,
-        components:StepThree
+        component:StepThree,
+        fields:["message"]
     }
 ]

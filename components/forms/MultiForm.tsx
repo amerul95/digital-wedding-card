@@ -6,53 +6,73 @@ import * as z from "zod"
 import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { steps } from './steps'
+import type { WeddingFormSchema } from '@/lib/schema/schema'
+import { Card, CardContent } from '../ui/card'
+import { Button } from '../ui/button'
 
 export default function MultiForm() {
 
-const methods = useForm({
+const methods = useForm<WeddingFormSchema>({
     resolver: zodResolver(weddingFormSchema),
     defaultValues: {
-      groomName: "",
-      brideName: "",
-      eventDate: "",
-      themeColor: "",
-      message: "",
+    animationColor: "",
+    animationEffect: "",
+    fontColor: "",
+    visualId: "",
+    doorStyle: "",
+    choosedPackage: "",
+    groomName: "",
+    brideName: "",
+    eventDate: "",
+    themeColor: "",
+    message: "",
+    isCustomDesign: false,
+    isCustomVideoCover: false,
     },
   })
 
   const [step,setStep] = useState(0)
-  const CurrentStep = steps[step].components
+  const CurrentStep = steps[step].component
 
-  const nextStep = ()=> setStep((prev) => Math.min(prev+1,steps.length-1))
+  const nextStep = async ()=> {
+    const currentFields = steps[step].fields
+    const valid = await methods.trigger(currentFields)
+    console.log(valid)
+    if(!valid) return
+    setStep((prev) => Math.min(prev+1,steps.length-1))
+  }
   const prevStep = ()=> setStep((prev) => Math.max(prev-1,0))
 
 //   submit to backend
-const onSubmit = () => {
-
+const onSubmit = (data:WeddingFormSchema) => {
+  console.log("Final data:", data)
 }
 
   return (
-    <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+    <Card>
+      <CardContent>
+          <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
             <h2 className='text-xl font-semibold'>{steps[step].id}</h2>
             <div>
                 <CurrentStep/>
             </div>
             <div className="flex justify-between">
-                {step > 0 && (
-                <button type="button" className='hover:cursor-pointer' onClick={prevStep}>
+                <Button type="button" className='hover:cursor-pointer' disabled={step > 0 ?false:true} onClick={prevStep}>
                     Back
-                </button>
-                )}
+                </Button>
                 {step < steps.length - 1 ? (
-            <button type="button" className='hover:cursor-pointer' onClick={nextStep} >
+            <Button type="button" className='hover:cursor-pointer' onClick={nextStep} >
               Next
-            </button>
+            </Button>
                 ) : (
-            <button type="submit" className='hover:cursor-pointer'>Submit</button>
+            <Button type="submit" className='hover:cursor-pointer'>Submit</Button>
                 )}
         </div>
         </form>
     </FormProvider>
+      </CardContent>
+
+    </Card>
   )
 }
