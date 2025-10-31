@@ -25,13 +25,16 @@ import { useRef } from "react"
 export default function StepOne() {
   const {watch,control,register,formState:{errors}} = useFormContext<WeddingFormSchema>()
   const colorInputRef = useRef<HTMLInputElement>(null)
+  const animationColorInputRef = useRef<HTMLInputElement>(null)
 
   const color = watch("fontColor") || "#000000"
+  const animationColor = watch("animationColor") || "#000000"
 
     const handlePreviewClick = () => {
     //click the hidden input
     colorInputRef.current?.click()
   }
+  const handleAnimationColorClick = () => animationColorInputRef.current?.click()
 
   return (
           <FieldGroup>
@@ -255,7 +258,7 @@ export default function StepOne() {
               <Input
                 type="color"
                 id="animationColor"
-                ref={colorInputRef}
+                ref={animationColorInputRef}
                 value={field.value || "#000000"}
                 onChange={(e) => field.onChange(e.target.value)}
                 className="absolute opacity-0 w-0 h-0"
@@ -266,9 +269,9 @@ export default function StepOne() {
                       {/* Show hex value beside it */}
               <p className="text-sm text-gray-700 px-1">{color}</p>
               <div
-                onClick={handlePreviewClick}
+                onClick={handleAnimationColorClick}
                 className="w-10 h-10 rounded border cursor-pointer transition-all hover:scale-105 rounded-br-lg rounded-tr-lg"
-                style={{ backgroundColor: color }}
+                style={{ backgroundColor: animationColor }}
                 title="Click to change color"
               ></div>
 
