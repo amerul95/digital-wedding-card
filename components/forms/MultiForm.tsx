@@ -9,12 +9,20 @@ import { steps } from './steps'
 import type { WeddingFormSchema } from '@/lib/schema/schema'
 import { Card, CardContent } from '../ui/card'
 import { Button } from '../ui/button'
+import StepTwo from './features/StepTwo'
 
 export default function MultiForm() {
 
 const methods = useForm<WeddingFormSchema>({
     resolver: zodResolver(weddingFormSchema),
+
     defaultValues: {
+    // form 2
+    couplesFontFamily:"times-roman",
+    couplesName:"",
+    ceremonyName:"",
+    ceremonynameFontsize:20,
+    // form 
     animationColor: "",
     animationEffect: "",
     fontColor: "",
@@ -55,7 +63,9 @@ const onSubmit = (data:WeddingFormSchema) => {
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
             <h2 className='text-xl font-semibold'>{steps[step].id}</h2>
             <div>
-                <CurrentStep/>
+                {/* <CurrentStep/> */}
+                <StepTwo/>
+
             </div>
             <div className="flex justify-between">
                 <Button type="button" className='hover:cursor-pointer' disabled={step > 0 ?false:true} onClick={prevStep}>

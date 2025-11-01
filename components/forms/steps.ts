@@ -17,7 +17,7 @@ export const steps : {
     {
         id:2,
         component:StepTwo,
-        fields:["eventDate","themeColor"]
+        fields:["eventDate","themeColor","ceremonyName","ceremonynameFontsize"]
     },
     {
         id:3,
