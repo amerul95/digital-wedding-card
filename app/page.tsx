@@ -6,7 +6,7 @@ import FooterPage from '@/components/FooterPage'
 export default function HomePage() {
   return (
     <div >
-      <NavBar />
+      <NavBar/>
       <div>
       <Introduction />
       </div>
