@@ -1,4 +1,6 @@
+'use client'
 import React from 'react'
+import { useLoginModal } from '@/context/LoginModalContext'
 
 export default function LoginandCart() {
   return (
@@ -10,8 +12,15 @@ export default function LoginandCart() {
 }
 
 function Login(){
+  const { openModal } = useLoginModal()
+
+  const handleLoginClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    openModal()
+  }
+
   return(
-      <a href="/login">
+      <a href="#" onClick={handleLoginClick} className='cursor-pointer'>
         <p>Login / Sign Up</p>
       </a>
   )
