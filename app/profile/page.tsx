@@ -1,10 +1,11 @@
 import React from 'react'
-import Profile from '@/components/Profile'
+import ProfileLayout from '@/components/profile/ProfileLayout'
+import ProfileSection from '@/components/profile/ProfileSection'
 
 export default function page() {
   return (
-    <div>
-      <Profile />
-    </div>
+    <ProfileLayout>
+      <ProfileSection />
+    </ProfileLayout>
   )
 }

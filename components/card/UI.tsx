@@ -2,13 +2,19 @@ import React from "react";
 
 export function Label({
   children,
-  htmlFor
+  htmlFor,
+  className
 }: {
   children: React.ReactNode;
   htmlFor?: string;
+  className?: string;
 }) {
   return (
-    <label htmlFor={htmlFor} className="text-sm text-rose-700 block mb-1">
+    <label 
+      htmlFor={htmlFor} 
+      className={`text-base font-bold block mb-1 text-gray-700 ${className || ""}`}
+      style={{ fontSize: '16px', fontFamily: 'Helvetica World, Helvetica, Arial, sans-serif' }}
+    >
       {children}
     </label>
   );
@@ -18,7 +24,7 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full rounded-xl border border-rose-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-300 ${props.className || ""}`}
+      className={`w-full rounded-xl border border-[#36463A] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#36463A] ${props.className || ""}`}
     />
   );
 }
@@ -27,7 +33,7 @@ export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
   return (
     <textarea
       {...props}
-      className={`w-full rounded-xl border border-rose-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-300 ${props.className || ""}`}
+      className={`w-full rounded-xl border border-[#36463A] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#36463A] ${props.className || ""}`}
     />
   );
 }

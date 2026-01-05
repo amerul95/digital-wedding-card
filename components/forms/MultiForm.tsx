@@ -3,7 +3,10 @@
 import React, { useState } from 'react'
 import { weddingFormSchema } from '@/lib/schema/schema'
 import * as z from "zod"
-import { FormProvider, useForm } from "react-hook-form"
+import {
+  FormProvider,
+  useForm,
+} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { steps } from './steps'
 import type { WeddingFormSchema } from '@/lib/schema/schema'

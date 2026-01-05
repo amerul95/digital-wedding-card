@@ -1,32 +1,34 @@
+'use client'
 import React from 'react'
-import CardCatalog from '../features/CardCatalog'
-
-const data = [
-  {
-    title: "Ethereal Swirl Gradient",
-    description: "Smooth, flowing gradients blending rich reds and blues in an abstract swirl.",
-    image: "https://cdn.shadcnstudio.com/ss-assets/components/card/image-2.png?height=280&format=auto",
-    link:"theme"
-  },
-  {
-    title: "Solar Bloom Spectrum",
-    description: "A radiant blend of orange, yellow, and pink tones evoking sunrise warmth and energy.",
-    image: "https://cdn.shadcnstudio.com/ss-assets/components/card/image-3.png?height=280&format=auto",
-    link:"category"
-  },
-  {
-    title: "Midnight Pulse Wave",
-    description: "Deep blues and purples merge with electric highlights, creating a futuristic pulse effect.",
-    image: "https://cdn.shadcnstudio.com/ss-assets/components/card/image-4.png?height=280&format=auto",
-    link:"color"
-  }
-]
-
+import Filter from '@/components/catalogs/Filter'
+import SetNamePreview from '@/components/catalogs/SetNamePreview'
+import CatalogGrid from '@/components/catalogs/CatalogGrid'
 
 export default function page() {
+  const handleApplyFilters = (filters: any) => {
+    console.log('Applied filters:', filters)
+    // TODO: Apply filters to the catalog items
+  }
+
+  const handleNameSet = (name: string) => {
+    console.log('Name set for preview:', name)
+    // TODO: Update preview with the name
+  }
+
   return (
-    <div>
-      <CardCatalog data={data}/>
+    <div className='max-w-7xl mx-auto py-12 px-6'>
+      <div className='flex gap-6 items-start'>
+        {/* Left Side - Filter */}
+        <div className='w-fit flex-shrink-0'>
+          <Filter onApplyFilters={handleApplyFilters} />
+        </div>
+        
+        {/* Right Side - Set Name Preview and Catalog Grid (Full Width) */}
+        <div className='flex-1 w-full'>
+          <SetNamePreview onNameSet={handleNameSet} />
+          <CatalogGrid />
+        </div>
+      </div>
     </div>
   )
 }

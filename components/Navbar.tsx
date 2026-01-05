@@ -2,15 +2,27 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useLoginModal } from '@/context/LoginModalContext'
 
 export default function NavBar() {
   const { openModal } = useLoginModal()
+  const pathname = usePathname()
 
   const handleSignInClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     openModal()
   }
+
+  const getNavLinkClassName = (path: string) => {
+    const isActive = pathname === path
+    const baseClasses = "px-4 py-2 rounded-lg font-bold uppercase transition-colors whitespace-nowrap"
+    const activeClasses = "bg-[#2d5016] text-white hover:bg-[#1f350f]"
+    const inactiveClasses = "text-[#4a4a4a] hover:text-[#2d5016]"
+    
+    return `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`
+  }
+
   return (
     <nav className="max-w-7xl mx-auto flex items-center justify-between py-4 px-8 bg-white w-full" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
       {/* Logo */}
@@ -31,42 +43,42 @@ export default function NavBar() {
       <div className="flex items-center gap-8 flex-1 justify-center px-8">
         <Link
           href="/"
-          className="bg-[#2d5016] text-white px-4 py-2 rounded-lg font-bold uppercase hover:bg-[#1f350f] transition-colors whitespace-nowrap"
+          className={getNavLinkClassName("/")}
           style={{ fontSize: '16px' }}
         >
           Home
         </Link>
         <Link
-          href="/catalog"
-          className="text-[#4a4a4a] uppercase font-bold hover:text-[#2d5016] transition-colors whitespace-nowrap"
+          href="/catalogs"
+          className={getNavLinkClassName("/catalogs")}
           style={{ fontSize: '16px' }}
         >
           Catalog
         </Link>
         <Link
           href="/packages"
-          className="text-[#4a4a4a] uppercase font-bold hover:text-[#2d5016] transition-colors whitespace-nowrap"
+          className={getNavLinkClassName("/packages")}
           style={{ fontSize: '16px' }}
         >
           Packages
         </Link>
         <Link
           href="/studio"
-          className="text-[#4a4a4a] uppercase font-bold hover:text-[#2d5016] transition-colors whitespace-nowrap"
+          className={getNavLinkClassName("/studio")}
           style={{ fontSize: '16px' }}
         >
           Studio
         </Link>
         <Link
           href="/resources"
-          className="text-[#4a4a4a] uppercase font-bold hover:text-[#2d5016] transition-colors whitespace-nowrap"
+          className={getNavLinkClassName("/resources")}
           style={{ fontSize: '16px' }}
         >
           Resources
         </Link>
         <Link
-          href="/contact"
-          className="text-[#4a4a4a] uppercase font-bold hover:text-[#2d5016] transition-colors whitespace-nowrap"
+          href="/contact-us"
+          className={getNavLinkClassName("/contact-us")}
           style={{ fontSize: '16px' }}
         >
           Contact Us

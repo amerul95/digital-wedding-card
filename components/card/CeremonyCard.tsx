@@ -202,7 +202,7 @@ export function CeremonyCard({ event: eventProp, editorSection }: CeremonyCardPr
   };
 
   return (
-    <div className="min-h-screen w-full bg-neutral-100 flex items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
       <div
         className="relative rounded-3xl shadow-2xl border bg-white"
         style={{
