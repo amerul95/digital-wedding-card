@@ -1,4 +1,3 @@
-import React from 'react'
 import Introduction from '@/components/Introduction'
 import DesignsSection from '@/components/DesignsSection'
 import FeedBack from '@/components/FeedBack'

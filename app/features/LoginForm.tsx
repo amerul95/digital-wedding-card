@@ -14,24 +14,27 @@ import {
 import { Input } from "@/components/ui/input"
 
 import { z } from "zod"
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm,Controller } from "react-hook-form"
+import { useForm } from "@tanstack/react-form"
 import React from "react"
 import axios from "axios"
-import { useRouter,useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
 const formSchema = z.object({
-    email:z.string().min(2,{
-        message:"Username must be a least 2 characters"
-    }),
-    password:z.string().nonempty({
-        message:"Please insert your password"
-    })
+  email: z.string().email({
+    message: "Please enter a valid email"
+  }).min(2, {
+    message: "Email is required"
+  }),
+  password: z.string().min(1, {
+    message: "Please enter your password"
+  })
 })
 
+type LoginFormValues = z.infer<typeof formSchema>
+
 type LoginProps = React.ComponentProps<"div"> & {
-  loginRoute:string
+  loginRoute: string
 }
 
 export function LoginForm({
@@ -45,42 +48,45 @@ export function LoginForm({
   const redirect = searchParams.get("redirect")
   const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/"
 
-
-  const form = useForm<z.infer<typeof formSchema>>({
-        resolver:zodResolver(formSchema),
-        defaultValues:{
-            email:"",
-            password:""
-        }
-    })
-
-    // define a submit handler
-    async function onSubmit(value:z.infer<typeof formSchema>){
-
+  const form = useForm<LoginFormValues>({
+    defaultValues: {
+      email: "",
+      password: ""
+    },
+    onSubmit: async ({ value }) => {
+      const validationResult = formSchema.safeParse(value)
+      if (!validationResult.success) {
+        return
+      }
 
       try {
-        const response = await axios.post("http://localhost:3000/api/login-auth",value,{
-          headers:{"Content-Type":"application/json"}
+        const response = await axios.post("/api/auth/client/login", {
+          email: validationResult.data.email,
+          password: validationResult.data.password,
+        }, {
+          headers: { "Content-Type": "application/json" }
         })
-        if(response.status === 200){
-          console.log("response api",response)
+
+        if (response.status === 200) {
+          toast.success("Login successful")
           router.push(decodedRedirect)
         }
-        
-      } catch (error) {
-        if(axios.isAxiosError(error)){
-          console.error("Axios error",error.response?.data || error.message)
-        } else {
-          console.error("Unexpected error",error)
-        }
+      } catch (error: any) {
+        const message = error?.response?.data?.error || "Invalid email or password"
+        toast.error(message)
       }
-    }
+    },
+  })
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" id="form-rhf-login" onSubmit={form.handleSubmit(onSubmit)}>
+          <form className="p-6 md:p-8" onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -88,31 +94,69 @@ export function LoginForm({
                   Login to your account
                 </p>
               </div>
-<Controller
-  name="email"
-  control={form.control}
-  render={({ field, fieldState }) => (
-    <Field data-invalid={fieldState.invalid}>
-      <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-      <Input {...field} id={field.name} aria-invalid={fieldState.invalid} autoComplete="email"/>
-      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-    </Field>
-  )}
-/>
-<Controller
-  name="password"
-  control={form.control}
-  render={({ field, fieldState }) => (
-    <Field data-invalid={fieldState.invalid}>
-      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-      <Input type="password" {...field} id={field.name} aria-invalid={fieldState.invalid} autoComplete="current-password"/>
-      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-    </Field>
-  )}
-/>
+              
+              <form.Field
+                name="email"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = formSchema.shape.email.safeParse(value)
+                    return result.success ? undefined : result.error.errors[0]?.message
+                  },
+                }}
+              >
+                {(field) => (
+                  <Field data-invalid={field.state.meta.errors.length > 0}>
+                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      type="email"
+                      autoComplete="email"
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
+
+              <form.Field
+                name="password"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = formSchema.shape.password.safeParse(value)
+                    return result.success ? undefined : result.error.errors[0]?.message
+                  },
+                }}
+              >
+                {(field) => (
+                  <Field data-invalid={field.state.meta.errors.length > 0}>
+                    <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="password"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      autoComplete="current-password"
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
 
               <Field>
-                <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Loggin in..." : "Login"}</Button>
+                <Button type="submit" disabled={form.state.isSubmitting}>
+                  {form.state.isSubmitting ? "Logging in..." : "Login"}
+                </Button>
               </Field>
               {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with

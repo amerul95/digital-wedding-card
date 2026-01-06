@@ -1,10 +1,11 @@
 'use client'
-import React, { useState } from 'react'
+
+import { useState } from 'react'
 import ResourcesTab from '@/components/resources/ResourcesTab'
 import TutorialGrid from '@/components/resources/TutorialGrid'
 import FAQSection from '@/components/resources/FAQSection'
 
-export default function page() {
+export default function ResourcesPage() {
   const [activeTab, setActiveTab] = useState<'tutorial' | 'faq'>('tutorial')
 
   return (

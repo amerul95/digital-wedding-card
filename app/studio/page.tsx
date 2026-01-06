@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import { CeremonyCard } from "@/components/card/CeremonyCard";
-import { EditorPager } from "@/components/EditorPager";
-import { useEvent } from "@/context/EventContext";
-import { IconSave } from "@/components/card/Icons";
-import { toast } from "sonner";
+import { useRef, useCallback, useState } from "react"
+import { CeremonyCard } from "@/components/card/CeremonyCard"
+import { EditorPager } from "@/components/EditorPager"
+import { useEvent } from "@/context/EventContext"
+import { IconSave } from "@/components/card/Icons"
+import { toast } from "sonner"
 
 const SECTIONS = [
   { id: 1, label: "1. Main & Opening" },
@@ -18,8 +18,12 @@ const SECTIONS = [
   { id: 8, label: "8. Contacts" },
   { id: 9, label: "9. Music & Auto Scroll" },
   { id: 10, label: "10. Final Segment" },
-];
+] as const
 
+/**
+ * Studio/Editor Page
+ * Allows users to edit wedding card content with a live preview
+ */
 export default function EditorPage() {
   const { resetEvent, event } = useEvent();
   const previewContainerRef = useRef<HTMLDivElement>(null);
@@ -46,7 +50,7 @@ export default function EditorPage() {
     <div className="min-h-screen  py-8 max-w-7xl mx-auto">
       <div className="container mx-auto px-4">
         <div className="mb-6 text-center flex flex-col items-center">
-          <h1 className="font-bold mb-2" style={{ fontSize: '24px', color: '#36463A' }}>Studio</h1>
+          <h1 className="text-2xl font-bold mb-2 text-[#36463A]">Studio</h1>
           
           {/* Tab Menu */}
           <div className="inline-flex rounded-2xl border border-[#36463A] overflow-hidden mb-4">
@@ -80,8 +84,10 @@ export default function EditorPage() {
             </button>
           </div>
           <button
+            type="button"
             onClick={resetEvent}
-            className="mt-4 px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50"
+            className="mt-4 px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50 transition-colors"
+            aria-label="Reset all form fields to default values"
           >
             Reset to Defaults
           </button>
@@ -103,9 +109,10 @@ export default function EditorPage() {
             <div className="mt-4 bg-white rounded-2xl shadow-lg border border-[#36463A] p-4">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <button
+                  type="button"
                   onClick={() => {
                     if (currentSection > 1) {
-                      setCurrentSection(currentSection - 1);
+                      setCurrentSection(currentSection - 1)
                     }
                   }}
                   disabled={currentSection === 1}
@@ -114,6 +121,7 @@ export default function EditorPage() {
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-[#36463A] text-white hover:bg-[#2d3a2f] shadow"
                   }`}
+                  aria-label="Go to previous section"
                 >
                   ←
                 </button>
@@ -121,21 +129,25 @@ export default function EditorPage() {
                 {SECTIONS.map((section) => (
                   <button
                     key={section.id}
+                    type="button"
                     onClick={() => setCurrentSection(section.id)}
                     className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
                       section.id === currentSection
                         ? "bg-[#36463A] text-white shadow"
                         : "bg-white text-gray-700 border border-gray-300 hover:border-[#36463A]"
                     }`}
+                    aria-label={`Go to section ${section.id}: ${section.label}`}
+                    aria-current={section.id === currentSection ? "page" : undefined}
                   >
                     {section.id}
                   </button>
                 ))}
 
                 <button
+                  type="button"
                   onClick={() => {
                     if (currentSection < 10) {
-                      setCurrentSection(currentSection + 1);
+                      setCurrentSection(currentSection + 1)
                     }
                   }}
                   disabled={currentSection === 10}
@@ -144,28 +156,30 @@ export default function EditorPage() {
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-[#36463A] text-white hover:bg-[#2d3a2f] shadow"
                   }`}
+                  aria-label="Go to next section"
                 >
                   →
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => {
                     try {
-                      localStorage.setItem("ceremony-card-event", JSON.stringify(event));
+                      localStorage.setItem("ceremony-card-event", JSON.stringify(event))
                       toast.success("Data saved successfully!", {
                         description: "All your changes have been saved to local storage.",
                         duration: 3000,
-                      });
+                      })
                     } catch (error) {
-                      console.error("Error saving data:", error);
+                      console.error("Error saving data:", error)
                       toast.error("Error saving data", {
                         description: "Failed to save. Check console for details.",
                         duration: 4000,
-                      });
+                      })
                     }
                   }}
                   className="ml-4 px-4 py-1 rounded-full bg-[#36463A] text-white hover:bg-[#2d3a2f] shadow text-sm font-medium transition-colors flex items-center gap-2"
-                  title="Save current data"
+                  aria-label="Save current data to local storage"
                 >
                   <IconSave />
                   <span className="hidden sm:inline">Save</span>

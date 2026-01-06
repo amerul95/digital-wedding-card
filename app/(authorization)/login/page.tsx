@@ -1,14 +1,13 @@
 "use client"
 
-import React from 'react'
 import { LoginForm } from '@/app/features/LoginForm'
 
-export default function page() {
-
+export default function LoginPage() {
   const loginRoute = process.env.LOGIN_ROUTE!
+
   return (
     <div>
-        <LoginForm loginRoute={loginRoute}/>
+      <LoginForm loginRoute={loginRoute} />
     </div>
   )
 }

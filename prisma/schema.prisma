@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
+  engineType= "client" // enable Prisma ORM without Rust
 }
 
 datasource db {
@@ -44,6 +45,7 @@ model User {
   sessions  Session[]
   passwordsResets  PasswordReset[]
   cart      Cart[]
+  designer  Designer?
 }
 // 
 model Role {
@@ -88,9 +90,17 @@ model Theme {
   secondaryColor  String?
   fontFamily      String?
   previewImageUrl String?
+  configJson      String?   @map("config_json") // Store theme config JSON
+  designerId      String?   @map("designer_id")
+  isPublished     Boolean   @default(false) @map("is_published")
   createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  designer        Designer? @relation(fields: [designerId], references: [id])
   weddings        Wedding[]
-  products        Product[]   
+  products        Product[]
+  sales           ThemeSale[]
 }
 
 model Song {
@@ -186,6 +196,7 @@ model Cart {
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   wedding    Wedding?    @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   items      CartItem[]
+  themeSales ThemeSale[]
 
   @@map("carts")
 }
@@ -208,4 +219,37 @@ enum CartStatus {
   PENDING
   COMPLETED
   CANCELLED
+}
+
+// Designer model
+model Designer {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  name      String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  themes    Theme[]
+  sales     ThemeSale[]
+}
+
+// Theme sales tracking for earnings
+model ThemeSale {
+  id              String   @id @default(uuid())
+  themeId         String   @map("theme_id")
+  productId       String   @map("product_id")
+  cartId          String   @map("cart_id")
+  salePrice       Decimal  @map("sale_price")
+  designerEarning Decimal  @map("designer_earning") // 15% of sale price
+  companyEarning  Decimal  @map("company_earning")   // 85% of sale price
+  createdAt       DateTime @default(now())
+
+  // Relations
+  theme           Theme    @relation(fields: [themeId], references: [id])
+  designer        Designer @relation(fields: [designerId], references: [id])
+  designerId      String   @map("designer_id")
+  cart            Cart     @relation(fields: [cartId], references: [id])
 }

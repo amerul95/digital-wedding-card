@@ -48,11 +48,23 @@ export async function POST(req:Request){
     // hashpassword
     const hashedPassword = await bcrypt.hash(password,10)
 
+    // Get or create client role (or leave null for default client)
+    let clientRole = await prisma.role.findUnique({
+      where: { name: "client" }
+    })
+
+    if (!clientRole) {
+      clientRole = await prisma.role.create({
+        data: { name: "client" }
+      })
+    }
+
     // create user
     const user = await prisma.user.create({
         data:{
             email,
-            password:hashedPassword
+            password:hashedPassword,
+            roleId: clientRole.id
         }
     })
 
@@ -60,16 +72,18 @@ export async function POST(req:Request){
     const {password:_, ...safeUser} = user
 
     const token = jwt.sign(
-        {email:body.email},JWT_SECRET,{expiresIn:"1h"}
+        {id: user.id, email:user.email, role: "client"},JWT_SECRET,{expiresIn:"7d"}
     )
 
+    // Use client cookie name
     ;(await cookies()).set({
-        name:'accessToken',
+        name:'next-auth.session-token.client',
         value:token,
         httpOnly:true,
         secure:process.env.NODE_ENV === "production",
         path:"/",
-        maxAge:60*60
+        maxAge:60*60*24*7, // 7 days
+        sameSite: "lax"
     })
     
     return NextResponse.json(
