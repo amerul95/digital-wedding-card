@@ -1,203 +1,228 @@
-'use client'
-import React, { useState } from 'react'
+"use client"
 
-// Mock data - replace with actual data fetching
-const mockOrders = [
-  {
-    id: '1',
-    orderNumber: 'ORD-001',
-    customerEmail: 'customer1@example.com',
-    total: 100.00,
-    status: 'completed',
-    createdAt: '2024-02-15',
-    items: ['Romantic Rose Theme']
-  },
-  {
-    id: '2',
-    orderNumber: 'ORD-002',
-    customerEmail: 'customer2@example.com',
-    total: 100.00,
-    status: 'pending',
-    createdAt: '2024-02-14',
-    items: ['Elegant Gold Theme']
-  },
-  {
-    id: '3',
-    orderNumber: 'ORD-003',
-    customerEmail: 'customer3@example.com',
-    total: 200.00,
-    status: 'completed',
-    createdAt: '2024-02-13',
-    items: ['Romantic Rose Theme', 'Classic Song']
-  },
-  {
-    id: '4',
-    orderNumber: 'ORD-004',
-    customerEmail: 'customer4@example.com',
-    total: 100.00,
-    status: 'cancelled',
-    createdAt: '2024-02-12',
-    items: ['Modern Minimalist Theme']
-  },
-]
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ShoppingBag, Clock, CheckCircle, XCircle, DollarSign } from 'lucide-react'
+
+interface Order {
+  id: string
+  orderNumber: string
+  customerEmail: string
+  total: number
+  status: 'completed' | 'pending' | 'cancelled'
+  createdAt: string
+  items: string[]
+}
 
 export default function OrdersPage() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed' | 'cancelled'>('all')
+  const [orders, setOrders] = useState<Order[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const response = await fetch('/api/admin/orders')
+        if (response.ok) {
+          const data = await response.json()
+          setOrders(data)
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchOrders()
+  }, [])
 
   const filteredOrders = filter === 'all' 
-    ? mockOrders 
-    : mockOrders.filter(order => order.status === filter)
+    ? orders 
+    : orders.filter(order => order.status === filter)
 
-  const totalOrders = mockOrders.length
-  const pendingOrders = mockOrders.filter(o => o.status === 'pending').length
-  const completedOrders = mockOrders.filter(o => o.status === 'completed').length
-  const cancelledOrders = mockOrders.filter(o => o.status === 'cancelled').length
-  const totalRevenue = mockOrders
+  const totalOrders = orders.length
+  const pendingOrders = orders.filter(o => o.status === 'pending').length
+  const completedOrders = orders.filter(o => o.status === 'completed').length
+  const cancelledOrders = orders.filter(o => o.status === 'cancelled').length
+  const totalRevenue = orders
     .filter(o => o.status === 'completed')
     .reduce((sum, order) => sum + order.total, 0)
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-4" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-3 w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#36463A] mb-2">Orders Management</h1>
-          <p className="text-gray-600">Monitor and process customer orders</p>
+          <h1 className="text-3xl font-bold tracking-tight">Orders Management</h1>
+          <p className="text-muted-foreground">Monitor and process customer orders</p>
         </div>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <p className="text-sm text-gray-600">Total Orders</p>
-          <p className="text-2xl font-bold text-[#36463A]">{totalOrders}</p>
-        </div>
-        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-          <p className="text-sm text-gray-600">Pending</p>
-          <p className="text-2xl font-bold text-[#36463A]">{pendingOrders}</p>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <p className="text-sm text-gray-600">Completed</p>
-          <p className="text-2xl font-bold text-[#36463A]">{completedOrders}</p>
-        </div>
-        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-          <p className="text-sm text-gray-600">Total Revenue</p>
-          <p className="text-2xl font-bold text-[#36463A]">${totalRevenue.toFixed(2)}</p>
-        </div>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalOrders}</div>
+            <p className="text-xs text-muted-foreground">All orders</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingOrders}</div>
+            <p className="text-xs text-muted-foreground">Awaiting processing</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{completedOrders}</div>
+            <p className="text-xs text-muted-foreground">Successfully processed</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalRevenue.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">From completed orders</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-gray-200">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'all'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          All ({totalOrders})
-        </button>
-        <button
-          onClick={() => setFilter('pending')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'pending'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Pending ({pendingOrders})
-        </button>
-        <button
-          onClick={() => setFilter('completed')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'completed'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Completed ({completedOrders})
-        </button>
-        <button
-          onClick={() => setFilter('cancelled')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'cancelled'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Cancelled ({cancelledOrders})
-        </button>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
+            <TabsList>
+              <TabsTrigger value="all">All ({totalOrders})</TabsTrigger>
+              <TabsTrigger value="pending">Pending ({pendingOrders})</TabsTrigger>
+              <TabsTrigger value="completed">Completed ({completedOrders})</TabsTrigger>
+              <TabsTrigger value="cancelled">Cancelled ({cancelledOrders})</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {/* Orders Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order #</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Items</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#36463A]">
-                    {order.orderNumber}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.customerEmail}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <div className="flex flex-col">
-                      {order.items.map((item, idx) => (
-                        <span key={idx}>{item}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#36463A]">
-                    ${order.total.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      <button className="text-[#327442] hover:text-[#2d3a2f]">View</button>
-                      {order.status === 'pending' && (
-                        <button className="text-green-600 hover:text-green-800">Process</button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredOrders.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600">No orders found</p>
-          </div>
-        )}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Orders</CardTitle>
+          <CardDescription>A list of all orders in the system</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order #</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8">
+                    <p className="text-muted-foreground">No orders found</p>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                    <TableCell>{order.customerEmail}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        {order.items.map((item, idx) => (
+                          <span key={idx} className="text-sm">{item}</span>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-semibold">${order.total.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge variant={
+                        order.status === 'completed' ? 'default' :
+                        order.status === 'pending' ? 'secondary' :
+                        'destructive'
+                      }>
+                        {order.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm">View</Button>
+                        {order.status === 'pending' && (
+                          <Button variant="default" size="sm">Process</Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }
-
-
-

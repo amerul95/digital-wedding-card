@@ -1,121 +1,183 @@
-'use client'
-import React from 'react'
+"use client"
 
-// Mock data - replace with actual data fetching
-const mockDesigners = [
-  {
-    id: '1',
-    email: 'designer1@example.com',
-    name: 'John Designer',
-    themes: 5,
-    totalSales: 25,
-    totalEarnings: 375.00,
-    joinedDate: '2024-01-15'
-  },
-  {
-    id: '2',
-    email: 'designer2@example.com',
-    name: 'Jane Artist',
-    themes: 3,
-    totalSales: 15,
-    totalEarnings: 225.00,
-    joinedDate: '2024-01-20'
-  },
-  {
-    id: '3',
-    email: 'designer3@example.com',
-    name: 'Mike Creator',
-    themes: 4,
-    totalSales: 8,
-    totalEarnings: 120.00,
-    joinedDate: '2024-02-01'
-  },
-]
+import React, { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { UsersRound, Palette, ShoppingBag, DollarSign } from 'lucide-react'
+
+interface Designer {
+  id: string
+  email: string
+  name: string
+  themes: number
+  totalSales: number
+  totalEarnings: number
+  joinedDate: string
+}
 
 export default function DesignersPage() {
-  const totalDesigners = mockDesigners.length
-  const totalThemes = mockDesigners.reduce((sum, d) => sum + d.themes, 0)
-  const totalSales = mockDesigners.reduce((sum, d) => sum + d.totalSales, 0)
-  const totalEarnings = mockDesigners.reduce((sum, d) => sum + d.totalEarnings, 0)
+  const [designers, setDesigners] = useState<Designer[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchDesigners() {
+      try {
+        const response = await fetch('/api/admin/designers')
+        if (response.ok) {
+          const data = await response.json()
+          setDesigners(data)
+        }
+      } catch (error) {
+        console.error('Error fetching designers:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchDesigners()
+  }, [])
+
+  const totalDesigners = designers.length
+  const totalThemes = designers.reduce((sum, d) => sum + d.themes, 0)
+  const totalSales = designers.reduce((sum, d) => sum + d.totalSales, 0)
+  const totalEarnings = designers.reduce((sum, d) => sum + d.totalEarnings, 0)
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-4" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-3 w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#36463A] mb-2">Designers Management</h1>
-        <p className="text-gray-600">Manage designers and their performance</p>
+        <h1 className="text-3xl font-bold tracking-tight">Designers Management</h1>
+        <p className="text-muted-foreground">Manage designers and their performance</p>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <p className="text-sm text-gray-600">Total Designers</p>
-          <p className="text-2xl font-bold text-[#36463A]">{totalDesigners}</p>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <p className="text-sm text-gray-600">Total Themes</p>
-          <p className="text-2xl font-bold text-[#36463A]">{totalThemes}</p>
-        </div>
-        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-          <p className="text-sm text-gray-600">Total Sales</p>
-          <p className="text-2xl font-bold text-[#36463A]">{totalSales}</p>
-        </div>
-        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-          <p className="text-sm text-gray-600">Designer Earnings</p>
-          <p className="text-2xl font-bold text-[#36463A]">${totalEarnings.toFixed(2)}</p>
-        </div>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Designers</CardTitle>
+            <UsersRound className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalDesigners}</div>
+            <p className="text-xs text-muted-foreground">Registered designers</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Themes</CardTitle>
+            <Palette className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalThemes}</div>
+            <p className="text-xs text-muted-foreground">Created by designers</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalSales}</div>
+            <p className="text-xs text-muted-foreground">Theme sales</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Designer Earnings</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalEarnings.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">Total paid to designers</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Designers Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Designer</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Themes</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Sales</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Earnings</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Joined</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {mockDesigners.map((designer) => (
-                <tr key={designer.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#36463A]">
-                    {designer.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {designer.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {designer.themes}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {designer.totalSales}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
-                    ${designer.totalEarnings.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(designer.joinedDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      <button className="text-[#327442] hover:text-[#2d3a2f]">View</button>
-                      <button className="text-gray-600 hover:text-gray-800">Edit</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Designers</CardTitle>
+          <CardDescription>A list of all designers in the system</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Themes</TableHead>
+                <TableHead>Total Sales</TableHead>
+                <TableHead>Earnings</TableHead>
+                <TableHead>Joined</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {designers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8">
+                    <p className="text-muted-foreground">No designers found</p>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                designers.map((designer) => (
+                  <TableRow key={designer.id}>
+                    <TableCell className="font-medium">{designer.name}</TableCell>
+                    <TableCell>{designer.email}</TableCell>
+                    <TableCell>{designer.themes}</TableCell>
+                    <TableCell>{designer.totalSales}</TableCell>
+                    <TableCell className="font-semibold">${designer.totalEarnings.toFixed(2)}</TableCell>
+                    <TableCell>{new Date(designer.joinedDate).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm">View</Button>
+                        <Button variant="ghost" size="sm">Edit</Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }
-
-
-

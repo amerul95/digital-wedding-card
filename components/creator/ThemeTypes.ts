@@ -5,6 +5,13 @@ export interface BackgroundStyle {
   value: string; // hex color or image url
 }
 
+export interface FooterIcons {
+  calendar?: string; // URL or data URL for custom icon
+  phone?: string;
+  pin?: string;
+  rsvp?: string;
+}
+
 export interface ThemeConfig {
   cardBackground: BackgroundStyle;
   section1Background: BackgroundStyle;
@@ -13,6 +20,8 @@ export interface ThemeConfig {
   section4Background: BackgroundStyle;
   footerBackground: BackgroundStyle;
   footerIconColor: string;
+  footerTextColor?: string; // Color for text under icons
+  footerIcons?: FooterIcons; // Custom icons for footer
 }
 
 export const defaultThemeConfig: ThemeConfig = {
@@ -23,4 +32,6 @@ export const defaultThemeConfig: ThemeConfig = {
   section4Background: { type: 'none', value: '' },
   footerBackground: { type: 'color', value: '#ffffff' }, // white default
   footerIconColor: '#be123c', // rose-700 default
+  footerTextColor: '#be123c', // rose-700 default for text
+  footerIcons: {}, // No custom icons by default
 };

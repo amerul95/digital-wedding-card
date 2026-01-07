@@ -1,16 +1,19 @@
 'use client'
-
-import { useState } from 'react'
+import React, { useState } from 'react'
+import NavBar from '@/components/NavBar'
 import ResourcesTab from '@/components/resources/ResourcesTab'
 import TutorialGrid from '@/components/resources/TutorialGrid'
 import FAQSection from '@/components/resources/FAQSection'
 
-export default function ResourcesPage() {
-  const [activeTab, setActiveTab] = useState<'tutorial' | 'faq'>('tutorial')
+type TabType = 'tutorial' | 'faq'
+
+export default function page() {
+  const [activeTab, setActiveTab] = useState<TabType>('tutorial')
 
   return (
-    <div className='max-w-7xl mx-auto py-12 px-6'>
-      <div className='flex flex-col items-center w-full'>
+    <div>
+      <NavBar />
+      <div className='max-w-7xl mx-auto py-12 px-6'>
         <ResourcesTab activeTab={activeTab} onTabChange={setActiveTab} />
         {activeTab === 'tutorial' ? <TutorialGrid /> : <FAQSection />}
       </div>

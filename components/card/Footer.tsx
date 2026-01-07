@@ -10,7 +10,15 @@ interface FooterProps {
 
 interface FooterStyle {
   background?: string; // hex or CSS background value
-  color?: string;     // hex color for icons/text
+  color?: string;     // hex color for icons
+  textColor?: string; // hex color for text under icons
+}
+
+interface FooterIcons {
+  calendar?: string; // URL or data URL for custom icon
+  phone?: string;
+  pin?: string;
+  rsvp?: string;
 }
 
 export function Footer({
@@ -19,7 +27,26 @@ export function Footer({
   onLocationClick,
   onRSVPClick,
   customStyle,
-}: FooterProps & { customStyle?: FooterStyle }) {
+  customIcons,
+}: FooterProps & { customStyle?: FooterStyle; customIcons?: FooterIcons }) {
+  const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp', defaultIcon: React.ReactNode) => {
+    const customIconUrl = customIcons?.[type];
+    if (customIconUrl) {
+      return (
+        <img 
+          src={customIconUrl} 
+          alt={type} 
+          className="w-6 h-6 object-contain"
+          style={{ 
+            filter: customStyle?.color ? `drop-shadow(0 0 0 ${customStyle.color})` : undefined,
+            color: customStyle?.color 
+          }}
+        />
+      );
+    }
+    return <div style={{ color: customStyle?.color }}>{defaultIcon}</div>;
+  };
+
   return (
     <div className="absolute bottom-0 left-0 right-0 z-20 p-3">
       <div
@@ -27,17 +54,17 @@ export function Footer({
         style={customStyle?.background ? { background: customStyle.background, border: 'none' } : undefined}
       >
         <div className={`grid grid-cols-4 gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
-          <FooterButton label="Calendar" onClick={onCalendarClick} color={customStyle?.color}>
-            <IconCalendar />
+          <FooterButton label="Calendar" onClick={onCalendarClick} color={customStyle?.color} textColor={customStyle?.textColor}>
+            {renderIcon('calendar', <IconCalendar />)}
           </FooterButton>
-          <FooterButton label="Contact" onClick={onContactClick} color={customStyle?.color}>
-            <IconPhone />
+          <FooterButton label="Contact" onClick={onContactClick} color={customStyle?.color} textColor={customStyle?.textColor}>
+            {renderIcon('phone', <IconPhone />)}
           </FooterButton>
-          <FooterButton label="Location" onClick={onLocationClick} color={customStyle?.color}>
-            <IconPin />
+          <FooterButton label="Location" onClick={onLocationClick} color={customStyle?.color} textColor={customStyle?.textColor}>
+            {renderIcon('pin', <IconPin />)}
           </FooterButton>
-          <FooterButton label="RSVP" onClick={onRSVPClick} color={customStyle?.color}>
-            <IconRSVP />
+          <FooterButton label="RSVP" onClick={onRSVPClick} color={customStyle?.color} textColor={customStyle?.textColor}>
+            {renderIcon('rsvp', <IconRSVP />)}
           </FooterButton>
         </div>
       </div>

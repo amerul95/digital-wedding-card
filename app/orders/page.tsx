@@ -1,13 +1,8 @@
-import type { Metadata } from 'next'
+import React from 'react'
 import ProfileLayout from '@/components/profile/ProfileLayout'
 import OrdersSection from '@/components/profile/OrdersSection'
 
-export const metadata: Metadata = {
-  title: 'Orders - Wedding Card Creator',
-  description: 'View and manage your wedding card orders.',
-}
-
-export default function OrdersPage() {
+export default function page() {
   return (
     <ProfileLayout>
       <OrdersSection />

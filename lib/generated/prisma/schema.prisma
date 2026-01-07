@@ -1,7 +1,6 @@
 generator client {
-  provider   = "prisma-client-js"
-  output     = "../lib/generated/prisma"
-  engineType = "client" // enable Prisma ORM without Rust
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -9,15 +8,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// user administration
 model Session {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
   token     String   @unique
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PasswordReset {
@@ -27,40 +24,33 @@ model PasswordReset {
   expiresAt  DateTime @map("expires_at")
   used       Boolean  @default(false)
   createdAt  DateTime @default(now()) @map("created_at")
-
-  // Relation
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  roleId    Int?
-  createdAt DateTime @default(now())
-
-  // Relations
+  id              String          @id @default(uuid())
+  email           String          @unique
+  password        String
+  roleId          Int?
+  createdAt       DateTime        @default(now())
+  designer        Designer?
+  passwordsResets PasswordReset[]
+  sessions        Session[]
   role            Role?           @relation(fields: [roleId], references: [id])
   weddings        Wedding[]
-  sessions        Session[]
-  passwordsResets PasswordReset[]
   cart            Cart[]
-  designer        Designer?
 }
 
-// 
 model Role {
   id    Int    @id @default(autoincrement())
   name  String @unique
   users User[]
 }
 
-// wedding section
-
 model Wedding {
-  id                String   @id @default(uuid())
+  id                String         @id @default(uuid())
   userId            String
-  slug              String   @unique
+  slug              String         @unique
   groomName         String
   brideName         String
   eventDate         DateTime
@@ -71,37 +61,33 @@ model Wedding {
   coverImageUrl     String?
   themeId           String?
   songId            String?
-  createdAt         DateTime @default(now())
-  isExpired         Boolean  @default(false)
-
-  // relations
-  donations     Donation[]
-  galleryImages GalleryImage[]
-  rsvps         Rsvp[]
-  cart          Cart[]
-  song          Song?          @relation(fields: [songId], references: [id])
-  theme         Theme?         @relation(fields: [themeId], references: [id])
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime       @default(now())
+  isExpired         Boolean        @default(false)
+  donations         Donation[]
+  galleryImages     GalleryImage[]
+  rsvps             Rsvp[]
+  song              Song?          @relation(fields: [songId], references: [id])
+  theme             Theme?         @relation(fields: [themeId], references: [id])
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cart              Cart[]
 }
 
 model Theme {
-  id              String   @id @default(uuid())
+  id              String      @id @default(uuid())
   name            String
   primaryColor    String?
   secondaryColor  String?
   fontFamily      String?
   previewImageUrl String?
-  configJson      String?  @map("config_json") // Store theme config JSON
-  designerId      String?  @map("designer_id")
-  isPublished     Boolean  @default(false) @map("is_published")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  // Relations
-  designer Designer?   @relation(fields: [designerId], references: [id])
-  weddings Wedding[]
-  products Product[]
-  sales    ThemeSale[]
+  createdAt       DateTime    @default(now())
+  configJson      String?     @map("config_json")
+  designerId      String?     @map("designer_id")
+  isPublished     Boolean     @default(false) @map("is_published")
+  updatedAt       DateTime    @updatedAt
+  designer        Designer?   @relation(fields: [designerId], references: [id])
+  sales           ThemeSale[]
+  weddings        Wedding[]
+  products        Product[]
 }
 
 model Song {
@@ -110,9 +96,7 @@ model Song {
   fileUrl   String
   createdAt DateTime  @default(now())
   weddings  Wedding[]
-
-  // 
-  products Product[]
+  products  Product[]
 }
 
 model Rsvp {
@@ -157,7 +141,6 @@ model GalleryImage {
   wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
 }
 
-// PRODUCT: abstract purchasable item
 model Product {
   id          String      @id @default(uuid())
   type        ProductType
@@ -166,37 +149,27 @@ model Product {
   description String?
   imageUrl    String?
   createdAt   DateTime    @default(now())
-
-  // Relations
-  theme     Theme?     @relation(fields: [themeId], references: [id])
-  themeId   String?
-  song      Song?      @relation(fields: [songId], references: [id])
-  songId    String?
-  cartItems CartItem[]
+  themeId     String?
+  songId      String?
+  cartItems   CartItem[]
+  song        Song?       @relation(fields: [songId], references: [id])
+  theme       Theme?      @relation(fields: [themeId], references: [id])
 
   @@map("products")
 }
 
-enum ProductType {
-  THEME
-  SONG
-  ADDON
-}
-
-// cart system
 model Cart {
-  id        String     @id @default(uuid())
-  userId    String
-  weddingId String?
-  status    CartStatus @default(PENDING)
-  total     Decimal    @default(0.00)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
+  id         String      @id @default(uuid())
+  userId     String
+  weddingId  String?
+  status     CartStatus  @default(PENDING)
+  total      Decimal     @default(0.00)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  themeSales ThemeSale[]
+  items      CartItem[]
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   wedding    Wedding?    @relation(fields: [weddingId], references: [id], onDelete: Cascade)
-  items      CartItem[]
-  themeSales ThemeSale[]
 
   @@map("carts")
 }
@@ -208,48 +181,48 @@ model CartItem {
   quantity  Int      @default(1)
   price     Decimal  @default(0.00)
   createdAt DateTime @default(now())
-
-  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("cart_items")
 }
 
-enum CartStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-}
-
-// Designer model
 model Designer {
-  id        String   @id @default(uuid())
-  userId    String   @unique @map("user_id")
+  id        String      @id @default(uuid())
+  userId    String      @unique @map("user_id")
   name      String?
+  address   String?
   bio       String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  themes Theme[]
-  sales  ThemeSale[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  themes    Theme[]
+  sales     ThemeSale[]
 }
 
-// Theme sales tracking for earnings
 model ThemeSale {
   id              String   @id @default(uuid())
   themeId         String   @map("theme_id")
   productId       String   @map("product_id")
   cartId          String   @map("cart_id")
   salePrice       Decimal  @map("sale_price")
-  designerEarning Decimal  @map("designer_earning") // 15% of sale price
-  companyEarning  Decimal  @map("company_earning") // 85% of sale price
+  designerEarning Decimal  @map("designer_earning")
+  companyEarning  Decimal  @map("company_earning")
   createdAt       DateTime @default(now())
+  designerId      String   @map("designer_id")
+  cart            Cart     @relation(fields: [cartId], references: [id])
+  designer        Designer @relation(fields: [designerId], references: [id])
+  theme           Theme    @relation(fields: [themeId], references: [id])
+}
 
-  // Relations
-  theme      Theme    @relation(fields: [themeId], references: [id])
-  designer   Designer @relation(fields: [designerId], references: [id])
-  designerId String   @map("designer_id")
-  cart       Cart     @relation(fields: [cartId], references: [id])
+enum ProductType {
+  THEME
+  SONG
+  ADDON
+}
+
+enum CartStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }

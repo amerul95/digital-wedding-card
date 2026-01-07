@@ -3,7 +3,7 @@
  * Client
 **/
 
-import * as runtime from './runtime/client.js';
+import * as runtime from './runtime/library.js';
 import $Types = runtime.Types // general types
 import $Public = runtime.Types.Public
 import $Utils = runtime.Types.Utils
@@ -93,6 +93,11 @@ export type Designer = $Result.DefaultSelection<Prisma.$DesignerPayload>
  * 
  */
 export type ThemeSale = $Result.DefaultSelection<Prisma.$ThemeSalePayload>
+/**
+ * Model WithdrawalRequest
+ * 
+ */
+export type WithdrawalRequest = $Result.DefaultSelection<Prisma.$WithdrawalRequestPayload>
 
 /**
  * Enums
@@ -115,6 +120,16 @@ export const CartStatus: {
 
 export type CartStatus = (typeof CartStatus)[keyof typeof CartStatus]
 
+
+export const WithdrawalStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  DECLINED: 'DECLINED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type WithdrawalStatus = (typeof WithdrawalStatus)[keyof typeof WithdrawalStatus]
+
 }
 
 export type ProductType = $Enums.ProductType
@@ -124,6 +139,10 @@ export const ProductType: typeof $Enums.ProductType
 export type CartStatus = $Enums.CartStatus
 
 export const CartStatus: typeof $Enums.CartStatus
+
+export type WithdrawalStatus = $Enums.WithdrawalStatus
+
+export const WithdrawalStatus: typeof $Enums.WithdrawalStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -402,6 +421,16 @@ export class PrismaClient<
     * ```
     */
   get themeSale(): Prisma.ThemeSaleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.withdrawalRequest`: Exposes CRUD operations for the **WithdrawalRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WithdrawalRequests
+    * const withdrawalRequests = await prisma.withdrawalRequest.findMany()
+    * ```
+    */
+  get withdrawalRequest(): Prisma.WithdrawalRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -858,7 +887,8 @@ export namespace Prisma {
     Cart: 'Cart',
     CartItem: 'CartItem',
     Designer: 'Designer',
-    ThemeSale: 'ThemeSale'
+    ThemeSale: 'ThemeSale',
+    WithdrawalRequest: 'WithdrawalRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -877,7 +907,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "session" | "passwordReset" | "user" | "role" | "wedding" | "theme" | "song" | "rsvp" | "donation" | "transferType" | "galleryImage" | "product" | "cart" | "cartItem" | "designer" | "themeSale"
+      modelProps: "session" | "passwordReset" | "user" | "role" | "wedding" | "theme" | "song" | "rsvp" | "donation" | "transferType" | "galleryImage" | "product" | "cart" | "cartItem" | "designer" | "themeSale" | "withdrawalRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2065,6 +2095,80 @@ export namespace Prisma {
           }
         }
       }
+      WithdrawalRequest: {
+        payload: Prisma.$WithdrawalRequestPayload<ExtArgs>
+        fields: Prisma.WithdrawalRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WithdrawalRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WithdrawalRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.WithdrawalRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WithdrawalRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          findMany: {
+            args: Prisma.WithdrawalRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>[]
+          }
+          create: {
+            args: Prisma.WithdrawalRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          createMany: {
+            args: Prisma.WithdrawalRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WithdrawalRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.WithdrawalRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          update: {
+            args: Prisma.WithdrawalRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.WithdrawalRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WithdrawalRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WithdrawalRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.WithdrawalRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.WithdrawalRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWithdrawalRequest>
+          }
+          groupBy: {
+            args: Prisma.WithdrawalRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WithdrawalRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WithdrawalRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<WithdrawalRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2177,6 +2281,7 @@ export namespace Prisma {
     cartItem?: CartItemOmit
     designer?: DesignerOmit
     themeSale?: ThemeSaleOmit
+    withdrawalRequest?: WithdrawalRequestOmit
   }
 
   /* Types for Logging */
@@ -2257,16 +2362,16 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    weddings: number
-    sessions: number
     passwordsResets: number
+    sessions: number
+    weddings: number
     cart: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    weddings?: boolean | UserCountOutputTypeCountWeddingsArgs
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     passwordsResets?: boolean | UserCountOutputTypeCountPasswordsResetsArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    weddings?: boolean | UserCountOutputTypeCountWeddingsArgs
     cart?: boolean | UserCountOutputTypeCountCartArgs
   }
 
@@ -2284,8 +2389,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountWeddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WeddingWhereInput
+  export type UserCountOutputTypeCountPasswordsResetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PasswordResetWhereInput
   }
 
   /**
@@ -2298,8 +2403,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountPasswordsResetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PasswordResetWhereInput
+  export type UserCountOutputTypeCountWeddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WeddingWhereInput
   }
 
   /**
@@ -2404,15 +2509,15 @@ export namespace Prisma {
    */
 
   export type ThemeCountOutputType = {
+    sales: number
     weddings: number
     products: number
-    sales: number
   }
 
   export type ThemeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sales?: boolean | ThemeCountOutputTypeCountSalesArgs
     weddings?: boolean | ThemeCountOutputTypeCountWeddingsArgs
     products?: boolean | ThemeCountOutputTypeCountProductsArgs
-    sales?: boolean | ThemeCountOutputTypeCountSalesArgs
   }
 
   // Custom InputTypes
@@ -2429,6 +2534,13 @@ export namespace Prisma {
   /**
    * ThemeCountOutputType without action
    */
+  export type ThemeCountOutputTypeCountSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ThemeSaleWhereInput
+  }
+
+  /**
+   * ThemeCountOutputType without action
+   */
   export type ThemeCountOutputTypeCountWeddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WeddingWhereInput
   }
@@ -2438,13 +2550,6 @@ export namespace Prisma {
    */
   export type ThemeCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductWhereInput
-  }
-
-  /**
-   * ThemeCountOutputType without action
-   */
-  export type ThemeCountOutputTypeCountSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ThemeSaleWhereInput
   }
 
 
@@ -2555,13 +2660,13 @@ export namespace Prisma {
    */
 
   export type CartCountOutputType = {
-    items: number
     themeSales: number
+    items: number
   }
 
   export type CartCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    items?: boolean | CartCountOutputTypeCountItemsArgs
     themeSales?: boolean | CartCountOutputTypeCountThemeSalesArgs
+    items?: boolean | CartCountOutputTypeCountItemsArgs
   }
 
   // Custom InputTypes
@@ -2578,15 +2683,15 @@ export namespace Prisma {
   /**
    * CartCountOutputType without action
    */
-  export type CartCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CartItemWhereInput
+  export type CartCountOutputTypeCountThemeSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ThemeSaleWhereInput
   }
 
   /**
    * CartCountOutputType without action
    */
-  export type CartCountOutputTypeCountThemeSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ThemeSaleWhereInput
+  export type CartCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CartItemWhereInput
   }
 
 
@@ -2597,11 +2702,13 @@ export namespace Prisma {
   export type DesignerCountOutputType = {
     themes: number
     sales: number
+    withdrawalRequests: number
   }
 
   export type DesignerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     themes?: boolean | DesignerCountOutputTypeCountThemesArgs
     sales?: boolean | DesignerCountOutputTypeCountSalesArgs
+    withdrawalRequests?: boolean | DesignerCountOutputTypeCountWithdrawalRequestsArgs
   }
 
   // Custom InputTypes
@@ -2627,6 +2734,13 @@ export namespace Prisma {
    */
   export type DesignerCountOutputTypeCountSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ThemeSaleWhereInput
+  }
+
+  /**
+   * DesignerCountOutputType without action
+   */
+  export type DesignerCountOutputTypeCountWithdrawalRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WithdrawalRequestWhereInput
   }
 
 
@@ -4961,12 +5075,12 @@ export namespace Prisma {
     password?: boolean
     roleId?: boolean
     createdAt?: boolean
+    designer?: boolean | User$designerArgs<ExtArgs>
+    passwordsResets?: boolean | User$passwordsResetsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     role?: boolean | User$roleArgs<ExtArgs>
     weddings?: boolean | User$weddingsArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
-    passwordsResets?: boolean | User$passwordsResetsArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
-    designer?: boolean | User$designerArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4998,12 +5112,12 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "roleId" | "createdAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    designer?: boolean | User$designerArgs<ExtArgs>
+    passwordsResets?: boolean | User$passwordsResetsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     role?: boolean | User$roleArgs<ExtArgs>
     weddings?: boolean | User$weddingsArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
-    passwordsResets?: boolean | User$passwordsResetsArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
-    designer?: boolean | User$designerArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5016,12 +5130,12 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      designer: Prisma.$DesignerPayload<ExtArgs> | null
+      passwordsResets: Prisma.$PasswordResetPayload<ExtArgs>[]
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
       role: Prisma.$RolePayload<ExtArgs> | null
       weddings: Prisma.$WeddingPayload<ExtArgs>[]
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
-      passwordsResets: Prisma.$PasswordResetPayload<ExtArgs>[]
       cart: Prisma.$CartPayload<ExtArgs>[]
-      designer: Prisma.$DesignerPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5423,12 +5537,12 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    designer<T extends User$designerArgs<ExtArgs> = {}>(args?: Subset<T, User$designerArgs<ExtArgs>>): Prisma__DesignerClient<$Result.GetResult<Prisma.$DesignerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    passwordsResets<T extends User$passwordsResetsArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordsResetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     role<T extends User$roleArgs<ExtArgs> = {}>(args?: Subset<T, User$roleArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     weddings<T extends User$weddingsArgs<ExtArgs> = {}>(args?: Subset<T, User$weddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    passwordsResets<T extends User$passwordsResetsArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordsResetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     cart<T extends User$cartArgs<ExtArgs> = {}>(args?: Subset<T, User$cartArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    designer<T extends User$designerArgs<ExtArgs> = {}>(args?: Subset<T, User$designerArgs<ExtArgs>>): Prisma__DesignerClient<$Result.GetResult<Prisma.$DesignerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5859,6 +5973,73 @@ export namespace Prisma {
   }
 
   /**
+   * User.designer
+   */
+  export type User$designerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Designer
+     */
+    select?: DesignerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Designer
+     */
+    omit?: DesignerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerInclude<ExtArgs> | null
+    where?: DesignerWhereInput
+  }
+
+  /**
+   * User.passwordsResets
+   */
+  export type User$passwordsResetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PasswordReset
+     */
+    select?: PasswordResetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordResetInclude<ExtArgs> | null
+    where?: PasswordResetWhereInput
+    orderBy?: PasswordResetOrderByWithRelationInput | PasswordResetOrderByWithRelationInput[]
+    cursor?: PasswordResetWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PasswordResetScalarFieldEnum | PasswordResetScalarFieldEnum[]
+  }
+
+  /**
+   * User.sessions
+   */
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    cursor?: SessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
    * User.role
    */
   export type User$roleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5902,54 +6083,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.sessions
-   */
-  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Session
-     */
-    select?: SessionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Session
-     */
-    omit?: SessionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionInclude<ExtArgs> | null
-    where?: SessionWhereInput
-    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
-    cursor?: SessionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
-  }
-
-  /**
-   * User.passwordsResets
-   */
-  export type User$passwordsResetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PasswordReset
-     */
-    select?: PasswordResetSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PasswordReset
-     */
-    omit?: PasswordResetOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PasswordResetInclude<ExtArgs> | null
-    where?: PasswordResetWhereInput
-    orderBy?: PasswordResetOrderByWithRelationInput | PasswordResetOrderByWithRelationInput[]
-    cursor?: PasswordResetWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PasswordResetScalarFieldEnum | PasswordResetScalarFieldEnum[]
-  }
-
-  /**
    * User.cart
    */
   export type User$cartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5971,25 +6104,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CartScalarFieldEnum | CartScalarFieldEnum[]
-  }
-
-  /**
-   * User.designer
-   */
-  export type User$designerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Designer
-     */
-    select?: DesignerSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Designer
-     */
-    omit?: DesignerOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DesignerInclude<ExtArgs> | null
-    where?: DesignerWhereInput
   }
 
   /**
@@ -7323,10 +7437,10 @@ export namespace Prisma {
     donations?: boolean | Wedding$donationsArgs<ExtArgs>
     galleryImages?: boolean | Wedding$galleryImagesArgs<ExtArgs>
     rsvps?: boolean | Wedding$rsvpsArgs<ExtArgs>
-    cart?: boolean | Wedding$cartArgs<ExtArgs>
     song?: boolean | Wedding$songArgs<ExtArgs>
     theme?: boolean | Wedding$themeArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    cart?: boolean | Wedding$cartArgs<ExtArgs>
     _count?: boolean | WeddingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wedding"]>
 
@@ -7395,10 +7509,10 @@ export namespace Prisma {
     donations?: boolean | Wedding$donationsArgs<ExtArgs>
     galleryImages?: boolean | Wedding$galleryImagesArgs<ExtArgs>
     rsvps?: boolean | Wedding$rsvpsArgs<ExtArgs>
-    cart?: boolean | Wedding$cartArgs<ExtArgs>
     song?: boolean | Wedding$songArgs<ExtArgs>
     theme?: boolean | Wedding$themeArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    cart?: boolean | Wedding$cartArgs<ExtArgs>
     _count?: boolean | WeddingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WeddingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7418,10 +7532,10 @@ export namespace Prisma {
       donations: Prisma.$DonationPayload<ExtArgs>[]
       galleryImages: Prisma.$GalleryImagePayload<ExtArgs>[]
       rsvps: Prisma.$RsvpPayload<ExtArgs>[]
-      cart: Prisma.$CartPayload<ExtArgs>[]
       song: Prisma.$SongPayload<ExtArgs> | null
       theme: Prisma.$ThemePayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
+      cart: Prisma.$CartPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7836,10 +7950,10 @@ export namespace Prisma {
     donations<T extends Wedding$donationsArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$donationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DonationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     galleryImages<T extends Wedding$galleryImagesArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$galleryImagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GalleryImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     rsvps<T extends Wedding$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RsvpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    cart<T extends Wedding$cartArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$cartArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     song<T extends Wedding$songArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$songArgs<ExtArgs>>): Prisma__SongClient<$Result.GetResult<Prisma.$SongPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     theme<T extends Wedding$themeArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$themeArgs<ExtArgs>>): Prisma__ThemeClient<$Result.GetResult<Prisma.$ThemePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    cart<T extends Wedding$cartArgs<ExtArgs> = {}>(args?: Subset<T, Wedding$cartArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8352,30 +8466,6 @@ export namespace Prisma {
   }
 
   /**
-   * Wedding.cart
-   */
-  export type Wedding$cartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Cart
-     */
-    select?: CartSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Cart
-     */
-    omit?: CartOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CartInclude<ExtArgs> | null
-    where?: CartWhereInput
-    orderBy?: CartOrderByWithRelationInput | CartOrderByWithRelationInput[]
-    cursor?: CartWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CartScalarFieldEnum | CartScalarFieldEnum[]
-  }
-
-  /**
    * Wedding.song
    */
   export type Wedding$songArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8414,6 +8504,30 @@ export namespace Prisma {
   }
 
   /**
+   * Wedding.cart
+   */
+  export type Wedding$cartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Cart
+     */
+    select?: CartSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Cart
+     */
+    omit?: CartOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CartInclude<ExtArgs> | null
+    where?: CartWhereInput
+    orderBy?: CartOrderByWithRelationInput | CartOrderByWithRelationInput[]
+    cursor?: CartWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CartScalarFieldEnum | CartScalarFieldEnum[]
+  }
+
+  /**
    * Wedding without action
    */
   export type WeddingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8449,10 +8563,10 @@ export namespace Prisma {
     secondaryColor: string | null
     fontFamily: string | null
     previewImageUrl: string | null
+    createdAt: Date | null
     configJson: string | null
     designerId: string | null
     isPublished: boolean | null
-    createdAt: Date | null
     updatedAt: Date | null
   }
 
@@ -8463,10 +8577,10 @@ export namespace Prisma {
     secondaryColor: string | null
     fontFamily: string | null
     previewImageUrl: string | null
+    createdAt: Date | null
     configJson: string | null
     designerId: string | null
     isPublished: boolean | null
-    createdAt: Date | null
     updatedAt: Date | null
   }
 
@@ -8477,10 +8591,10 @@ export namespace Prisma {
     secondaryColor: number
     fontFamily: number
     previewImageUrl: number
+    createdAt: number
     configJson: number
     designerId: number
     isPublished: number
-    createdAt: number
     updatedAt: number
     _all: number
   }
@@ -8493,10 +8607,10 @@ export namespace Prisma {
     secondaryColor?: true
     fontFamily?: true
     previewImageUrl?: true
+    createdAt?: true
     configJson?: true
     designerId?: true
     isPublished?: true
-    createdAt?: true
     updatedAt?: true
   }
 
@@ -8507,10 +8621,10 @@ export namespace Prisma {
     secondaryColor?: true
     fontFamily?: true
     previewImageUrl?: true
+    createdAt?: true
     configJson?: true
     designerId?: true
     isPublished?: true
-    createdAt?: true
     updatedAt?: true
   }
 
@@ -8521,10 +8635,10 @@ export namespace Prisma {
     secondaryColor?: true
     fontFamily?: true
     previewImageUrl?: true
+    createdAt?: true
     configJson?: true
     designerId?: true
     isPublished?: true
-    createdAt?: true
     updatedAt?: true
     _all?: true
   }
@@ -8608,10 +8722,10 @@ export namespace Prisma {
     secondaryColor: string | null
     fontFamily: string | null
     previewImageUrl: string | null
+    createdAt: Date
     configJson: string | null
     designerId: string | null
     isPublished: boolean
-    createdAt: Date
     updatedAt: Date
     _count: ThemeCountAggregateOutputType | null
     _min: ThemeMinAggregateOutputType | null
@@ -8639,15 +8753,15 @@ export namespace Prisma {
     secondaryColor?: boolean
     fontFamily?: boolean
     previewImageUrl?: boolean
+    createdAt?: boolean
     configJson?: boolean
     designerId?: boolean
     isPublished?: boolean
-    createdAt?: boolean
     updatedAt?: boolean
     designer?: boolean | Theme$designerArgs<ExtArgs>
+    sales?: boolean | Theme$salesArgs<ExtArgs>
     weddings?: boolean | Theme$weddingsArgs<ExtArgs>
     products?: boolean | Theme$productsArgs<ExtArgs>
-    sales?: boolean | Theme$salesArgs<ExtArgs>
     _count?: boolean | ThemeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["theme"]>
 
@@ -8658,10 +8772,10 @@ export namespace Prisma {
     secondaryColor?: boolean
     fontFamily?: boolean
     previewImageUrl?: boolean
+    createdAt?: boolean
     configJson?: boolean
     designerId?: boolean
     isPublished?: boolean
-    createdAt?: boolean
     updatedAt?: boolean
     designer?: boolean | Theme$designerArgs<ExtArgs>
   }, ExtArgs["result"]["theme"]>
@@ -8673,10 +8787,10 @@ export namespace Prisma {
     secondaryColor?: boolean
     fontFamily?: boolean
     previewImageUrl?: boolean
+    createdAt?: boolean
     configJson?: boolean
     designerId?: boolean
     isPublished?: boolean
-    createdAt?: boolean
     updatedAt?: boolean
     designer?: boolean | Theme$designerArgs<ExtArgs>
   }, ExtArgs["result"]["theme"]>
@@ -8688,19 +8802,19 @@ export namespace Prisma {
     secondaryColor?: boolean
     fontFamily?: boolean
     previewImageUrl?: boolean
+    createdAt?: boolean
     configJson?: boolean
     designerId?: boolean
     isPublished?: boolean
-    createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ThemeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "primaryColor" | "secondaryColor" | "fontFamily" | "previewImageUrl" | "configJson" | "designerId" | "isPublished" | "createdAt" | "updatedAt", ExtArgs["result"]["theme"]>
+  export type ThemeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "primaryColor" | "secondaryColor" | "fontFamily" | "previewImageUrl" | "createdAt" | "configJson" | "designerId" | "isPublished" | "updatedAt", ExtArgs["result"]["theme"]>
   export type ThemeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     designer?: boolean | Theme$designerArgs<ExtArgs>
+    sales?: boolean | Theme$salesArgs<ExtArgs>
     weddings?: boolean | Theme$weddingsArgs<ExtArgs>
     products?: boolean | Theme$productsArgs<ExtArgs>
-    sales?: boolean | Theme$salesArgs<ExtArgs>
     _count?: boolean | ThemeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ThemeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8714,9 +8828,9 @@ export namespace Prisma {
     name: "Theme"
     objects: {
       designer: Prisma.$DesignerPayload<ExtArgs> | null
+      sales: Prisma.$ThemeSalePayload<ExtArgs>[]
       weddings: Prisma.$WeddingPayload<ExtArgs>[]
       products: Prisma.$ProductPayload<ExtArgs>[]
-      sales: Prisma.$ThemeSalePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8725,10 +8839,10 @@ export namespace Prisma {
       secondaryColor: string | null
       fontFamily: string | null
       previewImageUrl: string | null
+      createdAt: Date
       configJson: string | null
       designerId: string | null
       isPublished: boolean
-      createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["theme"]>
     composites: {}
@@ -9125,9 +9239,9 @@ export namespace Prisma {
   export interface Prisma__ThemeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     designer<T extends Theme$designerArgs<ExtArgs> = {}>(args?: Subset<T, Theme$designerArgs<ExtArgs>>): Prisma__DesignerClient<$Result.GetResult<Prisma.$DesignerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    sales<T extends Theme$salesArgs<ExtArgs> = {}>(args?: Subset<T, Theme$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThemeSalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     weddings<T extends Theme$weddingsArgs<ExtArgs> = {}>(args?: Subset<T, Theme$weddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     products<T extends Theme$productsArgs<ExtArgs> = {}>(args?: Subset<T, Theme$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sales<T extends Theme$salesArgs<ExtArgs> = {}>(args?: Subset<T, Theme$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThemeSalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9163,10 +9277,10 @@ export namespace Prisma {
     readonly secondaryColor: FieldRef<"Theme", 'String'>
     readonly fontFamily: FieldRef<"Theme", 'String'>
     readonly previewImageUrl: FieldRef<"Theme", 'String'>
+    readonly createdAt: FieldRef<"Theme", 'DateTime'>
     readonly configJson: FieldRef<"Theme", 'String'>
     readonly designerId: FieldRef<"Theme", 'String'>
     readonly isPublished: FieldRef<"Theme", 'Boolean'>
-    readonly createdAt: FieldRef<"Theme", 'DateTime'>
     readonly updatedAt: FieldRef<"Theme", 'DateTime'>
   }
     
@@ -9583,6 +9697,30 @@ export namespace Prisma {
   }
 
   /**
+   * Theme.sales
+   */
+  export type Theme$salesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ThemeSale
+     */
+    select?: ThemeSaleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ThemeSale
+     */
+    omit?: ThemeSaleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ThemeSaleInclude<ExtArgs> | null
+    where?: ThemeSaleWhereInput
+    orderBy?: ThemeSaleOrderByWithRelationInput | ThemeSaleOrderByWithRelationInput[]
+    cursor?: ThemeSaleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ThemeSaleScalarFieldEnum | ThemeSaleScalarFieldEnum[]
+  }
+
+  /**
    * Theme.weddings
    */
   export type Theme$weddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9628,30 +9766,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProductScalarFieldEnum | ProductScalarFieldEnum[]
-  }
-
-  /**
-   * Theme.sales
-   */
-  export type Theme$salesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ThemeSale
-     */
-    select?: ThemeSaleSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ThemeSale
-     */
-    omit?: ThemeSaleOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ThemeSaleInclude<ExtArgs> | null
-    where?: ThemeSaleWhereInput
-    orderBy?: ThemeSaleOrderByWithRelationInput | ThemeSaleOrderByWithRelationInput[]
-    cursor?: ThemeSaleWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ThemeSaleScalarFieldEnum | ThemeSaleScalarFieldEnum[]
   }
 
   /**
@@ -15426,9 +15540,9 @@ export namespace Prisma {
     createdAt?: boolean
     themeId?: boolean
     songId?: boolean
-    theme?: boolean | Product$themeArgs<ExtArgs>
-    song?: boolean | Product$songArgs<ExtArgs>
     cartItems?: boolean | Product$cartItemsArgs<ExtArgs>
+    song?: boolean | Product$songArgs<ExtArgs>
+    theme?: boolean | Product$themeArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -15442,8 +15556,8 @@ export namespace Prisma {
     createdAt?: boolean
     themeId?: boolean
     songId?: boolean
-    theme?: boolean | Product$themeArgs<ExtArgs>
     song?: boolean | Product$songArgs<ExtArgs>
+    theme?: boolean | Product$themeArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -15456,8 +15570,8 @@ export namespace Prisma {
     createdAt?: boolean
     themeId?: boolean
     songId?: boolean
-    theme?: boolean | Product$themeArgs<ExtArgs>
     song?: boolean | Product$songArgs<ExtArgs>
+    theme?: boolean | Product$themeArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -15474,26 +15588,26 @@ export namespace Prisma {
 
   export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "name" | "price" | "description" | "imageUrl" | "createdAt" | "themeId" | "songId", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    theme?: boolean | Product$themeArgs<ExtArgs>
-    song?: boolean | Product$songArgs<ExtArgs>
     cartItems?: boolean | Product$cartItemsArgs<ExtArgs>
+    song?: boolean | Product$songArgs<ExtArgs>
+    theme?: boolean | Product$themeArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    theme?: boolean | Product$themeArgs<ExtArgs>
     song?: boolean | Product$songArgs<ExtArgs>
+    theme?: boolean | Product$themeArgs<ExtArgs>
   }
   export type ProductIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    theme?: boolean | Product$themeArgs<ExtArgs>
     song?: boolean | Product$songArgs<ExtArgs>
+    theme?: boolean | Product$themeArgs<ExtArgs>
   }
 
   export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Product"
     objects: {
-      theme: Prisma.$ThemePayload<ExtArgs> | null
-      song: Prisma.$SongPayload<ExtArgs> | null
       cartItems: Prisma.$CartItemPayload<ExtArgs>[]
+      song: Prisma.$SongPayload<ExtArgs> | null
+      theme: Prisma.$ThemePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -15899,9 +16013,9 @@ export namespace Prisma {
    */
   export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    theme<T extends Product$themeArgs<ExtArgs> = {}>(args?: Subset<T, Product$themeArgs<ExtArgs>>): Prisma__ThemeClient<$Result.GetResult<Prisma.$ThemePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    song<T extends Product$songArgs<ExtArgs> = {}>(args?: Subset<T, Product$songArgs<ExtArgs>>): Prisma__SongClient<$Result.GetResult<Prisma.$SongPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     cartItems<T extends Product$cartItemsArgs<ExtArgs> = {}>(args?: Subset<T, Product$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    song<T extends Product$songArgs<ExtArgs> = {}>(args?: Subset<T, Product$songArgs<ExtArgs>>): Prisma__SongClient<$Result.GetResult<Prisma.$SongPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    theme<T extends Product$themeArgs<ExtArgs> = {}>(args?: Subset<T, Product$themeArgs<ExtArgs>>): Prisma__ThemeClient<$Result.GetResult<Prisma.$ThemePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -16336,22 +16450,27 @@ export namespace Prisma {
   }
 
   /**
-   * Product.theme
+   * Product.cartItems
    */
-  export type Product$themeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Product$cartItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Theme
+     * Select specific fields to fetch from the CartItem
      */
-    select?: ThemeSelect<ExtArgs> | null
+    select?: CartItemSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Theme
+     * Omit specific fields from the CartItem
      */
-    omit?: ThemeOmit<ExtArgs> | null
+    omit?: CartItemOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ThemeInclude<ExtArgs> | null
-    where?: ThemeWhereInput
+    include?: CartItemInclude<ExtArgs> | null
+    where?: CartItemWhereInput
+    orderBy?: CartItemOrderByWithRelationInput | CartItemOrderByWithRelationInput[]
+    cursor?: CartItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CartItemScalarFieldEnum | CartItemScalarFieldEnum[]
   }
 
   /**
@@ -16374,27 +16493,22 @@ export namespace Prisma {
   }
 
   /**
-   * Product.cartItems
+   * Product.theme
    */
-  export type Product$cartItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Product$themeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the CartItem
+     * Select specific fields to fetch from the Theme
      */
-    select?: CartItemSelect<ExtArgs> | null
+    select?: ThemeSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the CartItem
+     * Omit specific fields from the Theme
      */
-    omit?: CartItemOmit<ExtArgs> | null
+    omit?: ThemeOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: CartItemInclude<ExtArgs> | null
-    where?: CartItemWhereInput
-    orderBy?: CartItemOrderByWithRelationInput | CartItemOrderByWithRelationInput[]
-    cursor?: CartItemWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CartItemScalarFieldEnum | CartItemScalarFieldEnum[]
+    include?: ThemeInclude<ExtArgs> | null
+    where?: ThemeWhereInput
   }
 
   /**
@@ -16630,10 +16744,10 @@ export namespace Prisma {
     total?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    themeSales?: boolean | Cart$themeSalesArgs<ExtArgs>
+    items?: boolean | Cart$itemsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     wedding?: boolean | Cart$weddingArgs<ExtArgs>
-    items?: boolean | Cart$itemsArgs<ExtArgs>
-    themeSales?: boolean | Cart$themeSalesArgs<ExtArgs>
     _count?: boolean | CartCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cart"]>
 
@@ -16673,10 +16787,10 @@ export namespace Prisma {
 
   export type CartOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "weddingId" | "status" | "total" | "createdAt" | "updatedAt", ExtArgs["result"]["cart"]>
   export type CartInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    themeSales?: boolean | Cart$themeSalesArgs<ExtArgs>
+    items?: boolean | Cart$itemsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     wedding?: boolean | Cart$weddingArgs<ExtArgs>
-    items?: boolean | Cart$itemsArgs<ExtArgs>
-    themeSales?: boolean | Cart$themeSalesArgs<ExtArgs>
     _count?: boolean | CartCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CartIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16691,10 +16805,10 @@ export namespace Prisma {
   export type $CartPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Cart"
     objects: {
+      themeSales: Prisma.$ThemeSalePayload<ExtArgs>[]
+      items: Prisma.$CartItemPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
       wedding: Prisma.$WeddingPayload<ExtArgs> | null
-      items: Prisma.$CartItemPayload<ExtArgs>[]
-      themeSales: Prisma.$ThemeSalePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17098,10 +17212,10 @@ export namespace Prisma {
    */
   export interface Prisma__CartClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    themeSales<T extends Cart$themeSalesArgs<ExtArgs> = {}>(args?: Subset<T, Cart$themeSalesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThemeSalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    items<T extends Cart$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Cart$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     wedding<T extends Cart$weddingArgs<ExtArgs> = {}>(args?: Subset<T, Cart$weddingArgs<ExtArgs>>): Prisma__WeddingClient<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    items<T extends Cart$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Cart$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    themeSales<T extends Cart$themeSalesArgs<ExtArgs> = {}>(args?: Subset<T, Cart$themeSalesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThemeSalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17534,22 +17648,27 @@ export namespace Prisma {
   }
 
   /**
-   * Cart.wedding
+   * Cart.themeSales
    */
-  export type Cart$weddingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Cart$themeSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Wedding
+     * Select specific fields to fetch from the ThemeSale
      */
-    select?: WeddingSelect<ExtArgs> | null
+    select?: ThemeSaleSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Wedding
+     * Omit specific fields from the ThemeSale
      */
-    omit?: WeddingOmit<ExtArgs> | null
+    omit?: ThemeSaleOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: WeddingInclude<ExtArgs> | null
-    where?: WeddingWhereInput
+    include?: ThemeSaleInclude<ExtArgs> | null
+    where?: ThemeSaleWhereInput
+    orderBy?: ThemeSaleOrderByWithRelationInput | ThemeSaleOrderByWithRelationInput[]
+    cursor?: ThemeSaleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ThemeSaleScalarFieldEnum | ThemeSaleScalarFieldEnum[]
   }
 
   /**
@@ -17577,27 +17696,22 @@ export namespace Prisma {
   }
 
   /**
-   * Cart.themeSales
+   * Cart.wedding
    */
-  export type Cart$themeSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Cart$weddingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ThemeSale
+     * Select specific fields to fetch from the Wedding
      */
-    select?: ThemeSaleSelect<ExtArgs> | null
+    select?: WeddingSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ThemeSale
+     * Omit specific fields from the Wedding
      */
-    omit?: ThemeSaleOmit<ExtArgs> | null
+    omit?: WeddingOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ThemeSaleInclude<ExtArgs> | null
-    where?: ThemeSaleWhereInput
-    orderBy?: ThemeSaleOrderByWithRelationInput | ThemeSaleOrderByWithRelationInput[]
-    cursor?: ThemeSaleWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ThemeSaleScalarFieldEnum | ThemeSaleScalarFieldEnum[]
+    include?: WeddingInclude<ExtArgs> | null
+    where?: WeddingWhereInput
   }
 
   /**
@@ -18742,15 +18856,30 @@ export namespace Prisma {
 
   export type AggregateDesigner = {
     _count: DesignerCountAggregateOutputType | null
+    _avg: DesignerAvgAggregateOutputType | null
+    _sum: DesignerSumAggregateOutputType | null
     _min: DesignerMinAggregateOutputType | null
     _max: DesignerMaxAggregateOutputType | null
+  }
+
+  export type DesignerAvgAggregateOutputType = {
+    walletBalance: Decimal | null
+  }
+
+  export type DesignerSumAggregateOutputType = {
+    walletBalance: Decimal | null
   }
 
   export type DesignerMinAggregateOutputType = {
     id: string | null
     userId: string | null
     name: string | null
+    address: string | null
     bio: string | null
+    walletBalance: Decimal | null
+    bankName: string | null
+    accountOwnerName: string | null
+    accountNumber: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -18759,7 +18888,12 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     name: string | null
+    address: string | null
     bio: string | null
+    walletBalance: Decimal | null
+    bankName: string | null
+    accountOwnerName: string | null
+    accountNumber: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -18768,18 +18902,36 @@ export namespace Prisma {
     id: number
     userId: number
     name: number
+    address: number
     bio: number
+    walletBalance: number
+    bankName: number
+    accountOwnerName: number
+    accountNumber: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
+  export type DesignerAvgAggregateInputType = {
+    walletBalance?: true
+  }
+
+  export type DesignerSumAggregateInputType = {
+    walletBalance?: true
+  }
+
   export type DesignerMinAggregateInputType = {
     id?: true
     userId?: true
     name?: true
+    address?: true
     bio?: true
+    walletBalance?: true
+    bankName?: true
+    accountOwnerName?: true
+    accountNumber?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -18788,7 +18940,12 @@ export namespace Prisma {
     id?: true
     userId?: true
     name?: true
+    address?: true
     bio?: true
+    walletBalance?: true
+    bankName?: true
+    accountOwnerName?: true
+    accountNumber?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -18797,7 +18954,12 @@ export namespace Prisma {
     id?: true
     userId?: true
     name?: true
+    address?: true
     bio?: true
+    walletBalance?: true
+    bankName?: true
+    accountOwnerName?: true
+    accountNumber?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -18841,6 +19003,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: DesignerAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DesignerSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: DesignerMinAggregateInputType
@@ -18871,6 +19045,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: DesignerCountAggregateInputType | true
+    _avg?: DesignerAvgAggregateInputType
+    _sum?: DesignerSumAggregateInputType
     _min?: DesignerMinAggregateInputType
     _max?: DesignerMaxAggregateInputType
   }
@@ -18879,10 +19055,17 @@ export namespace Prisma {
     id: string
     userId: string
     name: string | null
+    address: string | null
     bio: string | null
+    walletBalance: Decimal
+    bankName: string | null
+    accountOwnerName: string | null
+    accountNumber: string | null
     createdAt: Date
     updatedAt: Date
     _count: DesignerCountAggregateOutputType | null
+    _avg: DesignerAvgAggregateOutputType | null
+    _sum: DesignerSumAggregateOutputType | null
     _min: DesignerMinAggregateOutputType | null
     _max: DesignerMaxAggregateOutputType | null
   }
@@ -18905,12 +19088,18 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     name?: boolean
+    address?: boolean
     bio?: boolean
+    walletBalance?: boolean
+    bankName?: boolean
+    accountOwnerName?: boolean
+    accountNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     themes?: boolean | Designer$themesArgs<ExtArgs>
     sales?: boolean | Designer$salesArgs<ExtArgs>
+    withdrawalRequests?: boolean | Designer$withdrawalRequestsArgs<ExtArgs>
     _count?: boolean | DesignerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["designer"]>
 
@@ -18918,7 +19107,12 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     name?: boolean
+    address?: boolean
     bio?: boolean
+    walletBalance?: boolean
+    bankName?: boolean
+    accountOwnerName?: boolean
+    accountNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -18928,7 +19122,12 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     name?: boolean
+    address?: boolean
     bio?: boolean
+    walletBalance?: boolean
+    bankName?: boolean
+    accountOwnerName?: boolean
+    accountNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -18938,16 +19137,22 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     name?: boolean
+    address?: boolean
     bio?: boolean
+    walletBalance?: boolean
+    bankName?: boolean
+    accountOwnerName?: boolean
+    accountNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type DesignerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "bio" | "createdAt" | "updatedAt", ExtArgs["result"]["designer"]>
+  export type DesignerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "address" | "bio" | "walletBalance" | "bankName" | "accountOwnerName" | "accountNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["designer"]>
   export type DesignerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     themes?: boolean | Designer$themesArgs<ExtArgs>
     sales?: boolean | Designer$salesArgs<ExtArgs>
+    withdrawalRequests?: boolean | Designer$withdrawalRequestsArgs<ExtArgs>
     _count?: boolean | DesignerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DesignerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18963,12 +19168,18 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
       themes: Prisma.$ThemePayload<ExtArgs>[]
       sales: Prisma.$ThemeSalePayload<ExtArgs>[]
+      withdrawalRequests: Prisma.$WithdrawalRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
       name: string | null
+      address: string | null
       bio: string | null
+      walletBalance: Prisma.Decimal
+      bankName: string | null
+      accountOwnerName: string | null
+      accountNumber: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["designer"]>
@@ -19368,6 +19579,7 @@ export namespace Prisma {
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     themes<T extends Designer$themesArgs<ExtArgs> = {}>(args?: Subset<T, Designer$themesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThemePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sales<T extends Designer$salesArgs<ExtArgs> = {}>(args?: Subset<T, Designer$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ThemeSalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    withdrawalRequests<T extends Designer$withdrawalRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Designer$withdrawalRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19400,7 +19612,12 @@ export namespace Prisma {
     readonly id: FieldRef<"Designer", 'String'>
     readonly userId: FieldRef<"Designer", 'String'>
     readonly name: FieldRef<"Designer", 'String'>
+    readonly address: FieldRef<"Designer", 'String'>
     readonly bio: FieldRef<"Designer", 'String'>
+    readonly walletBalance: FieldRef<"Designer", 'Decimal'>
+    readonly bankName: FieldRef<"Designer", 'String'>
+    readonly accountOwnerName: FieldRef<"Designer", 'String'>
+    readonly accountNumber: FieldRef<"Designer", 'String'>
     readonly createdAt: FieldRef<"Designer", 'DateTime'>
     readonly updatedAt: FieldRef<"Designer", 'DateTime'>
   }
@@ -19847,6 +20064,30 @@ export namespace Prisma {
   }
 
   /**
+   * Designer.withdrawalRequests
+   */
+  export type Designer$withdrawalRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    where?: WithdrawalRequestWhereInput
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    cursor?: WithdrawalRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
    * Designer without action
    */
   export type DesignerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20103,9 +20344,9 @@ export namespace Prisma {
     companyEarning?: boolean
     createdAt?: boolean
     designerId?: boolean
-    theme?: boolean | ThemeDefaultArgs<ExtArgs>
-    designer?: boolean | DesignerDefaultArgs<ExtArgs>
     cart?: boolean | CartDefaultArgs<ExtArgs>
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+    theme?: boolean | ThemeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["themeSale"]>
 
   export type ThemeSaleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -20118,9 +20359,9 @@ export namespace Prisma {
     companyEarning?: boolean
     createdAt?: boolean
     designerId?: boolean
-    theme?: boolean | ThemeDefaultArgs<ExtArgs>
-    designer?: boolean | DesignerDefaultArgs<ExtArgs>
     cart?: boolean | CartDefaultArgs<ExtArgs>
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+    theme?: boolean | ThemeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["themeSale"]>
 
   export type ThemeSaleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -20133,9 +20374,9 @@ export namespace Prisma {
     companyEarning?: boolean
     createdAt?: boolean
     designerId?: boolean
-    theme?: boolean | ThemeDefaultArgs<ExtArgs>
-    designer?: boolean | DesignerDefaultArgs<ExtArgs>
     cart?: boolean | CartDefaultArgs<ExtArgs>
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+    theme?: boolean | ThemeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["themeSale"]>
 
   export type ThemeSaleSelectScalar = {
@@ -20152,27 +20393,27 @@ export namespace Prisma {
 
   export type ThemeSaleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "themeId" | "productId" | "cartId" | "salePrice" | "designerEarning" | "companyEarning" | "createdAt" | "designerId", ExtArgs["result"]["themeSale"]>
   export type ThemeSaleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    theme?: boolean | ThemeDefaultArgs<ExtArgs>
-    designer?: boolean | DesignerDefaultArgs<ExtArgs>
     cart?: boolean | CartDefaultArgs<ExtArgs>
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+    theme?: boolean | ThemeDefaultArgs<ExtArgs>
   }
   export type ThemeSaleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    theme?: boolean | ThemeDefaultArgs<ExtArgs>
-    designer?: boolean | DesignerDefaultArgs<ExtArgs>
     cart?: boolean | CartDefaultArgs<ExtArgs>
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+    theme?: boolean | ThemeDefaultArgs<ExtArgs>
   }
   export type ThemeSaleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    theme?: boolean | ThemeDefaultArgs<ExtArgs>
-    designer?: boolean | DesignerDefaultArgs<ExtArgs>
     cart?: boolean | CartDefaultArgs<ExtArgs>
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+    theme?: boolean | ThemeDefaultArgs<ExtArgs>
   }
 
   export type $ThemeSalePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ThemeSale"
     objects: {
-      theme: Prisma.$ThemePayload<ExtArgs>
-      designer: Prisma.$DesignerPayload<ExtArgs>
       cart: Prisma.$CartPayload<ExtArgs>
+      designer: Prisma.$DesignerPayload<ExtArgs>
+      theme: Prisma.$ThemePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20578,9 +20819,9 @@ export namespace Prisma {
    */
   export interface Prisma__ThemeSaleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    theme<T extends ThemeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ThemeDefaultArgs<ExtArgs>>): Prisma__ThemeClient<$Result.GetResult<Prisma.$ThemePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    designer<T extends DesignerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DesignerDefaultArgs<ExtArgs>>): Prisma__DesignerClient<$Result.GetResult<Prisma.$DesignerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     cart<T extends CartDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CartDefaultArgs<ExtArgs>>): Prisma__CartClient<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    designer<T extends DesignerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DesignerDefaultArgs<ExtArgs>>): Prisma__DesignerClient<$Result.GetResult<Prisma.$DesignerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    theme<T extends ThemeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ThemeDefaultArgs<ExtArgs>>): Prisma__ThemeClient<$Result.GetResult<Prisma.$ThemePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -21034,6 +21275,1158 @@ export namespace Prisma {
 
 
   /**
+   * Model WithdrawalRequest
+   */
+
+  export type AggregateWithdrawalRequest = {
+    _count: WithdrawalRequestCountAggregateOutputType | null
+    _avg: WithdrawalRequestAvgAggregateOutputType | null
+    _sum: WithdrawalRequestSumAggregateOutputType | null
+    _min: WithdrawalRequestMinAggregateOutputType | null
+    _max: WithdrawalRequestMaxAggregateOutputType | null
+  }
+
+  export type WithdrawalRequestAvgAggregateOutputType = {
+    requestNumber: number | null
+    amount: Decimal | null
+    approvedAmount: Decimal | null
+  }
+
+  export type WithdrawalRequestSumAggregateOutputType = {
+    requestNumber: number | null
+    amount: Decimal | null
+    approvedAmount: Decimal | null
+  }
+
+  export type WithdrawalRequestMinAggregateOutputType = {
+    id: string | null
+    requestNumber: number | null
+    designerId: string | null
+    amount: Decimal | null
+    status: $Enums.WithdrawalStatus | null
+    approvedAmount: Decimal | null
+    createdAt: Date | null
+    approvedAt: Date | null
+    cancelledAt: Date | null
+  }
+
+  export type WithdrawalRequestMaxAggregateOutputType = {
+    id: string | null
+    requestNumber: number | null
+    designerId: string | null
+    amount: Decimal | null
+    status: $Enums.WithdrawalStatus | null
+    approvedAmount: Decimal | null
+    createdAt: Date | null
+    approvedAt: Date | null
+    cancelledAt: Date | null
+  }
+
+  export type WithdrawalRequestCountAggregateOutputType = {
+    id: number
+    requestNumber: number
+    designerId: number
+    amount: number
+    status: number
+    approvedAmount: number
+    createdAt: number
+    approvedAt: number
+    cancelledAt: number
+    _all: number
+  }
+
+
+  export type WithdrawalRequestAvgAggregateInputType = {
+    requestNumber?: true
+    amount?: true
+    approvedAmount?: true
+  }
+
+  export type WithdrawalRequestSumAggregateInputType = {
+    requestNumber?: true
+    amount?: true
+    approvedAmount?: true
+  }
+
+  export type WithdrawalRequestMinAggregateInputType = {
+    id?: true
+    requestNumber?: true
+    designerId?: true
+    amount?: true
+    status?: true
+    approvedAmount?: true
+    createdAt?: true
+    approvedAt?: true
+    cancelledAt?: true
+  }
+
+  export type WithdrawalRequestMaxAggregateInputType = {
+    id?: true
+    requestNumber?: true
+    designerId?: true
+    amount?: true
+    status?: true
+    approvedAmount?: true
+    createdAt?: true
+    approvedAt?: true
+    cancelledAt?: true
+  }
+
+  export type WithdrawalRequestCountAggregateInputType = {
+    id?: true
+    requestNumber?: true
+    designerId?: true
+    amount?: true
+    status?: true
+    approvedAmount?: true
+    createdAt?: true
+    approvedAt?: true
+    cancelledAt?: true
+    _all?: true
+  }
+
+  export type WithdrawalRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WithdrawalRequest to aggregate.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WithdrawalRequests
+    **/
+    _count?: true | WithdrawalRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: WithdrawalRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: WithdrawalRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WithdrawalRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WithdrawalRequestMaxAggregateInputType
+  }
+
+  export type GetWithdrawalRequestAggregateType<T extends WithdrawalRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateWithdrawalRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWithdrawalRequest[P]>
+      : GetScalarType<T[P], AggregateWithdrawalRequest[P]>
+  }
+
+
+
+
+  export type WithdrawalRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WithdrawalRequestWhereInput
+    orderBy?: WithdrawalRequestOrderByWithAggregationInput | WithdrawalRequestOrderByWithAggregationInput[]
+    by: WithdrawalRequestScalarFieldEnum[] | WithdrawalRequestScalarFieldEnum
+    having?: WithdrawalRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WithdrawalRequestCountAggregateInputType | true
+    _avg?: WithdrawalRequestAvgAggregateInputType
+    _sum?: WithdrawalRequestSumAggregateInputType
+    _min?: WithdrawalRequestMinAggregateInputType
+    _max?: WithdrawalRequestMaxAggregateInputType
+  }
+
+  export type WithdrawalRequestGroupByOutputType = {
+    id: string
+    requestNumber: number
+    designerId: string
+    amount: Decimal
+    status: $Enums.WithdrawalStatus
+    approvedAmount: Decimal | null
+    createdAt: Date
+    approvedAt: Date | null
+    cancelledAt: Date | null
+    _count: WithdrawalRequestCountAggregateOutputType | null
+    _avg: WithdrawalRequestAvgAggregateOutputType | null
+    _sum: WithdrawalRequestSumAggregateOutputType | null
+    _min: WithdrawalRequestMinAggregateOutputType | null
+    _max: WithdrawalRequestMaxAggregateOutputType | null
+  }
+
+  type GetWithdrawalRequestGroupByPayload<T extends WithdrawalRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WithdrawalRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WithdrawalRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WithdrawalRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], WithdrawalRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WithdrawalRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requestNumber?: boolean
+    designerId?: boolean
+    amount?: boolean
+    status?: boolean
+    approvedAmount?: boolean
+    createdAt?: boolean
+    approvedAt?: boolean
+    cancelledAt?: boolean
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["withdrawalRequest"]>
+
+  export type WithdrawalRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requestNumber?: boolean
+    designerId?: boolean
+    amount?: boolean
+    status?: boolean
+    approvedAmount?: boolean
+    createdAt?: boolean
+    approvedAt?: boolean
+    cancelledAt?: boolean
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["withdrawalRequest"]>
+
+  export type WithdrawalRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requestNumber?: boolean
+    designerId?: boolean
+    amount?: boolean
+    status?: boolean
+    approvedAmount?: boolean
+    createdAt?: boolean
+    approvedAt?: boolean
+    cancelledAt?: boolean
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["withdrawalRequest"]>
+
+  export type WithdrawalRequestSelectScalar = {
+    id?: boolean
+    requestNumber?: boolean
+    designerId?: boolean
+    amount?: boolean
+    status?: boolean
+    approvedAmount?: boolean
+    createdAt?: boolean
+    approvedAt?: boolean
+    cancelledAt?: boolean
+  }
+
+  export type WithdrawalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "requestNumber" | "designerId" | "amount" | "status" | "approvedAmount" | "createdAt" | "approvedAt" | "cancelledAt", ExtArgs["result"]["withdrawalRequest"]>
+  export type WithdrawalRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+  }
+  export type WithdrawalRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+  }
+  export type WithdrawalRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    designer?: boolean | DesignerDefaultArgs<ExtArgs>
+  }
+
+  export type $WithdrawalRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WithdrawalRequest"
+    objects: {
+      designer: Prisma.$DesignerPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      requestNumber: number
+      designerId: string
+      amount: Prisma.Decimal
+      status: $Enums.WithdrawalStatus
+      approvedAmount: Prisma.Decimal | null
+      createdAt: Date
+      approvedAt: Date | null
+      cancelledAt: Date | null
+    }, ExtArgs["result"]["withdrawalRequest"]>
+    composites: {}
+  }
+
+  type WithdrawalRequestGetPayload<S extends boolean | null | undefined | WithdrawalRequestDefaultArgs> = $Result.GetResult<Prisma.$WithdrawalRequestPayload, S>
+
+  type WithdrawalRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WithdrawalRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WithdrawalRequestCountAggregateInputType | true
+    }
+
+  export interface WithdrawalRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WithdrawalRequest'], meta: { name: 'WithdrawalRequest' } }
+    /**
+     * Find zero or one WithdrawalRequest that matches the filter.
+     * @param {WithdrawalRequestFindUniqueArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WithdrawalRequestFindUniqueArgs>(args: SelectSubset<T, WithdrawalRequestFindUniqueArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WithdrawalRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WithdrawalRequestFindUniqueOrThrowArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WithdrawalRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, WithdrawalRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WithdrawalRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestFindFirstArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WithdrawalRequestFindFirstArgs>(args?: SelectSubset<T, WithdrawalRequestFindFirstArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WithdrawalRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestFindFirstOrThrowArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WithdrawalRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, WithdrawalRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WithdrawalRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WithdrawalRequests
+     * const withdrawalRequests = await prisma.withdrawalRequest.findMany()
+     * 
+     * // Get first 10 WithdrawalRequests
+     * const withdrawalRequests = await prisma.withdrawalRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const withdrawalRequestWithIdOnly = await prisma.withdrawalRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WithdrawalRequestFindManyArgs>(args?: SelectSubset<T, WithdrawalRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WithdrawalRequest.
+     * @param {WithdrawalRequestCreateArgs} args - Arguments to create a WithdrawalRequest.
+     * @example
+     * // Create one WithdrawalRequest
+     * const WithdrawalRequest = await prisma.withdrawalRequest.create({
+     *   data: {
+     *     // ... data to create a WithdrawalRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends WithdrawalRequestCreateArgs>(args: SelectSubset<T, WithdrawalRequestCreateArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WithdrawalRequests.
+     * @param {WithdrawalRequestCreateManyArgs} args - Arguments to create many WithdrawalRequests.
+     * @example
+     * // Create many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WithdrawalRequestCreateManyArgs>(args?: SelectSubset<T, WithdrawalRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WithdrawalRequests and returns the data saved in the database.
+     * @param {WithdrawalRequestCreateManyAndReturnArgs} args - Arguments to create many WithdrawalRequests.
+     * @example
+     * // Create many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WithdrawalRequests and only return the `id`
+     * const withdrawalRequestWithIdOnly = await prisma.withdrawalRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WithdrawalRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, WithdrawalRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WithdrawalRequest.
+     * @param {WithdrawalRequestDeleteArgs} args - Arguments to delete one WithdrawalRequest.
+     * @example
+     * // Delete one WithdrawalRequest
+     * const WithdrawalRequest = await prisma.withdrawalRequest.delete({
+     *   where: {
+     *     // ... filter to delete one WithdrawalRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WithdrawalRequestDeleteArgs>(args: SelectSubset<T, WithdrawalRequestDeleteArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WithdrawalRequest.
+     * @param {WithdrawalRequestUpdateArgs} args - Arguments to update one WithdrawalRequest.
+     * @example
+     * // Update one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WithdrawalRequestUpdateArgs>(args: SelectSubset<T, WithdrawalRequestUpdateArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WithdrawalRequests.
+     * @param {WithdrawalRequestDeleteManyArgs} args - Arguments to filter WithdrawalRequests to delete.
+     * @example
+     * // Delete a few WithdrawalRequests
+     * const { count } = await prisma.withdrawalRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WithdrawalRequestDeleteManyArgs>(args?: SelectSubset<T, WithdrawalRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WithdrawalRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WithdrawalRequestUpdateManyArgs>(args: SelectSubset<T, WithdrawalRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WithdrawalRequests and returns the data updated in the database.
+     * @param {WithdrawalRequestUpdateManyAndReturnArgs} args - Arguments to update many WithdrawalRequests.
+     * @example
+     * // Update many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WithdrawalRequests and only return the `id`
+     * const withdrawalRequestWithIdOnly = await prisma.withdrawalRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WithdrawalRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, WithdrawalRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WithdrawalRequest.
+     * @param {WithdrawalRequestUpsertArgs} args - Arguments to update or create a WithdrawalRequest.
+     * @example
+     * // Update or create a WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.upsert({
+     *   create: {
+     *     // ... data to create a WithdrawalRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WithdrawalRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WithdrawalRequestUpsertArgs>(args: SelectSubset<T, WithdrawalRequestUpsertArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WithdrawalRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestCountArgs} args - Arguments to filter WithdrawalRequests to count.
+     * @example
+     * // Count the number of WithdrawalRequests
+     * const count = await prisma.withdrawalRequest.count({
+     *   where: {
+     *     // ... the filter for the WithdrawalRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends WithdrawalRequestCountArgs>(
+      args?: Subset<T, WithdrawalRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WithdrawalRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WithdrawalRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WithdrawalRequestAggregateArgs>(args: Subset<T, WithdrawalRequestAggregateArgs>): Prisma.PrismaPromise<GetWithdrawalRequestAggregateType<T>>
+
+    /**
+     * Group by WithdrawalRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WithdrawalRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WithdrawalRequestGroupByArgs['orderBy'] }
+        : { orderBy?: WithdrawalRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WithdrawalRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWithdrawalRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WithdrawalRequest model
+   */
+  readonly fields: WithdrawalRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WithdrawalRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WithdrawalRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    designer<T extends DesignerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DesignerDefaultArgs<ExtArgs>>): Prisma__DesignerClient<$Result.GetResult<Prisma.$DesignerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WithdrawalRequest model
+   */
+  interface WithdrawalRequestFieldRefs {
+    readonly id: FieldRef<"WithdrawalRequest", 'String'>
+    readonly requestNumber: FieldRef<"WithdrawalRequest", 'Int'>
+    readonly designerId: FieldRef<"WithdrawalRequest", 'String'>
+    readonly amount: FieldRef<"WithdrawalRequest", 'Decimal'>
+    readonly status: FieldRef<"WithdrawalRequest", 'WithdrawalStatus'>
+    readonly approvedAmount: FieldRef<"WithdrawalRequest", 'Decimal'>
+    readonly createdAt: FieldRef<"WithdrawalRequest", 'DateTime'>
+    readonly approvedAt: FieldRef<"WithdrawalRequest", 'DateTime'>
+    readonly cancelledAt: FieldRef<"WithdrawalRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WithdrawalRequest findUnique
+   */
+  export type WithdrawalRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest findUniqueOrThrow
+   */
+  export type WithdrawalRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest findFirst
+   */
+  export type WithdrawalRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WithdrawalRequests.
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WithdrawalRequests.
+     */
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * WithdrawalRequest findFirstOrThrow
+   */
+  export type WithdrawalRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WithdrawalRequests.
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WithdrawalRequests.
+     */
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * WithdrawalRequest findMany
+   */
+  export type WithdrawalRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequests to fetch.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WithdrawalRequests.
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * WithdrawalRequest create
+   */
+  export type WithdrawalRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WithdrawalRequest.
+     */
+    data: XOR<WithdrawalRequestCreateInput, WithdrawalRequestUncheckedCreateInput>
+  }
+
+  /**
+   * WithdrawalRequest createMany
+   */
+  export type WithdrawalRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WithdrawalRequests.
+     */
+    data: WithdrawalRequestCreateManyInput | WithdrawalRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WithdrawalRequest createManyAndReturn
+   */
+  export type WithdrawalRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many WithdrawalRequests.
+     */
+    data: WithdrawalRequestCreateManyInput | WithdrawalRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WithdrawalRequest update
+   */
+  export type WithdrawalRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WithdrawalRequest.
+     */
+    data: XOR<WithdrawalRequestUpdateInput, WithdrawalRequestUncheckedUpdateInput>
+    /**
+     * Choose, which WithdrawalRequest to update.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest updateMany
+   */
+  export type WithdrawalRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WithdrawalRequests.
+     */
+    data: XOR<WithdrawalRequestUpdateManyMutationInput, WithdrawalRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which WithdrawalRequests to update
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * Limit how many WithdrawalRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WithdrawalRequest updateManyAndReturn
+   */
+  export type WithdrawalRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update WithdrawalRequests.
+     */
+    data: XOR<WithdrawalRequestUpdateManyMutationInput, WithdrawalRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which WithdrawalRequests to update
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * Limit how many WithdrawalRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WithdrawalRequest upsert
+   */
+  export type WithdrawalRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WithdrawalRequest to update in case it exists.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+    /**
+     * In case the WithdrawalRequest found by the `where` argument doesn't exist, create a new WithdrawalRequest with this data.
+     */
+    create: XOR<WithdrawalRequestCreateInput, WithdrawalRequestUncheckedCreateInput>
+    /**
+     * In case the WithdrawalRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WithdrawalRequestUpdateInput, WithdrawalRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * WithdrawalRequest delete
+   */
+  export type WithdrawalRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter which WithdrawalRequest to delete.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest deleteMany
+   */
+  export type WithdrawalRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WithdrawalRequests to delete
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * Limit how many WithdrawalRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WithdrawalRequest without action
+   */
+  export type WithdrawalRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -21117,10 +22510,10 @@ export namespace Prisma {
     secondaryColor: 'secondaryColor',
     fontFamily: 'fontFamily',
     previewImageUrl: 'previewImageUrl',
+    createdAt: 'createdAt',
     configJson: 'configJson',
     designerId: 'designerId',
     isPublished: 'isPublished',
-    createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
@@ -21230,7 +22623,12 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     name: 'name',
+    address: 'address',
     bio: 'bio',
+    walletBalance: 'walletBalance',
+    bankName: 'bankName',
+    accountOwnerName: 'accountOwnerName',
+    accountNumber: 'accountNumber',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -21251,6 +22649,21 @@ export namespace Prisma {
   };
 
   export type ThemeSaleScalarFieldEnum = (typeof ThemeSaleScalarFieldEnum)[keyof typeof ThemeSaleScalarFieldEnum]
+
+
+  export const WithdrawalRequestScalarFieldEnum: {
+    id: 'id',
+    requestNumber: 'requestNumber',
+    designerId: 'designerId',
+    amount: 'amount',
+    status: 'status',
+    approvedAmount: 'approvedAmount',
+    createdAt: 'createdAt',
+    approvedAt: 'approvedAt',
+    cancelledAt: 'cancelledAt'
+  };
+
+  export type WithdrawalRequestScalarFieldEnum = (typeof WithdrawalRequestScalarFieldEnum)[keyof typeof WithdrawalRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -21370,6 +22783,20 @@ export namespace Prisma {
    * Reference to a field of type 'CartStatus[]'
    */
   export type ListEnumCartStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CartStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'WithdrawalStatus'
+   */
+  export type EnumWithdrawalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WithdrawalStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'WithdrawalStatus[]'
+   */
+  export type ListEnumWithdrawalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WithdrawalStatus[]'>
     
 
 
@@ -21514,12 +22941,12 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     roleId?: IntNullableFilter<"User"> | number | null
     createdAt?: DateTimeFilter<"User"> | Date | string
+    designer?: XOR<DesignerNullableScalarRelationFilter, DesignerWhereInput> | null
+    passwordsResets?: PasswordResetListRelationFilter
+    sessions?: SessionListRelationFilter
     role?: XOR<RoleNullableScalarRelationFilter, RoleWhereInput> | null
     weddings?: WeddingListRelationFilter
-    sessions?: SessionListRelationFilter
-    passwordsResets?: PasswordResetListRelationFilter
     cart?: CartListRelationFilter
-    designer?: XOR<DesignerNullableScalarRelationFilter, DesignerWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -21528,12 +22955,12 @@ export namespace Prisma {
     password?: SortOrder
     roleId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    designer?: DesignerOrderByWithRelationInput
+    passwordsResets?: PasswordResetOrderByRelationAggregateInput
+    sessions?: SessionOrderByRelationAggregateInput
     role?: RoleOrderByWithRelationInput
     weddings?: WeddingOrderByRelationAggregateInput
-    sessions?: SessionOrderByRelationAggregateInput
-    passwordsResets?: PasswordResetOrderByRelationAggregateInput
     cart?: CartOrderByRelationAggregateInput
-    designer?: DesignerOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -21545,12 +22972,12 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     roleId?: IntNullableFilter<"User"> | number | null
     createdAt?: DateTimeFilter<"User"> | Date | string
+    designer?: XOR<DesignerNullableScalarRelationFilter, DesignerWhereInput> | null
+    passwordsResets?: PasswordResetListRelationFilter
+    sessions?: SessionListRelationFilter
     role?: XOR<RoleNullableScalarRelationFilter, RoleWhereInput> | null
     weddings?: WeddingListRelationFilter
-    sessions?: SessionListRelationFilter
-    passwordsResets?: PasswordResetListRelationFilter
     cart?: CartListRelationFilter
-    designer?: XOR<DesignerNullableScalarRelationFilter, DesignerWhereInput> | null
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -21641,10 +23068,10 @@ export namespace Prisma {
     donations?: DonationListRelationFilter
     galleryImages?: GalleryImageListRelationFilter
     rsvps?: RsvpListRelationFilter
-    cart?: CartListRelationFilter
     song?: XOR<SongNullableScalarRelationFilter, SongWhereInput> | null
     theme?: XOR<ThemeNullableScalarRelationFilter, ThemeWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    cart?: CartListRelationFilter
   }
 
   export type WeddingOrderByWithRelationInput = {
@@ -21666,10 +23093,10 @@ export namespace Prisma {
     donations?: DonationOrderByRelationAggregateInput
     galleryImages?: GalleryImageOrderByRelationAggregateInput
     rsvps?: RsvpOrderByRelationAggregateInput
-    cart?: CartOrderByRelationAggregateInput
     song?: SongOrderByWithRelationInput
     theme?: ThemeOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
+    cart?: CartOrderByRelationAggregateInput
   }
 
   export type WeddingWhereUniqueInput = Prisma.AtLeast<{
@@ -21694,10 +23121,10 @@ export namespace Prisma {
     donations?: DonationListRelationFilter
     galleryImages?: GalleryImageListRelationFilter
     rsvps?: RsvpListRelationFilter
-    cart?: CartListRelationFilter
     song?: XOR<SongNullableScalarRelationFilter, SongWhereInput> | null
     theme?: XOR<ThemeNullableScalarRelationFilter, ThemeWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    cart?: CartListRelationFilter
   }, "id" | "slug">
 
   export type WeddingOrderByWithAggregationInput = {
@@ -21752,15 +23179,15 @@ export namespace Prisma {
     secondaryColor?: StringNullableFilter<"Theme"> | string | null
     fontFamily?: StringNullableFilter<"Theme"> | string | null
     previewImageUrl?: StringNullableFilter<"Theme"> | string | null
+    createdAt?: DateTimeFilter<"Theme"> | Date | string
     configJson?: StringNullableFilter<"Theme"> | string | null
     designerId?: StringNullableFilter<"Theme"> | string | null
     isPublished?: BoolFilter<"Theme"> | boolean
-    createdAt?: DateTimeFilter<"Theme"> | Date | string
     updatedAt?: DateTimeFilter<"Theme"> | Date | string
     designer?: XOR<DesignerNullableScalarRelationFilter, DesignerWhereInput> | null
+    sales?: ThemeSaleListRelationFilter
     weddings?: WeddingListRelationFilter
     products?: ProductListRelationFilter
-    sales?: ThemeSaleListRelationFilter
   }
 
   export type ThemeOrderByWithRelationInput = {
@@ -21770,15 +23197,15 @@ export namespace Prisma {
     secondaryColor?: SortOrderInput | SortOrder
     fontFamily?: SortOrderInput | SortOrder
     previewImageUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
     configJson?: SortOrderInput | SortOrder
     designerId?: SortOrderInput | SortOrder
     isPublished?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
     designer?: DesignerOrderByWithRelationInput
+    sales?: ThemeSaleOrderByRelationAggregateInput
     weddings?: WeddingOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
-    sales?: ThemeSaleOrderByRelationAggregateInput
   }
 
   export type ThemeWhereUniqueInput = Prisma.AtLeast<{
@@ -21791,15 +23218,15 @@ export namespace Prisma {
     secondaryColor?: StringNullableFilter<"Theme"> | string | null
     fontFamily?: StringNullableFilter<"Theme"> | string | null
     previewImageUrl?: StringNullableFilter<"Theme"> | string | null
+    createdAt?: DateTimeFilter<"Theme"> | Date | string
     configJson?: StringNullableFilter<"Theme"> | string | null
     designerId?: StringNullableFilter<"Theme"> | string | null
     isPublished?: BoolFilter<"Theme"> | boolean
-    createdAt?: DateTimeFilter<"Theme"> | Date | string
     updatedAt?: DateTimeFilter<"Theme"> | Date | string
     designer?: XOR<DesignerNullableScalarRelationFilter, DesignerWhereInput> | null
+    sales?: ThemeSaleListRelationFilter
     weddings?: WeddingListRelationFilter
     products?: ProductListRelationFilter
-    sales?: ThemeSaleListRelationFilter
   }, "id">
 
   export type ThemeOrderByWithAggregationInput = {
@@ -21809,10 +23236,10 @@ export namespace Prisma {
     secondaryColor?: SortOrderInput | SortOrder
     fontFamily?: SortOrderInput | SortOrder
     previewImageUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
     configJson?: SortOrderInput | SortOrder
     designerId?: SortOrderInput | SortOrder
     isPublished?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ThemeCountOrderByAggregateInput
     _max?: ThemeMaxOrderByAggregateInput
@@ -21829,10 +23256,10 @@ export namespace Prisma {
     secondaryColor?: StringNullableWithAggregatesFilter<"Theme"> | string | null
     fontFamily?: StringNullableWithAggregatesFilter<"Theme"> | string | null
     previewImageUrl?: StringNullableWithAggregatesFilter<"Theme"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Theme"> | Date | string
     configJson?: StringNullableWithAggregatesFilter<"Theme"> | string | null
     designerId?: StringNullableWithAggregatesFilter<"Theme"> | string | null
     isPublished?: BoolWithAggregatesFilter<"Theme"> | boolean
-    createdAt?: DateTimeWithAggregatesFilter<"Theme"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Theme"> | Date | string
   }
 
@@ -22156,9 +23583,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Product"> | Date | string
     themeId?: StringNullableFilter<"Product"> | string | null
     songId?: StringNullableFilter<"Product"> | string | null
-    theme?: XOR<ThemeNullableScalarRelationFilter, ThemeWhereInput> | null
-    song?: XOR<SongNullableScalarRelationFilter, SongWhereInput> | null
     cartItems?: CartItemListRelationFilter
+    song?: XOR<SongNullableScalarRelationFilter, SongWhereInput> | null
+    theme?: XOR<ThemeNullableScalarRelationFilter, ThemeWhereInput> | null
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -22171,9 +23598,9 @@ export namespace Prisma {
     createdAt?: SortOrder
     themeId?: SortOrderInput | SortOrder
     songId?: SortOrderInput | SortOrder
-    theme?: ThemeOrderByWithRelationInput
-    song?: SongOrderByWithRelationInput
     cartItems?: CartItemOrderByRelationAggregateInput
+    song?: SongOrderByWithRelationInput
+    theme?: ThemeOrderByWithRelationInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -22189,9 +23616,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Product"> | Date | string
     themeId?: StringNullableFilter<"Product"> | string | null
     songId?: StringNullableFilter<"Product"> | string | null
-    theme?: XOR<ThemeNullableScalarRelationFilter, ThemeWhereInput> | null
-    song?: XOR<SongNullableScalarRelationFilter, SongWhereInput> | null
     cartItems?: CartItemListRelationFilter
+    song?: XOR<SongNullableScalarRelationFilter, SongWhereInput> | null
+    theme?: XOR<ThemeNullableScalarRelationFilter, ThemeWhereInput> | null
   }, "id">
 
   export type ProductOrderByWithAggregationInput = {
@@ -22237,10 +23664,10 @@ export namespace Prisma {
     total?: DecimalFilter<"Cart"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Cart"> | Date | string
     updatedAt?: DateTimeFilter<"Cart"> | Date | string
+    themeSales?: ThemeSaleListRelationFilter
+    items?: CartItemListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     wedding?: XOR<WeddingNullableScalarRelationFilter, WeddingWhereInput> | null
-    items?: CartItemListRelationFilter
-    themeSales?: ThemeSaleListRelationFilter
   }
 
   export type CartOrderByWithRelationInput = {
@@ -22251,10 +23678,10 @@ export namespace Prisma {
     total?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    themeSales?: ThemeSaleOrderByRelationAggregateInput
+    items?: CartItemOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
     wedding?: WeddingOrderByWithRelationInput
-    items?: CartItemOrderByRelationAggregateInput
-    themeSales?: ThemeSaleOrderByRelationAggregateInput
   }
 
   export type CartWhereUniqueInput = Prisma.AtLeast<{
@@ -22268,10 +23695,10 @@ export namespace Prisma {
     total?: DecimalFilter<"Cart"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Cart"> | Date | string
     updatedAt?: DateTimeFilter<"Cart"> | Date | string
+    themeSales?: ThemeSaleListRelationFilter
+    items?: CartItemListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     wedding?: XOR<WeddingNullableScalarRelationFilter, WeddingWhereInput> | null
-    items?: CartItemListRelationFilter
-    themeSales?: ThemeSaleListRelationFilter
   }, "id">
 
   export type CartOrderByWithAggregationInput = {
@@ -22374,24 +23801,36 @@ export namespace Prisma {
     id?: StringFilter<"Designer"> | string
     userId?: StringFilter<"Designer"> | string
     name?: StringNullableFilter<"Designer"> | string | null
+    address?: StringNullableFilter<"Designer"> | string | null
     bio?: StringNullableFilter<"Designer"> | string | null
+    walletBalance?: DecimalFilter<"Designer"> | Decimal | DecimalJsLike | number | string
+    bankName?: StringNullableFilter<"Designer"> | string | null
+    accountOwnerName?: StringNullableFilter<"Designer"> | string | null
+    accountNumber?: StringNullableFilter<"Designer"> | string | null
     createdAt?: DateTimeFilter<"Designer"> | Date | string
     updatedAt?: DateTimeFilter<"Designer"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     themes?: ThemeListRelationFilter
     sales?: ThemeSaleListRelationFilter
+    withdrawalRequests?: WithdrawalRequestListRelationFilter
   }
 
   export type DesignerOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
     name?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
     bio?: SortOrderInput | SortOrder
+    walletBalance?: SortOrder
+    bankName?: SortOrderInput | SortOrder
+    accountOwnerName?: SortOrderInput | SortOrder
+    accountNumber?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     themes?: ThemeOrderByRelationAggregateInput
     sales?: ThemeSaleOrderByRelationAggregateInput
+    withdrawalRequests?: WithdrawalRequestOrderByRelationAggregateInput
   }
 
   export type DesignerWhereUniqueInput = Prisma.AtLeast<{
@@ -22401,24 +23840,37 @@ export namespace Prisma {
     OR?: DesignerWhereInput[]
     NOT?: DesignerWhereInput | DesignerWhereInput[]
     name?: StringNullableFilter<"Designer"> | string | null
+    address?: StringNullableFilter<"Designer"> | string | null
     bio?: StringNullableFilter<"Designer"> | string | null
+    walletBalance?: DecimalFilter<"Designer"> | Decimal | DecimalJsLike | number | string
+    bankName?: StringNullableFilter<"Designer"> | string | null
+    accountOwnerName?: StringNullableFilter<"Designer"> | string | null
+    accountNumber?: StringNullableFilter<"Designer"> | string | null
     createdAt?: DateTimeFilter<"Designer"> | Date | string
     updatedAt?: DateTimeFilter<"Designer"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     themes?: ThemeListRelationFilter
     sales?: ThemeSaleListRelationFilter
+    withdrawalRequests?: WithdrawalRequestListRelationFilter
   }, "id" | "userId">
 
   export type DesignerOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
     name?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
     bio?: SortOrderInput | SortOrder
+    walletBalance?: SortOrder
+    bankName?: SortOrderInput | SortOrder
+    accountOwnerName?: SortOrderInput | SortOrder
+    accountNumber?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: DesignerCountOrderByAggregateInput
+    _avg?: DesignerAvgOrderByAggregateInput
     _max?: DesignerMaxOrderByAggregateInput
     _min?: DesignerMinOrderByAggregateInput
+    _sum?: DesignerSumOrderByAggregateInput
   }
 
   export type DesignerScalarWhereWithAggregatesInput = {
@@ -22428,7 +23880,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Designer"> | string
     userId?: StringWithAggregatesFilter<"Designer"> | string
     name?: StringNullableWithAggregatesFilter<"Designer"> | string | null
+    address?: StringNullableWithAggregatesFilter<"Designer"> | string | null
     bio?: StringNullableWithAggregatesFilter<"Designer"> | string | null
+    walletBalance?: DecimalWithAggregatesFilter<"Designer"> | Decimal | DecimalJsLike | number | string
+    bankName?: StringNullableWithAggregatesFilter<"Designer"> | string | null
+    accountOwnerName?: StringNullableWithAggregatesFilter<"Designer"> | string | null
+    accountNumber?: StringNullableWithAggregatesFilter<"Designer"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Designer"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Designer"> | Date | string
   }
@@ -22446,9 +23903,9 @@ export namespace Prisma {
     companyEarning?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"ThemeSale"> | Date | string
     designerId?: StringFilter<"ThemeSale"> | string
-    theme?: XOR<ThemeScalarRelationFilter, ThemeWhereInput>
-    designer?: XOR<DesignerScalarRelationFilter, DesignerWhereInput>
     cart?: XOR<CartScalarRelationFilter, CartWhereInput>
+    designer?: XOR<DesignerScalarRelationFilter, DesignerWhereInput>
+    theme?: XOR<ThemeScalarRelationFilter, ThemeWhereInput>
   }
 
   export type ThemeSaleOrderByWithRelationInput = {
@@ -22461,9 +23918,9 @@ export namespace Prisma {
     companyEarning?: SortOrder
     createdAt?: SortOrder
     designerId?: SortOrder
-    theme?: ThemeOrderByWithRelationInput
-    designer?: DesignerOrderByWithRelationInput
     cart?: CartOrderByWithRelationInput
+    designer?: DesignerOrderByWithRelationInput
+    theme?: ThemeOrderByWithRelationInput
   }
 
   export type ThemeSaleWhereUniqueInput = Prisma.AtLeast<{
@@ -22479,9 +23936,9 @@ export namespace Prisma {
     companyEarning?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"ThemeSale"> | Date | string
     designerId?: StringFilter<"ThemeSale"> | string
-    theme?: XOR<ThemeScalarRelationFilter, ThemeWhereInput>
-    designer?: XOR<DesignerScalarRelationFilter, DesignerWhereInput>
     cart?: XOR<CartScalarRelationFilter, CartWhereInput>
+    designer?: XOR<DesignerScalarRelationFilter, DesignerWhereInput>
+    theme?: XOR<ThemeScalarRelationFilter, ThemeWhereInput>
   }, "id">
 
   export type ThemeSaleOrderByWithAggregationInput = {
@@ -22514,6 +23971,83 @@ export namespace Prisma {
     companyEarning?: DecimalWithAggregatesFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeWithAggregatesFilter<"ThemeSale"> | Date | string
     designerId?: StringWithAggregatesFilter<"ThemeSale"> | string
+  }
+
+  export type WithdrawalRequestWhereInput = {
+    AND?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    OR?: WithdrawalRequestWhereInput[]
+    NOT?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    id?: StringFilter<"WithdrawalRequest"> | string
+    requestNumber?: IntFilter<"WithdrawalRequest"> | number
+    designerId?: StringFilter<"WithdrawalRequest"> | string
+    amount?: DecimalFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFilter<"WithdrawalRequest"> | $Enums.WithdrawalStatus
+    approvedAmount?: DecimalNullableFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    approvedAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
+    cancelledAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
+    designer?: XOR<DesignerScalarRelationFilter, DesignerWhereInput>
+  }
+
+  export type WithdrawalRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    requestNumber?: SortOrder
+    designerId?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    approvedAmount?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    cancelledAt?: SortOrderInput | SortOrder
+    designer?: DesignerOrderByWithRelationInput
+  }
+
+  export type WithdrawalRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    requestNumber?: number
+    AND?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    OR?: WithdrawalRequestWhereInput[]
+    NOT?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    designerId?: StringFilter<"WithdrawalRequest"> | string
+    amount?: DecimalFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFilter<"WithdrawalRequest"> | $Enums.WithdrawalStatus
+    approvedAmount?: DecimalNullableFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    approvedAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
+    cancelledAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
+    designer?: XOR<DesignerScalarRelationFilter, DesignerWhereInput>
+  }, "id" | "requestNumber">
+
+  export type WithdrawalRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    requestNumber?: SortOrder
+    designerId?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    approvedAmount?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    cancelledAt?: SortOrderInput | SortOrder
+    _count?: WithdrawalRequestCountOrderByAggregateInput
+    _avg?: WithdrawalRequestAvgOrderByAggregateInput
+    _max?: WithdrawalRequestMaxOrderByAggregateInput
+    _min?: WithdrawalRequestMinOrderByAggregateInput
+    _sum?: WithdrawalRequestSumOrderByAggregateInput
+  }
+
+  export type WithdrawalRequestScalarWhereWithAggregatesInput = {
+    AND?: WithdrawalRequestScalarWhereWithAggregatesInput | WithdrawalRequestScalarWhereWithAggregatesInput[]
+    OR?: WithdrawalRequestScalarWhereWithAggregatesInput[]
+    NOT?: WithdrawalRequestScalarWhereWithAggregatesInput | WithdrawalRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    requestNumber?: IntWithAggregatesFilter<"WithdrawalRequest"> | number
+    designerId?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    amount?: DecimalWithAggregatesFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusWithAggregatesFilter<"WithdrawalRequest"> | $Enums.WithdrawalStatus
+    approvedAmount?: DecimalNullableWithAggregatesFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"WithdrawalRequest"> | Date | string
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"WithdrawalRequest"> | Date | string | null
+    cancelledAt?: DateTimeNullableWithAggregatesFilter<"WithdrawalRequest"> | Date | string | null
   }
 
   export type SessionCreateInput = {
@@ -22638,12 +24172,12 @@ export namespace Prisma {
     email: string
     password: string
     createdAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     role?: RoleCreateNestedOneWithoutUsersInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
-    designer?: DesignerCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -22652,11 +24186,11 @@ export namespace Prisma {
     password: string
     roleId?: number | null
     createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
-    cart?: CartUncheckedCreateNestedManyWithoutUserInput
     designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -22664,12 +24198,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     role?: RoleUpdateOneWithoutUsersNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
-    designer?: DesignerUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -22678,11 +24212,11 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     roleId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
-    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
     designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -22760,10 +24294,10 @@ export namespace Prisma {
     donations?: DonationCreateNestedManyWithoutWeddingInput
     galleryImages?: GalleryImageCreateNestedManyWithoutWeddingInput
     rsvps?: RsvpCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     song?: SongCreateNestedOneWithoutWeddingsInput
     theme?: ThemeCreateNestedOneWithoutWeddingsInput
     user: UserCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateInput = {
@@ -22804,10 +24338,10 @@ export namespace Prisma {
     donations?: DonationUpdateManyWithoutWeddingNestedInput
     galleryImages?: GalleryImageUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     song?: SongUpdateOneWithoutWeddingsNestedInput
     theme?: ThemeUpdateOneWithoutWeddingsNestedInput
     user?: UserUpdateOneRequiredWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateInput = {
@@ -22890,14 +24424,14 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
     designer?: DesignerCreateNestedOneWithoutThemesInput
+    sales?: ThemeSaleCreateNestedManyWithoutThemeInput
     weddings?: WeddingCreateNestedManyWithoutThemeInput
     products?: ProductCreateNestedManyWithoutThemeInput
-    sales?: ThemeSaleCreateNestedManyWithoutThemeInput
   }
 
   export type ThemeUncheckedCreateInput = {
@@ -22907,14 +24441,14 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     designerId?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
+    sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutThemeInput
     products?: ProductUncheckedCreateNestedManyWithoutThemeInput
-    sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
   }
 
   export type ThemeUpdateInput = {
@@ -22924,14 +24458,14 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     designer?: DesignerUpdateOneWithoutThemesNestedInput
+    sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
     weddings?: WeddingUpdateManyWithoutThemeNestedInput
     products?: ProductUpdateManyWithoutThemeNestedInput
-    sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
   }
 
   export type ThemeUncheckedUpdateInput = {
@@ -22941,14 +24475,14 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     designerId?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutThemeNestedInput
     products?: ProductUncheckedUpdateManyWithoutThemeNestedInput
-    sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
   }
 
   export type ThemeCreateManyInput = {
@@ -22958,10 +24492,10 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     designerId?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
   }
 
@@ -22972,9 +24506,9 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -22985,10 +24519,10 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     designerId?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23313,9 +24847,9 @@ export namespace Prisma {
     description?: string | null
     imageUrl?: string | null
     createdAt?: Date | string
-    theme?: ThemeCreateNestedOneWithoutProductsInput
-    song?: SongCreateNestedOneWithoutProductsInput
     cartItems?: CartItemCreateNestedManyWithoutProductInput
+    song?: SongCreateNestedOneWithoutProductsInput
+    theme?: ThemeCreateNestedOneWithoutProductsInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -23339,9 +24873,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    theme?: ThemeUpdateOneWithoutProductsNestedInput
-    song?: SongUpdateOneWithoutProductsNestedInput
     cartItems?: CartItemUpdateManyWithoutProductNestedInput
+    song?: SongUpdateOneWithoutProductsNestedInput
+    theme?: ThemeUpdateOneWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -23397,10 +24931,10 @@ export namespace Prisma {
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
+    items?: CartItemCreateNestedManyWithoutCartInput
     user: UserCreateNestedOneWithoutCartInput
     wedding?: WeddingCreateNestedOneWithoutCartInput
-    items?: CartItemCreateNestedManyWithoutCartInput
-    themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
   }
 
   export type CartUncheckedCreateInput = {
@@ -23411,8 +24945,8 @@ export namespace Prisma {
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    items?: CartItemUncheckedCreateNestedManyWithoutCartInput
     themeSales?: ThemeSaleUncheckedCreateNestedManyWithoutCartInput
+    items?: CartItemUncheckedCreateNestedManyWithoutCartInput
   }
 
   export type CartUpdateInput = {
@@ -23421,10 +24955,10 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    themeSales?: ThemeSaleUpdateManyWithoutCartNestedInput
+    items?: CartItemUpdateManyWithoutCartNestedInput
     user?: UserUpdateOneRequiredWithoutCartNestedInput
     wedding?: WeddingUpdateOneWithoutCartNestedInput
-    items?: CartItemUpdateManyWithoutCartNestedInput
-    themeSales?: ThemeSaleUpdateManyWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateInput = {
@@ -23435,8 +24969,8 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
     themeSales?: ThemeSaleUncheckedUpdateManyWithoutCartNestedInput
+    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
   }
 
   export type CartCreateManyInput = {
@@ -23531,52 +25065,81 @@ export namespace Prisma {
   export type DesignerCreateInput = {
     id?: string
     name?: string | null
+    address?: string | null
     bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutDesignerInput
     themes?: ThemeCreateNestedManyWithoutDesignerInput
     sales?: ThemeSaleCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestCreateNestedManyWithoutDesignerInput
   }
 
   export type DesignerUncheckedCreateInput = {
     id?: string
     userId: string
     name?: string | null
+    address?: string | null
     bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     themes?: ThemeUncheckedCreateNestedManyWithoutDesignerInput
     sales?: ThemeSaleUncheckedCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestUncheckedCreateNestedManyWithoutDesignerInput
   }
 
   export type DesignerUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutDesignerNestedInput
     themes?: ThemeUpdateManyWithoutDesignerNestedInput
     sales?: ThemeSaleUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUpdateManyWithoutDesignerNestedInput
   }
 
   export type DesignerUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     themes?: ThemeUncheckedUpdateManyWithoutDesignerNestedInput
     sales?: ThemeSaleUncheckedUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUncheckedUpdateManyWithoutDesignerNestedInput
   }
 
   export type DesignerCreateManyInput = {
     id?: string
     userId: string
     name?: string | null
+    address?: string | null
     bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23584,7 +25147,12 @@ export namespace Prisma {
   export type DesignerUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23593,7 +25161,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23605,9 +25178,9 @@ export namespace Prisma {
     designerEarning: Decimal | DecimalJsLike | number | string
     companyEarning: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
-    theme: ThemeCreateNestedOneWithoutSalesInput
-    designer: DesignerCreateNestedOneWithoutSalesInput
     cart: CartCreateNestedOneWithoutThemeSalesInput
+    designer: DesignerCreateNestedOneWithoutSalesInput
+    theme: ThemeCreateNestedOneWithoutSalesInput
   }
 
   export type ThemeSaleUncheckedCreateInput = {
@@ -23629,9 +25202,9 @@ export namespace Prisma {
     designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    theme?: ThemeUpdateOneRequiredWithoutSalesNestedInput
-    designer?: DesignerUpdateOneRequiredWithoutSalesNestedInput
     cart?: CartUpdateOneRequiredWithoutThemeSalesNestedInput
+    designer?: DesignerUpdateOneRequiredWithoutSalesNestedInput
+    theme?: ThemeUpdateOneRequiredWithoutSalesNestedInput
   }
 
   export type ThemeSaleUncheckedUpdateInput = {
@@ -23677,6 +25250,87 @@ export namespace Prisma {
     companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     designerId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type WithdrawalRequestCreateInput = {
+    id?: string
+    requestNumber?: number
+    amount: Decimal | DecimalJsLike | number | string
+    status?: $Enums.WithdrawalStatus
+    approvedAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    approvedAt?: Date | string | null
+    cancelledAt?: Date | string | null
+    designer: DesignerCreateNestedOneWithoutWithdrawalRequestsInput
+  }
+
+  export type WithdrawalRequestUncheckedCreateInput = {
+    id?: string
+    requestNumber?: number
+    designerId: string
+    amount: Decimal | DecimalJsLike | number | string
+    status?: $Enums.WithdrawalStatus
+    approvedAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    approvedAt?: Date | string | null
+    cancelledAt?: Date | string | null
+  }
+
+  export type WithdrawalRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    designer?: DesignerUpdateOneRequiredWithoutWithdrawalRequestsNestedInput
+  }
+
+  export type WithdrawalRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestNumber?: IntFieldUpdateOperationsInput | number
+    designerId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type WithdrawalRequestCreateManyInput = {
+    id?: string
+    requestNumber?: number
+    designerId: string
+    amount: Decimal | DecimalJsLike | number | string
+    status?: $Enums.WithdrawalStatus
+    approvedAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    approvedAt?: Date | string | null
+    cancelledAt?: Date | string | null
+  }
+
+  export type WithdrawalRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type WithdrawalRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestNumber?: IntFieldUpdateOperationsInput | number
+    designerId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -23817,6 +25471,23 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type DesignerNullableScalarRelationFilter = {
+    is?: DesignerWhereInput | null
+    isNot?: DesignerWhereInput | null
+  }
+
+  export type PasswordResetListRelationFilter = {
+    every?: PasswordResetWhereInput
+    some?: PasswordResetWhereInput
+    none?: PasswordResetWhereInput
+  }
+
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
+  }
+
   export type RoleNullableScalarRelationFilter = {
     is?: RoleWhereInput | null
     isNot?: RoleWhereInput | null
@@ -23828,27 +25499,10 @@ export namespace Prisma {
     none?: WeddingWhereInput
   }
 
-  export type SessionListRelationFilter = {
-    every?: SessionWhereInput
-    some?: SessionWhereInput
-    none?: SessionWhereInput
-  }
-
-  export type PasswordResetListRelationFilter = {
-    every?: PasswordResetWhereInput
-    some?: PasswordResetWhereInput
-    none?: PasswordResetWhereInput
-  }
-
   export type CartListRelationFilter = {
     every?: CartWhereInput
     some?: CartWhereInput
     none?: CartWhereInput
-  }
-
-  export type DesignerNullableScalarRelationFilter = {
-    is?: DesignerWhereInput | null
-    isNot?: DesignerWhereInput | null
   }
 
   export type SortOrderInput = {
@@ -23856,7 +25510,7 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type WeddingOrderByRelationAggregateInput = {
+  export type PasswordResetOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23864,7 +25518,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type PasswordResetOrderByRelationAggregateInput = {
+  export type WeddingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24107,23 +25761,23 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type ProductListRelationFilter = {
-    every?: ProductWhereInput
-    some?: ProductWhereInput
-    none?: ProductWhereInput
-  }
-
   export type ThemeSaleListRelationFilter = {
     every?: ThemeSaleWhereInput
     some?: ThemeSaleWhereInput
     none?: ThemeSaleWhereInput
   }
 
-  export type ProductOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type ProductListRelationFilter = {
+    every?: ProductWhereInput
+    some?: ProductWhereInput
+    none?: ProductWhereInput
   }
 
   export type ThemeSaleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24134,10 +25788,10 @@ export namespace Prisma {
     secondaryColor?: SortOrder
     fontFamily?: SortOrder
     previewImageUrl?: SortOrder
+    createdAt?: SortOrder
     configJson?: SortOrder
     designerId?: SortOrder
     isPublished?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24148,10 +25802,10 @@ export namespace Prisma {
     secondaryColor?: SortOrder
     fontFamily?: SortOrder
     previewImageUrl?: SortOrder
+    createdAt?: SortOrder
     configJson?: SortOrder
     designerId?: SortOrder
     isPublished?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24162,10 +25816,10 @@ export namespace Prisma {
     secondaryColor?: SortOrder
     fontFamily?: SortOrder
     previewImageUrl?: SortOrder
+    createdAt?: SortOrder
     configJson?: SortOrder
     designerId?: SortOrder
     isPublished?: SortOrder
-    createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24546,7 +26200,17 @@ export namespace Prisma {
     none?: ThemeWhereInput
   }
 
+  export type WithdrawalRequestListRelationFilter = {
+    every?: WithdrawalRequestWhereInput
+    some?: WithdrawalRequestWhereInput
+    none?: WithdrawalRequestWhereInput
+  }
+
   export type ThemeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WithdrawalRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24554,16 +26218,30 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     name?: SortOrder
+    address?: SortOrder
     bio?: SortOrder
+    walletBalance?: SortOrder
+    bankName?: SortOrder
+    accountOwnerName?: SortOrder
+    accountNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type DesignerAvgOrderByAggregateInput = {
+    walletBalance?: SortOrder
   }
 
   export type DesignerMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     name?: SortOrder
+    address?: SortOrder
     bio?: SortOrder
+    walletBalance?: SortOrder
+    bankName?: SortOrder
+    accountOwnerName?: SortOrder
+    accountNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24572,19 +26250,28 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     name?: SortOrder
+    address?: SortOrder
     bio?: SortOrder
+    walletBalance?: SortOrder
+    bankName?: SortOrder
+    accountOwnerName?: SortOrder
+    accountNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type ThemeScalarRelationFilter = {
-    is?: ThemeWhereInput
-    isNot?: ThemeWhereInput
+  export type DesignerSumOrderByAggregateInput = {
+    walletBalance?: SortOrder
   }
 
   export type DesignerScalarRelationFilter = {
     is?: DesignerWhereInput
     isNot?: DesignerWhereInput
+  }
+
+  export type ThemeScalarRelationFilter = {
+    is?: ThemeWhereInput
+    isNot?: ThemeWhereInput
   }
 
   export type ThemeSaleCountOrderByAggregateInput = {
@@ -24635,6 +26322,123 @@ export namespace Prisma {
     companyEarning?: SortOrder
   }
 
+  export type EnumWithdrawalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WithdrawalStatus | EnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWithdrawalStatusFilter<$PrismaModel> | $Enums.WithdrawalStatus
+  }
+
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type WithdrawalRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    requestNumber?: SortOrder
+    designerId?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    approvedAmount?: SortOrder
+    createdAt?: SortOrder
+    approvedAt?: SortOrder
+    cancelledAt?: SortOrder
+  }
+
+  export type WithdrawalRequestAvgOrderByAggregateInput = {
+    requestNumber?: SortOrder
+    amount?: SortOrder
+    approvedAmount?: SortOrder
+  }
+
+  export type WithdrawalRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    requestNumber?: SortOrder
+    designerId?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    approvedAmount?: SortOrder
+    createdAt?: SortOrder
+    approvedAt?: SortOrder
+    cancelledAt?: SortOrder
+  }
+
+  export type WithdrawalRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    requestNumber?: SortOrder
+    designerId?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    approvedAmount?: SortOrder
+    createdAt?: SortOrder
+    approvedAt?: SortOrder
+    cancelledAt?: SortOrder
+  }
+
+  export type WithdrawalRequestSumOrderByAggregateInput = {
+    requestNumber?: SortOrder
+    amount?: SortOrder
+    approvedAmount?: SortOrder
+  }
+
+  export type EnumWithdrawalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WithdrawalStatus | EnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWithdrawalStatusWithAggregatesFilter<$PrismaModel> | $Enums.WithdrawalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
+    _max?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -24675,6 +26479,26 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordsResetsInput, UserUpdateWithoutPasswordsResetsInput>, UserUncheckedUpdateWithoutPasswordsResetsInput>
   }
 
+  export type DesignerCreateNestedOneWithoutUserInput = {
+    create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
+    connect?: DesignerWhereUniqueInput
+  }
+
+  export type PasswordResetCreateNestedManyWithoutUserInput = {
+    create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput> | PasswordResetCreateWithoutUserInput[] | PasswordResetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput | PasswordResetCreateOrConnectWithoutUserInput[]
+    createMany?: PasswordResetCreateManyUserInputEnvelope
+    connect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
+  }
+
+  export type SessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
   export type RoleCreateNestedOneWithoutUsersInput = {
     create?: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
     connectOrCreate?: RoleCreateOrConnectWithoutUsersInput
@@ -24688,55 +26512,7 @@ export namespace Prisma {
     connect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
   }
 
-  export type SessionCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-  }
-
-  export type PasswordResetCreateNestedManyWithoutUserInput = {
-    create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput> | PasswordResetCreateWithoutUserInput[] | PasswordResetUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput | PasswordResetCreateOrConnectWithoutUserInput[]
-    createMany?: PasswordResetCreateManyUserInputEnvelope
-    connect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
-  }
-
   export type CartCreateNestedManyWithoutUserInput = {
-    create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput> | CartCreateWithoutUserInput[] | CartUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CartCreateOrConnectWithoutUserInput | CartCreateOrConnectWithoutUserInput[]
-    createMany?: CartCreateManyUserInputEnvelope
-    connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
-  }
-
-  export type DesignerCreateNestedOneWithoutUserInput = {
-    create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
-    connect?: DesignerWhereUniqueInput
-  }
-
-  export type WeddingUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<WeddingCreateWithoutUserInput, WeddingUncheckedCreateWithoutUserInput> | WeddingCreateWithoutUserInput[] | WeddingUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WeddingCreateOrConnectWithoutUserInput | WeddingCreateOrConnectWithoutUserInput[]
-    createMany?: WeddingCreateManyUserInputEnvelope
-    connect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
-  }
-
-  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-  }
-
-  export type PasswordResetUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput> | PasswordResetCreateWithoutUserInput[] | PasswordResetUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput | PasswordResetCreateOrConnectWithoutUserInput[]
-    createMany?: PasswordResetCreateManyUserInputEnvelope
-    connect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
-  }
-
-  export type CartUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput> | CartCreateWithoutUserInput[] | CartUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CartCreateOrConnectWithoutUserInput | CartCreateOrConnectWithoutUserInput[]
     createMany?: CartCreateManyUserInputEnvelope
@@ -24747,6 +26523,72 @@ export namespace Prisma {
     create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
     connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
     connect?: DesignerWhereUniqueInput
+  }
+
+  export type PasswordResetUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput> | PasswordResetCreateWithoutUserInput[] | PasswordResetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput | PasswordResetCreateOrConnectWithoutUserInput[]
+    createMany?: PasswordResetCreateManyUserInputEnvelope
+    connect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
+  }
+
+  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
+  export type WeddingUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<WeddingCreateWithoutUserInput, WeddingUncheckedCreateWithoutUserInput> | WeddingCreateWithoutUserInput[] | WeddingUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WeddingCreateOrConnectWithoutUserInput | WeddingCreateOrConnectWithoutUserInput[]
+    createMany?: WeddingCreateManyUserInputEnvelope
+    connect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
+  }
+
+  export type CartUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput> | CartCreateWithoutUserInput[] | CartUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CartCreateOrConnectWithoutUserInput | CartCreateOrConnectWithoutUserInput[]
+    createMany?: CartCreateManyUserInputEnvelope
+    connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
+  }
+
+  export type DesignerUpdateOneWithoutUserNestedInput = {
+    create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
+    upsert?: DesignerUpsertWithoutUserInput
+    disconnect?: DesignerWhereInput | boolean
+    delete?: DesignerWhereInput | boolean
+    connect?: DesignerWhereUniqueInput
+    update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutUserInput, DesignerUpdateWithoutUserInput>, DesignerUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PasswordResetUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput> | PasswordResetCreateWithoutUserInput[] | PasswordResetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput | PasswordResetCreateOrConnectWithoutUserInput[]
+    upsert?: PasswordResetUpsertWithWhereUniqueWithoutUserInput | PasswordResetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PasswordResetCreateManyUserInputEnvelope
+    set?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
+    disconnect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
+    delete?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
+    connect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
+    update?: PasswordResetUpdateWithWhereUniqueWithoutUserInput | PasswordResetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PasswordResetUpdateManyWithWhereWithoutUserInput | PasswordResetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
+  }
+
+  export type SessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
   export type RoleUpdateOneWithoutUsersNestedInput = {
@@ -24773,34 +26615,6 @@ export namespace Prisma {
     deleteMany?: WeddingScalarWhereInput | WeddingScalarWhereInput[]
   }
 
-  export type SessionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
-  }
-
-  export type PasswordResetUpdateManyWithoutUserNestedInput = {
-    create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput> | PasswordResetCreateWithoutUserInput[] | PasswordResetUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput | PasswordResetCreateOrConnectWithoutUserInput[]
-    upsert?: PasswordResetUpsertWithWhereUniqueWithoutUserInput | PasswordResetUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: PasswordResetCreateManyUserInputEnvelope
-    set?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
-    disconnect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
-    delete?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
-    connect?: PasswordResetWhereUniqueInput | PasswordResetWhereUniqueInput[]
-    update?: PasswordResetUpdateWithWhereUniqueWithoutUserInput | PasswordResetUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: PasswordResetUpdateManyWithWhereWithoutUserInput | PasswordResetUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
-  }
-
   export type CartUpdateManyWithoutUserNestedInput = {
     create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput> | CartCreateWithoutUserInput[] | CartUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CartCreateOrConnectWithoutUserInput | CartCreateOrConnectWithoutUserInput[]
@@ -24815,16 +26629,6 @@ export namespace Prisma {
     deleteMany?: CartScalarWhereInput | CartScalarWhereInput[]
   }
 
-  export type DesignerUpdateOneWithoutUserNestedInput = {
-    create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
-    upsert?: DesignerUpsertWithoutUserInput
-    disconnect?: DesignerWhereInput | boolean
-    delete?: DesignerWhereInput | boolean
-    connect?: DesignerWhereUniqueInput
-    update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutUserInput, DesignerUpdateWithoutUserInput>, DesignerUncheckedUpdateWithoutUserInput>
-  }
-
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -24833,32 +26637,14 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type WeddingUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<WeddingCreateWithoutUserInput, WeddingUncheckedCreateWithoutUserInput> | WeddingCreateWithoutUserInput[] | WeddingUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WeddingCreateOrConnectWithoutUserInput | WeddingCreateOrConnectWithoutUserInput[]
-    upsert?: WeddingUpsertWithWhereUniqueWithoutUserInput | WeddingUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: WeddingCreateManyUserInputEnvelope
-    set?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
-    disconnect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
-    delete?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
-    connect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
-    update?: WeddingUpdateWithWhereUniqueWithoutUserInput | WeddingUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: WeddingUpdateManyWithWhereWithoutUserInput | WeddingUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: WeddingScalarWhereInput | WeddingScalarWhereInput[]
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  export type DesignerUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
+    connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
+    upsert?: DesignerUpsertWithoutUserInput
+    disconnect?: DesignerWhereInput | boolean
+    delete?: DesignerWhereInput | boolean
+    connect?: DesignerWhereUniqueInput
+    update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutUserInput, DesignerUpdateWithoutUserInput>, DesignerUncheckedUpdateWithoutUserInput>
   }
 
   export type PasswordResetUncheckedUpdateManyWithoutUserNestedInput = {
@@ -24875,6 +26661,34 @@ export namespace Prisma {
     deleteMany?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
   }
 
+  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type WeddingUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WeddingCreateWithoutUserInput, WeddingUncheckedCreateWithoutUserInput> | WeddingCreateWithoutUserInput[] | WeddingUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WeddingCreateOrConnectWithoutUserInput | WeddingCreateOrConnectWithoutUserInput[]
+    upsert?: WeddingUpsertWithWhereUniqueWithoutUserInput | WeddingUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WeddingCreateManyUserInputEnvelope
+    set?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
+    disconnect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
+    delete?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
+    connect?: WeddingWhereUniqueInput | WeddingWhereUniqueInput[]
+    update?: WeddingUpdateWithWhereUniqueWithoutUserInput | WeddingUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WeddingUpdateManyWithWhereWithoutUserInput | WeddingUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WeddingScalarWhereInput | WeddingScalarWhereInput[]
+  }
+
   export type CartUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput> | CartCreateWithoutUserInput[] | CartUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CartCreateOrConnectWithoutUserInput | CartCreateOrConnectWithoutUserInput[]
@@ -24887,16 +26701,6 @@ export namespace Prisma {
     update?: CartUpdateWithWhereUniqueWithoutUserInput | CartUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: CartUpdateManyWithWhereWithoutUserInput | CartUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: CartScalarWhereInput | CartScalarWhereInput[]
-  }
-
-  export type DesignerUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
-    upsert?: DesignerUpsertWithoutUserInput
-    disconnect?: DesignerWhereInput | boolean
-    delete?: DesignerWhereInput | boolean
-    connect?: DesignerWhereUniqueInput
-    update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutUserInput, DesignerUpdateWithoutUserInput>, DesignerUncheckedUpdateWithoutUserInput>
   }
 
   export type UserCreateNestedManyWithoutRoleInput = {
@@ -24970,13 +26774,6 @@ export namespace Prisma {
     connect?: RsvpWhereUniqueInput | RsvpWhereUniqueInput[]
   }
 
-  export type CartCreateNestedManyWithoutWeddingInput = {
-    create?: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput> | CartCreateWithoutWeddingInput[] | CartUncheckedCreateWithoutWeddingInput[]
-    connectOrCreate?: CartCreateOrConnectWithoutWeddingInput | CartCreateOrConnectWithoutWeddingInput[]
-    createMany?: CartCreateManyWeddingInputEnvelope
-    connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
-  }
-
   export type SongCreateNestedOneWithoutWeddingsInput = {
     create?: XOR<SongCreateWithoutWeddingsInput, SongUncheckedCreateWithoutWeddingsInput>
     connectOrCreate?: SongCreateOrConnectWithoutWeddingsInput
@@ -24993,6 +26790,13 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutWeddingsInput, UserUncheckedCreateWithoutWeddingsInput>
     connectOrCreate?: UserCreateOrConnectWithoutWeddingsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type CartCreateNestedManyWithoutWeddingInput = {
+    create?: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput> | CartCreateWithoutWeddingInput[] | CartUncheckedCreateWithoutWeddingInput[]
+    connectOrCreate?: CartCreateOrConnectWithoutWeddingInput | CartCreateOrConnectWithoutWeddingInput[]
+    createMany?: CartCreateManyWeddingInputEnvelope
+    connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
   }
 
   export type DonationUncheckedCreateNestedManyWithoutWeddingInput = {
@@ -25069,20 +26873,6 @@ export namespace Prisma {
     deleteMany?: RsvpScalarWhereInput | RsvpScalarWhereInput[]
   }
 
-  export type CartUpdateManyWithoutWeddingNestedInput = {
-    create?: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput> | CartCreateWithoutWeddingInput[] | CartUncheckedCreateWithoutWeddingInput[]
-    connectOrCreate?: CartCreateOrConnectWithoutWeddingInput | CartCreateOrConnectWithoutWeddingInput[]
-    upsert?: CartUpsertWithWhereUniqueWithoutWeddingInput | CartUpsertWithWhereUniqueWithoutWeddingInput[]
-    createMany?: CartCreateManyWeddingInputEnvelope
-    set?: CartWhereUniqueInput | CartWhereUniqueInput[]
-    disconnect?: CartWhereUniqueInput | CartWhereUniqueInput[]
-    delete?: CartWhereUniqueInput | CartWhereUniqueInput[]
-    connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
-    update?: CartUpdateWithWhereUniqueWithoutWeddingInput | CartUpdateWithWhereUniqueWithoutWeddingInput[]
-    updateMany?: CartUpdateManyWithWhereWithoutWeddingInput | CartUpdateManyWithWhereWithoutWeddingInput[]
-    deleteMany?: CartScalarWhereInput | CartScalarWhereInput[]
-  }
-
   export type SongUpdateOneWithoutWeddingsNestedInput = {
     create?: XOR<SongCreateWithoutWeddingsInput, SongUncheckedCreateWithoutWeddingsInput>
     connectOrCreate?: SongCreateOrConnectWithoutWeddingsInput
@@ -25109,6 +26899,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutWeddingsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWeddingsInput, UserUpdateWithoutWeddingsInput>, UserUncheckedUpdateWithoutWeddingsInput>
+  }
+
+  export type CartUpdateManyWithoutWeddingNestedInput = {
+    create?: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput> | CartCreateWithoutWeddingInput[] | CartUncheckedCreateWithoutWeddingInput[]
+    connectOrCreate?: CartCreateOrConnectWithoutWeddingInput | CartCreateOrConnectWithoutWeddingInput[]
+    upsert?: CartUpsertWithWhereUniqueWithoutWeddingInput | CartUpsertWithWhereUniqueWithoutWeddingInput[]
+    createMany?: CartCreateManyWeddingInputEnvelope
+    set?: CartWhereUniqueInput | CartWhereUniqueInput[]
+    disconnect?: CartWhereUniqueInput | CartWhereUniqueInput[]
+    delete?: CartWhereUniqueInput | CartWhereUniqueInput[]
+    connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
+    update?: CartUpdateWithWhereUniqueWithoutWeddingInput | CartUpdateWithWhereUniqueWithoutWeddingInput[]
+    updateMany?: CartUpdateManyWithWhereWithoutWeddingInput | CartUpdateManyWithWhereWithoutWeddingInput[]
+    deleteMany?: CartScalarWhereInput | CartScalarWhereInput[]
   }
 
   export type DonationUncheckedUpdateManyWithoutWeddingNestedInput = {
@@ -25173,6 +26977,13 @@ export namespace Prisma {
     connect?: DesignerWhereUniqueInput
   }
 
+  export type ThemeSaleCreateNestedManyWithoutThemeInput = {
+    create?: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput> | ThemeSaleCreateWithoutThemeInput[] | ThemeSaleUncheckedCreateWithoutThemeInput[]
+    connectOrCreate?: ThemeSaleCreateOrConnectWithoutThemeInput | ThemeSaleCreateOrConnectWithoutThemeInput[]
+    createMany?: ThemeSaleCreateManyThemeInputEnvelope
+    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+  }
+
   export type WeddingCreateNestedManyWithoutThemeInput = {
     create?: XOR<WeddingCreateWithoutThemeInput, WeddingUncheckedCreateWithoutThemeInput> | WeddingCreateWithoutThemeInput[] | WeddingUncheckedCreateWithoutThemeInput[]
     connectOrCreate?: WeddingCreateOrConnectWithoutThemeInput | WeddingCreateOrConnectWithoutThemeInput[]
@@ -25187,7 +26998,7 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
-  export type ThemeSaleCreateNestedManyWithoutThemeInput = {
+  export type ThemeSaleUncheckedCreateNestedManyWithoutThemeInput = {
     create?: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput> | ThemeSaleCreateWithoutThemeInput[] | ThemeSaleUncheckedCreateWithoutThemeInput[]
     connectOrCreate?: ThemeSaleCreateOrConnectWithoutThemeInput | ThemeSaleCreateOrConnectWithoutThemeInput[]
     createMany?: ThemeSaleCreateManyThemeInputEnvelope
@@ -25208,13 +27019,6 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
-  export type ThemeSaleUncheckedCreateNestedManyWithoutThemeInput = {
-    create?: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput> | ThemeSaleCreateWithoutThemeInput[] | ThemeSaleUncheckedCreateWithoutThemeInput[]
-    connectOrCreate?: ThemeSaleCreateOrConnectWithoutThemeInput | ThemeSaleCreateOrConnectWithoutThemeInput[]
-    createMany?: ThemeSaleCreateManyThemeInputEnvelope
-    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-  }
-
   export type DesignerUpdateOneWithoutThemesNestedInput = {
     create?: XOR<DesignerCreateWithoutThemesInput, DesignerUncheckedCreateWithoutThemesInput>
     connectOrCreate?: DesignerCreateOrConnectWithoutThemesInput
@@ -25223,6 +27027,20 @@ export namespace Prisma {
     delete?: DesignerWhereInput | boolean
     connect?: DesignerWhereUniqueInput
     update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutThemesInput, DesignerUpdateWithoutThemesInput>, DesignerUncheckedUpdateWithoutThemesInput>
+  }
+
+  export type ThemeSaleUpdateManyWithoutThemeNestedInput = {
+    create?: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput> | ThemeSaleCreateWithoutThemeInput[] | ThemeSaleUncheckedCreateWithoutThemeInput[]
+    connectOrCreate?: ThemeSaleCreateOrConnectWithoutThemeInput | ThemeSaleCreateOrConnectWithoutThemeInput[]
+    upsert?: ThemeSaleUpsertWithWhereUniqueWithoutThemeInput | ThemeSaleUpsertWithWhereUniqueWithoutThemeInput[]
+    createMany?: ThemeSaleCreateManyThemeInputEnvelope
+    set?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    disconnect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    delete?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    update?: ThemeSaleUpdateWithWhereUniqueWithoutThemeInput | ThemeSaleUpdateWithWhereUniqueWithoutThemeInput[]
+    updateMany?: ThemeSaleUpdateManyWithWhereWithoutThemeInput | ThemeSaleUpdateManyWithWhereWithoutThemeInput[]
+    deleteMany?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
   }
 
   export type WeddingUpdateManyWithoutThemeNestedInput = {
@@ -25253,7 +27071,7 @@ export namespace Prisma {
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
-  export type ThemeSaleUpdateManyWithoutThemeNestedInput = {
+  export type ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput = {
     create?: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput> | ThemeSaleCreateWithoutThemeInput[] | ThemeSaleUncheckedCreateWithoutThemeInput[]
     connectOrCreate?: ThemeSaleCreateOrConnectWithoutThemeInput | ThemeSaleCreateOrConnectWithoutThemeInput[]
     upsert?: ThemeSaleUpsertWithWhereUniqueWithoutThemeInput | ThemeSaleUpsertWithWhereUniqueWithoutThemeInput[]
@@ -25293,20 +27111,6 @@ export namespace Prisma {
     update?: ProductUpdateWithWhereUniqueWithoutThemeInput | ProductUpdateWithWhereUniqueWithoutThemeInput[]
     updateMany?: ProductUpdateManyWithWhereWithoutThemeInput | ProductUpdateManyWithWhereWithoutThemeInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
-  }
-
-  export type ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput = {
-    create?: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput> | ThemeSaleCreateWithoutThemeInput[] | ThemeSaleUncheckedCreateWithoutThemeInput[]
-    connectOrCreate?: ThemeSaleCreateOrConnectWithoutThemeInput | ThemeSaleCreateOrConnectWithoutThemeInput[]
-    upsert?: ThemeSaleUpsertWithWhereUniqueWithoutThemeInput | ThemeSaleUpsertWithWhereUniqueWithoutThemeInput[]
-    createMany?: ThemeSaleCreateManyThemeInputEnvelope
-    set?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    disconnect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    delete?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    update?: ThemeSaleUpdateWithWhereUniqueWithoutThemeInput | ThemeSaleUpdateWithWhereUniqueWithoutThemeInput[]
-    updateMany?: ThemeSaleUpdateManyWithWhereWithoutThemeInput | ThemeSaleUpdateManyWithWhereWithoutThemeInput[]
-    deleteMany?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
   }
 
   export type WeddingCreateNestedManyWithoutSongInput = {
@@ -25493,10 +27297,11 @@ export namespace Prisma {
     update?: XOR<XOR<WeddingUpdateToOneWithWhereWithoutGalleryImagesInput, WeddingUpdateWithoutGalleryImagesInput>, WeddingUncheckedUpdateWithoutGalleryImagesInput>
   }
 
-  export type ThemeCreateNestedOneWithoutProductsInput = {
-    create?: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
-    connectOrCreate?: ThemeCreateOrConnectWithoutProductsInput
-    connect?: ThemeWhereUniqueInput
+  export type CartItemCreateNestedManyWithoutProductInput = {
+    create?: XOR<CartItemCreateWithoutProductInput, CartItemUncheckedCreateWithoutProductInput> | CartItemCreateWithoutProductInput[] | CartItemUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: CartItemCreateOrConnectWithoutProductInput | CartItemCreateOrConnectWithoutProductInput[]
+    createMany?: CartItemCreateManyProductInputEnvelope
+    connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
   }
 
   export type SongCreateNestedOneWithoutProductsInput = {
@@ -25505,11 +27310,10 @@ export namespace Prisma {
     connect?: SongWhereUniqueInput
   }
 
-  export type CartItemCreateNestedManyWithoutProductInput = {
-    create?: XOR<CartItemCreateWithoutProductInput, CartItemUncheckedCreateWithoutProductInput> | CartItemCreateWithoutProductInput[] | CartItemUncheckedCreateWithoutProductInput[]
-    connectOrCreate?: CartItemCreateOrConnectWithoutProductInput | CartItemCreateOrConnectWithoutProductInput[]
-    createMany?: CartItemCreateManyProductInputEnvelope
-    connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
+  export type ThemeCreateNestedOneWithoutProductsInput = {
+    create?: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: ThemeCreateOrConnectWithoutProductsInput
+    connect?: ThemeWhereUniqueInput
   }
 
   export type CartItemUncheckedCreateNestedManyWithoutProductInput = {
@@ -25531,26 +27335,6 @@ export namespace Prisma {
     divide?: Decimal | DecimalJsLike | number | string
   }
 
-  export type ThemeUpdateOneWithoutProductsNestedInput = {
-    create?: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
-    connectOrCreate?: ThemeCreateOrConnectWithoutProductsInput
-    upsert?: ThemeUpsertWithoutProductsInput
-    disconnect?: ThemeWhereInput | boolean
-    delete?: ThemeWhereInput | boolean
-    connect?: ThemeWhereUniqueInput
-    update?: XOR<XOR<ThemeUpdateToOneWithWhereWithoutProductsInput, ThemeUpdateWithoutProductsInput>, ThemeUncheckedUpdateWithoutProductsInput>
-  }
-
-  export type SongUpdateOneWithoutProductsNestedInput = {
-    create?: XOR<SongCreateWithoutProductsInput, SongUncheckedCreateWithoutProductsInput>
-    connectOrCreate?: SongCreateOrConnectWithoutProductsInput
-    upsert?: SongUpsertWithoutProductsInput
-    disconnect?: SongWhereInput | boolean
-    delete?: SongWhereInput | boolean
-    connect?: SongWhereUniqueInput
-    update?: XOR<XOR<SongUpdateToOneWithWhereWithoutProductsInput, SongUpdateWithoutProductsInput>, SongUncheckedUpdateWithoutProductsInput>
-  }
-
   export type CartItemUpdateManyWithoutProductNestedInput = {
     create?: XOR<CartItemCreateWithoutProductInput, CartItemUncheckedCreateWithoutProductInput> | CartItemCreateWithoutProductInput[] | CartItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: CartItemCreateOrConnectWithoutProductInput | CartItemCreateOrConnectWithoutProductInput[]
@@ -25563,6 +27347,26 @@ export namespace Prisma {
     update?: CartItemUpdateWithWhereUniqueWithoutProductInput | CartItemUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: CartItemUpdateManyWithWhereWithoutProductInput | CartItemUpdateManyWithWhereWithoutProductInput[]
     deleteMany?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
+  }
+
+  export type SongUpdateOneWithoutProductsNestedInput = {
+    create?: XOR<SongCreateWithoutProductsInput, SongUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: SongCreateOrConnectWithoutProductsInput
+    upsert?: SongUpsertWithoutProductsInput
+    disconnect?: SongWhereInput | boolean
+    delete?: SongWhereInput | boolean
+    connect?: SongWhereUniqueInput
+    update?: XOR<XOR<SongUpdateToOneWithWhereWithoutProductsInput, SongUpdateWithoutProductsInput>, SongUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type ThemeUpdateOneWithoutProductsNestedInput = {
+    create?: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
+    connectOrCreate?: ThemeCreateOrConnectWithoutProductsInput
+    upsert?: ThemeUpsertWithoutProductsInput
+    disconnect?: ThemeWhereInput | boolean
+    delete?: ThemeWhereInput | boolean
+    connect?: ThemeWhereUniqueInput
+    update?: XOR<XOR<ThemeUpdateToOneWithWhereWithoutProductsInput, ThemeUpdateWithoutProductsInput>, ThemeUncheckedUpdateWithoutProductsInput>
   }
 
   export type CartItemUncheckedUpdateManyWithoutProductNestedInput = {
@@ -25579,6 +27383,20 @@ export namespace Prisma {
     deleteMany?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
   }
 
+  export type ThemeSaleCreateNestedManyWithoutCartInput = {
+    create?: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput> | ThemeSaleCreateWithoutCartInput[] | ThemeSaleUncheckedCreateWithoutCartInput[]
+    connectOrCreate?: ThemeSaleCreateOrConnectWithoutCartInput | ThemeSaleCreateOrConnectWithoutCartInput[]
+    createMany?: ThemeSaleCreateManyCartInputEnvelope
+    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+  }
+
+  export type CartItemCreateNestedManyWithoutCartInput = {
+    create?: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput> | CartItemCreateWithoutCartInput[] | CartItemUncheckedCreateWithoutCartInput[]
+    connectOrCreate?: CartItemCreateOrConnectWithoutCartInput | CartItemCreateOrConnectWithoutCartInput[]
+    createMany?: CartItemCreateManyCartInputEnvelope
+    connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutCartInput = {
     create?: XOR<UserCreateWithoutCartInput, UserUncheckedCreateWithoutCartInput>
     connectOrCreate?: UserCreateOrConnectWithoutCartInput
@@ -25591,14 +27409,7 @@ export namespace Prisma {
     connect?: WeddingWhereUniqueInput
   }
 
-  export type CartItemCreateNestedManyWithoutCartInput = {
-    create?: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput> | CartItemCreateWithoutCartInput[] | CartItemUncheckedCreateWithoutCartInput[]
-    connectOrCreate?: CartItemCreateOrConnectWithoutCartInput | CartItemCreateOrConnectWithoutCartInput[]
-    createMany?: CartItemCreateManyCartInputEnvelope
-    connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
-  }
-
-  export type ThemeSaleCreateNestedManyWithoutCartInput = {
+  export type ThemeSaleUncheckedCreateNestedManyWithoutCartInput = {
     create?: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput> | ThemeSaleCreateWithoutCartInput[] | ThemeSaleUncheckedCreateWithoutCartInput[]
     connectOrCreate?: ThemeSaleCreateOrConnectWithoutCartInput | ThemeSaleCreateOrConnectWithoutCartInput[]
     createMany?: ThemeSaleCreateManyCartInputEnvelope
@@ -25612,15 +27423,36 @@ export namespace Prisma {
     connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
   }
 
-  export type ThemeSaleUncheckedCreateNestedManyWithoutCartInput = {
-    create?: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput> | ThemeSaleCreateWithoutCartInput[] | ThemeSaleUncheckedCreateWithoutCartInput[]
-    connectOrCreate?: ThemeSaleCreateOrConnectWithoutCartInput | ThemeSaleCreateOrConnectWithoutCartInput[]
-    createMany?: ThemeSaleCreateManyCartInputEnvelope
-    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-  }
-
   export type EnumCartStatusFieldUpdateOperationsInput = {
     set?: $Enums.CartStatus
+  }
+
+  export type ThemeSaleUpdateManyWithoutCartNestedInput = {
+    create?: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput> | ThemeSaleCreateWithoutCartInput[] | ThemeSaleUncheckedCreateWithoutCartInput[]
+    connectOrCreate?: ThemeSaleCreateOrConnectWithoutCartInput | ThemeSaleCreateOrConnectWithoutCartInput[]
+    upsert?: ThemeSaleUpsertWithWhereUniqueWithoutCartInput | ThemeSaleUpsertWithWhereUniqueWithoutCartInput[]
+    createMany?: ThemeSaleCreateManyCartInputEnvelope
+    set?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    disconnect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    delete?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+    update?: ThemeSaleUpdateWithWhereUniqueWithoutCartInput | ThemeSaleUpdateWithWhereUniqueWithoutCartInput[]
+    updateMany?: ThemeSaleUpdateManyWithWhereWithoutCartInput | ThemeSaleUpdateManyWithWhereWithoutCartInput[]
+    deleteMany?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
+  }
+
+  export type CartItemUpdateManyWithoutCartNestedInput = {
+    create?: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput> | CartItemCreateWithoutCartInput[] | CartItemUncheckedCreateWithoutCartInput[]
+    connectOrCreate?: CartItemCreateOrConnectWithoutCartInput | CartItemCreateOrConnectWithoutCartInput[]
+    upsert?: CartItemUpsertWithWhereUniqueWithoutCartInput | CartItemUpsertWithWhereUniqueWithoutCartInput[]
+    createMany?: CartItemCreateManyCartInputEnvelope
+    set?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
+    disconnect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
+    delete?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
+    connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
+    update?: CartItemUpdateWithWhereUniqueWithoutCartInput | CartItemUpdateWithWhereUniqueWithoutCartInput[]
+    updateMany?: CartItemUpdateManyWithWhereWithoutCartInput | CartItemUpdateManyWithWhereWithoutCartInput[]
+    deleteMany?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
   }
 
   export type UserUpdateOneRequiredWithoutCartNestedInput = {
@@ -25641,21 +27473,7 @@ export namespace Prisma {
     update?: XOR<XOR<WeddingUpdateToOneWithWhereWithoutCartInput, WeddingUpdateWithoutCartInput>, WeddingUncheckedUpdateWithoutCartInput>
   }
 
-  export type CartItemUpdateManyWithoutCartNestedInput = {
-    create?: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput> | CartItemCreateWithoutCartInput[] | CartItemUncheckedCreateWithoutCartInput[]
-    connectOrCreate?: CartItemCreateOrConnectWithoutCartInput | CartItemCreateOrConnectWithoutCartInput[]
-    upsert?: CartItemUpsertWithWhereUniqueWithoutCartInput | CartItemUpsertWithWhereUniqueWithoutCartInput[]
-    createMany?: CartItemCreateManyCartInputEnvelope
-    set?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
-    disconnect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
-    delete?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
-    connect?: CartItemWhereUniqueInput | CartItemWhereUniqueInput[]
-    update?: CartItemUpdateWithWhereUniqueWithoutCartInput | CartItemUpdateWithWhereUniqueWithoutCartInput[]
-    updateMany?: CartItemUpdateManyWithWhereWithoutCartInput | CartItemUpdateManyWithWhereWithoutCartInput[]
-    deleteMany?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
-  }
-
-  export type ThemeSaleUpdateManyWithoutCartNestedInput = {
+  export type ThemeSaleUncheckedUpdateManyWithoutCartNestedInput = {
     create?: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput> | ThemeSaleCreateWithoutCartInput[] | ThemeSaleUncheckedCreateWithoutCartInput[]
     connectOrCreate?: ThemeSaleCreateOrConnectWithoutCartInput | ThemeSaleCreateOrConnectWithoutCartInput[]
     upsert?: ThemeSaleUpsertWithWhereUniqueWithoutCartInput | ThemeSaleUpsertWithWhereUniqueWithoutCartInput[]
@@ -25681,20 +27499,6 @@ export namespace Prisma {
     update?: CartItemUpdateWithWhereUniqueWithoutCartInput | CartItemUpdateWithWhereUniqueWithoutCartInput[]
     updateMany?: CartItemUpdateManyWithWhereWithoutCartInput | CartItemUpdateManyWithWhereWithoutCartInput[]
     deleteMany?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
-  }
-
-  export type ThemeSaleUncheckedUpdateManyWithoutCartNestedInput = {
-    create?: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput> | ThemeSaleCreateWithoutCartInput[] | ThemeSaleUncheckedCreateWithoutCartInput[]
-    connectOrCreate?: ThemeSaleCreateOrConnectWithoutCartInput | ThemeSaleCreateOrConnectWithoutCartInput[]
-    upsert?: ThemeSaleUpsertWithWhereUniqueWithoutCartInput | ThemeSaleUpsertWithWhereUniqueWithoutCartInput[]
-    createMany?: ThemeSaleCreateManyCartInputEnvelope
-    set?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    disconnect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    delete?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
-    update?: ThemeSaleUpdateWithWhereUniqueWithoutCartInput | ThemeSaleUpdateWithWhereUniqueWithoutCartInput[]
-    updateMany?: ThemeSaleUpdateManyWithWhereWithoutCartInput | ThemeSaleUpdateManyWithWhereWithoutCartInput[]
-    deleteMany?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
   }
 
   export type CartCreateNestedOneWithoutItemsInput = {
@@ -25745,6 +27549,13 @@ export namespace Prisma {
     connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
   }
 
+  export type WithdrawalRequestCreateNestedManyWithoutDesignerInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutDesignerInput, WithdrawalRequestUncheckedCreateWithoutDesignerInput> | WithdrawalRequestCreateWithoutDesignerInput[] | WithdrawalRequestUncheckedCreateWithoutDesignerInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutDesignerInput | WithdrawalRequestCreateOrConnectWithoutDesignerInput[]
+    createMany?: WithdrawalRequestCreateManyDesignerInputEnvelope
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+  }
+
   export type ThemeUncheckedCreateNestedManyWithoutDesignerInput = {
     create?: XOR<ThemeCreateWithoutDesignerInput, ThemeUncheckedCreateWithoutDesignerInput> | ThemeCreateWithoutDesignerInput[] | ThemeUncheckedCreateWithoutDesignerInput[]
     connectOrCreate?: ThemeCreateOrConnectWithoutDesignerInput | ThemeCreateOrConnectWithoutDesignerInput[]
@@ -25757,6 +27568,13 @@ export namespace Prisma {
     connectOrCreate?: ThemeSaleCreateOrConnectWithoutDesignerInput | ThemeSaleCreateOrConnectWithoutDesignerInput[]
     createMany?: ThemeSaleCreateManyDesignerInputEnvelope
     connect?: ThemeSaleWhereUniqueInput | ThemeSaleWhereUniqueInput[]
+  }
+
+  export type WithdrawalRequestUncheckedCreateNestedManyWithoutDesignerInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutDesignerInput, WithdrawalRequestUncheckedCreateWithoutDesignerInput> | WithdrawalRequestCreateWithoutDesignerInput[] | WithdrawalRequestUncheckedCreateWithoutDesignerInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutDesignerInput | WithdrawalRequestCreateOrConnectWithoutDesignerInput[]
+    createMany?: WithdrawalRequestCreateManyDesignerInputEnvelope
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
   }
 
   export type UserUpdateOneRequiredWithoutDesignerNestedInput = {
@@ -25795,6 +27613,20 @@ export namespace Prisma {
     deleteMany?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
   }
 
+  export type WithdrawalRequestUpdateManyWithoutDesignerNestedInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutDesignerInput, WithdrawalRequestUncheckedCreateWithoutDesignerInput> | WithdrawalRequestCreateWithoutDesignerInput[] | WithdrawalRequestUncheckedCreateWithoutDesignerInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutDesignerInput | WithdrawalRequestCreateOrConnectWithoutDesignerInput[]
+    upsert?: WithdrawalRequestUpsertWithWhereUniqueWithoutDesignerInput | WithdrawalRequestUpsertWithWhereUniqueWithoutDesignerInput[]
+    createMany?: WithdrawalRequestCreateManyDesignerInputEnvelope
+    set?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    disconnect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    delete?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    update?: WithdrawalRequestUpdateWithWhereUniqueWithoutDesignerInput | WithdrawalRequestUpdateWithWhereUniqueWithoutDesignerInput[]
+    updateMany?: WithdrawalRequestUpdateManyWithWhereWithoutDesignerInput | WithdrawalRequestUpdateManyWithWhereWithoutDesignerInput[]
+    deleteMany?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
+  }
+
   export type ThemeUncheckedUpdateManyWithoutDesignerNestedInput = {
     create?: XOR<ThemeCreateWithoutDesignerInput, ThemeUncheckedCreateWithoutDesignerInput> | ThemeCreateWithoutDesignerInput[] | ThemeUncheckedCreateWithoutDesignerInput[]
     connectOrCreate?: ThemeCreateOrConnectWithoutDesignerInput | ThemeCreateOrConnectWithoutDesignerInput[]
@@ -25823,16 +27655,18 @@ export namespace Prisma {
     deleteMany?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
   }
 
-  export type ThemeCreateNestedOneWithoutSalesInput = {
-    create?: XOR<ThemeCreateWithoutSalesInput, ThemeUncheckedCreateWithoutSalesInput>
-    connectOrCreate?: ThemeCreateOrConnectWithoutSalesInput
-    connect?: ThemeWhereUniqueInput
-  }
-
-  export type DesignerCreateNestedOneWithoutSalesInput = {
-    create?: XOR<DesignerCreateWithoutSalesInput, DesignerUncheckedCreateWithoutSalesInput>
-    connectOrCreate?: DesignerCreateOrConnectWithoutSalesInput
-    connect?: DesignerWhereUniqueInput
+  export type WithdrawalRequestUncheckedUpdateManyWithoutDesignerNestedInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutDesignerInput, WithdrawalRequestUncheckedCreateWithoutDesignerInput> | WithdrawalRequestCreateWithoutDesignerInput[] | WithdrawalRequestUncheckedCreateWithoutDesignerInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutDesignerInput | WithdrawalRequestCreateOrConnectWithoutDesignerInput[]
+    upsert?: WithdrawalRequestUpsertWithWhereUniqueWithoutDesignerInput | WithdrawalRequestUpsertWithWhereUniqueWithoutDesignerInput[]
+    createMany?: WithdrawalRequestCreateManyDesignerInputEnvelope
+    set?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    disconnect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    delete?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    update?: WithdrawalRequestUpdateWithWhereUniqueWithoutDesignerInput | WithdrawalRequestUpdateWithWhereUniqueWithoutDesignerInput[]
+    updateMany?: WithdrawalRequestUpdateManyWithWhereWithoutDesignerInput | WithdrawalRequestUpdateManyWithWhereWithoutDesignerInput[]
+    deleteMany?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
   }
 
   export type CartCreateNestedOneWithoutThemeSalesInput = {
@@ -25841,12 +27675,24 @@ export namespace Prisma {
     connect?: CartWhereUniqueInput
   }
 
-  export type ThemeUpdateOneRequiredWithoutSalesNestedInput = {
+  export type DesignerCreateNestedOneWithoutSalesInput = {
+    create?: XOR<DesignerCreateWithoutSalesInput, DesignerUncheckedCreateWithoutSalesInput>
+    connectOrCreate?: DesignerCreateOrConnectWithoutSalesInput
+    connect?: DesignerWhereUniqueInput
+  }
+
+  export type ThemeCreateNestedOneWithoutSalesInput = {
     create?: XOR<ThemeCreateWithoutSalesInput, ThemeUncheckedCreateWithoutSalesInput>
     connectOrCreate?: ThemeCreateOrConnectWithoutSalesInput
-    upsert?: ThemeUpsertWithoutSalesInput
     connect?: ThemeWhereUniqueInput
-    update?: XOR<XOR<ThemeUpdateToOneWithWhereWithoutSalesInput, ThemeUpdateWithoutSalesInput>, ThemeUncheckedUpdateWithoutSalesInput>
+  }
+
+  export type CartUpdateOneRequiredWithoutThemeSalesNestedInput = {
+    create?: XOR<CartCreateWithoutThemeSalesInput, CartUncheckedCreateWithoutThemeSalesInput>
+    connectOrCreate?: CartCreateOrConnectWithoutThemeSalesInput
+    upsert?: CartUpsertWithoutThemeSalesInput
+    connect?: CartWhereUniqueInput
+    update?: XOR<XOR<CartUpdateToOneWithWhereWithoutThemeSalesInput, CartUpdateWithoutThemeSalesInput>, CartUncheckedUpdateWithoutThemeSalesInput>
   }
 
   export type DesignerUpdateOneRequiredWithoutSalesNestedInput = {
@@ -25857,12 +27703,42 @@ export namespace Prisma {
     update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutSalesInput, DesignerUpdateWithoutSalesInput>, DesignerUncheckedUpdateWithoutSalesInput>
   }
 
-  export type CartUpdateOneRequiredWithoutThemeSalesNestedInput = {
-    create?: XOR<CartCreateWithoutThemeSalesInput, CartUncheckedCreateWithoutThemeSalesInput>
-    connectOrCreate?: CartCreateOrConnectWithoutThemeSalesInput
-    upsert?: CartUpsertWithoutThemeSalesInput
-    connect?: CartWhereUniqueInput
-    update?: XOR<XOR<CartUpdateToOneWithWhereWithoutThemeSalesInput, CartUpdateWithoutThemeSalesInput>, CartUncheckedUpdateWithoutThemeSalesInput>
+  export type ThemeUpdateOneRequiredWithoutSalesNestedInput = {
+    create?: XOR<ThemeCreateWithoutSalesInput, ThemeUncheckedCreateWithoutSalesInput>
+    connectOrCreate?: ThemeCreateOrConnectWithoutSalesInput
+    upsert?: ThemeUpsertWithoutSalesInput
+    connect?: ThemeWhereUniqueInput
+    update?: XOR<XOR<ThemeUpdateToOneWithWhereWithoutSalesInput, ThemeUpdateWithoutSalesInput>, ThemeUncheckedUpdateWithoutSalesInput>
+  }
+
+  export type DesignerCreateNestedOneWithoutWithdrawalRequestsInput = {
+    create?: XOR<DesignerCreateWithoutWithdrawalRequestsInput, DesignerUncheckedCreateWithoutWithdrawalRequestsInput>
+    connectOrCreate?: DesignerCreateOrConnectWithoutWithdrawalRequestsInput
+    connect?: DesignerWhereUniqueInput
+  }
+
+  export type EnumWithdrawalStatusFieldUpdateOperationsInput = {
+    set?: $Enums.WithdrawalStatus
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type DesignerUpdateOneRequiredWithoutWithdrawalRequestsNestedInput = {
+    create?: XOR<DesignerCreateWithoutWithdrawalRequestsInput, DesignerUncheckedCreateWithoutWithdrawalRequestsInput>
+    connectOrCreate?: DesignerCreateOrConnectWithoutWithdrawalRequestsInput
+    upsert?: DesignerUpsertWithoutWithdrawalRequestsInput
+    connect?: DesignerWhereUniqueInput
+    update?: XOR<XOR<DesignerUpdateToOneWithWhereWithoutWithdrawalRequestsInput, DesignerUpdateWithoutWithdrawalRequestsInput>, DesignerUncheckedUpdateWithoutWithdrawalRequestsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -26102,16 +27978,85 @@ export namespace Prisma {
     _max?: NestedEnumCartStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumWithdrawalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WithdrawalStatus | EnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWithdrawalStatusFilter<$PrismaModel> | $Enums.WithdrawalStatus
+  }
+
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumWithdrawalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WithdrawalStatus | EnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWithdrawalStatusWithAggregatesFilter<$PrismaModel> | $Enums.WithdrawalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
+    _max?: NestedEnumWithdrawalStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
     password: string
     createdAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
     role?: RoleCreateNestedOneWithoutUsersInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
-    designer?: DesignerCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -26120,10 +28065,10 @@ export namespace Prisma {
     password: string
     roleId?: number | null
     createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
-    cart?: CartUncheckedCreateNestedManyWithoutUserInput
     designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -26147,11 +28092,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
     role?: RoleUpdateOneWithoutUsersNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
-    designer?: DesignerUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -26160,10 +28105,10 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     roleId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
-    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
     designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPasswordsResetsInput = {
@@ -26171,11 +28116,11 @@ export namespace Prisma {
     email: string
     password: string
     createdAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     role?: RoleCreateNestedOneWithoutUsersInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
-    designer?: DesignerCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordsResetsInput = {
@@ -26184,10 +28129,10 @@ export namespace Prisma {
     password: string
     roleId?: number | null
     createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    cart?: CartUncheckedCreateNestedManyWithoutUserInput
     designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordsResetsInput = {
@@ -26211,11 +28156,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     role?: RoleUpdateOneWithoutUsersNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
-    designer?: DesignerUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordsResetsInput = {
@@ -26224,10 +28169,97 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     roleId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
     designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type DesignerCreateWithoutUserInput = {
+    id?: string
+    name?: string | null
+    address?: string | null
+    bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    themes?: ThemeCreateNestedManyWithoutDesignerInput
+    sales?: ThemeSaleCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestCreateNestedManyWithoutDesignerInput
+  }
+
+  export type DesignerUncheckedCreateWithoutUserInput = {
+    id?: string
+    name?: string | null
+    address?: string | null
+    bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    themes?: ThemeUncheckedCreateNestedManyWithoutDesignerInput
+    sales?: ThemeSaleUncheckedCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestUncheckedCreateNestedManyWithoutDesignerInput
+  }
+
+  export type DesignerCreateOrConnectWithoutUserInput = {
+    where: DesignerWhereUniqueInput
+    create: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
+  }
+
+  export type PasswordResetCreateWithoutUserInput = {
+    id?: string
+    resetToken: string
+    expiresAt: Date | string
+    used?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PasswordResetUncheckedCreateWithoutUserInput = {
+    id?: string
+    resetToken: string
+    expiresAt: Date | string
+    used?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PasswordResetCreateOrConnectWithoutUserInput = {
+    where: PasswordResetWhereUniqueInput
+    create: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
+  }
+
+  export type PasswordResetCreateManyUserInputEnvelope = {
+    data: PasswordResetCreateManyUserInput | PasswordResetCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SessionCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SessionUncheckedCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SessionCreateOrConnectWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type RoleCreateWithoutUsersInput = {
@@ -26260,9 +28292,9 @@ export namespace Prisma {
     donations?: DonationCreateNestedManyWithoutWeddingInput
     galleryImages?: GalleryImageCreateNestedManyWithoutWeddingInput
     rsvps?: RsvpCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     song?: SongCreateNestedOneWithoutWeddingsInput
     theme?: ThemeCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutUserInput = {
@@ -26296,65 +28328,15 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type SessionCreateWithoutUserInput = {
-    id?: string
-    token: string
-    expiresAt: Date | string
-    createdAt?: Date | string
-  }
-
-  export type SessionUncheckedCreateWithoutUserInput = {
-    id?: string
-    token: string
-    expiresAt: Date | string
-    createdAt?: Date | string
-  }
-
-  export type SessionCreateOrConnectWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionCreateManyUserInputEnvelope = {
-    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type PasswordResetCreateWithoutUserInput = {
-    id?: string
-    resetToken: string
-    expiresAt: Date | string
-    used?: boolean
-    createdAt?: Date | string
-  }
-
-  export type PasswordResetUncheckedCreateWithoutUserInput = {
-    id?: string
-    resetToken: string
-    expiresAt: Date | string
-    used?: boolean
-    createdAt?: Date | string
-  }
-
-  export type PasswordResetCreateOrConnectWithoutUserInput = {
-    where: PasswordResetWhereUniqueInput
-    create: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
-  }
-
-  export type PasswordResetCreateManyUserInputEnvelope = {
-    data: PasswordResetCreateManyUserInput | PasswordResetCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type CartCreateWithoutUserInput = {
     id?: string
     status?: $Enums.CartStatus
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    wedding?: WeddingCreateNestedOneWithoutCartInput
-    items?: CartItemCreateNestedManyWithoutCartInput
     themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
+    items?: CartItemCreateNestedManyWithoutCartInput
+    wedding?: WeddingCreateNestedOneWithoutCartInput
   }
 
   export type CartUncheckedCreateWithoutUserInput = {
@@ -26364,8 +28346,8 @@ export namespace Prisma {
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    items?: CartItemUncheckedCreateNestedManyWithoutCartInput
     themeSales?: ThemeSaleUncheckedCreateNestedManyWithoutCartInput
+    items?: CartItemUncheckedCreateNestedManyWithoutCartInput
   }
 
   export type CartCreateOrConnectWithoutUserInput = {
@@ -26378,29 +28360,102 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type DesignerCreateWithoutUserInput = {
-    id?: string
-    name?: string | null
-    bio?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    themes?: ThemeCreateNestedManyWithoutDesignerInput
-    sales?: ThemeSaleCreateNestedManyWithoutDesignerInput
-  }
-
-  export type DesignerUncheckedCreateWithoutUserInput = {
-    id?: string
-    name?: string | null
-    bio?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    themes?: ThemeUncheckedCreateNestedManyWithoutDesignerInput
-    sales?: ThemeSaleUncheckedCreateNestedManyWithoutDesignerInput
-  }
-
-  export type DesignerCreateOrConnectWithoutUserInput = {
-    where: DesignerWhereUniqueInput
+  export type DesignerUpsertWithoutUserInput = {
+    update: XOR<DesignerUpdateWithoutUserInput, DesignerUncheckedUpdateWithoutUserInput>
     create: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
+    where?: DesignerWhereInput
+  }
+
+  export type DesignerUpdateToOneWithWhereWithoutUserInput = {
+    where?: DesignerWhereInput
+    data: XOR<DesignerUpdateWithoutUserInput, DesignerUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DesignerUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    themes?: ThemeUpdateManyWithoutDesignerNestedInput
+    sales?: ThemeSaleUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUpdateManyWithoutDesignerNestedInput
+  }
+
+  export type DesignerUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    themes?: ThemeUncheckedUpdateManyWithoutDesignerNestedInput
+    sales?: ThemeSaleUncheckedUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUncheckedUpdateManyWithoutDesignerNestedInput
+  }
+
+  export type PasswordResetUpsertWithWhereUniqueWithoutUserInput = {
+    where: PasswordResetWhereUniqueInput
+    update: XOR<PasswordResetUpdateWithoutUserInput, PasswordResetUncheckedUpdateWithoutUserInput>
+    create: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
+  }
+
+  export type PasswordResetUpdateWithWhereUniqueWithoutUserInput = {
+    where: PasswordResetWhereUniqueInput
+    data: XOR<PasswordResetUpdateWithoutUserInput, PasswordResetUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PasswordResetUpdateManyWithWhereWithoutUserInput = {
+    where: PasswordResetScalarWhereInput
+    data: XOR<PasswordResetUpdateManyMutationInput, PasswordResetUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PasswordResetScalarWhereInput = {
+    AND?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
+    OR?: PasswordResetScalarWhereInput[]
+    NOT?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
+    id?: StringFilter<"PasswordReset"> | string
+    userId?: StringFilter<"PasswordReset"> | string
+    resetToken?: StringFilter<"PasswordReset"> | string
+    expiresAt?: DateTimeFilter<"PasswordReset"> | Date | string
+    used?: BoolFilter<"PasswordReset"> | boolean
+    createdAt?: DateTimeFilter<"PasswordReset"> | Date | string
+  }
+
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: StringFilter<"Session"> | string
+    userId?: StringFilter<"Session"> | string
+    token?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
+    createdAt?: DateTimeFilter<"Session"> | Date | string
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -26460,61 +28515,6 @@ export namespace Prisma {
     isExpired?: BoolFilter<"Wedding"> | boolean
   }
 
-  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SessionUpdateManyWithWhereWithoutUserInput = {
-    where: SessionScalarWhereInput
-    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type SessionScalarWhereInput = {
-    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    OR?: SessionScalarWhereInput[]
-    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    id?: StringFilter<"Session"> | string
-    userId?: StringFilter<"Session"> | string
-    token?: StringFilter<"Session"> | string
-    expiresAt?: DateTimeFilter<"Session"> | Date | string
-    createdAt?: DateTimeFilter<"Session"> | Date | string
-  }
-
-  export type PasswordResetUpsertWithWhereUniqueWithoutUserInput = {
-    where: PasswordResetWhereUniqueInput
-    update: XOR<PasswordResetUpdateWithoutUserInput, PasswordResetUncheckedUpdateWithoutUserInput>
-    create: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
-  }
-
-  export type PasswordResetUpdateWithWhereUniqueWithoutUserInput = {
-    where: PasswordResetWhereUniqueInput
-    data: XOR<PasswordResetUpdateWithoutUserInput, PasswordResetUncheckedUpdateWithoutUserInput>
-  }
-
-  export type PasswordResetUpdateManyWithWhereWithoutUserInput = {
-    where: PasswordResetScalarWhereInput
-    data: XOR<PasswordResetUpdateManyMutationInput, PasswordResetUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type PasswordResetScalarWhereInput = {
-    AND?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
-    OR?: PasswordResetScalarWhereInput[]
-    NOT?: PasswordResetScalarWhereInput | PasswordResetScalarWhereInput[]
-    id?: StringFilter<"PasswordReset"> | string
-    userId?: StringFilter<"PasswordReset"> | string
-    resetToken?: StringFilter<"PasswordReset"> | string
-    expiresAt?: DateTimeFilter<"PasswordReset"> | Date | string
-    used?: BoolFilter<"PasswordReset"> | boolean
-    createdAt?: DateTimeFilter<"PasswordReset"> | Date | string
-  }
-
   export type CartUpsertWithWhereUniqueWithoutUserInput = {
     where: CartWhereUniqueInput
     update: XOR<CartUpdateWithoutUserInput, CartUncheckedUpdateWithoutUserInput>
@@ -26544,47 +28544,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Cart"> | Date | string
   }
 
-  export type DesignerUpsertWithoutUserInput = {
-    update: XOR<DesignerUpdateWithoutUserInput, DesignerUncheckedUpdateWithoutUserInput>
-    create: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
-    where?: DesignerWhereInput
-  }
-
-  export type DesignerUpdateToOneWithWhereWithoutUserInput = {
-    where?: DesignerWhereInput
-    data: XOR<DesignerUpdateWithoutUserInput, DesignerUncheckedUpdateWithoutUserInput>
-  }
-
-  export type DesignerUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    themes?: ThemeUpdateManyWithoutDesignerNestedInput
-    sales?: ThemeSaleUpdateManyWithoutDesignerNestedInput
-  }
-
-  export type DesignerUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    themes?: ThemeUncheckedUpdateManyWithoutDesignerNestedInput
-    sales?: ThemeSaleUncheckedUpdateManyWithoutDesignerNestedInput
-  }
-
   export type UserCreateWithoutRoleInput = {
     id?: string
     email: string
     password: string
     createdAt?: Date | string
-    weddings?: WeddingCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
-    cart?: CartCreateNestedManyWithoutUserInput
     designer?: DesignerCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    weddings?: WeddingCreateNestedManyWithoutUserInput
+    cart?: CartCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -26592,11 +28561,11 @@ export namespace Prisma {
     email: string
     password: string
     createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
-    cart?: CartUncheckedCreateNestedManyWithoutUserInput
     designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -26724,38 +28693,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type CartCreateWithoutWeddingInput = {
-    id?: string
-    status?: $Enums.CartStatus
-    total?: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutCartInput
-    items?: CartItemCreateNestedManyWithoutCartInput
-    themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
-  }
-
-  export type CartUncheckedCreateWithoutWeddingInput = {
-    id?: string
-    userId: string
-    status?: $Enums.CartStatus
-    total?: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    items?: CartItemUncheckedCreateNestedManyWithoutCartInput
-    themeSales?: ThemeSaleUncheckedCreateNestedManyWithoutCartInput
-  }
-
-  export type CartCreateOrConnectWithoutWeddingInput = {
-    where: CartWhereUniqueInput
-    create: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput>
-  }
-
-  export type CartCreateManyWeddingInputEnvelope = {
-    data: CartCreateManyWeddingInput | CartCreateManyWeddingInput[]
-    skipDuplicates?: boolean
-  }
-
   export type SongCreateWithoutWeddingsInput = {
     id?: string
     title?: string | null
@@ -26784,13 +28721,13 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
     designer?: DesignerCreateNestedOneWithoutThemesInput
-    products?: ProductCreateNestedManyWithoutThemeInput
     sales?: ThemeSaleCreateNestedManyWithoutThemeInput
+    products?: ProductCreateNestedManyWithoutThemeInput
   }
 
   export type ThemeUncheckedCreateWithoutWeddingsInput = {
@@ -26800,13 +28737,13 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     designerId?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
-    products?: ProductUncheckedCreateNestedManyWithoutThemeInput
     sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
+    products?: ProductUncheckedCreateNestedManyWithoutThemeInput
   }
 
   export type ThemeCreateOrConnectWithoutWeddingsInput = {
@@ -26819,11 +28756,11 @@ export namespace Prisma {
     email: string
     password: string
     createdAt?: Date | string
-    role?: RoleCreateNestedOneWithoutUsersInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
-    cart?: CartCreateNestedManyWithoutUserInput
     designer?: DesignerCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    role?: RoleCreateNestedOneWithoutUsersInput
+    cart?: CartCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWeddingsInput = {
@@ -26832,15 +28769,47 @@ export namespace Prisma {
     password: string
     roleId?: number | null
     createdAt?: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
-    cart?: CartUncheckedCreateNestedManyWithoutUserInput
     designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWeddingsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutWeddingsInput, UserUncheckedCreateWithoutWeddingsInput>
+  }
+
+  export type CartCreateWithoutWeddingInput = {
+    id?: string
+    status?: $Enums.CartStatus
+    total?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
+    items?: CartItemCreateNestedManyWithoutCartInput
+    user: UserCreateNestedOneWithoutCartInput
+  }
+
+  export type CartUncheckedCreateWithoutWeddingInput = {
+    id?: string
+    userId: string
+    status?: $Enums.CartStatus
+    total?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    themeSales?: ThemeSaleUncheckedCreateNestedManyWithoutCartInput
+    items?: CartItemUncheckedCreateNestedManyWithoutCartInput
+  }
+
+  export type CartCreateOrConnectWithoutWeddingInput = {
+    where: CartWhereUniqueInput
+    create: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput>
+  }
+
+  export type CartCreateManyWeddingInputEnvelope = {
+    data: CartCreateManyWeddingInput | CartCreateManyWeddingInput[]
+    skipDuplicates?: boolean
   }
 
   export type DonationUpsertWithWhereUniqueWithoutWeddingInput = {
@@ -26932,22 +28901,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Rsvp"> | Date | string
   }
 
-  export type CartUpsertWithWhereUniqueWithoutWeddingInput = {
-    where: CartWhereUniqueInput
-    update: XOR<CartUpdateWithoutWeddingInput, CartUncheckedUpdateWithoutWeddingInput>
-    create: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput>
-  }
-
-  export type CartUpdateWithWhereUniqueWithoutWeddingInput = {
-    where: CartWhereUniqueInput
-    data: XOR<CartUpdateWithoutWeddingInput, CartUncheckedUpdateWithoutWeddingInput>
-  }
-
-  export type CartUpdateManyWithWhereWithoutWeddingInput = {
-    where: CartScalarWhereInput
-    data: XOR<CartUpdateManyMutationInput, CartUncheckedUpdateManyWithoutWeddingInput>
-  }
-
   export type SongUpsertWithoutWeddingsInput = {
     update: XOR<SongUpdateWithoutWeddingsInput, SongUncheckedUpdateWithoutWeddingsInput>
     create: XOR<SongCreateWithoutWeddingsInput, SongUncheckedCreateWithoutWeddingsInput>
@@ -26993,13 +28946,13 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     designer?: DesignerUpdateOneWithoutThemesNestedInput
-    products?: ProductUpdateManyWithoutThemeNestedInput
     sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
+    products?: ProductUpdateManyWithoutThemeNestedInput
   }
 
   export type ThemeUncheckedUpdateWithoutWeddingsInput = {
@@ -27009,13 +28962,13 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     designerId?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    products?: ProductUncheckedUpdateManyWithoutThemeNestedInput
     sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
+    products?: ProductUncheckedUpdateManyWithoutThemeNestedInput
   }
 
   export type UserUpsertWithoutWeddingsInput = {
@@ -27034,11 +28987,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: RoleUpdateOneWithoutUsersNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
-    cart?: CartUpdateManyWithoutUserNestedInput
     designer?: DesignerUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    role?: RoleUpdateOneWithoutUsersNestedInput
+    cart?: CartUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWeddingsInput = {
@@ -27047,35 +29000,95 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     roleId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
-    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
     designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type CartUpsertWithWhereUniqueWithoutWeddingInput = {
+    where: CartWhereUniqueInput
+    update: XOR<CartUpdateWithoutWeddingInput, CartUncheckedUpdateWithoutWeddingInput>
+    create: XOR<CartCreateWithoutWeddingInput, CartUncheckedCreateWithoutWeddingInput>
+  }
+
+  export type CartUpdateWithWhereUniqueWithoutWeddingInput = {
+    where: CartWhereUniqueInput
+    data: XOR<CartUpdateWithoutWeddingInput, CartUncheckedUpdateWithoutWeddingInput>
+  }
+
+  export type CartUpdateManyWithWhereWithoutWeddingInput = {
+    where: CartScalarWhereInput
+    data: XOR<CartUpdateManyMutationInput, CartUncheckedUpdateManyWithoutWeddingInput>
   }
 
   export type DesignerCreateWithoutThemesInput = {
     id?: string
     name?: string | null
+    address?: string | null
     bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutDesignerInput
     sales?: ThemeSaleCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestCreateNestedManyWithoutDesignerInput
   }
 
   export type DesignerUncheckedCreateWithoutThemesInput = {
     id?: string
     userId: string
     name?: string | null
+    address?: string | null
     bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: ThemeSaleUncheckedCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestUncheckedCreateNestedManyWithoutDesignerInput
   }
 
   export type DesignerCreateOrConnectWithoutThemesInput = {
     where: DesignerWhereUniqueInput
     create: XOR<DesignerCreateWithoutThemesInput, DesignerUncheckedCreateWithoutThemesInput>
+  }
+
+  export type ThemeSaleCreateWithoutThemeInput = {
+    id?: string
+    productId: string
+    salePrice: Decimal | DecimalJsLike | number | string
+    designerEarning: Decimal | DecimalJsLike | number | string
+    companyEarning: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    cart: CartCreateNestedOneWithoutThemeSalesInput
+    designer: DesignerCreateNestedOneWithoutSalesInput
+  }
+
+  export type ThemeSaleUncheckedCreateWithoutThemeInput = {
+    id?: string
+    productId: string
+    cartId: string
+    salePrice: Decimal | DecimalJsLike | number | string
+    designerEarning: Decimal | DecimalJsLike | number | string
+    companyEarning: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    designerId: string
+  }
+
+  export type ThemeSaleCreateOrConnectWithoutThemeInput = {
+    where: ThemeSaleWhereUniqueInput
+    create: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput>
+  }
+
+  export type ThemeSaleCreateManyThemeInputEnvelope = {
+    data: ThemeSaleCreateManyThemeInput | ThemeSaleCreateManyThemeInput[]
+    skipDuplicates?: boolean
   }
 
   export type WeddingCreateWithoutThemeInput = {
@@ -27094,9 +29107,9 @@ export namespace Prisma {
     donations?: DonationCreateNestedManyWithoutWeddingInput
     galleryImages?: GalleryImageCreateNestedManyWithoutWeddingInput
     rsvps?: RsvpCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     song?: SongCreateNestedOneWithoutWeddingsInput
     user: UserCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutThemeInput = {
@@ -27138,8 +29151,8 @@ export namespace Prisma {
     description?: string | null
     imageUrl?: string | null
     createdAt?: Date | string
-    song?: SongCreateNestedOneWithoutProductsInput
     cartItems?: CartItemCreateNestedManyWithoutProductInput
+    song?: SongCreateNestedOneWithoutProductsInput
   }
 
   export type ProductUncheckedCreateWithoutThemeInput = {
@@ -27164,38 +29177,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ThemeSaleCreateWithoutThemeInput = {
-    id?: string
-    productId: string
-    salePrice: Decimal | DecimalJsLike | number | string
-    designerEarning: Decimal | DecimalJsLike | number | string
-    companyEarning: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    designer: DesignerCreateNestedOneWithoutSalesInput
-    cart: CartCreateNestedOneWithoutThemeSalesInput
-  }
-
-  export type ThemeSaleUncheckedCreateWithoutThemeInput = {
-    id?: string
-    productId: string
-    cartId: string
-    salePrice: Decimal | DecimalJsLike | number | string
-    designerEarning: Decimal | DecimalJsLike | number | string
-    companyEarning: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    designerId: string
-  }
-
-  export type ThemeSaleCreateOrConnectWithoutThemeInput = {
-    where: ThemeSaleWhereUniqueInput
-    create: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput>
-  }
-
-  export type ThemeSaleCreateManyThemeInputEnvelope = {
-    data: ThemeSaleCreateManyThemeInput | ThemeSaleCreateManyThemeInput[]
-    skipDuplicates?: boolean
-  }
-
   export type DesignerUpsertWithoutThemesInput = {
     update: XOR<DesignerUpdateWithoutThemesInput, DesignerUncheckedUpdateWithoutThemesInput>
     create: XOR<DesignerCreateWithoutThemesInput, DesignerUncheckedCreateWithoutThemesInput>
@@ -27210,21 +29191,64 @@ export namespace Prisma {
   export type DesignerUpdateWithoutThemesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutDesignerNestedInput
     sales?: ThemeSaleUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUpdateManyWithoutDesignerNestedInput
   }
 
   export type DesignerUncheckedUpdateWithoutThemesInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: ThemeSaleUncheckedUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUncheckedUpdateManyWithoutDesignerNestedInput
+  }
+
+  export type ThemeSaleUpsertWithWhereUniqueWithoutThemeInput = {
+    where: ThemeSaleWhereUniqueInput
+    update: XOR<ThemeSaleUpdateWithoutThemeInput, ThemeSaleUncheckedUpdateWithoutThemeInput>
+    create: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput>
+  }
+
+  export type ThemeSaleUpdateWithWhereUniqueWithoutThemeInput = {
+    where: ThemeSaleWhereUniqueInput
+    data: XOR<ThemeSaleUpdateWithoutThemeInput, ThemeSaleUncheckedUpdateWithoutThemeInput>
+  }
+
+  export type ThemeSaleUpdateManyWithWhereWithoutThemeInput = {
+    where: ThemeSaleScalarWhereInput
+    data: XOR<ThemeSaleUpdateManyMutationInput, ThemeSaleUncheckedUpdateManyWithoutThemeInput>
+  }
+
+  export type ThemeSaleScalarWhereInput = {
+    AND?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
+    OR?: ThemeSaleScalarWhereInput[]
+    NOT?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
+    id?: StringFilter<"ThemeSale"> | string
+    themeId?: StringFilter<"ThemeSale"> | string
+    productId?: StringFilter<"ThemeSale"> | string
+    cartId?: StringFilter<"ThemeSale"> | string
+    salePrice?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"ThemeSale"> | Date | string
+    designerId?: StringFilter<"ThemeSale"> | string
   }
 
   export type WeddingUpsertWithWhereUniqueWithoutThemeInput = {
@@ -27274,37 +29298,6 @@ export namespace Prisma {
     songId?: StringNullableFilter<"Product"> | string | null
   }
 
-  export type ThemeSaleUpsertWithWhereUniqueWithoutThemeInput = {
-    where: ThemeSaleWhereUniqueInput
-    update: XOR<ThemeSaleUpdateWithoutThemeInput, ThemeSaleUncheckedUpdateWithoutThemeInput>
-    create: XOR<ThemeSaleCreateWithoutThemeInput, ThemeSaleUncheckedCreateWithoutThemeInput>
-  }
-
-  export type ThemeSaleUpdateWithWhereUniqueWithoutThemeInput = {
-    where: ThemeSaleWhereUniqueInput
-    data: XOR<ThemeSaleUpdateWithoutThemeInput, ThemeSaleUncheckedUpdateWithoutThemeInput>
-  }
-
-  export type ThemeSaleUpdateManyWithWhereWithoutThemeInput = {
-    where: ThemeSaleScalarWhereInput
-    data: XOR<ThemeSaleUpdateManyMutationInput, ThemeSaleUncheckedUpdateManyWithoutThemeInput>
-  }
-
-  export type ThemeSaleScalarWhereInput = {
-    AND?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
-    OR?: ThemeSaleScalarWhereInput[]
-    NOT?: ThemeSaleScalarWhereInput | ThemeSaleScalarWhereInput[]
-    id?: StringFilter<"ThemeSale"> | string
-    themeId?: StringFilter<"ThemeSale"> | string
-    productId?: StringFilter<"ThemeSale"> | string
-    cartId?: StringFilter<"ThemeSale"> | string
-    salePrice?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFilter<"ThemeSale"> | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFilter<"ThemeSale"> | Date | string
-    designerId?: StringFilter<"ThemeSale"> | string
-  }
-
   export type WeddingCreateWithoutSongInput = {
     id?: string
     slug: string
@@ -27321,9 +29314,9 @@ export namespace Prisma {
     donations?: DonationCreateNestedManyWithoutWeddingInput
     galleryImages?: GalleryImageCreateNestedManyWithoutWeddingInput
     rsvps?: RsvpCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     theme?: ThemeCreateNestedOneWithoutWeddingsInput
     user: UserCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutSongInput = {
@@ -27365,8 +29358,8 @@ export namespace Prisma {
     description?: string | null
     imageUrl?: string | null
     createdAt?: Date | string
-    theme?: ThemeCreateNestedOneWithoutProductsInput
     cartItems?: CartItemCreateNestedManyWithoutProductInput
+    theme?: ThemeCreateNestedOneWithoutProductsInput
   }
 
   export type ProductUncheckedCreateWithoutSongInput = {
@@ -27438,10 +29431,10 @@ export namespace Prisma {
     isExpired?: boolean
     donations?: DonationCreateNestedManyWithoutWeddingInput
     galleryImages?: GalleryImageCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     song?: SongCreateNestedOneWithoutWeddingsInput
     theme?: ThemeCreateNestedOneWithoutWeddingsInput
     user: UserCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutRsvpsInput = {
@@ -27496,10 +29489,10 @@ export namespace Prisma {
     isExpired?: BoolFieldUpdateOperationsInput | boolean
     donations?: DonationUpdateManyWithoutWeddingNestedInput
     galleryImages?: GalleryImageUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     song?: SongUpdateOneWithoutWeddingsNestedInput
     theme?: ThemeUpdateOneWithoutWeddingsNestedInput
     user?: UserUpdateOneRequiredWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutRsvpsInput = {
@@ -27552,10 +29545,10 @@ export namespace Prisma {
     isExpired?: boolean
     galleryImages?: GalleryImageCreateNestedManyWithoutWeddingInput
     rsvps?: RsvpCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     song?: SongCreateNestedOneWithoutWeddingsInput
     theme?: ThemeCreateNestedOneWithoutWeddingsInput
     user: UserCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutDonationsInput = {
@@ -27630,10 +29623,10 @@ export namespace Prisma {
     isExpired?: BoolFieldUpdateOperationsInput | boolean
     galleryImages?: GalleryImageUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     song?: SongUpdateOneWithoutWeddingsNestedInput
     theme?: ThemeUpdateOneWithoutWeddingsNestedInput
     user?: UserUpdateOneRequiredWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutDonationsInput = {
@@ -27720,10 +29713,10 @@ export namespace Prisma {
     isExpired?: boolean
     donations?: DonationCreateNestedManyWithoutWeddingInput
     rsvps?: RsvpCreateNestedManyWithoutWeddingInput
-    cart?: CartCreateNestedManyWithoutWeddingInput
     song?: SongCreateNestedOneWithoutWeddingsInput
     theme?: ThemeCreateNestedOneWithoutWeddingsInput
     user: UserCreateNestedOneWithoutWeddingsInput
+    cart?: CartCreateNestedManyWithoutWeddingInput
   }
 
   export type WeddingUncheckedCreateWithoutGalleryImagesInput = {
@@ -27778,10 +29771,10 @@ export namespace Prisma {
     isExpired?: BoolFieldUpdateOperationsInput | boolean
     donations?: DonationUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     song?: SongUpdateOneWithoutWeddingsNestedInput
     theme?: ThemeUpdateOneWithoutWeddingsNestedInput
     user?: UserUpdateOneRequiredWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutGalleryImagesInput = {
@@ -27803,64 +29796,6 @@ export namespace Prisma {
     donations?: DonationUncheckedUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUncheckedUpdateManyWithoutWeddingNestedInput
     cart?: CartUncheckedUpdateManyWithoutWeddingNestedInput
-  }
-
-  export type ThemeCreateWithoutProductsInput = {
-    id?: string
-    name: string
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    fontFamily?: string | null
-    previewImageUrl?: string | null
-    configJson?: string | null
-    isPublished?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designer?: DesignerCreateNestedOneWithoutThemesInput
-    weddings?: WeddingCreateNestedManyWithoutThemeInput
-    sales?: ThemeSaleCreateNestedManyWithoutThemeInput
-  }
-
-  export type ThemeUncheckedCreateWithoutProductsInput = {
-    id?: string
-    name: string
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    fontFamily?: string | null
-    previewImageUrl?: string | null
-    configJson?: string | null
-    designerId?: string | null
-    isPublished?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutThemeInput
-    sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
-  }
-
-  export type ThemeCreateOrConnectWithoutProductsInput = {
-    where: ThemeWhereUniqueInput
-    create: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
-  }
-
-  export type SongCreateWithoutProductsInput = {
-    id?: string
-    title?: string | null
-    fileUrl: string
-    createdAt?: Date | string
-    weddings?: WeddingCreateNestedManyWithoutSongInput
-  }
-
-  export type SongUncheckedCreateWithoutProductsInput = {
-    id?: string
-    title?: string | null
-    fileUrl: string
-    createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutSongInput
-  }
-
-  export type SongCreateOrConnectWithoutProductsInput = {
-    where: SongWhereUniqueInput
-    create: XOR<SongCreateWithoutProductsInput, SongUncheckedCreateWithoutProductsInput>
   }
 
   export type CartItemCreateWithoutProductInput = {
@@ -27889,74 +29824,62 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ThemeUpsertWithoutProductsInput = {
-    update: XOR<ThemeUpdateWithoutProductsInput, ThemeUncheckedUpdateWithoutProductsInput>
-    create: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
-    where?: ThemeWhereInput
+  export type SongCreateWithoutProductsInput = {
+    id?: string
+    title?: string | null
+    fileUrl: string
+    createdAt?: Date | string
+    weddings?: WeddingCreateNestedManyWithoutSongInput
   }
 
-  export type ThemeUpdateToOneWithWhereWithoutProductsInput = {
-    where?: ThemeWhereInput
-    data: XOR<ThemeUpdateWithoutProductsInput, ThemeUncheckedUpdateWithoutProductsInput>
+  export type SongUncheckedCreateWithoutProductsInput = {
+    id?: string
+    title?: string | null
+    fileUrl: string
+    createdAt?: Date | string
+    weddings?: WeddingUncheckedCreateNestedManyWithoutSongInput
   }
 
-  export type ThemeUpdateWithoutProductsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
-    previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    configJson?: NullableStringFieldUpdateOperationsInput | string | null
-    isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designer?: DesignerUpdateOneWithoutThemesNestedInput
-    weddings?: WeddingUpdateManyWithoutThemeNestedInput
-    sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
-  }
-
-  export type ThemeUncheckedUpdateWithoutProductsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
-    previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    configJson?: NullableStringFieldUpdateOperationsInput | string | null
-    designerId?: NullableStringFieldUpdateOperationsInput | string | null
-    isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutThemeNestedInput
-    sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
-  }
-
-  export type SongUpsertWithoutProductsInput = {
-    update: XOR<SongUpdateWithoutProductsInput, SongUncheckedUpdateWithoutProductsInput>
+  export type SongCreateOrConnectWithoutProductsInput = {
+    where: SongWhereUniqueInput
     create: XOR<SongCreateWithoutProductsInput, SongUncheckedCreateWithoutProductsInput>
-    where?: SongWhereInput
   }
 
-  export type SongUpdateToOneWithWhereWithoutProductsInput = {
-    where?: SongWhereInput
-    data: XOR<SongUpdateWithoutProductsInput, SongUncheckedUpdateWithoutProductsInput>
+  export type ThemeCreateWithoutProductsInput = {
+    id?: string
+    name: string
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    fontFamily?: string | null
+    previewImageUrl?: string | null
+    createdAt?: Date | string
+    configJson?: string | null
+    isPublished?: boolean
+    updatedAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutThemesInput
+    sales?: ThemeSaleCreateNestedManyWithoutThemeInput
+    weddings?: WeddingCreateNestedManyWithoutThemeInput
   }
 
-  export type SongUpdateWithoutProductsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUpdateManyWithoutSongNestedInput
+  export type ThemeUncheckedCreateWithoutProductsInput = {
+    id?: string
+    name: string
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    fontFamily?: string | null
+    previewImageUrl?: string | null
+    createdAt?: Date | string
+    configJson?: string | null
+    designerId?: string | null
+    isPublished?: boolean
+    updatedAt?: Date | string
+    sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutThemeInput
   }
 
-  export type SongUncheckedUpdateWithoutProductsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutSongNestedInput
+  export type ThemeCreateOrConnectWithoutProductsInput = {
+    where: ThemeWhereUniqueInput
+    create: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
   }
 
   export type CartItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -27987,16 +29910,144 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"CartItem"> | Date | string
   }
 
+  export type SongUpsertWithoutProductsInput = {
+    update: XOR<SongUpdateWithoutProductsInput, SongUncheckedUpdateWithoutProductsInput>
+    create: XOR<SongCreateWithoutProductsInput, SongUncheckedCreateWithoutProductsInput>
+    where?: SongWhereInput
+  }
+
+  export type SongUpdateToOneWithWhereWithoutProductsInput = {
+    where?: SongWhereInput
+    data: XOR<SongUpdateWithoutProductsInput, SongUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type SongUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    weddings?: WeddingUpdateManyWithoutSongNestedInput
+  }
+
+  export type SongUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    weddings?: WeddingUncheckedUpdateManyWithoutSongNestedInput
+  }
+
+  export type ThemeUpsertWithoutProductsInput = {
+    update: XOR<ThemeUpdateWithoutProductsInput, ThemeUncheckedUpdateWithoutProductsInput>
+    create: XOR<ThemeCreateWithoutProductsInput, ThemeUncheckedCreateWithoutProductsInput>
+    where?: ThemeWhereInput
+  }
+
+  export type ThemeUpdateToOneWithWhereWithoutProductsInput = {
+    where?: ThemeWhereInput
+    data: XOR<ThemeUpdateWithoutProductsInput, ThemeUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type ThemeUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
+    previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    configJson?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneWithoutThemesNestedInput
+    sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
+    weddings?: WeddingUpdateManyWithoutThemeNestedInput
+  }
+
+  export type ThemeUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
+    previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    configJson?: NullableStringFieldUpdateOperationsInput | string | null
+    designerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutThemeNestedInput
+  }
+
+  export type ThemeSaleCreateWithoutCartInput = {
+    id?: string
+    productId: string
+    salePrice: Decimal | DecimalJsLike | number | string
+    designerEarning: Decimal | DecimalJsLike | number | string
+    companyEarning: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    designer: DesignerCreateNestedOneWithoutSalesInput
+    theme: ThemeCreateNestedOneWithoutSalesInput
+  }
+
+  export type ThemeSaleUncheckedCreateWithoutCartInput = {
+    id?: string
+    themeId: string
+    productId: string
+    salePrice: Decimal | DecimalJsLike | number | string
+    designerEarning: Decimal | DecimalJsLike | number | string
+    companyEarning: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    designerId: string
+  }
+
+  export type ThemeSaleCreateOrConnectWithoutCartInput = {
+    where: ThemeSaleWhereUniqueInput
+    create: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput>
+  }
+
+  export type ThemeSaleCreateManyCartInputEnvelope = {
+    data: ThemeSaleCreateManyCartInput | ThemeSaleCreateManyCartInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CartItemCreateWithoutCartInput = {
+    id?: string
+    quantity?: number
+    price?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    product: ProductCreateNestedOneWithoutCartItemsInput
+  }
+
+  export type CartItemUncheckedCreateWithoutCartInput = {
+    id?: string
+    productId: string
+    quantity?: number
+    price?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+  }
+
+  export type CartItemCreateOrConnectWithoutCartInput = {
+    where: CartItemWhereUniqueInput
+    create: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput>
+  }
+
+  export type CartItemCreateManyCartInputEnvelope = {
+    data: CartItemCreateManyCartInput | CartItemCreateManyCartInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserCreateWithoutCartInput = {
     id?: string
     email: string
     password: string
     createdAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     role?: RoleCreateNestedOneWithoutUsersInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
-    designer?: DesignerCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCartInput = {
@@ -28005,10 +30056,10 @@ export namespace Prisma {
     password: string
     roleId?: number | null
     createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
     designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCartInput = {
@@ -28063,62 +30114,36 @@ export namespace Prisma {
     create: XOR<WeddingCreateWithoutCartInput, WeddingUncheckedCreateWithoutCartInput>
   }
 
-  export type CartItemCreateWithoutCartInput = {
-    id?: string
-    quantity?: number
-    price?: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    product: ProductCreateNestedOneWithoutCartItemsInput
-  }
-
-  export type CartItemUncheckedCreateWithoutCartInput = {
-    id?: string
-    productId: string
-    quantity?: number
-    price?: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-  }
-
-  export type CartItemCreateOrConnectWithoutCartInput = {
-    where: CartItemWhereUniqueInput
-    create: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput>
-  }
-
-  export type CartItemCreateManyCartInputEnvelope = {
-    data: CartItemCreateManyCartInput | CartItemCreateManyCartInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ThemeSaleCreateWithoutCartInput = {
-    id?: string
-    productId: string
-    salePrice: Decimal | DecimalJsLike | number | string
-    designerEarning: Decimal | DecimalJsLike | number | string
-    companyEarning: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    theme: ThemeCreateNestedOneWithoutSalesInput
-    designer: DesignerCreateNestedOneWithoutSalesInput
-  }
-
-  export type ThemeSaleUncheckedCreateWithoutCartInput = {
-    id?: string
-    themeId: string
-    productId: string
-    salePrice: Decimal | DecimalJsLike | number | string
-    designerEarning: Decimal | DecimalJsLike | number | string
-    companyEarning: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    designerId: string
-  }
-
-  export type ThemeSaleCreateOrConnectWithoutCartInput = {
+  export type ThemeSaleUpsertWithWhereUniqueWithoutCartInput = {
     where: ThemeSaleWhereUniqueInput
+    update: XOR<ThemeSaleUpdateWithoutCartInput, ThemeSaleUncheckedUpdateWithoutCartInput>
     create: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput>
   }
 
-  export type ThemeSaleCreateManyCartInputEnvelope = {
-    data: ThemeSaleCreateManyCartInput | ThemeSaleCreateManyCartInput[]
-    skipDuplicates?: boolean
+  export type ThemeSaleUpdateWithWhereUniqueWithoutCartInput = {
+    where: ThemeSaleWhereUniqueInput
+    data: XOR<ThemeSaleUpdateWithoutCartInput, ThemeSaleUncheckedUpdateWithoutCartInput>
+  }
+
+  export type ThemeSaleUpdateManyWithWhereWithoutCartInput = {
+    where: ThemeSaleScalarWhereInput
+    data: XOR<ThemeSaleUpdateManyMutationInput, ThemeSaleUncheckedUpdateManyWithoutCartInput>
+  }
+
+  export type CartItemUpsertWithWhereUniqueWithoutCartInput = {
+    where: CartItemWhereUniqueInput
+    update: XOR<CartItemUpdateWithoutCartInput, CartItemUncheckedUpdateWithoutCartInput>
+    create: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput>
+  }
+
+  export type CartItemUpdateWithWhereUniqueWithoutCartInput = {
+    where: CartItemWhereUniqueInput
+    data: XOR<CartItemUpdateWithoutCartInput, CartItemUncheckedUpdateWithoutCartInput>
+  }
+
+  export type CartItemUpdateManyWithWhereWithoutCartInput = {
+    where: CartItemScalarWhereInput
+    data: XOR<CartItemUpdateManyMutationInput, CartItemUncheckedUpdateManyWithoutCartInput>
   }
 
   export type UserUpsertWithoutCartInput = {
@@ -28137,11 +30162,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     role?: RoleUpdateOneWithoutUsersNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
-    designer?: DesignerUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCartInput = {
@@ -28150,10 +30175,10 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     roleId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
     designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WeddingUpsertWithoutCartInput = {
@@ -28209,47 +30234,15 @@ export namespace Prisma {
     rsvps?: RsvpUncheckedUpdateManyWithoutWeddingNestedInput
   }
 
-  export type CartItemUpsertWithWhereUniqueWithoutCartInput = {
-    where: CartItemWhereUniqueInput
-    update: XOR<CartItemUpdateWithoutCartInput, CartItemUncheckedUpdateWithoutCartInput>
-    create: XOR<CartItemCreateWithoutCartInput, CartItemUncheckedCreateWithoutCartInput>
-  }
-
-  export type CartItemUpdateWithWhereUniqueWithoutCartInput = {
-    where: CartItemWhereUniqueInput
-    data: XOR<CartItemUpdateWithoutCartInput, CartItemUncheckedUpdateWithoutCartInput>
-  }
-
-  export type CartItemUpdateManyWithWhereWithoutCartInput = {
-    where: CartItemScalarWhereInput
-    data: XOR<CartItemUpdateManyMutationInput, CartItemUncheckedUpdateManyWithoutCartInput>
-  }
-
-  export type ThemeSaleUpsertWithWhereUniqueWithoutCartInput = {
-    where: ThemeSaleWhereUniqueInput
-    update: XOR<ThemeSaleUpdateWithoutCartInput, ThemeSaleUncheckedUpdateWithoutCartInput>
-    create: XOR<ThemeSaleCreateWithoutCartInput, ThemeSaleUncheckedCreateWithoutCartInput>
-  }
-
-  export type ThemeSaleUpdateWithWhereUniqueWithoutCartInput = {
-    where: ThemeSaleWhereUniqueInput
-    data: XOR<ThemeSaleUpdateWithoutCartInput, ThemeSaleUncheckedUpdateWithoutCartInput>
-  }
-
-  export type ThemeSaleUpdateManyWithWhereWithoutCartInput = {
-    where: ThemeSaleScalarWhereInput
-    data: XOR<ThemeSaleUpdateManyMutationInput, ThemeSaleUncheckedUpdateManyWithoutCartInput>
-  }
-
   export type CartCreateWithoutItemsInput = {
     id?: string
     status?: $Enums.CartStatus
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
     user: UserCreateNestedOneWithoutCartInput
     wedding?: WeddingCreateNestedOneWithoutCartInput
-    themeSales?: ThemeSaleCreateNestedManyWithoutCartInput
   }
 
   export type CartUncheckedCreateWithoutItemsInput = {
@@ -28276,8 +30269,8 @@ export namespace Prisma {
     description?: string | null
     imageUrl?: string | null
     createdAt?: Date | string
-    theme?: ThemeCreateNestedOneWithoutProductsInput
     song?: SongCreateNestedOneWithoutProductsInput
+    theme?: ThemeCreateNestedOneWithoutProductsInput
   }
 
   export type ProductUncheckedCreateWithoutCartItemsInput = {
@@ -28314,9 +30307,9 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    themeSales?: ThemeSaleUpdateManyWithoutCartNestedInput
     user?: UserUpdateOneRequiredWithoutCartNestedInput
     wedding?: WeddingUpdateOneWithoutCartNestedInput
-    themeSales?: ThemeSaleUpdateManyWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateWithoutItemsInput = {
@@ -28349,8 +30342,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    theme?: ThemeUpdateOneWithoutProductsNestedInput
     song?: SongUpdateOneWithoutProductsNestedInput
+    theme?: ThemeUpdateOneWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCartItemsInput = {
@@ -28370,10 +30363,10 @@ export namespace Prisma {
     email: string
     password: string
     createdAt?: Date | string
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     role?: RoleCreateNestedOneWithoutUsersInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
   }
 
@@ -28383,9 +30376,9 @@ export namespace Prisma {
     password: string
     roleId?: number | null
     createdAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -28401,13 +30394,13 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
+    sales?: ThemeSaleCreateNestedManyWithoutThemeInput
     weddings?: WeddingCreateNestedManyWithoutThemeInput
     products?: ProductCreateNestedManyWithoutThemeInput
-    sales?: ThemeSaleCreateNestedManyWithoutThemeInput
   }
 
   export type ThemeUncheckedCreateWithoutDesignerInput = {
@@ -28417,13 +30410,13 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
+    sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutThemeInput
     products?: ProductUncheckedCreateNestedManyWithoutThemeInput
-    sales?: ThemeSaleUncheckedCreateNestedManyWithoutThemeInput
   }
 
   export type ThemeCreateOrConnectWithoutDesignerInput = {
@@ -28443,8 +30436,8 @@ export namespace Prisma {
     designerEarning: Decimal | DecimalJsLike | number | string
     companyEarning: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
-    theme: ThemeCreateNestedOneWithoutSalesInput
     cart: CartCreateNestedOneWithoutThemeSalesInput
+    theme: ThemeCreateNestedOneWithoutSalesInput
   }
 
   export type ThemeSaleUncheckedCreateWithoutDesignerInput = {
@@ -28468,6 +30461,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type WithdrawalRequestCreateWithoutDesignerInput = {
+    id?: string
+    requestNumber?: number
+    amount: Decimal | DecimalJsLike | number | string
+    status?: $Enums.WithdrawalStatus
+    approvedAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    approvedAt?: Date | string | null
+    cancelledAt?: Date | string | null
+  }
+
+  export type WithdrawalRequestUncheckedCreateWithoutDesignerInput = {
+    id?: string
+    requestNumber?: number
+    amount: Decimal | DecimalJsLike | number | string
+    status?: $Enums.WithdrawalStatus
+    approvedAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    approvedAt?: Date | string | null
+    cancelledAt?: Date | string | null
+  }
+
+  export type WithdrawalRequestCreateOrConnectWithoutDesignerInput = {
+    where: WithdrawalRequestWhereUniqueInput
+    create: XOR<WithdrawalRequestCreateWithoutDesignerInput, WithdrawalRequestUncheckedCreateWithoutDesignerInput>
+  }
+
+  export type WithdrawalRequestCreateManyDesignerInputEnvelope = {
+    data: WithdrawalRequestCreateManyDesignerInput | WithdrawalRequestCreateManyDesignerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutDesignerInput = {
     update: XOR<UserUpdateWithoutDesignerInput, UserUncheckedUpdateWithoutDesignerInput>
     create: XOR<UserCreateWithoutDesignerInput, UserUncheckedCreateWithoutDesignerInput>
@@ -28484,10 +30509,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     role?: RoleUpdateOneWithoutUsersNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
   }
 
@@ -28497,9 +30522,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     roleId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -28529,10 +30554,10 @@ export namespace Prisma {
     secondaryColor?: StringNullableFilter<"Theme"> | string | null
     fontFamily?: StringNullableFilter<"Theme"> | string | null
     previewImageUrl?: StringNullableFilter<"Theme"> | string | null
+    createdAt?: DateTimeFilter<"Theme"> | Date | string
     configJson?: StringNullableFilter<"Theme"> | string | null
     designerId?: StringNullableFilter<"Theme"> | string | null
     isPublished?: BoolFilter<"Theme"> | boolean
-    createdAt?: DateTimeFilter<"Theme"> | Date | string
     updatedAt?: DateTimeFilter<"Theme"> | Date | string
   }
 
@@ -28552,66 +30577,35 @@ export namespace Prisma {
     data: XOR<ThemeSaleUpdateManyMutationInput, ThemeSaleUncheckedUpdateManyWithoutDesignerInput>
   }
 
-  export type ThemeCreateWithoutSalesInput = {
-    id?: string
-    name: string
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    fontFamily?: string | null
-    previewImageUrl?: string | null
-    configJson?: string | null
-    isPublished?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designer?: DesignerCreateNestedOneWithoutThemesInput
-    weddings?: WeddingCreateNestedManyWithoutThemeInput
-    products?: ProductCreateNestedManyWithoutThemeInput
+  export type WithdrawalRequestUpsertWithWhereUniqueWithoutDesignerInput = {
+    where: WithdrawalRequestWhereUniqueInput
+    update: XOR<WithdrawalRequestUpdateWithoutDesignerInput, WithdrawalRequestUncheckedUpdateWithoutDesignerInput>
+    create: XOR<WithdrawalRequestCreateWithoutDesignerInput, WithdrawalRequestUncheckedCreateWithoutDesignerInput>
   }
 
-  export type ThemeUncheckedCreateWithoutSalesInput = {
-    id?: string
-    name: string
-    primaryColor?: string | null
-    secondaryColor?: string | null
-    fontFamily?: string | null
-    previewImageUrl?: string | null
-    configJson?: string | null
-    designerId?: string | null
-    isPublished?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    weddings?: WeddingUncheckedCreateNestedManyWithoutThemeInput
-    products?: ProductUncheckedCreateNestedManyWithoutThemeInput
+  export type WithdrawalRequestUpdateWithWhereUniqueWithoutDesignerInput = {
+    where: WithdrawalRequestWhereUniqueInput
+    data: XOR<WithdrawalRequestUpdateWithoutDesignerInput, WithdrawalRequestUncheckedUpdateWithoutDesignerInput>
   }
 
-  export type ThemeCreateOrConnectWithoutSalesInput = {
-    where: ThemeWhereUniqueInput
-    create: XOR<ThemeCreateWithoutSalesInput, ThemeUncheckedCreateWithoutSalesInput>
+  export type WithdrawalRequestUpdateManyWithWhereWithoutDesignerInput = {
+    where: WithdrawalRequestScalarWhereInput
+    data: XOR<WithdrawalRequestUpdateManyMutationInput, WithdrawalRequestUncheckedUpdateManyWithoutDesignerInput>
   }
 
-  export type DesignerCreateWithoutSalesInput = {
-    id?: string
-    name?: string | null
-    bio?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutDesignerInput
-    themes?: ThemeCreateNestedManyWithoutDesignerInput
-  }
-
-  export type DesignerUncheckedCreateWithoutSalesInput = {
-    id?: string
-    userId: string
-    name?: string | null
-    bio?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    themes?: ThemeUncheckedCreateNestedManyWithoutDesignerInput
-  }
-
-  export type DesignerCreateOrConnectWithoutSalesInput = {
-    where: DesignerWhereUniqueInput
-    create: XOR<DesignerCreateWithoutSalesInput, DesignerUncheckedCreateWithoutSalesInput>
+  export type WithdrawalRequestScalarWhereInput = {
+    AND?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
+    OR?: WithdrawalRequestScalarWhereInput[]
+    NOT?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
+    id?: StringFilter<"WithdrawalRequest"> | string
+    requestNumber?: IntFilter<"WithdrawalRequest"> | number
+    designerId?: StringFilter<"WithdrawalRequest"> | string
+    amount?: DecimalFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFilter<"WithdrawalRequest"> | $Enums.WithdrawalStatus
+    approvedAmount?: DecimalNullableFilter<"WithdrawalRequest"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    approvedAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
+    cancelledAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
   }
 
   export type CartCreateWithoutThemeSalesInput = {
@@ -28620,9 +30614,9 @@ export namespace Prisma {
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    items?: CartItemCreateNestedManyWithoutCartInput
     user: UserCreateNestedOneWithoutCartInput
     wedding?: WeddingCreateNestedOneWithoutCartInput
-    items?: CartItemCreateNestedManyWithoutCartInput
   }
 
   export type CartUncheckedCreateWithoutThemeSalesInput = {
@@ -28639,6 +30633,156 @@ export namespace Prisma {
   export type CartCreateOrConnectWithoutThemeSalesInput = {
     where: CartWhereUniqueInput
     create: XOR<CartCreateWithoutThemeSalesInput, CartUncheckedCreateWithoutThemeSalesInput>
+  }
+
+  export type DesignerCreateWithoutSalesInput = {
+    id?: string
+    name?: string | null
+    address?: string | null
+    bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDesignerInput
+    themes?: ThemeCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestCreateNestedManyWithoutDesignerInput
+  }
+
+  export type DesignerUncheckedCreateWithoutSalesInput = {
+    id?: string
+    userId: string
+    name?: string | null
+    address?: string | null
+    bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    themes?: ThemeUncheckedCreateNestedManyWithoutDesignerInput
+    withdrawalRequests?: WithdrawalRequestUncheckedCreateNestedManyWithoutDesignerInput
+  }
+
+  export type DesignerCreateOrConnectWithoutSalesInput = {
+    where: DesignerWhereUniqueInput
+    create: XOR<DesignerCreateWithoutSalesInput, DesignerUncheckedCreateWithoutSalesInput>
+  }
+
+  export type ThemeCreateWithoutSalesInput = {
+    id?: string
+    name: string
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    fontFamily?: string | null
+    previewImageUrl?: string | null
+    createdAt?: Date | string
+    configJson?: string | null
+    isPublished?: boolean
+    updatedAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutThemesInput
+    weddings?: WeddingCreateNestedManyWithoutThemeInput
+    products?: ProductCreateNestedManyWithoutThemeInput
+  }
+
+  export type ThemeUncheckedCreateWithoutSalesInput = {
+    id?: string
+    name: string
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    fontFamily?: string | null
+    previewImageUrl?: string | null
+    createdAt?: Date | string
+    configJson?: string | null
+    designerId?: string | null
+    isPublished?: boolean
+    updatedAt?: Date | string
+    weddings?: WeddingUncheckedCreateNestedManyWithoutThemeInput
+    products?: ProductUncheckedCreateNestedManyWithoutThemeInput
+  }
+
+  export type ThemeCreateOrConnectWithoutSalesInput = {
+    where: ThemeWhereUniqueInput
+    create: XOR<ThemeCreateWithoutSalesInput, ThemeUncheckedCreateWithoutSalesInput>
+  }
+
+  export type CartUpsertWithoutThemeSalesInput = {
+    update: XOR<CartUpdateWithoutThemeSalesInput, CartUncheckedUpdateWithoutThemeSalesInput>
+    create: XOR<CartCreateWithoutThemeSalesInput, CartUncheckedCreateWithoutThemeSalesInput>
+    where?: CartWhereInput
+  }
+
+  export type CartUpdateToOneWithWhereWithoutThemeSalesInput = {
+    where?: CartWhereInput
+    data: XOR<CartUpdateWithoutThemeSalesInput, CartUncheckedUpdateWithoutThemeSalesInput>
+  }
+
+  export type CartUpdateWithoutThemeSalesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumCartStatusFieldUpdateOperationsInput | $Enums.CartStatus
+    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: CartItemUpdateManyWithoutCartNestedInput
+    user?: UserUpdateOneRequiredWithoutCartNestedInput
+    wedding?: WeddingUpdateOneWithoutCartNestedInput
+  }
+
+  export type CartUncheckedUpdateWithoutThemeSalesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    weddingId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCartStatusFieldUpdateOperationsInput | $Enums.CartStatus
+    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
+  }
+
+  export type DesignerUpsertWithoutSalesInput = {
+    update: XOR<DesignerUpdateWithoutSalesInput, DesignerUncheckedUpdateWithoutSalesInput>
+    create: XOR<DesignerCreateWithoutSalesInput, DesignerUncheckedCreateWithoutSalesInput>
+    where?: DesignerWhereInput
+  }
+
+  export type DesignerUpdateToOneWithWhereWithoutSalesInput = {
+    where?: DesignerWhereInput
+    data: XOR<DesignerUpdateWithoutSalesInput, DesignerUncheckedUpdateWithoutSalesInput>
+  }
+
+  export type DesignerUpdateWithoutSalesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDesignerNestedInput
+    themes?: ThemeUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUpdateManyWithoutDesignerNestedInput
+  }
+
+  export type DesignerUncheckedUpdateWithoutSalesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    themes?: ThemeUncheckedUpdateManyWithoutDesignerNestedInput
+    withdrawalRequests?: WithdrawalRequestUncheckedUpdateManyWithoutDesignerNestedInput
   }
 
   export type ThemeUpsertWithoutSalesInput = {
@@ -28659,9 +30803,9 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     designer?: DesignerUpdateOneWithoutThemesNestedInput
     weddings?: WeddingUpdateManyWithoutThemeNestedInput
@@ -28675,77 +30819,108 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     designerId?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     weddings?: WeddingUncheckedUpdateManyWithoutThemeNestedInput
     products?: ProductUncheckedUpdateManyWithoutThemeNestedInput
   }
 
-  export type DesignerUpsertWithoutSalesInput = {
-    update: XOR<DesignerUpdateWithoutSalesInput, DesignerUncheckedUpdateWithoutSalesInput>
-    create: XOR<DesignerCreateWithoutSalesInput, DesignerUncheckedCreateWithoutSalesInput>
+  export type DesignerCreateWithoutWithdrawalRequestsInput = {
+    id?: string
+    name?: string | null
+    address?: string | null
+    bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDesignerInput
+    themes?: ThemeCreateNestedManyWithoutDesignerInput
+    sales?: ThemeSaleCreateNestedManyWithoutDesignerInput
+  }
+
+  export type DesignerUncheckedCreateWithoutWithdrawalRequestsInput = {
+    id?: string
+    userId: string
+    name?: string | null
+    address?: string | null
+    bio?: string | null
+    walletBalance?: Decimal | DecimalJsLike | number | string
+    bankName?: string | null
+    accountOwnerName?: string | null
+    accountNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    themes?: ThemeUncheckedCreateNestedManyWithoutDesignerInput
+    sales?: ThemeSaleUncheckedCreateNestedManyWithoutDesignerInput
+  }
+
+  export type DesignerCreateOrConnectWithoutWithdrawalRequestsInput = {
+    where: DesignerWhereUniqueInput
+    create: XOR<DesignerCreateWithoutWithdrawalRequestsInput, DesignerUncheckedCreateWithoutWithdrawalRequestsInput>
+  }
+
+  export type DesignerUpsertWithoutWithdrawalRequestsInput = {
+    update: XOR<DesignerUpdateWithoutWithdrawalRequestsInput, DesignerUncheckedUpdateWithoutWithdrawalRequestsInput>
+    create: XOR<DesignerCreateWithoutWithdrawalRequestsInput, DesignerUncheckedCreateWithoutWithdrawalRequestsInput>
     where?: DesignerWhereInput
   }
 
-  export type DesignerUpdateToOneWithWhereWithoutSalesInput = {
+  export type DesignerUpdateToOneWithWhereWithoutWithdrawalRequestsInput = {
     where?: DesignerWhereInput
-    data: XOR<DesignerUpdateWithoutSalesInput, DesignerUncheckedUpdateWithoutSalesInput>
+    data: XOR<DesignerUpdateWithoutWithdrawalRequestsInput, DesignerUncheckedUpdateWithoutWithdrawalRequestsInput>
   }
 
-  export type DesignerUpdateWithoutSalesInput = {
+  export type DesignerUpdateWithoutWithdrawalRequestsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutDesignerNestedInput
     themes?: ThemeUpdateManyWithoutDesignerNestedInput
+    sales?: ThemeSaleUpdateManyWithoutDesignerNestedInput
   }
 
-  export type DesignerUncheckedUpdateWithoutSalesInput = {
+  export type DesignerUncheckedUpdateWithoutWithdrawalRequestsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    walletBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountOwnerName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     themes?: ThemeUncheckedUpdateManyWithoutDesignerNestedInput
+    sales?: ThemeSaleUncheckedUpdateManyWithoutDesignerNestedInput
   }
 
-  export type CartUpsertWithoutThemeSalesInput = {
-    update: XOR<CartUpdateWithoutThemeSalesInput, CartUncheckedUpdateWithoutThemeSalesInput>
-    create: XOR<CartCreateWithoutThemeSalesInput, CartUncheckedCreateWithoutThemeSalesInput>
-    where?: CartWhereInput
+  export type PasswordResetCreateManyUserInput = {
+    id?: string
+    resetToken: string
+    expiresAt: Date | string
+    used?: boolean
+    createdAt?: Date | string
   }
 
-  export type CartUpdateToOneWithWhereWithoutThemeSalesInput = {
-    where?: CartWhereInput
-    data: XOR<CartUpdateWithoutThemeSalesInput, CartUncheckedUpdateWithoutThemeSalesInput>
-  }
-
-  export type CartUpdateWithoutThemeSalesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumCartStatusFieldUpdateOperationsInput | $Enums.CartStatus
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCartNestedInput
-    wedding?: WeddingUpdateOneWithoutCartNestedInput
-    items?: CartItemUpdateManyWithoutCartNestedInput
-  }
-
-  export type CartUncheckedUpdateWithoutThemeSalesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    weddingId?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumCartStatusFieldUpdateOperationsInput | $Enums.CartStatus
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
+  export type SessionCreateManyUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
   }
 
   export type WeddingCreateManyUserInput = {
@@ -28765,21 +30940,6 @@ export namespace Prisma {
     isExpired?: boolean
   }
 
-  export type SessionCreateManyUserInput = {
-    id?: string
-    token: string
-    expiresAt: Date | string
-    createdAt?: Date | string
-  }
-
-  export type PasswordResetCreateManyUserInput = {
-    id?: string
-    resetToken: string
-    expiresAt: Date | string
-    used?: boolean
-    createdAt?: Date | string
-  }
-
   export type CartCreateManyUserInput = {
     id?: string
     weddingId?: string | null
@@ -28787,6 +30947,51 @@ export namespace Prisma {
     total?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type PasswordResetUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resetToken?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasswordResetUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resetToken?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasswordResetUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resetToken?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type WeddingUpdateWithoutUserInput = {
@@ -28805,9 +31010,9 @@ export namespace Prisma {
     donations?: DonationUpdateManyWithoutWeddingNestedInput
     galleryImages?: GalleryImageUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     song?: SongUpdateOneWithoutWeddingsNestedInput
     theme?: ThemeUpdateOneWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutUserInput = {
@@ -28848,60 +31053,15 @@ export namespace Prisma {
     isExpired?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type SessionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    token?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    token?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    token?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PasswordResetUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    resetToken?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    used?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PasswordResetUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    resetToken?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    used?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PasswordResetUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    resetToken?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    used?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type CartUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumCartStatusFieldUpdateOperationsInput | $Enums.CartStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    wedding?: WeddingUpdateOneWithoutCartNestedInput
-    items?: CartItemUpdateManyWithoutCartNestedInput
     themeSales?: ThemeSaleUpdateManyWithoutCartNestedInput
+    items?: CartItemUpdateManyWithoutCartNestedInput
+    wedding?: WeddingUpdateOneWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateWithoutUserInput = {
@@ -28911,8 +31071,8 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
     themeSales?: ThemeSaleUncheckedUpdateManyWithoutCartNestedInput
+    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateManyWithoutUserInput = {
@@ -28936,11 +31096,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
-    cart?: CartUpdateManyWithoutUserNestedInput
     designer?: DesignerUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUpdateManyWithoutUserNestedInput
+    cart?: CartUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -28948,11 +31108,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
-    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
     designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutRoleInput = {
@@ -29093,9 +31253,9 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCartNestedInput
-    items?: CartItemUpdateManyWithoutCartNestedInput
     themeSales?: ThemeSaleUpdateManyWithoutCartNestedInput
+    items?: CartItemUpdateManyWithoutCartNestedInput
+    user?: UserUpdateOneRequiredWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateWithoutWeddingInput = {
@@ -29105,8 +31265,8 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
     themeSales?: ThemeSaleUncheckedUpdateManyWithoutCartNestedInput
+    items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateManyWithoutWeddingInput = {
@@ -29116,6 +31276,17 @@ export namespace Prisma {
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ThemeSaleCreateManyThemeInput = {
+    id?: string
+    productId: string
+    cartId: string
+    salePrice: Decimal | DecimalJsLike | number | string
+    designerEarning: Decimal | DecimalJsLike | number | string
+    companyEarning: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    designerId: string
   }
 
   export type WeddingCreateManyThemeInput = {
@@ -29146,15 +31317,37 @@ export namespace Prisma {
     songId?: string | null
   }
 
-  export type ThemeSaleCreateManyThemeInput = {
-    id?: string
-    productId: string
-    cartId: string
-    salePrice: Decimal | DecimalJsLike | number | string
-    designerEarning: Decimal | DecimalJsLike | number | string
-    companyEarning: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-    designerId: string
+  export type ThemeSaleUpdateWithoutThemeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cart?: CartUpdateOneRequiredWithoutThemeSalesNestedInput
+    designer?: DesignerUpdateOneRequiredWithoutSalesNestedInput
+  }
+
+  export type ThemeSaleUncheckedUpdateWithoutThemeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    cartId?: StringFieldUpdateOperationsInput | string
+    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designerId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ThemeSaleUncheckedUpdateManyWithoutThemeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    cartId?: StringFieldUpdateOperationsInput | string
+    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designerId?: StringFieldUpdateOperationsInput | string
   }
 
   export type WeddingUpdateWithoutThemeInput = {
@@ -29173,9 +31366,9 @@ export namespace Prisma {
     donations?: DonationUpdateManyWithoutWeddingNestedInput
     galleryImages?: GalleryImageUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     song?: SongUpdateOneWithoutWeddingsNestedInput
     user?: UserUpdateOneRequiredWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutThemeInput = {
@@ -29224,8 +31417,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    song?: SongUpdateOneWithoutProductsNestedInput
     cartItems?: CartItemUpdateManyWithoutProductNestedInput
+    song?: SongUpdateOneWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutThemeInput = {
@@ -29249,39 +31442,6 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     songId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type ThemeSaleUpdateWithoutThemeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    productId?: StringFieldUpdateOperationsInput | string
-    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designer?: DesignerUpdateOneRequiredWithoutSalesNestedInput
-    cart?: CartUpdateOneRequiredWithoutThemeSalesNestedInput
-  }
-
-  export type ThemeSaleUncheckedUpdateWithoutThemeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    productId?: StringFieldUpdateOperationsInput | string
-    cartId?: StringFieldUpdateOperationsInput | string
-    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designerId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type ThemeSaleUncheckedUpdateManyWithoutThemeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    productId?: StringFieldUpdateOperationsInput | string
-    cartId?: StringFieldUpdateOperationsInput | string
-    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designerId?: StringFieldUpdateOperationsInput | string
   }
 
   export type WeddingCreateManySongInput = {
@@ -29328,9 +31488,9 @@ export namespace Prisma {
     donations?: DonationUpdateManyWithoutWeddingNestedInput
     galleryImages?: GalleryImageUpdateManyWithoutWeddingNestedInput
     rsvps?: RsvpUpdateManyWithoutWeddingNestedInput
-    cart?: CartUpdateManyWithoutWeddingNestedInput
     theme?: ThemeUpdateOneWithoutWeddingsNestedInput
     user?: UserUpdateOneRequiredWithoutWeddingsNestedInput
+    cart?: CartUpdateManyWithoutWeddingNestedInput
   }
 
   export type WeddingUncheckedUpdateWithoutSongInput = {
@@ -29379,8 +31539,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    theme?: ThemeUpdateOneWithoutProductsNestedInput
     cartItems?: CartItemUpdateManyWithoutProductNestedInput
+    theme?: ThemeUpdateOneWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutSongInput = {
@@ -29482,14 +31642,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CartItemCreateManyCartInput = {
-    id?: string
-    productId: string
-    quantity?: number
-    price?: Decimal | DecimalJsLike | number | string
-    createdAt?: Date | string
-  }
-
   export type ThemeSaleCreateManyCartInput = {
     id?: string
     themeId: string
@@ -29499,6 +31651,47 @@ export namespace Prisma {
     companyEarning: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     designerId: string
+  }
+
+  export type CartItemCreateManyCartInput = {
+    id?: string
+    productId: string
+    quantity?: number
+    price?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+  }
+
+  export type ThemeSaleUpdateWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneRequiredWithoutSalesNestedInput
+    theme?: ThemeUpdateOneRequiredWithoutSalesNestedInput
+  }
+
+  export type ThemeSaleUncheckedUpdateWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    themeId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designerId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ThemeSaleUncheckedUpdateManyWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    themeId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designerId?: StringFieldUpdateOperationsInput | string
   }
 
   export type CartItemUpdateWithoutCartInput = {
@@ -29525,39 +31718,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ThemeSaleUpdateWithoutCartInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    productId?: StringFieldUpdateOperationsInput | string
-    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    theme?: ThemeUpdateOneRequiredWithoutSalesNestedInput
-    designer?: DesignerUpdateOneRequiredWithoutSalesNestedInput
-  }
-
-  export type ThemeSaleUncheckedUpdateWithoutCartInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    themeId?: StringFieldUpdateOperationsInput | string
-    productId?: StringFieldUpdateOperationsInput | string
-    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designerId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type ThemeSaleUncheckedUpdateManyWithoutCartInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    themeId?: StringFieldUpdateOperationsInput | string
-    productId?: StringFieldUpdateOperationsInput | string
-    salePrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designerId?: StringFieldUpdateOperationsInput | string
-  }
-
   export type ThemeCreateManyDesignerInput = {
     id?: string
     name: string
@@ -29565,9 +31725,9 @@ export namespace Prisma {
     secondaryColor?: string | null
     fontFamily?: string | null
     previewImageUrl?: string | null
+    createdAt?: Date | string
     configJson?: string | null
     isPublished?: boolean
-    createdAt?: Date | string
     updatedAt?: Date | string
   }
 
@@ -29582,6 +31742,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type WithdrawalRequestCreateManyDesignerInput = {
+    id?: string
+    requestNumber?: number
+    amount: Decimal | DecimalJsLike | number | string
+    status?: $Enums.WithdrawalStatus
+    approvedAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    approvedAt?: Date | string | null
+    cancelledAt?: Date | string | null
+  }
+
   export type ThemeUpdateWithoutDesignerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -29589,13 +31760,13 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
     weddings?: WeddingUpdateManyWithoutThemeNestedInput
     products?: ProductUpdateManyWithoutThemeNestedInput
-    sales?: ThemeSaleUpdateManyWithoutThemeNestedInput
   }
 
   export type ThemeUncheckedUpdateWithoutDesignerInput = {
@@ -29605,13 +31776,13 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutThemeNestedInput
     products?: ProductUncheckedUpdateManyWithoutThemeNestedInput
-    sales?: ThemeSaleUncheckedUpdateManyWithoutThemeNestedInput
   }
 
   export type ThemeUncheckedUpdateManyWithoutDesignerInput = {
@@ -29621,9 +31792,9 @@ export namespace Prisma {
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
     previewImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     configJson?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -29634,8 +31805,8 @@ export namespace Prisma {
     designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    theme?: ThemeUpdateOneRequiredWithoutSalesNestedInput
     cart?: CartUpdateOneRequiredWithoutThemeSalesNestedInput
+    theme?: ThemeUpdateOneRequiredWithoutSalesNestedInput
   }
 
   export type ThemeSaleUncheckedUpdateWithoutDesignerInput = {
@@ -29658,6 +31829,38 @@ export namespace Prisma {
     designerEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     companyEarning?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalRequestUpdateWithoutDesignerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type WithdrawalRequestUncheckedUpdateWithoutDesignerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestNumber?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type WithdrawalRequestUncheckedUpdateManyWithoutDesignerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestNumber?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    approvedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 

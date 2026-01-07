@@ -34,20 +34,28 @@ type LoginFormValues = z.infer<typeof formSchema>
 export function DesignerLoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get("redirect")
-  const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/designer/dashboard"
 
-  const form = useForm<LoginFormValues>({
+  const form = useForm({
     defaultValues: {
       email: "",
       password: ""
-    },
+    } as LoginFormValues,
     onSubmit: async ({ value }) => {
       // Validate with zod
       const validationResult = formSchema.safeParse(value)
       if (!validationResult.success) {
         return
       }
+      
+      // Get redirect URL from current search params (inside onSubmit to get latest value)
+      const redirect = searchParams.get("redirect")
+      let decodedRedirect = redirect ? decodeURIComponent(redirect) : "/designer/dashboard"
+      // Ensure it starts with /
+      if (!decodedRedirect.startsWith("/")) {
+        decodedRedirect = "/" + decodedRedirect
+      }
+      console.log("Login attempt - Redirect URL:", decodedRedirect, "from param:", redirect)
+      
       try {
         const response = await axios.post("/api/auth/designer/login", {
           email: validationResult.data.email,
@@ -56,11 +64,28 @@ export function DesignerLoginForm() {
           headers: { "Content-Type": "application/json" }
         })
 
-        if (response.status === 200) {
+        console.log("Login response:", response.status, response.data)
+        
+        if (response.status === 200 && response.data) {
           toast.success("Login successful")
-          router.push(decodedRedirect)
+          
+          // Use redirect URL from response if available, otherwise use decodedRedirect
+          const redirectUrl = response.data.redirect || decodedRedirect
+          console.log("Login successful, redirecting to:", redirectUrl)
+          
+          // Wait longer to ensure cookie is processed by browser
+          // The cookie is set via Set-Cookie header, browser needs time to process it
+          setTimeout(() => {
+            console.log("Executing redirect now to:", redirectUrl)
+            // Use window.location.replace to avoid adding to history
+            window.location.replace(redirectUrl)
+          }, 1500)
+        } else {
+          console.error("Unexpected response:", response)
+          toast.error("Login failed. Please try again.")
         }
       } catch (error: any) {
+        console.error("Login error:", error)
         const message = error?.response?.data?.error || "Invalid email or password"
         toast.error(message)
       }
@@ -89,7 +114,9 @@ export function DesignerLoginForm() {
                 validators={{
                   onChange: ({ value }) => {
                     const result = formSchema.shape.email.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstIssue = result.error.issues?.[0]
+                    return firstIssue?.message || "Invalid email"
                   },
                 }}
               >
@@ -107,7 +134,7 @@ export function DesignerLoginForm() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -118,7 +145,9 @@ export function DesignerLoginForm() {
                 validators={{
                   onChange: ({ value }) => {
                     const result = formSchema.shape.password.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstIssue = result.error.issues?.[0]
+                    return firstIssue?.message || "Invalid password"
                   },
                 }}
               >
@@ -136,7 +165,7 @@ export function DesignerLoginForm() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}

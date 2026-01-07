@@ -19,10 +19,8 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email"
-  }).min(2, {
-    message: "Email is required"
+  username: z.string().min(1, {
+    message: "Username is required"
   }),
   password: z.string().min(1, {
     message: "Please enter your password"
@@ -39,7 +37,7 @@ export function AdminLoginForm() {
 
   const form = useForm<LoginFormValues>({
     defaultValues: {
-      email: "",
+      username: "",
       password: ""
     },
     onSubmit: async ({ value }) => {
@@ -49,7 +47,7 @@ export function AdminLoginForm() {
       }
       try {
         const response = await axios.post("/api/auth/admin/login", {
-          email: validationResult.data.email,
+          username: validationResult.data.username,
           password: validationResult.data.password,
         }, {
           headers: { "Content-Type": "application/json" }
@@ -60,7 +58,7 @@ export function AdminLoginForm() {
           router.push(decodedRedirect)
         }
       } catch (error: any) {
-        const message = error?.response?.data?.error || "Invalid email or password"
+        const message = error?.response?.data?.error || "Invalid username or password"
         toast.error(message)
       }
     },
@@ -84,29 +82,31 @@ export function AdminLoginForm() {
               </div>
               
               <form.Field
-                name="email"
+                name="username"
                 validators={{
                   onChange: ({ value }) => {
-                    const result = formSchema.shape.email.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    const result = formSchema.shape.username.safeParse(value)
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid username"
                   },
                 }}
               >
                 {(field) => (
                   <Field data-invalid={field.state.meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Username</FieldLabel>
                     <Input
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
-                      type="email"
-                      autoComplete="email"
+                      type="text"
+                      autoComplete="username"
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -117,7 +117,9 @@ export function AdminLoginForm() {
                 validators={{
                   onChange: ({ value }) => {
                     const result = formSchema.shape.password.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid password"
                   },
                 }}
               >
@@ -135,7 +137,7 @@ export function AdminLoginForm() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -146,10 +148,6 @@ export function AdminLoginForm() {
                   {form.state.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
               </Field>
-              
-              <FieldDescription className="text-center">
-                Don&apos;t have an account? <a href="/admin/sign-up">Sign up</a>
-              </FieldDescription>
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">

@@ -19,6 +19,9 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 const SignUpFormSchema = z.object({
+  fullName: z.string().min(2, {
+    message: "Full name must be at least 2 characters"
+  }),
   email: z.string().email({
     message: "Please enter a valid email"
   }).min(2, {
@@ -29,6 +32,9 @@ const SignUpFormSchema = z.object({
   }),
   confirmPassword: z.string().min(6, {
     message: "Please confirm your password"
+  }),
+  address: z.string().min(5, {
+    message: "Address must be at least 5 characters"
   })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
@@ -45,9 +51,11 @@ export function DesignerSignUpForm() {
 
   const form = useForm<SignUpFormValues>({
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      address: ""
     },
     onSubmit: async ({ value }) => {
       const validationResult = SignUpFormSchema.safeParse(value)
@@ -57,8 +65,10 @@ export function DesignerSignUpForm() {
 
       try {
         const response = await axios.post("/api/sign-up/designer", {
+          fullName: validationResult.data.fullName,
           email: validationResult.data.email,
-          password: validationResult.data.password
+          password: validationResult.data.password,
+          address: validationResult.data.address
         }, {
           headers: { "Content-Type": "application/json" }
         })
@@ -92,11 +102,44 @@ export function DesignerSignUpForm() {
               </div>
               
               <form.Field
+                name="fullName"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = SignUpFormSchema.shape.fullName.safeParse(value)
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid full name"
+                  },
+                }}
+              >
+                {(field) => (
+                  <Field data-invalid={field.state.meta.errors.length > 0}>
+                    <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      type="text"
+                      autoComplete="name"
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
+
+              <form.Field
                 name="email"
                 validators={{
                   onChange: ({ value }) => {
                     const result = SignUpFormSchema.shape.email.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid email"
                   },
                 }}
               >
@@ -114,7 +157,7 @@ export function DesignerSignUpForm() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -125,7 +168,9 @@ export function DesignerSignUpForm() {
                 validators={{
                   onChange: ({ value }) => {
                     const result = SignUpFormSchema.shape.password.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid password"
                   },
                 }}
               >
@@ -143,7 +188,7 @@ export function DesignerSignUpForm() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -152,13 +197,16 @@ export function DesignerSignUpForm() {
               <form.Field
                 name="confirmPassword"
                 validators={{
-                  onChange: ({ value, formApi }) => {
-                    const password = formApi.getFieldValue("password")
-                    if (value !== password) {
+                  onChange: ({ value }) => {
+                    // Get password value from form state directly
+                    const password = form.state.values.password
+                    if (value && password && value !== password) {
                       return "Passwords do not match"
                     }
                     const result = SignUpFormSchema.shape.confirmPassword.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid password confirmation"
                   },
                 }}
               >
@@ -176,7 +224,38 @@ export function DesignerSignUpForm() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
+
+              <form.Field
+                name="address"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = SignUpFormSchema.shape.address.safeParse(value)
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid address"
+                  },
+                }}
+              >
+                {(field) => (
+                  <Field data-invalid={field.state.meta.errors.length > 0}>
+                    <FieldLabel htmlFor={field.name}>Address</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      type="text"
+                      autoComplete="street-address"
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -209,4 +288,5 @@ export function DesignerSignUpForm() {
     </div>
   )
 }
+
 

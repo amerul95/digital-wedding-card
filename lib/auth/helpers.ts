@@ -8,24 +8,37 @@ const JWT_SECRET = process.env.JWT_SECRET || ""
 
 export async function signIn(
   route: "client" | "designer" | "admin",
-  email: string,
+  emailOrUsername: string,
   password: string
 ) {
   try {
+    // Validate JWT_SECRET is set
+    if (!JWT_SECRET || JWT_SECRET === "") {
+      throw new Error("JWT_SECRET is not configured. Please add JWT_SECRET to your .env file.")
+    }
+
+    // For admin route, username is stored in the email field
+    // For other routes, use email as normal
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: emailOrUsername },
       include: { role: true },
     })
 
     if (!user) {
-      return { success: false, error: "Invalid email or password" }
+      const errorMessage = route === "admin" 
+        ? "Invalid username or password" 
+        : "Invalid email or password"
+      return { success: false, error: errorMessage }
     }
 
     // Verify password
     const isValid = await bcrypt.compare(password, user.password)
 
     if (!isValid) {
-      return { success: false, error: "Invalid email or password" }
+      const errorMessage = route === "admin" 
+        ? "Invalid username or password" 
+        : "Invalid email or password"
+      return { success: false, error: errorMessage }
     }
 
     // Check role based on route
@@ -76,4 +89,5 @@ export async function signIn(
     return { success: false, error: "An error occurred during sign in" }
   }
 }
+
 

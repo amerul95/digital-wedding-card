@@ -1,198 +1,182 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Users, Palette, DollarSign, TrendingUp, Clock } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 
-/**
- * Admin Dashboard Page
- * Displays overview statistics and quick actions for administrators
- * TODO: Replace mock data with actual data fetching
- */
+interface DashboardStats {
+  totalUsers: number
+  totalThemes: number
+  totalSales: number
+  totalRevenue: number
+  totalRevenueAfterDeduction: number
+  totalPendingPayments: number
+}
+
 export default function AdminDashboardPage() {
-  // Mock data - replace with actual data fetching
-  const stats = {
-    totalUsers: 1250,
-    totalOrders: 342,
-    totalThemes: 45,
-    totalDesigners: 12,
-    totalRevenue: 34200.00,
-    monthlyRevenue: 8500.00,
-    pendingOrders: 8
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch('/api/admin/dashboard/stats')
+        if (response.ok) {
+          const data = await response.json()
+          setStats(data)
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchStats()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-4" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-3 w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[#36463A] mb-2">Admin Dashboard</h1>
-        <p className="text-gray-600">Overview of your platform's performance</p>
+        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+        <p className="text-muted-foreground">
+          Overview of your platform statistics
+        </p>
       </div>
 
-      {/* Stats Grid */}
-      <section aria-label="Dashboard statistics" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Users */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 uppercase tracking-wide">Total Users</p>
-              <p className="text-3xl font-bold text-[#36463A] mt-2">{stats.totalUsers.toLocaleString()}</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              All registered users
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Total Orders */}
-        <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 uppercase tracking-wide">Total Orders</p>
-              <p className="text-3xl font-bold text-[#36463A] mt-2">{stats.totalOrders}</p>
-              <p className="text-xs text-gray-600 mt-1">{stats.pendingOrders} pending</p>
-            </div>
-            <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Themes</CardTitle>
+            <Palette className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.totalThemes || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              All created themes
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Total Revenue */}
-        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-lg border border-yellow-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 uppercase tracking-wide">Total Revenue</p>
-              <p className="text-3xl font-bold text-[#36463A] mt-2">${stats.totalRevenue.toLocaleString()}</p>
-              <p className="text-xs text-gray-600 mt-1">${stats.monthlyRevenue.toLocaleString()} this month</p>
-            </div>
-            <div className="w-12 h-12 bg-yellow-200 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.totalSales || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              All theme sales
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Total Themes */}
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 uppercase tracking-wide">Total Themes</p>
-              <p className="text-3xl font-bold text-[#36463A] mt-2">{stats.totalThemes}</p>
-              <p className="text-xs text-gray-600 mt-1">{stats.totalDesigners} designers</p>
-            </div>
-            <div className="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </section>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${(stats?.totalRevenue || 0).toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">
+              Before deduction
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Quick Actions */}
-      <section className="mt-8" aria-label="Quick action links">
-        <h2 className="text-xl font-semibold text-[#36463A] mb-4">Quick Actions</h2>
-        <nav className="grid grid-cols-1 md:grid-cols-3 gap-4" aria-label="Navigation menu">
-          <Link
-            href="/admin/dashboard/users"
-            className="p-6 bg-white border-2 border-[#327442] rounded-lg hover:bg-[#327442] hover:text-white transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#327442] group-hover:bg-white rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-white group-hover:text-[#327442]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg group-hover:text-white">Manage Users</h3>
-                <p className="text-sm text-gray-600 group-hover:text-gray-200">View and manage user accounts</p>
-              </div>
-            </div>
-          </Link>
+      {/* Additional Revenue Stats */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Revenue After Deduction</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${(stats?.totalRevenueAfterDeduction || 0).toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">
+              After approved payments
+            </p>
+          </CardContent>
+        </Card>
 
-          <Link
-            href="/admin/dashboard/orders"
-            className="p-6 bg-white border-2 border-gray-300 rounded-lg hover:border-[#327442] transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gray-200 group-hover:bg-[#327442] rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">View Orders</h3>
-                <p className="text-sm text-gray-600">Monitor and process orders</p>
-              </div>
-            </div>
-          </Link>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Designer Payments</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${(stats?.totalPendingPayments || 0).toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">
+              Awaiting approval
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-          <Link
-            href="/admin/dashboard/themes"
-            className="p-6 bg-white border-2 border-gray-300 rounded-lg hover:border-[#327442] transition-colors group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gray-200 group-hover:bg-[#327442] rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Manage Themes</h3>
-                <p className="text-sm text-gray-600">Review and approve themes</p>
-              </div>
-            </div>
-          </Link>
-        </nav>
-      </section>
+      {/* Additional Content */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Latest platform activities</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">No recent activity</p>
+          </CardContent>
+        </Card>
 
-      {/* Recent Activity */}
-      <section className="mt-8" aria-label="Recent platform activity">
-        <h2 className="text-xl font-semibold text-[#36463A] mb-4">Recent Activity</h2>
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 pb-4 border-b border-gray-200">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <p className="font-medium">New order #342 completed</p>
-                <p className="text-sm text-gray-600">Customer: john@example.com • $100.00 • 1 hour ago</p>
-              </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common administrative tasks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Manage users, themes, and platform settings</p>
             </div>
-            <div className="flex items-center gap-4 pb-4 border-b border-gray-200">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <p className="font-medium">New user registered</p>
-                <p className="text-sm text-gray-600">user@example.com • 2 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <p className="font-medium">Theme "Romantic Rose" approved</p>
-                <p className="text-sm text-gray-600">Designer: designer@example.com • 3 hours ago</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
-
-
-

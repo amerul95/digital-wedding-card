@@ -15,9 +15,26 @@ export async function POST(req: Request) {
       )
     }
 
+    // Get redirect URL from query params if provided
+    const url = new URL(req.url)
+    const redirect = url.searchParams.get("redirect") || "/designer/dashboard"
+    const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/designer/dashboard"
+
+    // Return success response with redirect URL
+    // The cookie is already set by signIn function
     return NextResponse.json(
-      { message: "Login successful", user: result.user },
-      { status: 200 }
+      { 
+        message: "Login successful", 
+        user: result.user,
+        redirect: decodedRedirect
+      },
+      { 
+        status: 200,
+        headers: {
+          // Ensure cookie is set by adding cache control
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        }
+      }
     )
   } catch (error) {
     return NextResponse.json(
@@ -26,4 +43,5 @@ export async function POST(req: Request) {
     )
   }
 }
+
 

@@ -1,188 +1,293 @@
-'use client'
-import React, { useState } from 'react'
+"use client"
 
-// Mock data - replace with actual data fetching
-const mockThemes = [
-  {
-    id: '1',
-    name: 'Romantic Rose',
-    designer: 'designer1@example.com',
-    status: 'published',
-    createdAt: '2024-01-15',
-    sales: 12,
-    revenue: 1200.00
-  },
-  {
-    id: '2',
-    name: 'Elegant Gold',
-    designer: 'designer2@example.com',
-    status: 'published',
-    createdAt: '2024-01-20',
-    sales: 8,
-    revenue: 800.00
-  },
-  {
-    id: '3',
-    name: 'Classic White',
-    designer: 'designer1@example.com',
-    status: 'pending',
-    createdAt: '2024-02-01',
-    sales: 0,
-    revenue: 0.00
-  },
-  {
-    id: '4',
-    name: 'Modern Minimalist',
-    designer: 'designer3@example.com',
-    status: 'published',
-    createdAt: '2024-02-05',
-    sales: 5,
-    revenue: 500.00
-  },
-]
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Palette, CheckCircle, Clock, DollarSign } from 'lucide-react'
+import { toast } from 'sonner'
+
+interface Theme {
+  id: string
+  name: string
+  designer: string
+  status: 'published' | 'pending'
+  createdAt: string
+  sales: number
+  revenue: number
+}
 
 export default function ThemesPage() {
   const [filter, setFilter] = useState<'all' | 'published' | 'pending'>('all')
+  const [themes, setThemes] = useState<Theme[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchThemes() {
+      try {
+        const response = await fetch('/api/admin/themes')
+        if (response.ok) {
+          const data = await response.json()
+          setThemes(data)
+        }
+      } catch (error) {
+        console.error('Error fetching themes:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchThemes()
+  }, [])
 
   const filteredThemes = filter === 'all' 
-    ? mockThemes 
-    : mockThemes.filter(theme => theme.status === filter)
+    ? themes 
+    : themes.filter(theme => theme.status === filter)
 
-  const totalThemes = mockThemes.length
-  const publishedThemes = mockThemes.filter(t => t.status === 'published').length
-  const pendingThemes = mockThemes.filter(t => t.status === 'pending').length
-  const totalRevenue = mockThemes.reduce((sum, theme) => sum + theme.revenue, 0)
+  const totalThemes = themes.length
+  const publishedThemes = themes.filter(t => t.status === 'published').length
+  const pendingThemes = themes.filter(t => t.status === 'pending').length
+  const totalRevenue = themes.reduce((sum, theme) => sum + theme.revenue, 0)
+
+  const handleApprove = async (themeId: string) => {
+    try {
+      const response = await fetch(`/api/admin/themes/${themeId}/approve`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'approve',
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(data.message || 'Theme approved successfully')
+        // Refresh themes list
+        const themesResponse = await fetch('/api/admin/themes')
+        if (themesResponse.ok) {
+          const themesData = await themesResponse.json()
+          setThemes(themesData)
+        }
+      } else {
+        toast.error(data.error || 'Failed to approve theme')
+      }
+    } catch (error) {
+      console.error('Error approving theme:', error)
+      toast.error('An error occurred while approving theme')
+    }
+  }
+
+  const handleReject = async (themeId: string) => {
+    try {
+      const response = await fetch(`/api/admin/themes/${themeId}/approve`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'reject',
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(data.message || 'Theme rejected')
+        // Refresh themes list
+        const themesResponse = await fetch('/api/admin/themes')
+        if (themesResponse.ok) {
+          const themesData = await themesResponse.json()
+          setThemes(themesData)
+        }
+      } else {
+        toast.error(data.error || 'Failed to reject theme')
+      }
+    } catch (error) {
+      console.error('Error rejecting theme:', error)
+      toast.error('An error occurred while rejecting theme')
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-4" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-3 w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#36463A] mb-2">Themes Management</h1>
-          <p className="text-gray-600">Review and manage all themes</p>
+          <h1 className="text-3xl font-bold tracking-tight">Themes Management</h1>
+          <p className="text-muted-foreground">Review and manage all themes</p>
         </div>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <p className="text-sm text-gray-600">Total Themes</p>
-          <p className="text-2xl font-bold text-[#36463A]">{totalThemes}</p>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <p className="text-sm text-gray-600">Published</p>
-          <p className="text-2xl font-bold text-[#36463A]">{publishedThemes}</p>
-        </div>
-        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-          <p className="text-sm text-gray-600">Pending Review</p>
-          <p className="text-2xl font-bold text-[#36463A]">{pendingThemes}</p>
-        </div>
-        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-          <p className="text-sm text-gray-600">Total Revenue</p>
-          <p className="text-2xl font-bold text-[#36463A]">${totalRevenue.toFixed(2)}</p>
-        </div>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Themes</CardTitle>
+            <Palette className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalThemes}</div>
+            <p className="text-xs text-muted-foreground">All created themes</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Published</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{publishedThemes}</div>
+            <p className="text-xs text-muted-foreground">Published themes</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingThemes}</div>
+            <p className="text-xs text-muted-foreground">Awaiting approval</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalRevenue.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">From all themes</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-gray-200">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'all'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          All ({totalThemes})
-        </button>
-        <button
-          onClick={() => setFilter('published')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'published'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Published ({publishedThemes})
-        </button>
-        <button
-          onClick={() => setFilter('pending')}
-          className={`px-4 py-2 font-semibold text-sm transition-colors ${
-            filter === 'pending'
-              ? 'text-[#327442] border-b-2 border-[#327442]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Pending ({pendingThemes})
-        </button>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
+            <TabsList>
+              <TabsTrigger value="all">All ({totalThemes})</TabsTrigger>
+              <TabsTrigger value="published">Published ({publishedThemes})</TabsTrigger>
+              <TabsTrigger value="pending">Pending ({pendingThemes})</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {/* Themes Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Theme Name</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Designer</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sales</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Revenue</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredThemes.map((theme) => (
-                <tr key={theme.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#36463A]">
-                    {theme.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {theme.designer}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      theme.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {theme.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(theme.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {theme.sales}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
-                    ${theme.revenue.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      {theme.status === 'pending' && (
-                        <>
-                          <button className="text-green-600 hover:text-green-800">Approve</button>
-                          <button className="text-red-600 hover:text-red-800">Reject</button>
-                        </>
-                      )}
-                      <button className="text-[#327442] hover:text-[#2d3a2f]">View</button>
-                      <button className="text-gray-600 hover:text-gray-800">Edit</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredThemes.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600">No themes found</p>
-          </div>
-        )}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Themes</CardTitle>
+          <CardDescription>A list of all themes in the system</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Theme Name</TableHead>
+                <TableHead>Designer</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Sales</TableHead>
+                <TableHead>Revenue</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredThemes.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8">
+                    <p className="text-muted-foreground">No themes found</p>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredThemes.map((theme) => (
+                  <TableRow key={theme.id}>
+                    <TableCell className="font-medium">{theme.name}</TableCell>
+                    <TableCell>{theme.designer}</TableCell>
+                    <TableCell>
+                      <Badge variant={theme.status === 'published' ? 'default' : 'secondary'}>
+                        {theme.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{new Date(theme.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>{theme.sales}</TableCell>
+                    <TableCell className="font-semibold">${theme.revenue.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        {theme.status === 'pending' && (
+                          <>
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              onClick={() => handleApprove(theme.id)}
+                            >
+                              Approve
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => handleReject(theme.id)}
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        <Button variant="ghost" size="sm">View</Button>
+                        <Button variant="ghost" size="sm">Edit</Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }
-
-
-

@@ -6,3 +6,4 @@ const handler = NextAuth(createAuthConfig("admin"))
 
 export { handler as GET, handler as POST }
 
+

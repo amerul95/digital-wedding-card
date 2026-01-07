@@ -1,60 +1,46 @@
-'use client'
-import React, { useState } from 'react'
+"use client"
 
-// Mock data - replace with actual data fetching
-const mockEarnings = [
-  {
-    id: '1',
-    themeName: 'Romantic Rose',
-    saleDate: '2024-02-15',
-    salePrice: 100.00,
-    designerEarning: 15.00, // 15%
-    companyEarning: 85.00,  // 85%
-    customerEmail: 'customer1@example.com'
-  },
-  {
-    id: '2',
-    themeName: 'Elegant Gold',
-    saleDate: '2024-02-14',
-    salePrice: 100.00,
-    designerEarning: 15.00,
-    companyEarning: 85.00,
-    customerEmail: 'customer2@example.com'
-  },
-  {
-    id: '3',
-    themeName: 'Romantic Rose',
-    saleDate: '2024-02-13',
-    salePrice: 100.00,
-    designerEarning: 15.00,
-    companyEarning: 85.00,
-    customerEmail: 'customer3@example.com'
-  },
-  {
-    id: '4',
-    themeName: 'Modern Minimalist',
-    saleDate: '2024-02-12',
-    salePrice: 100.00,
-    designerEarning: 15.00,
-    companyEarning: 85.00,
-    customerEmail: 'customer4@example.com'
-  },
-  {
-    id: '5',
-    themeName: 'Elegant Gold',
-    saleDate: '2024-02-10',
-    salePrice: 100.00,
-    designerEarning: 15.00,
-    companyEarning: 85.00,
-    customerEmail: 'customer5@example.com'
-  },
-]
+import * as React from "react"
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Info, DollarSign, TrendingUp, ShoppingCart, Calendar } from "lucide-react"
+
+interface EarningsData {
+  id: string
+  themeName: string
+  saleDate: string
+  salePrice: number
+  designerEarning: number
+  companyEarning: number
+  customerEmail: string
+}
 
 export default function EarningsPage() {
   const [timeRange, setTimeRange] = useState<'all' | 'month' | 'week'>('all')
+  const [earnings, setEarnings] = useState<EarningsData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const totalEarnings = mockEarnings.reduce((sum, sale) => sum + sale.designerEarning, 0)
-  const monthlyEarnings = mockEarnings
+  useEffect(() => {
+    async function fetchEarnings() {
+      try {
+        const response = await fetch('/api/designer/earnings')
+        if (response.ok) {
+          const data = await response.json()
+          setEarnings(data)
+        }
+      } catch (error) {
+        console.error('Error fetching earnings:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchEarnings()
+  }, [])
+
+  const totalEarnings = earnings.reduce((sum, sale) => sum + sale.designerEarning, 0)
+  const monthlyEarnings = earnings
     .filter(sale => {
       const saleDate = new Date(sale.saleDate)
       const now = new Date()
@@ -62,18 +48,18 @@ export default function EarningsPage() {
     })
     .reduce((sum, sale) => sum + sale.designerEarning, 0)
   
-  const totalSales = mockEarnings.length
+  const totalSales = earnings.length
   const averageEarning = totalEarnings / totalSales || 0
 
   const filteredEarnings = timeRange === 'all' 
-    ? mockEarnings 
+    ? earnings 
     : timeRange === 'month'
-    ? mockEarnings.filter(sale => {
+    ? earnings.filter(sale => {
         const saleDate = new Date(sale.saleDate)
         const now = new Date()
         return saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear()
       })
-    : mockEarnings.filter(sale => {
+    : earnings.filter(sale => {
         const saleDate = new Date(sale.saleDate)
         const now = new Date()
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
@@ -81,153 +67,231 @@ export default function EarningsPage() {
       })
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-[#36463A] mb-2">Earnings</h1>
-        <p className="text-gray-600">Track your sales and earnings from theme purchases</p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Earnings</h2>
+          <p className="text-muted-foreground">Track your sales and earnings from theme purchases</p>
+        </div>
       </div>
 
       {/* Earnings Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
-          <p className="text-sm text-gray-600 uppercase tracking-wide mb-2">Total Earnings</p>
-          <p className="text-3xl font-bold text-[#36463A]">${totalEarnings.toFixed(2)}</p>
-          <p className="text-xs text-gray-600 mt-1">All time</p>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <Skeleton className="h-8 w-24 mb-2" />
+            ) : (
+              <>
+                <div className="text-2xl font-bold">${totalEarnings.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">All time</p>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
-          <p className="text-sm text-gray-600 uppercase tracking-wide mb-2">This Month</p>
-          <p className="text-3xl font-bold text-[#36463A]">${monthlyEarnings.toFixed(2)}</p>
-          <p className="text-xs text-gray-600 mt-1">Current month</p>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <Skeleton className="h-8 w-24 mb-2" />
+            ) : (
+              <>
+                <div className="text-2xl font-bold">${monthlyEarnings.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">Current month</p>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
-          <p className="text-sm text-gray-600 uppercase tracking-wide mb-2">Total Sales</p>
-          <p className="text-3xl font-bold text-[#36463A]">{totalSales}</p>
-          <p className="text-xs text-gray-600 mt-1">Theme purchases</p>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <Skeleton className="h-8 w-16 mb-2" />
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{totalSales}</div>
+                <p className="text-xs text-muted-foreground">Theme purchases</p>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
-        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-lg border border-yellow-200">
-          <p className="text-sm text-gray-600 uppercase tracking-wide mb-2">Avg per Sale</p>
-          <p className="text-3xl font-bold text-[#36463A]">${averageEarning.toFixed(2)}</p>
-          <p className="text-xs text-gray-600 mt-1">15% commission</p>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg per Sale</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <Skeleton className="h-8 w-24 mb-2" />
+            ) : (
+              <>
+                <div className="text-2xl font-bold">${averageEarning.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">15% commission</p>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Commission Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>
-            <p className="font-semibold text-blue-900 mb-1">Commission Structure</p>
-            <p className="text-sm text-blue-800">
-              You receive <strong>15%</strong> of each theme sale, while the company receives <strong>85%</strong>. 
-              Earnings are calculated automatically when a customer purchases your theme.
-            </p>
-          </div>
-        </div>
-      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        {/* Commission Info */}
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Commission Structure</CardTitle>
+            <CardDescription>
+              Understanding your earnings breakdown
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium leading-none">
+                  You receive <strong>15%</strong> of each theme sale
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  The company receives <strong>85%</strong>. Earnings are calculated automatically when a customer purchases your theme.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Time Range Filter */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setTimeRange('all')}
-          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
-            timeRange === 'all'
-              ? 'bg-[#327442] text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-          }`}
-        >
-          All Time
-        </button>
-        <button
-          onClick={() => setTimeRange('month')}
-          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
-            timeRange === 'month'
-              ? 'bg-[#327442] text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-          }`}
-        >
-          This Month
-        </button>
-        <button
-          onClick={() => setTimeRange('week')}
-          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
-            timeRange === 'week'
-              ? 'bg-[#327442] text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-          }`}
-        >
-          This Week
-        </button>
+        {/* Time Range Filter */}
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Time Range</CardTitle>
+            <CardDescription>
+              Filter earnings by period
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              <Button
+                onClick={() => setTimeRange('all')}
+                variant={timeRange === 'all' ? 'default' : 'outline'}
+                className="w-full justify-start"
+              >
+                All Time
+              </Button>
+              <Button
+                onClick={() => setTimeRange('month')}
+                variant={timeRange === 'month' ? 'default' : 'outline'}
+                className="w-full justify-start"
+              >
+                This Month
+              </Button>
+              <Button
+                onClick={() => setTimeRange('week')}
+                variant={timeRange === 'week' ? 'default' : 'outline'}
+                className="w-full justify-start"
+              >
+                This Week
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Earnings Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Theme</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sale Price</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Your Earnings (15%)</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Company (85%)</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredEarnings.map((sale) => (
-                <tr key={sale.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(sale.saleDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#36463A]">
-                    {sale.themeName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${sale.salePrice.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
-                    ${sale.designerEarning.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    ${sale.companyEarning.toFixed(2)}
-                  </td>
-                </tr>
+      <Card>
+        <CardHeader>
+          <CardTitle>Earnings History</CardTitle>
+          <CardDescription>
+            Detailed breakdown of your earnings by sale
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-12 w-full" />
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton key={i} className="h-16 w-full" />
               ))}
-            </tbody>
-            {filteredEarnings.length > 0 && (
-              <tfoot className="bg-gray-50 border-t border-gray-200">
-                <tr>
-                  <td colSpan={3} className="px-6 py-4 text-sm font-semibold text-gray-900 text-right">
-                    Total:
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
-                    ${filteredEarnings.reduce((sum, sale) => sum + sale.designerEarning, 0).toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    ${filteredEarnings.reduce((sum, sale) => sum + sale.companyEarning, 0).toFixed(2)}
-                  </td>
-                </tr>
-              </tfoot>
-            )}
-          </table>
-        </div>
-
-        {filteredEarnings.length === 0 && (
-          <div className="text-center py-12">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-gray-600">No earnings found for this period</p>
-          </div>
-        )}
-      </div>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <div className="overflow-x-auto">
+                <table className="w-full caption-bottom text-sm">
+                  <thead>
+                    <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Theme</th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Sale Price</th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Your Earnings</th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Company</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredEarnings.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="h-24 text-center">
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <Info className="h-8 w-8 text-muted-foreground" />
+                            <p className="text-sm text-muted-foreground">No earnings found for this period</p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredEarnings.map((sale) => (
+                        <tr key={sale.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                          <td className="p-4 align-middle">
+                            {new Date(sale.saleDate).toLocaleDateString()}
+                          </td>
+                          <td className="p-4 align-middle font-medium">
+                            {sale.themeName}
+                          </td>
+                          <td className="p-4 align-middle">
+                            ${sale.salePrice.toFixed(2)}
+                          </td>
+                          <td className="p-4 align-middle font-semibold">
+                            ${sale.designerEarning.toFixed(2)}
+                          </td>
+                          <td className="p-4 align-middle text-muted-foreground">
+                            ${sale.companyEarning.toFixed(2)}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                  {filteredEarnings.length > 0 && (
+                    <tfoot>
+                      <tr className="border-t bg-muted/50 font-medium">
+                        <td colSpan={3} className="p-4 align-middle text-right">
+                          Total:
+                        </td>
+                        <td className="p-4 align-middle font-bold">
+                          ${filteredEarnings.reduce((sum, sale) => sum + sale.designerEarning, 0).toFixed(2)}
+                        </td>
+                        <td className="p-4 align-middle text-muted-foreground">
+                          ${filteredEarnings.reduce((sum, sale) => sum + sale.companyEarning, 0).toFixed(2)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
+
 
 
 

@@ -1,16 +1,10 @@
-import type { Metadata } from 'next'
-import ProfileLayout from '@/components/profile/ProfileLayout'
-import ProfileSection from '@/components/profile/ProfileSection'
+import React from 'react'
+import Profile from '@/components/Profile'
 
-export const metadata: Metadata = {
-  title: 'Profile - Wedding Card Creator',
-  description: 'Manage your profile settings and account information.',
-}
-
-export default function ProfilePage() {
+export default function page() {
   return (
-    <ProfileLayout>
-      <ProfileSection />
-    </ProfileLayout>
+    <div>
+      <Profile />
+    </div>
   )
 }
