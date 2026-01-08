@@ -89,6 +89,14 @@ button {
   margin: 0.5rem 0;
 }
 
+/* Gradient text support */
+.ProseMirror [style*="background-clip"] {
+  display: inline-block;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .ProseMirror li {
   margin: 0.25rem 0;
 }

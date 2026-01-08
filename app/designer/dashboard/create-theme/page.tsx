@@ -489,13 +489,29 @@ export default function CreateThemePage() {
                                 <CardTitle>Content Editor</CardTitle>
                                 <CardDescription>Set default content for your theme. Clients can customize these later.</CardDescription>
                             </div>
-                            <Button
-                                onClick={resetEvent}
-                                variant="outline"
-                                className="px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50"
-                            >
-                                Reset to Defaults
-                            </Button>
+                            <div className="flex gap-2">
+                                <Button
+                                    onClick={resetEvent}
+                                    variant="outline"
+                                    className="px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50"
+                                >
+                                    Reset to Defaults
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        // Save current event data to localStorage before navigating
+                                        try {
+                                            localStorage.setItem("ceremony-card-event", JSON.stringify(event));
+                                        } catch (error) {
+                                            console.error("Error saving event data:", error);
+                                        }
+                                        router.push("/designer/preview");
+                                    }}
+                                    className="px-4 py-2 rounded-full border border-[#36463A] text-white bg-[#36463A] text-sm shadow hover:bg-[#2d3a2f]"
+                                >
+                                    Preview
+                                </Button>
+                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>
