@@ -75,23 +75,23 @@ export function Page7Form() {
 
         {/* 3. RSVP Closing Date */}
         <div>
-          <Label>3. RSVP Closing Date</Label>
-          <div className="flex gap-2 items-center mt-2">
-            <div className="flex-1">
-              <DateTimePicker
-                value={event.rsvpClosingDate}
-                onChange={(value) => updateEvent({ rsvpClosingDate: value })}
-                placeholder="Select RSVP closing date and time"
-              />
-            </div>
+          <div className="flex items-center justify-between mb-2">
+            <Label>3. RSVP Closing Date</Label>
             <Button
               type="button"
               variant="outline"
               onClick={() => updateEvent({ rsvpClosingDate: "" })}
+              className="px-3 py-1 rounded-full border border-[#36463A] text-[#36463A] bg-white text-xs shadow hover:bg-gray-50"
             >
               Reset
             </Button>
           </div>
+          <DateTimePicker
+            value={event.rsvpClosingDate}
+            onChange={(value) => updateEvent({ rsvpClosingDate: value })}
+            placeholder="Select RSVP closing date and time"
+            className="mt-2"
+          />
         </div>
 
         {/* 4. RSVP Input */}

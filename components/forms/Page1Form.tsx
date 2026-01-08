@@ -16,21 +16,6 @@ const EFFECTS = [
   { value: "bubbles", label: "Bubbles" },
 ] as const;
 
-const DESIGN_CODES = [
-  "Design A",
-  "Design B",
-  "Design C",
-  "Design D",
-  "Design E",
-  "Design F",
-  "Design G",
-  "Design H",
-  "Design I",
-  "Design J",
-  "Design K",
-  "Design L",
-];
-
 export function Page1Form() {
   const { event, updateEvent } = useEvent();
 
@@ -51,25 +36,9 @@ export function Page1Form() {
           </select>
         </div>
 
-        {/* 2. Design Code */}
-        <div>
-          <Label>2. Design Code</Label>
-          <select
-            value={event.designCode}
-            onChange={(e) => updateEvent({ designCode: e.target.value })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-          >
-            {DESIGN_CODES.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* 3. Opening Style */}
         <div>
-          <Label>3. Opening Style</Label>
+          <Label>2. Opening Style</Label>
           <select
             value={event.openingStyle || event.doorStyle}
             onChange={(e) => {
@@ -90,14 +59,21 @@ export function Page1Form() {
         <div>
           <Label>3a. Door Color</Label>
           <div className="flex gap-2 items-center mt-2">
-            <input
-              type="color"
-              value={event.openingStyleColor || event.doorColor}
-              onChange={(e) => {
-                updateEvent({ openingStyleColor: e.target.value, doorColor: e.target.value });
-              }}
-              className="h-10 w-20 rounded-lg border border-[#36463A] cursor-pointer"
-            />
+            <div className="relative h-10 w-10">
+              <div
+                className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                style={{ backgroundColor: event.openingStyleColor || event.doorColor }}
+              />
+              <input
+                type="color"
+                value={event.openingStyleColor || event.doorColor}
+                onChange={(e) => {
+                  updateEvent({ openingStyleColor: e.target.value, doorColor: e.target.value });
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                style={{ WebkitAppearance: "none", appearance: "none" }}
+              />
+            </div>
             <input
               type="text"
               value={event.openingStyleColor || event.doorColor}
@@ -107,6 +83,31 @@ export function Page1Form() {
               placeholder="#f43f5e"
               className="flex-1 px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
             />
+          </div>
+          {/* Door Opacity Slider */}
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                value={event.doorOpacity ?? 100}
+                onChange={(e) => updateEvent({ doorOpacity: Number(e.target.value) })}
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#36463A]"
+              />
+              <div className="flex items-center gap-2 min-w-[80px]">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={event.doorOpacity ?? 100}
+                  onChange={(e) => updateEvent({ doorOpacity: Number(e.target.value) })}
+                  className="w-16 px-2 py-1 rounded-lg border border-[#36463A] text-sm text-gray-700 text-center focus:outline-none focus:ring-2 focus:ring-[#36463A]"
+                />
+                <span className="text-sm text-[#36463A] font-medium">%</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -134,14 +135,21 @@ export function Page1Form() {
           <div>
             <Label>4a. Effect Color</Label>
             <div className="flex gap-2 items-center mt-2">
-              <input
-                type="color"
-                value={event.animationEffectColor || event.effectColor}
-                onChange={(e) => {
-                  updateEvent({ animationEffectColor: e.target.value, effectColor: e.target.value });
-                }}
-                className="h-10 w-20 rounded-lg border border-[#36463A] cursor-pointer"
-              />
+              <div className="relative h-10 w-10">
+                <div
+                  className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                  style={{ backgroundColor: event.animationEffectColor || event.effectColor }}
+                />
+                <input
+                  type="color"
+                  value={event.animationEffectColor || event.effectColor}
+                  onChange={(e) => {
+                    updateEvent({ animationEffectColor: e.target.value, effectColor: e.target.value });
+                  }}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  style={{ WebkitAppearance: "none", appearance: "none" }}
+                />
+              </div>
               <input
                 type="text"
                 value={event.animationEffectColor || event.effectColor}

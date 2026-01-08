@@ -41,6 +41,7 @@ export type EventData = {
   designCode: string;  // Design code (Design A, B, etc.)
   openingStyle: "swing" | "slide" | "envelope";  // Opening style (door style)
   openingStyleColor: string;  // Door color
+  doorOpacity?: number;  // Door opacity (0-100)
   animationEffect: "none" | "snow" | "petals" | "bubbles";  // Animation & effects
   animationEffectColor: string;  // Effect color
 
@@ -61,9 +62,10 @@ export type EventData = {
 
   // Page 3 - Invitation speech
   openingSpeech: string;  // Opening speech (Greeting with richtexteditor)
-  numberOfOrganizers: "one" | "two" | "others";  // No. of Organizer
-  organizerName1: string;  // Name of organizer 1
-  organizerName2: string;  // Name of organizer 2
+  numberOfOrganizers: "one" | "two" | "others";  // No. of Organizer (legacy, kept for backwards compatibility)
+  organizerName1: string;  // Name of organizer 1 (legacy)
+  organizerName2: string;  // Name of organizer 2 (legacy)
+  organizerNames?: string[];  // Array of organizer names (new implementation)
   speechContent: string;  // Speech (multiline with richtexteditor)
 
   // Page 4 - Location and Navigation
@@ -85,6 +87,7 @@ export type EventData = {
   titleTextFontSize: number;  // Title text font size
   backgroundColor: string;  // Background Color
   sideMargin: number;  // Side margin (range input)
+  uploadedFonts?: Array<{ name: string; url: string; fontFamily: string }>;  // Uploaded font files
 
   // Page 7 - RSVP
   rsvpMode: "rsvp-speech" | "speech-only" | "thirdparty" | "none";  // RSVP Mode
@@ -170,6 +173,7 @@ export const defaultEvent: EventData = {
   designCode: "Design A",
   openingStyle: "swing",
   openingStyleColor: "#f43f5e",
+  doorOpacity: 100,
   animationEffect: "none",
   animationEffectColor: "#f43f5e",
 
@@ -193,6 +197,7 @@ export const defaultEvent: EventData = {
   numberOfOrganizers: "one",
   organizerName1: "",
   organizerName2: "",
+  organizerNames: [""],
   speechContent: "Dengan penuh kesyukuran, kami mempersilakan...",
 
   // Page 4 - Location and Navigation defaults
@@ -214,6 +219,7 @@ export const defaultEvent: EventData = {
   titleTextFontSize: 18,
   backgroundColor: "#ffffff",
   sideMargin: 20,
+  uploadedFonts: [],
 
   // Page 7 - RSVP defaults
   rsvpMode: "rsvp-speech",

@@ -20,85 +20,56 @@ export function Page3Form() {
           />
         </div>
 
-        {/* 2. No. of Organizer */}
+        {/* 2. Name of Organizer */}
         <div>
-          <Label>2. No. of Organizer</Label>
-          <div className="flex gap-4 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="numberOfOrganizers"
-                value="one"
-                checked={event.numberOfOrganizers === "one"}
-                onChange={(e) => updateEvent({ numberOfOrganizers: e.target.value as "one" | "two" | "others" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
-              />
-              <span className="text-sm text-gray-700">One</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="numberOfOrganizers"
-                value="two"
-                checked={event.numberOfOrganizers === "two"}
-                onChange={(e) => updateEvent({ numberOfOrganizers: e.target.value as "one" | "two" | "others" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
-              />
-              <span className="text-sm text-gray-700">Two</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="numberOfOrganizers"
-                value="others"
-                checked={event.numberOfOrganizers === "others"}
-                onChange={(e) => updateEvent({ numberOfOrganizers: e.target.value as "one" | "two" | "others" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
-              />
-              <span className="text-sm text-gray-700">Others</span>
-            </label>
+          <div className="flex items-center justify-between mb-2">
+            <Label>2. Name of Organizer</Label>
+            <button
+              onClick={() => {
+                const currentOrganizers = event.organizerNames || [];
+                if (currentOrganizers.length === 0) {
+                  // Initialize with one empty organizer if empty
+                  updateEvent({ organizerNames: [""] });
+                } else {
+                  updateEvent({ organizerNames: [...currentOrganizers, ""] });
+                }
+              }}
+              className="px-3 py-1 rounded-full bg-[#36463A] text-white text-xs shadow hover:bg-[#2d3a2f]"
+            >
+              + Add Organizer
+            </button>
           </div>
-        </div>
-
-        {/* 3. Name of organizer */}
-        <div>
-          <Label>3. Name of Organizer</Label>
-          {event.numberOfOrganizers === "one" && (
-            <Input
-              value={event.organizerName1}
-              onChange={(e) => updateEvent({ organizerName1: e.target.value })}
-              placeholder="Organizer Name"
-              className="mt-2"
-            />
-          )}
-          {event.numberOfOrganizers === "two" && (
-            <div className="space-y-2 mt-2">
-              <Input
-                value={event.organizerName1}
-                onChange={(e) => updateEvent({ organizerName1: e.target.value })}
-                placeholder="Organizer Name 1"
-              />
-              <Input
-                value={event.organizerName2}
-                onChange={(e) => updateEvent({ organizerName2: e.target.value })}
-                placeholder="Organizer Name 2"
-              />
-            </div>
-          )}
-          {event.numberOfOrganizers === "others" && (
-            <div className="space-y-2 mt-2">
-              <Input
-                value={event.organizerName1}
-                onChange={(e) => updateEvent({ organizerName1: e.target.value })}
-                placeholder="Organizer Name 1"
-              />
-              <Input
-                value={event.organizerName2}
-                onChange={(e) => updateEvent({ organizerName2: e.target.value })}
-                placeholder="Organizer Name 2"
-              />
-            </div>
-          )}
+          <div className="space-y-3">
+            {(event.organizerNames && event.organizerNames.length > 0 ? event.organizerNames : [""]).map((name: string, index: number) => (
+              <div key={index} className="border border-[#36463A] rounded-xl p-3">
+                <div className="flex gap-2">
+                  <Input
+                    value={name}
+                    onChange={(e) => {
+                      const currentOrganizers = event.organizerNames || [""];
+                      const newOrganizers = [...currentOrganizers];
+                      newOrganizers[index] = e.target.value;
+                      updateEvent({ organizerNames: newOrganizers });
+                    }}
+                    placeholder={`Organizer Name ${index + 1}`}
+                    className="flex-1"
+                  />
+                  {(event.organizerNames && event.organizerNames.length > 1) && (
+                    <button
+                      onClick={() => {
+                        const currentOrganizers = event.organizerNames || [];
+                        const newOrganizers = currentOrganizers.filter((_, i) => i !== index);
+                        updateEvent({ organizerNames: newOrganizers.length > 0 ? newOrganizers : [""] });
+                      }}
+                      className="px-3 py-2 rounded-xl border border-red-300 text-red-700 text-sm hover:bg-red-50"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 4. Speech */}

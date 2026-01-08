@@ -73,13 +73,20 @@ export function Page2Form() {
         {/* 2c. Font color */}
         <div>
           <Label>2c. Font Color</Label>
-          <div className="flex gap-2 items-center mt-2">
-            <input
-              type="color"
-              value={event.shortNameFontColor}
-              onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
-              className="h-10 w-20 rounded-lg border border-[#36463A] cursor-pointer"
-            />
+            <div className="flex gap-2 items-center mt-2">
+            <div className="relative h-10 w-10">
+              <div
+                className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                style={{ backgroundColor: event.shortNameFontColor }}
+              />
+              <input
+                type="color"
+                value={event.shortNameFontColor}
+                onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                style={{ WebkitAppearance: "none", appearance: "none" }}
+              />
+            </div>
             <input
               type="text"
               value={event.shortNameFontColor}

@@ -94,7 +94,7 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                 {/* Color Picker */}
                 <div className="relative group">
                     <button
-                        className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center bg-gray-50 hover:bg-gray-100"
+                        className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center bg-gray-50 hover:bg-gray-100"
                         title="Pick Color"
                         onClick={() => {
                             // If it's already a color, keep current value, else reset to white for picker
@@ -103,13 +103,14 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                             }
                         }}
                     >
-                        <div className="w-5 h-5 rounded-sm border border-gray-200" style={{ backgroundColor: value.type === 'color' ? value.value : '#fff' }} />
+                        <div className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: value.type === 'color' ? value.value : '#fff' }} />
                     </button>
                     <input
                         type="color"
-                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full rounded-full"
                         value={value.type === 'color' ? value.value : '#ffffff'}
                         onChange={handleColorChange}
+                        style={{ WebkitAppearance: "none", appearance: "none" }}
                     />
                 </div>
 
@@ -227,7 +228,8 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                                         type="color"
                                         value={gradientColor1}
                                         onChange={(e) => setGradientColor1(e.target.value)}
-                                        className="w-16 h-16 rounded border border-gray-300 cursor-pointer"
+                                        className="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
+                                        style={{ WebkitAppearance: "none", appearance: "none" }}
                                     />
                                     <div className="flex-1">
                                         <input
@@ -249,7 +251,8 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                                         type="color"
                                         value={gradientColor2}
                                         onChange={(e) => setGradientColor2(e.target.value)}
-                                        className="w-16 h-16 rounded border border-gray-300 cursor-pointer"
+                                        className="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
+                                        style={{ WebkitAppearance: "none", appearance: "none" }}
                                     />
                                     <div className="flex-1">
                                         <input
