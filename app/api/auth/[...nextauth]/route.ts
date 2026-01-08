@@ -7,3 +7,4 @@ const handler = NextAuth(createAuthConfig("client"))
 export { handler as GET, handler as POST }
 
 
+

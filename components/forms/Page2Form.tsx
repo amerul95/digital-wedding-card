@@ -2,6 +2,7 @@
 
 import { useEvent } from "@/context/EventContext";
 import { Label, Input, Row } from "@/components/card/UI";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 
 export function Page2Form() {
   const { event, updateEvent } = useEvent();
@@ -92,23 +93,25 @@ export function Page2Form() {
         {/* 3. Start of Event */}
         <div>
           <Label>3. Start of Event</Label>
-          <input
-            type="datetime-local"
-            value={event.startEventDateTime}
-            onChange={(e) => updateEvent({ startEventDateTime: e.target.value })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-          />
+          <div className="mt-2">
+            <DateTimePicker
+              value={event.startEventDateTime}
+              onChange={(value) => updateEvent({ startEventDateTime: value })}
+              placeholder="Select start date and time"
+            />
+          </div>
         </div>
 
         {/* 4. End of Event */}
         <div>
           <Label>4. End of Event</Label>
-          <input
-            type="datetime-local"
-            value={event.endEventDateTime}
-            onChange={(e) => updateEvent({ endEventDateTime: e.target.value })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-          />
+          <div className="mt-2">
+            <DateTimePicker
+              value={event.endEventDateTime}
+              onChange={(value) => updateEvent({ endEventDateTime: value })}
+              placeholder="Select end date and time"
+            />
+          </div>
         </div>
 
         {/* 5. Day and Date */}

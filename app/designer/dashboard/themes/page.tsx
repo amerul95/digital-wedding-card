@@ -19,9 +19,11 @@ interface Theme {
   earnings: number
   previewImage: string | null
   config: ThemeConfig | null
+  type?: 'theme' | 'content' | 'template'
 }
 
 export default function ThemesPage() {
+  const [activeTab, setActiveTab] = useState<'template' | 'theme' | 'content'>('template')
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all')
   const [themes, setThemes] = useState<Theme[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -43,15 +45,18 @@ export default function ThemesPage() {
     fetchThemes()
   }, [])
 
-  const filteredThemes = filter === 'all' 
-    ? themes 
-    : themes.filter(theme => theme.status === filter)
+  // Filter by type first, then by status
+  const filteredByType = themes.filter(theme => {
+    const type = theme.type || 'theme' // Default to 'theme' for backward compatibility
+    if (activeTab === 'template') return type === 'template'
+    if (activeTab === 'theme') return type === 'theme'
+    if (activeTab === 'content') return type === 'content'
+    return true
+  })
 
-  const totalThemes = themes.length
-  const publishedThemes = themes.filter(t => t.status === 'published').length
-  const draftThemes = themes.filter(t => t.status === 'draft').length
-  const totalSales = themes.reduce((sum, theme) => sum + theme.sales, 0)
-  const totalEarnings = themes.reduce((sum, theme) => sum + theme.earnings, 0)
+  const filteredThemes = filter === 'all' 
+    ? filteredByType 
+    : filteredByType.filter(theme => theme.status === filter)
 
   const handlePublishToggle = async (themeId: string, currentStatus: 'published' | 'draft') => {
     const newStatus = currentStatus === 'published' ? false : true
@@ -86,30 +91,68 @@ export default function ThemesPage() {
     }
   }
 
+  const templates = themes.filter(t => (t.type || 'theme') === 'template')
+  const themeItems = themes.filter(t => (t.type || 'theme') === 'theme')
+  const contentItems = themes.filter(t => (t.type || 'theme') === 'content')
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Themes</h1>
-          <p className="text-muted-foreground">Manage and track your created themes</p>
+          <h1 className="text-3xl font-bold mb-2">My Projects</h1>
+          <p className="text-muted-foreground">Manage and track your created templates, themes, and content</p>
         </div>
         <Link href="/designer/dashboard/create-theme">
           <Button>
             <Plus className="w-4 h-4" />
-            Create New Theme
+            Create New Project
           </Button>
         </Link>
+      </div>
+
+      {/* Tab Menu */}
+      <div className="flex gap-2 border-b">
+        <button
+          onClick={() => setActiveTab('template')}
+          className={`px-4 py-2 font-semibold text-sm transition-colors ${
+            activeTab === 'template'
+              ? 'text-foreground border-b-2 border-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Template ({templates.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('theme')}
+          className={`px-4 py-2 font-semibold text-sm transition-colors ${
+            activeTab === 'theme'
+              ? 'text-foreground border-b-2 border-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Themes ({themeItems.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('content')}
+          className={`px-4 py-2 font-semibold text-sm transition-colors ${
+            activeTab === 'content'
+              ? 'text-foreground border-b-2 border-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Content ({contentItems.length})
+        </button>
       </div>
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total Themes</CardDescription>
+            <CardDescription>Total {activeTab === 'template' ? 'Templates' : activeTab === 'theme' ? 'Themes' : 'Content'}</CardDescription>
             {isLoading ? (
               <Skeleton className="h-8 w-16" />
             ) : (
-              <CardTitle className="text-2xl">{totalThemes}</CardTitle>
+              <CardTitle className="text-2xl">{filteredByType.length}</CardTitle>
             )}
           </CardHeader>
         </Card>
@@ -119,7 +162,7 @@ export default function ThemesPage() {
             {isLoading ? (
               <Skeleton className="h-8 w-16" />
             ) : (
-              <CardTitle className="text-2xl">{publishedThemes}</CardTitle>
+              <CardTitle className="text-2xl">{filteredByType.filter(t => t.status === 'published').length}</CardTitle>
             )}
           </CardHeader>
         </Card>
@@ -129,7 +172,7 @@ export default function ThemesPage() {
             {isLoading ? (
               <Skeleton className="h-8 w-16" />
             ) : (
-              <CardTitle className="text-2xl">{draftThemes}</CardTitle>
+              <CardTitle className="text-2xl">{filteredByType.filter(t => t.status === 'draft').length}</CardTitle>
             )}
           </CardHeader>
         </Card>
@@ -139,7 +182,7 @@ export default function ThemesPage() {
             {isLoading ? (
               <Skeleton className="h-8 w-16" />
             ) : (
-              <CardTitle className="text-2xl">{totalSales}</CardTitle>
+              <CardTitle className="text-2xl">{filteredByType.reduce((sum, theme) => sum + theme.sales, 0)}</CardTitle>
             )}
           </CardHeader>
         </Card>
@@ -155,7 +198,7 @@ export default function ThemesPage() {
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          All ({totalThemes})
+          All ({filteredByType.length})
         </button>
         <button
           onClick={() => setFilter('published')}
@@ -165,7 +208,7 @@ export default function ThemesPage() {
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          Published ({publishedThemes})
+          Published ({filteredByType.filter(t => t.status === 'published').length})
         </button>
         <button
           onClick={() => setFilter('draft')}
@@ -175,7 +218,7 @@ export default function ThemesPage() {
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          Drafts ({draftThemes})
+          Drafts ({filteredByType.filter(t => t.status === 'draft').length})
         </button>
       </div>
 
@@ -231,7 +274,14 @@ export default function ThemesPage() {
 
             {/* Theme Info */}
             <CardHeader className="pb-2 pt-3">
-              <CardTitle className="text-base">{theme.name}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">{theme.name}</CardTitle>
+                {(theme.type === 'template' || theme.type === 'content') && (
+                  <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 uppercase">
+                    {theme.type}
+                  </span>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="pt-0 pb-3">
               <div className="space-y-1 text-xs mb-3">
@@ -280,11 +330,13 @@ export default function ThemesPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Layout className="w-16 h-16 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground mb-4">No themes found</p>
+            <p className="text-muted-foreground mb-4">
+              No {activeTab === 'template' ? 'templates' : activeTab === 'theme' ? 'themes' : 'content'} found
+            </p>
             <Link href="/designer/dashboard/create-theme">
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                Create Your First Theme
+                Create Your First {activeTab === 'template' ? 'Template' : activeTab === 'theme' ? 'Theme' : 'Content'}
               </Button>
             </Link>
           </CardContent>

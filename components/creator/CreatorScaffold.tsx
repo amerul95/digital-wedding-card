@@ -21,6 +21,9 @@ export function CreatorScaffold({ config, updateConfig }: CreatorScaffoldProps) 
                 backgroundRepeat: 'no-repeat'
             };
         }
+        if (bgStyle.type === 'gradient') {
+            return { background: bgStyle.value };
+        }
         return {}; // none
     };
 

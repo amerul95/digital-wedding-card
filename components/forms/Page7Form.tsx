@@ -3,6 +3,8 @@
 import { useEvent } from "@/context/EventContext";
 import { Label, Input } from "@/components/card/UI";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { Button } from "@/components/ui/button";
 
 export function Page7Form() {
   const { event, updateEvent } = useEvent();
@@ -75,18 +77,20 @@ export function Page7Form() {
         <div>
           <Label>3. RSVP Closing Date</Label>
           <div className="flex gap-2 items-center mt-2">
-            <input
-              type="datetime-local"
-              value={event.rsvpClosingDate}
-              onChange={(e) => updateEvent({ rsvpClosingDate: e.target.value })}
-              className="flex-1 px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
-            />
-            <button
+            <div className="flex-1">
+              <DateTimePicker
+                value={event.rsvpClosingDate}
+                onChange={(value) => updateEvent({ rsvpClosingDate: value })}
+                placeholder="Select RSVP closing date and time"
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => updateEvent({ rsvpClosingDate: "" })}
-              className="px-4 py-2 rounded-xl border border-[#36463A] text-[#36463A] bg-white text-sm hover:bg-gray-50"
             >
               Reset
-            </button>
+            </Button>
           </div>
         </div>
 

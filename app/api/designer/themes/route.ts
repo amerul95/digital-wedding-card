@@ -69,6 +69,7 @@ export async function GET() {
         )
 
         const config = theme.configJson ? JSON.parse(theme.configJson) : null
+        const type = config?.type || 'theme' // Default to 'theme' for backward compatibility
 
         return {
           id: theme.id,
@@ -79,6 +80,7 @@ export async function GET() {
           earnings: earnings,
           previewImage: theme.previewImageUrl || null,
           config: config,
+          type: type, // 'theme', 'content', or 'template'
         }
       })
     )
@@ -105,21 +107,29 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { name, config } = body
+    const { name, config, defaultEventData, type = 'theme' } = body
 
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return NextResponse.json(
-        { error: "Theme name is required" },
+        { error: "Name is required" },
         { status: 400 }
       )
     }
 
-    // Create the theme
+    // Merge config and defaultEventData into a single config object
+    // Include type to distinguish between theme, content, and template
+    const fullConfig = {
+      ...config,
+      defaultEventData: defaultEventData || null,
+      type: type, // 'theme', 'content', or 'template'
+    }
+
+    // Create the theme (or content/template)
     const theme = await prisma.theme.create({
       data: {
         name: name.trim(),
         designerId,
-        configJson: JSON.stringify(config),
+        configJson: JSON.stringify(fullConfig),
         isPublished: false, // Default to draft
       },
     })

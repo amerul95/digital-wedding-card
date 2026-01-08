@@ -22,6 +22,9 @@ export function ThemePreview({ config }: ThemePreviewProps) {
         backgroundRepeat: 'no-repeat'
       };
     }
+    if (bgStyle.type === 'gradient') {
+      return { background: bgStyle.value };
+    }
     return {
       background: 'linear-gradient(to bottom, #fff1f2, #ffffff, #ffe4e6)'
     };
@@ -58,7 +61,13 @@ export function ThemePreview({ config }: ThemePreviewProps) {
           onLocationClick={noOp}
           onRSVPClick={noOp}
           customStyle={{
-            background: config.footerBackground.type === 'color' ? config.footerBackground.value : undefined,
+            background: config.footerBackground.type === 'color' 
+              ? config.footerBackground.value 
+              : config.footerBackground.type === 'gradient'
+              ? config.footerBackground.value
+              : config.footerBackground.type === 'image'
+              ? `url(${config.footerBackground.value})`
+              : undefined,
             color: config.footerIconColor
           }}
           customIcons={config.footerIcons}

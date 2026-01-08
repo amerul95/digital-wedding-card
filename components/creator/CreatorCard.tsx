@@ -23,6 +23,9 @@ export function CreatorCard({ config, updateConfig }: CreatorCardProps) {
                 backgroundRepeat: 'no-repeat'
             };
         }
+        if (bgStyle.type === 'gradient') {
+            return { background: bgStyle.value };
+        }
         return {
             // Default fallback if 'none' (though usually we want a base color)
             background: 'linear-gradient(to bottom, #fff1f2, #ffffff, #ffe4e6)'
@@ -60,7 +63,13 @@ export function CreatorCard({ config, updateConfig }: CreatorCardProps) {
                     onLocationClick={() => { }}
                     onRSVPClick={() => { }}
                     customStyle={{
-                        background: config.footerBackground.type === 'color' ? config.footerBackground.value : undefined, // Simplify for now, assuming color. If image needed, logic needs update in Footer.tsx
+                        background: config.footerBackground.type === 'color' 
+                            ? config.footerBackground.value 
+                            : config.footerBackground.type === 'gradient'
+                            ? config.footerBackground.value
+                            : config.footerBackground.type === 'image'
+                            ? `url(${config.footerBackground.value})`
+                            : undefined,
                         color: config.footerIconColor,
                         textColor: config.footerTextColor || config.footerIconColor
                     }}

@@ -22,13 +22,15 @@ import Snow from "./effects/Snow";
 import Petals from "./effects/PetalsFlow";
 import Bubbles from "./effects/Bubbles";
 import { YouTubePlayer } from "./YouTubePlayer";
+import { ThemeConfig, BackgroundStyle } from "@/components/creator/ThemeTypes";
 
 interface CeremonyCardProps {
   event?: EventData;
   editorSection?: number;  // Current editor section (1-5), undefined means not in editor
+  themeConfig?: ThemeConfig;  // Optional theme config to apply styling
 }
 
-export function CeremonyCard({ event: eventProp, editorSection }: CeremonyCardProps) {
+export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: CeremonyCardProps) {
   const { event: eventFromContext } = useEvent();
   const event = eventProp || eventFromContext;
   const [doorsOpen, setDoorsOpen] = useState(false);
@@ -201,6 +203,59 @@ export function CeremonyCard({ event: eventProp, editorSection }: CeremonyCardPr
     downloadICS(event);
   };
 
+  // Helper function to get background style from theme config
+  const getCardBackgroundStyle = (): React.CSSProperties => {
+    if (!themeConfig?.cardBackground) {
+      return {};
+    }
+    
+    const bgStyle: BackgroundStyle = themeConfig.cardBackground;
+    if (bgStyle.type === 'color') {
+      return { backgroundColor: bgStyle.value };
+    }
+    if (bgStyle.type === 'image') {
+      return {
+        backgroundImage: `url(${bgStyle.value})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+    if (bgStyle.type === 'gradient') {
+      return { background: bgStyle.value };
+    }
+    return {};
+  };
+
+  // Helper function to get section background style
+  const getSectionBackgroundStyle = (sectionNumber: 1 | 2 | 3 | 4): React.CSSProperties => {
+    if (!themeConfig) return {};
+    
+    const bgStyle: BackgroundStyle | undefined = 
+      sectionNumber === 1 ? themeConfig.section1Background :
+      sectionNumber === 2 ? themeConfig.section2Background :
+      sectionNumber === 3 ? themeConfig.section3Background :
+      themeConfig.section4Background;
+    
+    if (!bgStyle) return {};
+    
+    if (bgStyle.type === 'color') {
+      return { backgroundColor: bgStyle.value };
+    }
+    if (bgStyle.type === 'image') {
+      return {
+        backgroundImage: `url(${bgStyle.value})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+    if (bgStyle.type === 'gradient') {
+      return { background: bgStyle.value };
+    }
+    return {};
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
       <div
@@ -215,8 +270,17 @@ export function CeremonyCard({ event: eventProp, editorSection }: CeremonyCardPr
         }}
       >
         {/* BACKGROUND */}
-        <div className="absolute inset-0 bg-gradient-to-b from-rose-50 via-white to-rose-100" />
-        <div className="absolute inset-5 rounded-2xl border border-rose-200/70 shadow-inner" />
+        <div 
+          className="absolute inset-0 transition-all duration-300 ease-in-out"
+          style={
+            themeConfig?.cardBackground 
+              ? getCardBackgroundStyle()
+              : { background: 'linear-gradient(to bottom, #fff1f2, #ffffff, #ffe4e6)' }
+          }
+        />
+        {!themeConfig?.cardBackground && (
+          <div className="absolute inset-5 rounded-2xl border border-rose-200/70 shadow-inner" />
+        )}
         
         {/* BACKGROUND EFFECTS - positioned to cover entire card */}
         <div className="absolute pointer-events-none" style={{ 
@@ -240,6 +304,7 @@ export function CeremonyCard({ event: eventProp, editorSection }: CeremonyCardPr
             onCalendarClick={() => setModal("calendar")}
             onRSVPClick={() => setModal("rsvp")}
             onUcapanClick={() => setModal("ucapan")}
+            themeConfig={themeConfig}
           />
         </div>
 
@@ -249,6 +314,18 @@ export function CeremonyCard({ event: eventProp, editorSection }: CeremonyCardPr
           onContactClick={() => setModal("contact")}
           onLocationClick={() => setModal("location")}
           onRSVPClick={() => setModal("rsvp")}
+          customStyle={themeConfig ? {
+            background: themeConfig.footerBackground?.type === 'color' 
+              ? themeConfig.footerBackground.value 
+              : themeConfig.footerBackground?.type === 'gradient'
+              ? themeConfig.footerBackground.value
+              : themeConfig.footerBackground?.type === 'image'
+              ? `url(${themeConfig.footerBackground.value})`
+              : undefined,
+            color: themeConfig.footerIconColor,
+            textColor: themeConfig.footerTextColor || themeConfig.footerIconColor
+          } : undefined}
+          customIcons={themeConfig?.footerIcons}
         />
 
         {/* DOOR OVERLAY (dynamic based on doorStyle) */}

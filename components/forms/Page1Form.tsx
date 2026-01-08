@@ -37,38 +37,9 @@ export function Page1Form() {
   return (
     <div className="bg-white p-6">
       <div className="space-y-4">
-        {/* 1. Card Language */}
+        {/* 1. Package Choice */}
         <div>
-          <Label>1. Card Language</Label>
-          <div className="flex gap-4 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="cardLanguage"
-                value="english"
-                checked={event.cardLanguage === "english"}
-                onChange={(e) => updateEvent({ cardLanguage: e.target.value as "english" | "bahasa-melayu" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
-              />
-              <span className="text-sm text-gray-700">English</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="cardLanguage"
-                value="bahasa-melayu"
-                checked={event.cardLanguage === "bahasa-melayu"}
-                onChange={(e) => updateEvent({ cardLanguage: e.target.value as "english" | "bahasa-melayu" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
-              />
-              <span className="text-sm text-gray-700">Bahasa</span>
-            </label>
-          </div>
-        </div>
-
-        {/* 2. Package Choice */}
-        <div>
-          <Label>2. Package Choice</Label>
+          <Label>1. Package Choice</Label>
           <select
             value={event.packageChoice}
             onChange={(e) => updateEvent({ packageChoice: e.target.value as "gold" | "silver" | "bronze" })}
@@ -80,9 +51,9 @@ export function Page1Form() {
           </select>
         </div>
 
-        {/* 3. Design Code */}
+        {/* 2. Design Code */}
         <div>
-          <Label>3. Design Code</Label>
+          <Label>2. Design Code</Label>
           <select
             value={event.designCode}
             onChange={(e) => updateEvent({ designCode: e.target.value })}
@@ -96,9 +67,9 @@ export function Page1Form() {
           </select>
         </div>
 
-        {/* 4. Opening Style */}
+        {/* 3. Opening Style */}
         <div>
-          <Label>4. Opening Style</Label>
+          <Label>3. Opening Style</Label>
           <select
             value={event.openingStyle || event.doorStyle}
             onChange={(e) => {
@@ -115,9 +86,9 @@ export function Page1Form() {
           </select>
         </div>
 
-        {/* 4a. Door Color (shown after opening style is selected) */}
+        {/* 3a. Door Color (shown after opening style is selected) */}
         <div>
-          <Label>4a. Door Color</Label>
+          <Label>3a. Door Color</Label>
           <div className="flex gap-2 items-center mt-2">
             <input
               type="color"
@@ -139,9 +110,9 @@ export function Page1Form() {
           </div>
         </div>
 
-        {/* 5. Animation & effects */}
+        {/* 4. Animation & effects */}
         <div>
-          <Label>5. Animation & Effects</Label>
+          <Label>4. Animation & Effects</Label>
           <select
             value={event.animationEffect || event.effect}
             onChange={(e) => {
@@ -158,10 +129,10 @@ export function Page1Form() {
           </select>
         </div>
 
-        {/* 5a. Effect Color (shown when effect is not none) */}
+        {/* 4a. Effect Color (shown when effect is not none) */}
         {(event.animationEffect || event.effect) !== "none" && (
           <div>
-            <Label>5a. Effect Color</Label>
+            <Label>4a. Effect Color</Label>
             <div className="flex gap-2 items-center mt-2">
               <input
                 type="color"

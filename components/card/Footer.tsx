@@ -32,14 +32,52 @@ export function Footer({
   const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp', defaultIcon: React.ReactNode) => {
     const customIconUrl = customIcons?.[type];
     if (customIconUrl) {
+      // Check if it's an SVG (data URL with svg+xml or starts with <svg)
+      const isSVG = customIconUrl.includes('svg+xml') || customIconUrl.trim().startsWith('<svg');
+      
+      if (isSVG && customStyle?.color) {
+        // For SVG, try to inject color into the SVG string
+        try {
+          let svgContent = customIconUrl;
+          if (svgContent.includes('data:image/svg+xml')) {
+            // Decode base64 or URL-encoded SVG
+            if (svgContent.includes('base64,')) {
+              svgContent = atob(svgContent.split('base64,')[1]);
+            } else if (svgContent.includes('svg+xml,')) {
+              svgContent = decodeURIComponent(svgContent.split('svg+xml,')[1]);
+            }
+          }
+          
+          // Replace fill and stroke attributes with the theme color
+          const coloredSVG = svgContent
+            .replace(/fill="[^"]*"/g, `fill="${customStyle.color}"`)
+            .replace(/fill='[^']*'/g, `fill='${customStyle.color}'`)
+            .replace(/stroke="[^"]*"/g, `stroke="${customStyle.color}"`)
+            .replace(/stroke='[^']*'/g, `stroke='${customStyle.color}'`)
+            .replace(/<svg/, `<svg fill="${customStyle.color}"`);
+          
+          const svgDataUrl = `data:image/svg+xml;base64,${btoa(coloredSVG)}`;
+          return (
+            <img 
+              src={svgDataUrl} 
+              alt={type} 
+              className="w-6 h-6 object-contain"
+            />
+          );
+        } catch (error) {
+          // Fallback to regular image if SVG processing fails
+          console.error('Error processing SVG:', error);
+        }
+      }
+      
+      // For regular images or if SVG processing failed
       return (
         <img 
           src={customIconUrl} 
           alt={type} 
           className="w-6 h-6 object-contain"
           style={{ 
-            filter: customStyle?.color ? `drop-shadow(0 0 0 ${customStyle.color})` : undefined,
-            color: customStyle?.color 
+            filter: customStyle?.color && !isSVG ? `drop-shadow(0 0 0 ${customStyle.color})` : undefined,
           }}
         />
       );
@@ -47,11 +85,34 @@ export function Footer({
     return <div style={{ color: customStyle?.color }}>{defaultIcon}</div>;
   };
 
+  // Get footer background style
+  const getFooterBackgroundStyle = (): React.CSSProperties => {
+    if (!customStyle?.background) return {};
+    
+    // If it's a gradient or color string, use directly
+    if (customStyle.background.includes('gradient') || customStyle.background.startsWith('#')) {
+      return { background: customStyle.background, border: 'none' };
+    }
+    
+    // If it's an image URL
+    if (customStyle.background.startsWith('url(')) {
+      return { 
+        backgroundImage: customStyle.background, 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        border: 'none' 
+      };
+    }
+    
+    return { background: customStyle.background, border: 'none' };
+  };
+
   return (
     <div className="absolute bottom-0 left-0 right-0 z-20 p-3">
       <div
         className="mx-auto max-w-xs rounded-2xl bg-white/90 backdrop-blur border border-rose-200 shadow px-3 py-2"
-        style={customStyle?.background ? { background: customStyle.background, border: 'none' } : undefined}
+        style={customStyle?.background ? getFooterBackgroundStyle() : undefined}
       >
         <div className={`grid grid-cols-4 gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
           <FooterButton label="Calendar" onClick={onCalendarClick} color={customStyle?.color} textColor={customStyle?.textColor}>

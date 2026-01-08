@@ -19,6 +19,9 @@ export function PreviewScaffold({ config }: PreviewScaffoldProps) {
                 backgroundRepeat: 'no-repeat'
             };
         }
+        if (bgStyle.type === 'gradient') {
+            return { background: bgStyle.value };
+        }
         return {}; // none
     };
 
@@ -70,4 +73,5 @@ export function PreviewScaffold({ config }: PreviewScaffoldProps) {
         </div>
     );
 }
+
 

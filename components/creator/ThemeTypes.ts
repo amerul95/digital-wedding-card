@@ -1,8 +1,8 @@
-export type BackgroundType = 'none' | 'color' | 'image';
+export type BackgroundType = 'none' | 'color' | 'image' | 'gradient';
 
 export interface BackgroundStyle {
   type: BackgroundType;
-  value: string; // hex color or image url
+  value: string; // hex color, image url, or gradient CSS string (e.g., "linear-gradient(to bottom, #ff0000, #0000ff)")
 }
 
 export interface FooterIcons {

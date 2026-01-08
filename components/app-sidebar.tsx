@@ -39,7 +39,7 @@ const menuItems = [
     icon: Plus,
   },
   {
-    title: "My Themes",
+    title: "My Projects",
     url: "/designer/dashboard/themes",
     icon: FileText,
   },
