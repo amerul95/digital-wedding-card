@@ -15,139 +15,202 @@ import {
 export function Page2Form() {
   const { event, updateEvent } = useEvent();
   const [showGradientPicker, setShowGradientPicker] = useState(false);
+  const [gradientPickerFor, setGradientPickerFor] = useState<"eventTitle" | "shortName">("shortName");
   const [gradientColor1, setGradientColor1] = useState("#ff0000");
   const [gradientColor2, setGradientColor2] = useState("#0000ff");
   const [gradientDirection, setGradientDirection] = useState("to bottom");
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-4">
-        {/* 1. Type of event */}
-        <div>
+      <div className="space-y-6">
+        {/* 1. Type of Event - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>1. Type of Event (Event Title Name)</Label>
-          <Input
-            value={event.eventTitle}
-            onChange={(e) => updateEvent({ eventTitle: e.target.value })}
-            placeholder="Majlis Aqiqah"
-            className="mt-2"
-          />
-        </div>
-
-        {/* 1a. Font size of event name */}
-        <div>
-          <Label>1a. Font Size of Event Name</Label>
-          <input
-            type="number"
-            value={event.eventTitleFontSize}
-            onChange={(e) => updateEvent({ eventTitleFontSize: Number(e.target.value) })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-            min="8"
-            max="72"
-          />
-        </div>
-
-        {/* 2. Short Name (Celebrated Person) */}
-        <div>
-          <Label>2. Short Name (Celebrated Person)</Label>
-          <Input
-            value={event.shortName}
-            onChange={(e) => updateEvent({ shortName: e.target.value })}
-            placeholder="Aqil"
-            className="mt-2"
-          />
-        </div>
-
-        {/* 2a. Family font */}
-        <div>
-          <Label>2a. Family Font</Label>
-          <input
-            type="text"
-            value={event.shortNameFamilyFont}
-            onChange={(e) => updateEvent({ shortNameFamilyFont: e.target.value })}
-            placeholder="Arial"
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-          />
-        </div>
-
-        {/* 2b. Font size */}
-        <div>
-          <Label>2b. Font Size</Label>
-          <input
-            type="number"
-            value={event.shortNameFontSize}
-            onChange={(e) => updateEvent({ shortNameFontSize: Number(e.target.value) })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-            min="8"
-            max="72"
-          />
-        </div>
-
-        {/* 2c. Font color */}
-        <div>
-          <Label>2c. Font Color</Label>
-          <div className="flex gap-2 items-center mt-2">
-            <div className="relative h-10 w-10">
-              <div
-                className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
-                style={{ 
-                  backgroundColor: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient') 
-                    ? 'transparent' 
-                    : event.shortNameFontColor,
-                  background: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient') 
-                    ? event.shortNameFontColor 
-                    : undefined
-                }}
-              />
+          <div className="space-y-3">
+            <Input
+              value={event.eventTitle}
+              onChange={(e) => updateEvent({ eventTitle: e.target.value })}
+              placeholder="Majlis Aqiqah"
+            />
+            <div>
+              <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
               <input
-                type="color"
-                value={event.shortNameFontColor && !event.shortNameFontColor.startsWith('linear-gradient') ? event.shortNameFontColor : "#f43f5e"}
-                onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                style={{ WebkitAppearance: "none", appearance: "none" }}
+                type="number"
+                value={event.eventTitleFontSize}
+                onChange={(e) => updateEvent({ eventTitleFontSize: Number(e.target.value) })}
+                className="w-full px-4 py-3 rounded-xl border border-[#36463A] text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
+                min="8"
+                max="72"
               />
             </div>
-            <input
-              type="text"
-              value={event.shortNameFontColor}
-              onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
-              placeholder="#f43f5e or gradient"
-              className="flex-1 px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
-            />
-            <button
-              type="button"
-              onClick={() => setShowGradientPicker(true)}
-              className="px-3 py-2 rounded-xl border border-[#36463A] text-[#36463A] bg-white hover:bg-gray-50 text-sm font-medium transition-colors flex items-center gap-2"
-              title="Gradient Color"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-              </svg>
-              Gradient
-            </button>
-          </div>
-          {/* Preview */}
-          {event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient') && (
-            <div className="mt-2 p-2 rounded border border-green-200 bg-green-50">
-              <div 
-                className="text-lg font-semibold text-center"
-                style={{
-                  background: event.shortNameFontColor,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  color: 'transparent'
-                }}
-              >
-                {event.shortName || 'Preview Text'}
+            <div>
+              <label className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              <div className="flex gap-2 items-center">
+                <div className="relative h-10 w-10">
+                  <div
+                    className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                    style={{ 
+                      backgroundColor: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient') 
+                        ? 'transparent' 
+                        : event.eventTitleFontColor,
+                      background: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient') 
+                        ? event.eventTitleFontColor 
+                        : undefined
+                    }}
+                  />
+                  <input
+                    type="color"
+                    value={event.eventTitleFontColor && !event.eventTitleFontColor.startsWith('linear-gradient') ? event.eventTitleFontColor : "#f43f5e"}
+                    onChange={(e) => updateEvent({ eventTitleFontColor: e.target.value })}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    style={{ WebkitAppearance: "none", appearance: "none" }}
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={event.eventTitleFontColor}
+                  onChange={(e) => updateEvent({ eventTitleFontColor: e.target.value })}
+                  placeholder="#f43f5e or gradient"
+                  className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGradientPickerFor("eventTitle");
+                    setShowGradientPicker(true);
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[#36463A] text-[#36463A] bg-white hover:bg-gray-50 text-sm font-medium transition-colors flex items-center gap-2"
+                  title="Gradient Color"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                  </svg>
+                  Gradient
+                </button>
               </div>
             </div>
-          )}
+            {/* Preview */}
+            {event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient') && (
+              <div className="p-2 rounded border border-green-200 bg-green-50">
+                <div 
+                  className="text-lg font-semibold text-center"
+                  style={{
+                    background: event.eventTitleFontColor,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    color: 'transparent'
+                  }}
+                >
+                  {event.eventTitle || 'Preview Text'}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* 3. Start of Event */}
-        <div>
+        {/* 2. Short Name - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <Label>2. Short Name (Celebrated Person)</Label>
+          <div className="space-y-3">
+            <Input
+              value={event.shortName}
+              onChange={(e) => updateEvent({ shortName: e.target.value })}
+              placeholder="Aqil"
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-gray-600 mb-1 block">Family Font</label>
+                <input
+                  type="text"
+                  value={event.shortNameFamilyFont}
+                  onChange={(e) => updateEvent({ shortNameFamilyFont: e.target.value })}
+                  placeholder="Arial"
+                  className="w-full px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
+                <input
+                  type="number"
+                  value={event.shortNameFontSize}
+                  onChange={(e) => updateEvent({ shortNameFontSize: Number(e.target.value) })}
+                  className="w-full px-4 py-3 rounded-xl border border-[#36463A] text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
+                  min="8"
+                  max="72"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              <div className="flex gap-2 items-center">
+                <div className="relative h-10 w-10">
+                  <div
+                    className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                    style={{ 
+                      backgroundColor: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient') 
+                        ? 'transparent' 
+                        : event.shortNameFontColor,
+                      background: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient') 
+                        ? event.shortNameFontColor 
+                        : undefined
+                    }}
+                  />
+                  <input
+                    type="color"
+                    value={event.shortNameFontColor && !event.shortNameFontColor.startsWith('linear-gradient') ? event.shortNameFontColor : "#f43f5e"}
+                    onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    style={{ WebkitAppearance: "none", appearance: "none" }}
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={event.shortNameFontColor}
+                  onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
+                  placeholder="#f43f5e or gradient"
+                  className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGradientPickerFor("shortName");
+                    setShowGradientPicker(true);
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[#36463A] text-[#36463A] bg-white hover:bg-gray-50 text-sm font-medium transition-colors flex items-center gap-2"
+                  title="Gradient Color"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                  </svg>
+                  Gradient
+                </button>
+              </div>
+            </div>
+            {/* Preview */}
+            {event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient') && (
+              <div className="p-2 rounded border border-green-200 bg-green-50">
+                <div 
+                  className="text-lg font-semibold text-center"
+                  style={{
+                    background: event.shortNameFontColor,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    color: 'transparent'
+                  }}
+                >
+                  {event.shortName || 'Preview Text'}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 3. Start of Event - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>3. Start of Event</Label>
-          <div className="mt-2">
+          <div>
             <DateTimePicker
               value={event.startEventDateTime}
               onChange={(value) => updateEvent({ startEventDateTime: value })}
@@ -156,10 +219,10 @@ export function Page2Form() {
           </div>
         </div>
 
-        {/* 4. End of Event */}
-        <div>
+        {/* 4. End of Event - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>4. End of Event</Label>
-          <div className="mt-2">
+          <div>
             <DateTimePicker
               value={event.endEventDateTime}
               onChange={(value) => updateEvent({ endEventDateTime: value })}
@@ -168,62 +231,58 @@ export function Page2Form() {
           </div>
         </div>
 
-        {/* 5. Day and Date */}
-        <div>
+        {/* 5. Day and Date - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>5. Day and Date (Format: Days - dd.mm.yy)</Label>
-          <Input
-            value={event.dayAndDate}
-            onChange={(e) => updateEvent({ dayAndDate: e.target.value })}
-            placeholder="Rabu - 29.10.25"
-            className="mt-2"
-          />
+          <div className="space-y-3">
+            <Input
+              value={event.dayAndDate}
+              onChange={(e) => updateEvent({ dayAndDate: e.target.value })}
+              placeholder="Rabu - 29.10.25"
+            />
+            <div className="flex gap-4 items-center">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="dayAndDateShowName"
+                  checked={event.dayAndDateShowName}
+                  onChange={(e) => updateEvent({ dayAndDateShowName: e.target.checked })}
+                  className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
+                />
+                <Label htmlFor="dayAndDateShowName" className="mb-0 text-sm">Name</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="dayAndDateShowPhone"
+                  checked={event.dayAndDateShowPhone}
+                  onChange={(e) => updateEvent({ dayAndDateShowPhone: e.target.checked })}
+                  className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
+                />
+                <Label htmlFor="dayAndDateShowPhone" className="mb-0 text-sm">Phone</Label>
+              </div>
+              <div className="flex-1">
+                <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
+                <input
+                  type="number"
+                  value={event.dayAndDateFontSize}
+                  onChange={(e) => updateEvent({ dayAndDateFontSize: Number(e.target.value) })}
+                  className="w-full px-4 py-3 rounded-xl border border-[#36463A] text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
+                  min="8"
+                  max="72"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* 5a. Checkboxes for name and phone */}
-        <Row>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="dayAndDateShowName"
-              checked={event.dayAndDateShowName}
-              onChange={(e) => updateEvent({ dayAndDateShowName: e.target.checked })}
-              className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
-            />
-            <Label htmlFor="dayAndDateShowName" className="mb-0">Name</Label>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="dayAndDateShowPhone"
-              checked={event.dayAndDateShowPhone}
-              onChange={(e) => updateEvent({ dayAndDateShowPhone: e.target.checked })}
-              className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
-            />
-            <Label htmlFor="dayAndDateShowPhone" className="mb-0">Phone</Label>
-          </div>
-        </Row>
-
-        {/* 5b. Font size */}
-        <div>
-          <Label>5b. Font Size</Label>
-          <input
-            type="number"
-            value={event.dayAndDateFontSize}
-            onChange={(e) => updateEvent({ dayAndDateFontSize: Number(e.target.value) })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-            min="8"
-            max="72"
-          />
-        </div>
-
-        {/* 6. Place/hashtag/etc (Venue) */}
-        <div>
+        {/* 6. Place/hashtag/etc (Venue) - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>6. Place/Hashtag/Etc (Venue)</Label>
           <Input
             value={event.venue}
             onChange={(e) => updateEvent({ venue: e.target.value })}
             placeholder="Dewan Seri Melati, Putrajaya"
-            className="mt-2"
           />
         </div>
       </div>
@@ -330,7 +389,7 @@ export function Page2Form() {
                     color: 'transparent'
                   }}
                 >
-                  {event.shortName || 'Gradient Text Preview'}
+                  {gradientPickerFor === "eventTitle" ? (event.eventTitle || 'Gradient Text Preview') : (event.shortName || 'Gradient Text Preview')}
                 </div>
               </div>
             </div>
@@ -345,7 +404,11 @@ export function Page2Form() {
             <button
               onClick={() => {
                 const gradientValue = `linear-gradient(${gradientDirection}, ${gradientColor1}, ${gradientColor2})`;
-                updateEvent({ shortNameFontColor: gradientValue });
+                if (gradientPickerFor === "eventTitle") {
+                  updateEvent({ eventTitleFontColor: gradientValue });
+                } else {
+                  updateEvent({ shortNameFontColor: gradientValue });
+                }
                 setShowGradientPicker(false);
               }}
               className="px-4 py-2 text-sm bg-[#36463A] text-white rounded hover:bg-[#2d3a2f]"

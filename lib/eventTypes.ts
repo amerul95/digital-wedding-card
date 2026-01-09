@@ -48,6 +48,7 @@ export type EventData = {
   // Page 2 - Front Page
   eventTitle: string;  // Type of event (event title name)
   eventTitleFontSize: number;  // Font size of event name
+  eventTitleFontColor: string;  // Font color for event title
   shortName: string;  // Short Name (Celebrated Person)
   shortNameFamilyFont: string;  // Family font for short name
   shortNameFontSize: number;  // Font size for short name
@@ -180,6 +181,7 @@ export const defaultEvent: EventData = {
   // Page 2 - Front Page defaults
   eventTitle: "Majlis Aqiqah",
   eventTitleFontSize: 24,
+  eventTitleFontColor: "#f43f5e",
   shortName: "Aqil",
   shortNameFamilyFont: "Arial",
   shortNameFontSize: 18,

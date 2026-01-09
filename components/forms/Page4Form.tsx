@@ -9,20 +9,19 @@ export function Page4Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-4">
-        {/* 1. Hijrah date (optional) */}
-        <div>
+      <div className="space-y-6">
+        {/* 1. Hijrah Date - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>1. Hijrah Date (Optional)</Label>
           <Input
             value={event.hijrahDate}
             onChange={(e) => updateEvent({ hijrahDate: e.target.value })}
             placeholder="Hijrah date"
-            className="mt-2"
           />
         </div>
 
-        {/* 2. Event address */}
-        <div>
+        {/* 2. Event Address - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>2. Event Address (Location Full)</Label>
           <RichTextEditor
             content={event.eventAddress}
@@ -31,12 +30,12 @@ export function Page4Form() {
           />
         </div>
 
-        {/* 3. Navigation (optional) */}
-        <div>
+        {/* 3. Navigation - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>3. Navigation (Optional)</Label>
-          <div className="space-y-2 mt-2">
+          <div className="space-y-3">
             <div>
-              <Label className="text-sm">Google Map Link</Label>
+              <label className="text-xs text-gray-600 mb-1 block">Google Map Link</label>
               <Input
                 value={event.navigationGoogleMap}
                 onChange={(e) => updateEvent({ navigationGoogleMap: e.target.value })}
@@ -45,7 +44,7 @@ export function Page4Form() {
               />
             </div>
             <div>
-              <Label className="text-sm">Waze Link</Label>
+              <label className="text-xs text-gray-600 mb-1 block">Waze Link</label>
               <Input
                 value={event.navigationWaze}
                 onChange={(e) => updateEvent({ navigationWaze: e.target.value })}
@@ -54,7 +53,7 @@ export function Page4Form() {
               />
             </div>
             <div>
-              <Label className="text-sm">Others</Label>
+              <label className="text-xs text-gray-600 mb-1 block">Others</label>
               <Input
                 value={event.navigationOthers}
                 onChange={(e) => updateEvent({ navigationOthers: e.target.value })}

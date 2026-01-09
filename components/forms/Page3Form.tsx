@@ -9,9 +9,9 @@ export function Page3Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-4">
-        {/* 1. Opening speech */}
-        <div>
+      <div className="space-y-6">
+        {/* 1. Opening Speech - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>1. Opening Speech (Greeting)</Label>
           <RichTextEditor
             content={event.openingSpeech}
@@ -20,9 +20,9 @@ export function Page3Form() {
           />
         </div>
 
-        {/* 2. Name of Organizer */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
+        {/* 2. Name of Organizer - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="flex items-center justify-between">
             <Label>2. Name of Organizer</Label>
             <button
               onClick={() => {
@@ -72,9 +72,9 @@ export function Page3Form() {
           </div>
         </div>
 
-        {/* 4. Speech */}
-        <div>
-          <Label>4. Speech (Multiline)</Label>
+        {/* 3. Speech - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <Label>3. Speech (Multiline)</Label>
           <RichTextEditor
             content={event.speechContent}
             onChange={(html) => updateEvent({ speechContent: html })}

@@ -56,20 +56,22 @@ export default function CreateThemePage() {
         }));
     };
 
-    const scrollToSection = useCallback((section: number) => {
-        // Find the scrollable container within the CeremonyCard
-        const container = previewContainerRef.current;
-        if (!container) return;
-
-        // The card content has a scrollable div, find it
-        const scrollableDiv = container.querySelector('[class*="overflow-y-auto"]');
-        if (!scrollableDiv) return;
-
-        // Find the target section
-        const targetSection = scrollableDiv.querySelector(`#card-sec-${section}`);
-        if (targetSection) {
-            targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    const scrollToSection = useCallback((pageNumber: number) => {
+        // Map page numbers to card sections:
+        // Page 1 → no scroll (door closed)
+        // Page 2 → card section 1
+        // Page 3-4 → card section 2
+        // Page 5 → card section 3
+        // Other pages → let CeremonyCard handle it
+        
+        if (pageNumber === 1) {
+            // Page 1 - no scrolling needed, door stays closed
+            return;
         }
+
+        // Don't scroll immediately - let CeremonyCard's useEffect handle it based on editorSection
+        // This prevents the double scroll issue
+        return;
     }, []);
 
     // Scroll detection to determine active section - improved to prevent flickering
@@ -546,19 +548,23 @@ export default function CreateThemePage() {
                                             ←
                                         </button>
 
-                                        {SECTIONS.map((section) => (
-                                            <button
-                                                key={section.id}
-                                                onClick={() => setCurrentContentSection(section.id)}
-                                                className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
-                                                    section.id === currentContentSection
-                                                        ? "bg-[#36463A] text-white shadow"
-                                                        : "bg-white text-gray-700 border border-gray-300 hover:border-[#36463A]"
-                                                }`}
-                                            >
-                                                {section.id}
-                                            </button>
-                                        ))}
+                                        {SECTIONS.map((section) => {
+                                            // Hide page 6 as per requirements
+                                            if (section.id === 6) return null;
+                                            return (
+                                                <button
+                                                    key={section.id}
+                                                    onClick={() => setCurrentContentSection(section.id)}
+                                                    className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                                                        section.id === currentContentSection
+                                                            ? "bg-[#36463A] text-white shadow"
+                                                            : "bg-white text-gray-700 border border-gray-300 hover:border-[#36463A]"
+                                                    }`}
+                                                >
+                                                    {section.id}
+                                                </button>
+                                            );
+                                        })}
 
                                         <button
                                             onClick={() => {
@@ -609,10 +615,14 @@ export default function CreateThemePage() {
                                 </div>
                             </div>
 
-                            {/* Preview */}
+                            {/* Preview - Live updates with event prop */}
                             <div className="lg:sticky lg:top-8 lg:h-fit flex items-start justify-center">
                                 <div ref={previewContainerRef} className="overflow-visible [&>div]:min-h-0 [&>div]:h-auto [&>div]:w-full [&>div]:flex-none [&>div]:items-start [&>div]:rounded-3xl [&>div>div]:rounded-3xl [&>div>div]:overflow-hidden" style={{ width: '294px', height: '509px', backgroundColor: 'transparent' }}>
-                                    <CeremonyCard editorSection={currentContentSection} themeConfig={config} />
+                                    <CeremonyCard 
+                                        event={event} 
+                                        editorSection={currentContentSection} 
+                                        themeConfig={config} 
+                                    />
                                 </div>
                             </div>
                         </div>

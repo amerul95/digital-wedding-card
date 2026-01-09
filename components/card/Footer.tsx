@@ -6,6 +6,7 @@ interface FooterProps {
   onContactClick: () => void;
   onLocationClick: () => void;
   onRSVPClick: () => void;
+  rsvpMode?: "rsvp-speech" | "speech-only" | "thirdparty" | "none";
 }
 
 interface FooterStyle {
@@ -26,9 +27,12 @@ export function Footer({
   onContactClick,
   onLocationClick,
   onRSVPClick,
+  rsvpMode,
   customStyle,
   customIcons,
 }: FooterProps & { customStyle?: FooterStyle; customIcons?: FooterIcons }) {
+  // Hide RSVP button if rsvpMode is "none" or "speech-only"
+  const shouldShowRSVP = rsvpMode !== "none" && rsvpMode !== "speech-only";
   const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp', defaultIcon: React.ReactNode) => {
     const customIconUrl = customIcons?.[type];
     if (customIconUrl) {
@@ -114,7 +118,7 @@ export function Footer({
         className="mx-auto max-w-xs rounded-2xl bg-white/90 backdrop-blur border border-rose-200 shadow px-3 py-2"
         style={customStyle?.background ? getFooterBackgroundStyle() : undefined}
       >
-        <div className={`grid grid-cols-4 gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
+        <div className={`grid ${shouldShowRSVP ? 'grid-cols-4' : 'grid-cols-3'} gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
           <FooterButton label="Calendar" onClick={onCalendarClick} color={customStyle?.color} textColor={customStyle?.textColor}>
             {renderIcon('calendar', <IconCalendar />)}
           </FooterButton>
@@ -124,9 +128,11 @@ export function Footer({
           <FooterButton label="Location" onClick={onLocationClick} color={customStyle?.color} textColor={customStyle?.textColor}>
             {renderIcon('pin', <IconPin />)}
           </FooterButton>
-          <FooterButton label="RSVP" onClick={onRSVPClick} color={customStyle?.color} textColor={customStyle?.textColor}>
-            {renderIcon('rsvp', <IconRSVP />)}
-          </FooterButton>
+          {shouldShowRSVP && (
+            <FooterButton label="RSVP" onClick={onRSVPClick} color={customStyle?.color} textColor={customStyle?.textColor}>
+              {renderIcon('rsvp', <IconRSVP />)}
+            </FooterButton>
+          )}
         </div>
       </div>
     </div>

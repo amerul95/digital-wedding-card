@@ -64,19 +64,82 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: C
     setShowDoors(true);
   }, [event.doorStyle]);
 
-  // --------- Auto-open doors when not viewing Appearance section ---------
+  // --------- Auto-open doors and scroll based on editor section pagination ---------
   useEffect(() => {
     if (editorSection !== undefined) {
       // In editor mode
       if (editorSection === 1) {
-        // Section 1 (Appearance) - Keep doors closed for preview
+        // Page 1 - Keep doors closed for preview
         setDoorsOpen(false);
         setShowDoors(true);
+        // Reset scroll to top
+        const scrollableDiv = scrollContainerRef.current?.querySelector('.overflow-y-auto') as HTMLElement;
+        if (scrollableDiv) {
+          scrollableDiv.scrollTop = 0;
+        }
+      } else if (editorSection === 2) {
+        // Page 2 - Open doors and scroll to section 1 (page 2 is content for section 1)
+        // First, immediately reset scroll to top to prevent showing section 2
+        const scrollableDiv = scrollContainerRef.current?.querySelector('.overflow-y-auto') as HTMLElement;
+        if (scrollableDiv) {
+          scrollableDiv.scrollTop = 0;
+        }
+        
+        setShowDoors(true);
+        setDoorsOpen(false);
+        requestAnimationFrame(() => {
+          setDoorsOpen(true);
+          // Scroll to section 1 after doors open animation completes
+          setTimeout(() => {
+            const scrollableDivAfter = scrollContainerRef.current?.querySelector('.overflow-y-auto') as HTMLElement;
+            if (scrollableDivAfter) {
+              // Ensure we're at top, then scroll to section 1
+              scrollableDivAfter.scrollTop = 0;
+              setTimeout(() => {
+                const section1 = scrollableDivAfter.querySelector('#card-sec-1');
+                if (section1) {
+                  section1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 100);
+            }
+          }, 600); // Wait for door animation to complete
+        });
+      } else if (editorSection === 3 || editorSection === 4) {
+        // Page 3-4 - Open doors and scroll to section 2
+        setShowDoors(true);
+        setDoorsOpen(false);
+        requestAnimationFrame(() => {
+          setDoorsOpen(true);
+          setTimeout(() => {
+            const scrollableDiv = scrollContainerRef.current?.querySelector('.overflow-y-auto') as HTMLElement;
+            if (scrollableDiv) {
+              const section2 = scrollableDiv.querySelector('#card-sec-2');
+              if (section2) {
+                section2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          }, 500);
+        });
+      } else if (editorSection === 5) {
+        // Page 5 - Open doors and scroll to section 3
+        setShowDoors(true);
+        setDoorsOpen(false);
+        requestAnimationFrame(() => {
+          setDoorsOpen(true);
+          setTimeout(() => {
+            const scrollableDiv = scrollContainerRef.current?.querySelector('.overflow-y-auto') as HTMLElement;
+            if (scrollableDiv) {
+              const section3 = scrollableDiv.querySelector('#card-sec-3');
+              if (section3) {
+                section3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          }, 500);
+        });
       } else {
         // Other sections - Auto-open doors so user can see content
         setShowDoors(true);
         setDoorsOpen(false);
-        // Open on next frame to trigger animation
         requestAnimationFrame(() => setDoorsOpen(true));
       }
     }
@@ -96,8 +159,8 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: C
       return;
     }
     
-    // Only auto scroll if not in editor mode or not in Section 1 (Appearance)
-    const shouldAutoScroll = editorSection === undefined || editorSection !== 1;
+    // Disable auto scroll completely when in editor mode
+    const shouldAutoScroll = editorSection === undefined;
     console.log('🎯 Should auto scroll?', shouldAutoScroll, { editorSection });
     if (!shouldAutoScroll) return;
 
@@ -314,6 +377,7 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: C
           onContactClick={() => setModal("contact")}
           onLocationClick={() => setModal("location")}
           onRSVPClick={() => setModal("rsvp")}
+          rsvpMode={event.rsvpMode}
           customStyle={themeConfig ? {
             background: themeConfig.footerBackground?.type === 'color' 
               ? themeConfig.footerBackground.value 

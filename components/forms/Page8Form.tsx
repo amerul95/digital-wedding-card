@@ -27,9 +27,10 @@ export function Page8Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-4">
-        <div>
-          <div className="flex items-center justify-between mb-2">
+      <div className="space-y-6">
+        {/* Contacts - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="flex items-center justify-between">
             <Label>Contacts (Additional Settings)</Label>
             <button
               onClick={addContact}

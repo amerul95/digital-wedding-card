@@ -17,93 +17,99 @@ export function Page9Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-4">
-        {/* YouTube Song URL */}
-        <div>
+      <div className="space-y-6">
+        {/* Background Song - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>Background Song (YouTube URL)</Label>
-          <div className="flex gap-2 mt-2">
-            <input
-              type="url"
-              value={event.songUrl}
-              onChange={(e) => updateEvent({ songUrl: e.target.value })}
-              placeholder="https://www.youtube.com/watch?v=..."
-              className="flex-1 px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
-            />
-            {!event.songUrl && (
-              <a
-                href="https://www.youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 shadow transition-colors whitespace-nowrap"
-              >
-                🎵 YouTube
-              </a>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={event.songUrl}
+                onChange={(e) => updateEvent({ songUrl: e.target.value })}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="flex-1 px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
+              />
+              {!event.songUrl && (
+                <a
+                  href="https://www.youtube.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 shadow transition-colors whitespace-nowrap"
+                >
+                  🎵 YouTube
+                </a>
+              )}
+            </div>
+            {videoId && (
+              <div className="p-2 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-xs text-green-700">✅ Valid YouTube URL detected (ID: {videoId})</p>
+              </div>
+            )}
+            {event.songUrl && !videoId && (
+              <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-xs text-red-700">❌ Invalid YouTube URL. Please check the link.</p>
+              </div>
             )}
           </div>
-          {videoId && (
-            <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-xs text-green-700">✅ Valid YouTube URL detected (ID: {videoId})</p>
-            </div>
-          )}
-          {event.songUrl && !videoId && (
-            <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-xs text-red-700">❌ Invalid YouTube URL. Please check the link.</p>
-            </div>
-          )}
         </div>
 
-        {/* Music Play Seconds */}
-        <div>
-          <Label>1. Seconds of Music Will Play</Label>
-          <input
-            type="number"
-            value={event.musicPlaySeconds}
-            onChange={(e) => updateEvent({ musicPlaySeconds: Number(e.target.value) })}
-            className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white mt-2"
-            min="0"
-            max="600"
-          />
-          <p className="text-xs text-gray-600 mt-2">
-            Set how many seconds the music will play (0-600 seconds)
-          </p>
-        </div>
-
-        {/* Auto Scroll Delay */}
-        <div>
-          <Label>Auto Scroll Delay (after door opens)</Label>
-          <div className="flex items-center gap-4 mt-2">
+        {/* Music Play Seconds - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <Label>Seconds of Music Will Play</Label>
+          <div className="space-y-2">
             <input
-              type="range"
+              type="number"
+              value={event.musicPlaySeconds}
+              onChange={(e) => updateEvent({ musicPlaySeconds: Number(e.target.value) })}
+              className="w-full px-4 py-3 rounded-xl border border-[#36463A] text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
               min="0"
-              max="100"
-              step="1"
-              value={event.autoScrollDelay}
-              onChange={(e) => updateEvent({ autoScrollDelay: Number(e.target.value) })}
-              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#36463A]"
+              max="600"
             />
-            <div className="flex items-center gap-2 min-w-[80px]">
+            <p className="text-xs text-gray-600">
+              Set how many seconds the music will play (0-600 seconds)
+            </p>
+          </div>
+        </div>
+
+        {/* Auto Scroll Delay - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <Label>Auto Scroll Delay (after door opens)</Label>
+          <div className="space-y-2">
+            <div className="flex items-center gap-4">
               <input
-                type="number"
+                type="range"
                 min="0"
                 max="100"
+                step="1"
                 value={event.autoScrollDelay}
                 onChange={(e) => updateEvent({ autoScrollDelay: Number(e.target.value) })}
-                className="w-16 px-2 py-1 rounded-lg border border-[#36463A] text-sm text-gray-700 text-center focus:outline-none focus:ring-2 focus:ring-[#36463A]"
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#36463A]"
               />
-              <span className="text-sm text-[#36463A] font-medium">s</span>
+              <div className="flex items-center gap-2 min-w-[80px]">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={event.autoScrollDelay}
+                  onChange={(e) => updateEvent({ autoScrollDelay: Number(e.target.value) })}
+                  className="w-16 px-2 py-1 rounded-lg border border-[#36463A] text-sm text-gray-700 text-center focus:outline-none focus:ring-2 focus:ring-[#36463A]"
+                />
+                <span className="text-sm text-[#36463A] font-medium">s</span>
+              </div>
             </div>
+            <p className="text-xs text-gray-600">
+              {event.autoScrollDelay === 0 
+                ? "Auto scroll starts immediately after door opens" 
+                : `Auto scroll starts ${event.autoScrollDelay} second${event.autoScrollDelay === 1 ? '' : 's'} after door opens`}
+            </p>
           </div>
-          <p className="text-xs text-gray-600 mt-2">
-            {event.autoScrollDelay === 0 
-              ? "Auto scroll starts immediately after door opens" 
-              : `Auto scroll starts ${event.autoScrollDelay} second${event.autoScrollDelay === 1 ? '' : 's'} after door opens`}
-          </p>
         </div>
 
-        {/* Show Video */}
-        <div>
-          <Label>2. Show Video</Label>
-          <label className="flex items-center gap-2 cursor-pointer mt-2">
+        {/* Show Video - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <Label>Show Video</Label>
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={event.showVideo}
@@ -114,10 +120,10 @@ export function Page9Form() {
           </label>
         </div>
 
-        {/* Autoplay */}
-        <div>
-          <Label>3. Autoplay</Label>
-          <label className="flex items-center gap-2 cursor-pointer mt-2">
+        {/* Autoplay - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <Label>Autoplay</Label>
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={event.autoplay}

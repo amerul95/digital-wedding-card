@@ -11,60 +11,76 @@ export function Page7Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-4">
-        {/* 1. RSVP Mode */}
-        <div>
+      <div className="space-y-6">
+        {/* 1. RSVP Mode - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>1. RSVP Mode</Label>
-          <div className="space-y-2 mt-2">
+          <div className="space-y-2">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="radio"
-                name="rsvpMode"
-                value="rsvp-speech"
+                type="checkbox"
                 checked={event.rsvpMode === "rsvp-speech"}
-                onChange={(e) => updateEvent({ rsvpMode: e.target.value as "rsvp-speech" | "speech-only" | "thirdparty" | "none" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    updateEvent({ rsvpMode: "rsvp-speech" });
+                  }
+                }}
+                onClick={(e) => {
+                  // Prevent unchecking - make it behave like radio buttons
+                  if (event.rsvpMode === "rsvp-speech") {
+                    e.preventDefault();
+                  }
+                }}
+                className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
               />
               <span className="text-sm text-gray-700">RSVP + Speech</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="radio"
-                name="rsvpMode"
-                value="speech-only"
+                type="checkbox"
                 checked={event.rsvpMode === "speech-only"}
-                onChange={(e) => updateEvent({ rsvpMode: e.target.value as "rsvp-speech" | "speech-only" | "thirdparty" | "none" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    updateEvent({ rsvpMode: "speech-only" });
+                  }
+                }}
+                onClick={(e) => {
+                  if (event.rsvpMode === "speech-only") {
+                    e.preventDefault();
+                  }
+                }}
+                className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
               />
               <span className="text-sm text-gray-700">Speech Only</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="radio"
-                name="rsvpMode"
-                value="thirdparty"
-                checked={event.rsvpMode === "thirdparty"}
-                onChange={(e) => updateEvent({ rsvpMode: e.target.value as "rsvp-speech" | "speech-only" | "thirdparty" | "none" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
-              />
-              <span className="text-sm text-gray-700">Third Party</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="rsvpMode"
-                value="none"
+                type="checkbox"
                 checked={event.rsvpMode === "none"}
-                onChange={(e) => updateEvent({ rsvpMode: e.target.value as "rsvp-speech" | "speech-only" | "thirdparty" | "none" })}
-                className="w-4 h-4 text-[#36463A] border-[#36463A] focus:ring-[#36463A]"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    updateEvent({ rsvpMode: "none" });
+                  }
+                }}
+                onClick={(e) => {
+                  if (event.rsvpMode === "none") {
+                    e.preventDefault();
+                  }
+                }}
+                className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
               />
               <span className="text-sm text-gray-700">None</span>
             </label>
           </div>
+          <p className="text-xs text-gray-500">
+            Note: Only one option can be selected. If RSVP + Speech is selected, both "Sahkan Kehadiran" button and RSVP button at bottom will show.
+            If Speech Only is selected, "Sahkan Kehadiran" button and RSVP button at bottom will hide.
+            If None is selected, Section 4 and RSVP button at bottom will hide.
+          </p>
         </div>
 
-        {/* 2. Notes (optional) */}
-        <div>
+        {/* 2. Notes - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>2. Notes (Optional)</Label>
           <RichTextEditor
             content={event.rsvpNotes}
@@ -73,9 +89,9 @@ export function Page7Form() {
           />
         </div>
 
-        {/* 3. RSVP Closing Date */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
+        {/* 3. RSVP Closing Date - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="flex items-center justify-between">
             <Label>3. RSVP Closing Date</Label>
             <Button
               type="button"
@@ -90,14 +106,13 @@ export function Page7Form() {
             value={event.rsvpClosingDate}
             onChange={(value) => updateEvent({ rsvpClosingDate: value })}
             placeholder="Select RSVP closing date and time"
-            className="mt-2"
           />
         </div>
 
-        {/* 4. RSVP Input */}
-        <div>
+        {/* 4. RSVP Input - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>4. RSVP Input (Checkboxes for fields to show in RSVP)</Label>
-          <div className="grid grid-cols-2 gap-2 mt-2">
+          <div className="grid grid-cols-2 gap-2">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -182,10 +197,10 @@ export function Page7Form() {
           </div>
         </div>
 
-        {/* 5. Children attendance separation */}
-        <div>
+        {/* 5. Children Attendance Separation - Grouped */}
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
           <Label>5. Children Attendance Separation</Label>
-          <label className="flex items-center gap-2 cursor-pointer mt-2">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={event.childrenAttendanceSeparation}
