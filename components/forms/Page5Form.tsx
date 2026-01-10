@@ -9,9 +9,9 @@ export function Page5Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* 1. Additional Information - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. Additional Information #1 (Optional)</Label>
           <RichTextEditor
             content={event.additionalInformation1}
@@ -21,7 +21,7 @@ export function Page5Form() {
         </div>
 
         {/* 2. Event Tentative - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Event Tentative (Schedule Content)</Label>
           <RichTextEditor
             content={event.eventTentative}

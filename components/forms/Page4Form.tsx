@@ -9,9 +9,9 @@ export function Page4Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* 1. Hijrah Date - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. Hijrah Date (Optional)</Label>
           <Input
             value={event.hijrahDate}
@@ -21,7 +21,7 @@ export function Page4Form() {
         </div>
 
         {/* 2. Event Address - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Event Address (Location Full)</Label>
           <RichTextEditor
             content={event.eventAddress}
@@ -31,7 +31,7 @@ export function Page4Form() {
         </div>
 
         {/* 3. Navigation - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>3. Navigation (Optional)</Label>
           <div className="space-y-3">
             <div>

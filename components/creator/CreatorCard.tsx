@@ -71,7 +71,8 @@ export function CreatorCard({ config, updateConfig }: CreatorCardProps) {
                             ? `url(${config.footerBackground.value})`
                             : undefined,
                         color: config.footerIconColor,
-                        textColor: config.footerTextColor || config.footerIconColor
+                        textColor: config.footerTextColor || config.footerIconColor,
+                        boxShadow: config.footerBoxShadow
                     }}
                     customIcons={config.footerIcons}
                 />

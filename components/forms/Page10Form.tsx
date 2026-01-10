@@ -9,9 +9,9 @@ export function Page10Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* Show Segment - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>Show Segment (Toggle to show/hide segments)</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center justify-between">

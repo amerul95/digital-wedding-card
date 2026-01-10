@@ -78,7 +78,7 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
     return (
         <div className={`p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-rose-200 shadow-sm flex flex-col gap-2 z-50 ${className}`}>
             <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider">{label}</span>
+                <label htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-color-picker`} className="text-xs font-semibold text-rose-800 uppercase tracking-wider">{label}</label>
                 {(label.toLowerCase().includes('bg') || label.toLowerCase().includes('section')) && (
                     <button
                         onClick={() => setShowSizeModal(true)}
@@ -106,11 +106,14 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                         <div className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: value.type === 'color' ? value.value : '#fff' }} />
                     </button>
                     <input
+                        id={`${label.toLowerCase().replace(/\s+/g, '-')}-color-picker`}
+                        name={`${label.toLowerCase().replace(/\s+/g, '-')}-color-picker`}
                         type="color"
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full rounded-full"
                         value={value.type === 'color' ? value.value : '#ffffff'}
                         onChange={handleColorChange}
                         style={{ WebkitAppearance: "none", appearance: "none" }}
+                        aria-label={`${label} color picker`}
                     />
                 </div>
 
@@ -144,11 +147,14 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                     </svg>
                 </button>
                 <input
+                    id={`${label.toLowerCase().replace(/\s+/g, '-')}-file-upload`}
+                    name={`${label.toLowerCase().replace(/\s+/g, '-')}-file-upload`}
                     type="file"
                     ref={fileInputRef}
                     className="hidden"
                     accept="image/*"
                     onChange={handleImageUpload}
+                    aria-label={`${label} image upload`}
                 />
 
                 {/* Clear/None */}
@@ -222,9 +228,11 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                         <div className="space-y-4">
                             {/* Color 1 */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Color 1 (Start)</label>
+                                <label htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color1-picker`} className="text-sm font-medium">Color 1 (Start)</label>
                                 <div className="flex items-center gap-3">
                                     <input
+                                        id={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color1-picker`}
+                                        name={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color1-picker`}
                                         type="color"
                                         value={gradientColor1}
                                         onChange={(e) => setGradientColor1(e.target.value)}
@@ -233,6 +241,8 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                                     />
                                     <div className="flex-1">
                                         <input
+                                            id={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color1-text`}
+                                            name={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color1-text`}
                                             type="text"
                                             value={gradientColor1}
                                             onChange={(e) => setGradientColor1(e.target.value)}
@@ -245,9 +255,11 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
 
                             {/* Color 2 */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Color 2 (End)</label>
+                                <label htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color2-picker`} className="text-sm font-medium">Color 2 (End)</label>
                                 <div className="flex items-center gap-3">
                                     <input
+                                        id={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color2-picker`}
+                                        name={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color2-picker`}
                                         type="color"
                                         value={gradientColor2}
                                         onChange={(e) => setGradientColor2(e.target.value)}
@@ -256,6 +268,8 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
                                     />
                                     <div className="flex-1">
                                         <input
+                                            id={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color2-text`}
+                                            name={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-color2-text`}
                                             type="text"
                                             value={gradientColor2}
                                             onChange={(e) => setGradientColor2(e.target.value)}
@@ -268,8 +282,10 @@ export function ThemeControls({ label, value, onChange, className = '' }: ThemeC
 
                             {/* Direction */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Direction</label>
+                                <label htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-direction`} className="text-sm font-medium">Direction</label>
                                 <select
+                                    id={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-direction`}
+                                    name={`${label.toLowerCase().replace(/\s+/g, '-')}-gradient-direction`}
                                     value={gradientDirection}
                                     onChange={(e) => setGradientDirection(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm"

@@ -21,9 +21,9 @@ export function Page1Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* 1. Package Choice - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. Package Choice</Label>
           <select
             value={event.packageChoice}
@@ -37,7 +37,7 @@ export function Page1Form() {
         </div>
 
         {/* 2. Opening Style - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Opening Style</Label>
           <div className="space-y-3">
             <select
@@ -112,7 +112,7 @@ export function Page1Form() {
         </div>
 
         {/* 3. Animation & Effects - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>3. Animation & Effects</Label>
           <div className="space-y-3">
             <select

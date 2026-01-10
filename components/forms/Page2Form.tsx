@@ -22,19 +22,23 @@ export function Page2Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* 1. Type of Event - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. Type of Event (Event Title Name)</Label>
           <div className="space-y-3">
             <Input
+              id="eventTitle"
+              name="eventTitle"
               value={event.eventTitle}
               onChange={(e) => updateEvent({ eventTitle: e.target.value })}
               placeholder="Majlis Aqiqah"
             />
             <div>
-              <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
+              <label htmlFor="eventTitleFontSize" className="text-xs text-gray-600 mb-1 block">Font Size</label>
               <input
+                id="eventTitleFontSize"
+                name="eventTitleFontSize"
                 type="number"
                 value={event.eventTitleFontSize}
                 onChange={(e) => updateEvent({ eventTitleFontSize: Number(e.target.value) })}
@@ -44,7 +48,8 @@ export function Page2Form() {
               />
             </div>
             <div>
-              <label className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              <label htmlFor="eventTitleFontColor" className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              {/* Preview Color and Gradient Button - Side by Side */}
               <div className="flex gap-2 items-center">
                 <div className="relative h-10 w-10">
                   <div
@@ -59,6 +64,8 @@ export function Page2Form() {
                     }}
                   />
                   <input
+                    id="eventTitleFontColor"
+                    name="eventTitleFontColor"
                     type="color"
                     value={event.eventTitleFontColor && !event.eventTitleFontColor.startsWith('linear-gradient') ? event.eventTitleFontColor : "#f43f5e"}
                     onChange={(e) => updateEvent({ eventTitleFontColor: e.target.value })}
@@ -66,13 +73,6 @@ export function Page2Form() {
                     style={{ WebkitAppearance: "none", appearance: "none" }}
                   />
                 </div>
-                <input
-                  type="text"
-                  value={event.eventTitleFontColor}
-                  onChange={(e) => updateEvent({ eventTitleFontColor: e.target.value })}
-                  placeholder="#f43f5e or gradient"
-                  className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
-                />
                 <button
                   type="button"
                   onClick={() => {
@@ -110,18 +110,22 @@ export function Page2Form() {
         </div>
 
         {/* 2. Short Name - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Short Name (Celebrated Person)</Label>
           <div className="space-y-3">
             <Input
+              id="shortName"
+              name="shortName"
               value={event.shortName}
               onChange={(e) => updateEvent({ shortName: e.target.value })}
               placeholder="Aqil"
             />
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-gray-600 mb-1 block">Family Font</label>
+                <label htmlFor="shortNameFamilyFont" className="text-xs text-gray-600 mb-1 block">Family Font</label>
                 <input
+                  id="shortNameFamilyFont"
+                  name="shortNameFamilyFont"
                   type="text"
                   value={event.shortNameFamilyFont}
                   onChange={(e) => updateEvent({ shortNameFamilyFont: e.target.value })}
@@ -130,8 +134,10 @@ export function Page2Form() {
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
+                <label htmlFor="shortNameFontSize" className="text-xs text-gray-600 mb-1 block">Font Size</label>
                 <input
+                  id="shortNameFontSize"
+                  name="shortNameFontSize"
                   type="number"
                   value={event.shortNameFontSize}
                   onChange={(e) => updateEvent({ shortNameFontSize: Number(e.target.value) })}
@@ -142,7 +148,8 @@ export function Page2Form() {
               </div>
             </div>
             <div>
-              <label className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              <label htmlFor="shortNameFontColor" className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              {/* Preview Color and Gradient Button - Side by Side */}
               <div className="flex gap-2 items-center">
                 <div className="relative h-10 w-10">
                   <div
@@ -157,6 +164,8 @@ export function Page2Form() {
                     }}
                   />
                   <input
+                    id="shortNameFontColor"
+                    name="shortNameFontColor"
                     type="color"
                     value={event.shortNameFontColor && !event.shortNameFontColor.startsWith('linear-gradient') ? event.shortNameFontColor : "#f43f5e"}
                     onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
@@ -164,13 +173,6 @@ export function Page2Form() {
                     style={{ WebkitAppearance: "none", appearance: "none" }}
                   />
                 </div>
-                <input
-                  type="text"
-                  value={event.shortNameFontColor}
-                  onChange={(e) => updateEvent({ shortNameFontColor: e.target.value })}
-                  placeholder="#f43f5e or gradient"
-                  className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
-                />
                 <button
                   type="button"
                   onClick={() => {
@@ -208,7 +210,7 @@ export function Page2Form() {
         </div>
 
         {/* 3. Start of Event - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>3. Start of Event</Label>
           <div>
             <DateTimePicker
@@ -220,7 +222,7 @@ export function Page2Form() {
         </div>
 
         {/* 4. End of Event - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>4. End of Event</Label>
           <div>
             <DateTimePicker
@@ -232,10 +234,12 @@ export function Page2Form() {
         </div>
 
         {/* 5. Day and Date - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>5. Day and Date (Format: Days - dd.mm.yy)</Label>
           <div className="space-y-3">
             <Input
+              id="dayAndDate"
+              name="dayAndDate"
               value={event.dayAndDate}
               onChange={(e) => updateEvent({ dayAndDate: e.target.value })}
               placeholder="Rabu - 29.10.25"
@@ -245,6 +249,7 @@ export function Page2Form() {
                 <input
                   type="checkbox"
                   id="dayAndDateShowName"
+                  name="dayAndDateShowName"
                   checked={event.dayAndDateShowName}
                   onChange={(e) => updateEvent({ dayAndDateShowName: e.target.checked })}
                   className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
@@ -255,6 +260,7 @@ export function Page2Form() {
                 <input
                   type="checkbox"
                   id="dayAndDateShowPhone"
+                  name="dayAndDateShowPhone"
                   checked={event.dayAndDateShowPhone}
                   onChange={(e) => updateEvent({ dayAndDateShowPhone: e.target.checked })}
                   className="w-4 h-4 text-[#36463A] border-[#36463A] rounded focus:ring-[#36463A]"
@@ -262,8 +268,10 @@ export function Page2Form() {
                 <Label htmlFor="dayAndDateShowPhone" className="mb-0 text-sm">Phone</Label>
               </div>
               <div className="flex-1">
-                <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
+                <label htmlFor="dayAndDateFontSize" className="text-xs text-gray-600 mb-1 block">Font Size</label>
                 <input
+                  id="dayAndDateFontSize"
+                  name="dayAndDateFontSize"
                   type="number"
                   value={event.dayAndDateFontSize}
                   onChange={(e) => updateEvent({ dayAndDateFontSize: Number(e.target.value) })}
@@ -277,9 +285,11 @@ export function Page2Form() {
         </div>
 
         {/* 6. Place/hashtag/etc (Venue) - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>6. Place/Hashtag/Etc (Venue)</Label>
           <Input
+            id="venue"
+            name="venue"
             value={event.venue}
             onChange={(e) => updateEvent({ venue: e.target.value })}
             placeholder="Dewan Seri Melati, Putrajaya"
@@ -300,7 +310,7 @@ export function Page2Form() {
             <div className="space-y-4">
               {/* Color 1 */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Color 1 (Start)</label>
+                <label htmlFor="gradientColor1Picker" className="text-sm font-medium">Color 1 (Start)</label>
                 <div className="flex items-center gap-3">
                   <div className="relative h-10 w-10">
                     <div
@@ -308,6 +318,8 @@ export function Page2Form() {
                       style={{ backgroundColor: gradientColor1 }}
                     />
                     <input
+                      id="gradientColor1Picker"
+                      name="gradientColor1Picker"
                       type="color"
                       value={gradientColor1}
                       onChange={(e) => setGradientColor1(e.target.value)}
@@ -317,6 +329,8 @@ export function Page2Form() {
                   </div>
                   <div className="flex-1">
                     <input
+                      id="gradientColor1Text"
+                      name="gradientColor1Text"
                       type="text"
                       value={gradientColor1}
                       onChange={(e) => setGradientColor1(e.target.value)}
@@ -329,7 +343,7 @@ export function Page2Form() {
 
               {/* Color 2 */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Color 2 (End)</label>
+                <label htmlFor="gradientColor2Picker" className="text-sm font-medium">Color 2 (End)</label>
                 <div className="flex items-center gap-3">
                   <div className="relative h-10 w-10">
                     <div
@@ -337,6 +351,8 @@ export function Page2Form() {
                       style={{ backgroundColor: gradientColor2 }}
                     />
                     <input
+                      id="gradientColor2Picker"
+                      name="gradientColor2Picker"
                       type="color"
                       value={gradientColor2}
                       onChange={(e) => setGradientColor2(e.target.value)}
@@ -346,6 +362,8 @@ export function Page2Form() {
                   </div>
                   <div className="flex-1">
                     <input
+                      id="gradientColor2Text"
+                      name="gradientColor2Text"
                       type="text"
                       value={gradientColor2}
                       onChange={(e) => setGradientColor2(e.target.value)}
@@ -358,8 +376,10 @@ export function Page2Form() {
 
               {/* Direction */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Direction</label>
+                <label htmlFor="gradientDirection" className="text-sm font-medium">Direction</label>
                 <select
+                  id="gradientDirection"
+                  name="gradientDirection"
                   value={gradientDirection}
                   onChange={(e) => setGradientDirection(e.target.value)}
                   className="w-full px-3 py-2 border border-green-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"

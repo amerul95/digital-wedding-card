@@ -24,9 +24,9 @@ export function Page6Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* 1. Body Text - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. Body Text</Label>
           <div className="space-y-3">
             <div>
@@ -104,7 +104,7 @@ export function Page6Form() {
         </div>
 
         {/* 2. Title Text - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Title Text</Label>
           <div className="space-y-3">
             <div>
@@ -157,7 +157,7 @@ export function Page6Form() {
         </div>
 
         {/* 3. Background Color - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>3. Background Color</Label>
           <div className="flex gap-2 items-center">
             <div className="relative h-10 w-10">
@@ -184,7 +184,7 @@ export function Page6Form() {
         </div>
 
         {/* 4. Side Margin - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>4. Side Margin</Label>
           <div className="flex items-center gap-4">
             <input

@@ -17,9 +17,9 @@ export function Page9Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* Background Song - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>Background Song (YouTube URL)</Label>
           <div className="space-y-3">
             <div className="flex gap-2">
@@ -55,7 +55,7 @@ export function Page9Form() {
         </div>
 
         {/* Music Play Seconds - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>Seconds of Music Will Play</Label>
           <div className="space-y-2">
             <input
@@ -73,7 +73,7 @@ export function Page9Form() {
         </div>
 
         {/* Auto Scroll Delay - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>Auto Scroll Delay (after door opens)</Label>
           <div className="space-y-2">
             <div className="flex items-center gap-4">
@@ -107,7 +107,7 @@ export function Page9Form() {
         </div>
 
         {/* Show Video - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>Show Video</Label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -121,7 +121,7 @@ export function Page9Form() {
         </div>
 
         {/* Autoplay - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>Autoplay</Label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input

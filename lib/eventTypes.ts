@@ -63,11 +63,19 @@ export type EventData = {
 
   // Page 3 - Invitation speech
   openingSpeech: string;  // Opening speech (Greeting with richtexteditor)
+  openingSpeechMarginTop?: number;  // Margin top for opening speech container
+  openingSpeechMarginRight?: number;  // Margin right for opening speech container
+  openingSpeechMarginBottom?: number;  // Margin bottom for opening speech container
+  openingSpeechMarginLeft?: number;  // Margin left for opening speech container
   numberOfOrganizers: "one" | "two" | "others";  // No. of Organizer (legacy, kept for backwards compatibility)
   organizerName1: string;  // Name of organizer 1 (legacy)
   organizerName2: string;  // Name of organizer 2 (legacy)
   organizerNames?: string[];  // Array of organizer names (new implementation)
   speechContent: string;  // Speech (multiline with richtexteditor)
+  speechContentMarginTop?: number;  // Margin top for speech content container
+  speechContentMarginRight?: number;  // Margin right for speech content container
+  speechContentMarginBottom?: number;  // Margin bottom for speech content container
+  speechContentMarginLeft?: number;  // Margin left for speech content container
 
   // Page 4 - Location and Navigation
   hijrahDate: string;  // Hijrah date (optional)
@@ -196,11 +204,19 @@ export const defaultEvent: EventData = {
 
   // Page 3 - Invitation speech defaults
   openingSpeech: "Assalamualaikum, hello & selamat sejahtera",
+  openingSpeechMarginTop: 0,
+  openingSpeechMarginRight: 0,
+  openingSpeechMarginBottom: 0,
+  openingSpeechMarginLeft: 0,
   numberOfOrganizers: "one",
   organizerName1: "",
   organizerName2: "",
   organizerNames: [""],
   speechContent: "Dengan penuh kesyukuran, kami mempersilakan...",
+  speechContentMarginTop: 0,
+  speechContentMarginRight: 0,
+  speechContentMarginBottom: 0,
+  speechContentMarginLeft: 0,
 
   // Page 4 - Location and Navigation defaults
   hijrahDate: "",

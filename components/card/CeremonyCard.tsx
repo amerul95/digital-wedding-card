@@ -28,9 +28,10 @@ interface CeremonyCardProps {
   event?: EventData;
   editorSection?: number;  // Current editor section (1-5), undefined means not in editor
   themeConfig?: ThemeConfig;  // Optional theme config to apply styling
+  onSectionClick?: (sectionNumber: number) => void;  // Callback when a section is clicked in editor mode
 }
 
-export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: CeremonyCardProps) {
+export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onSectionClick }: CeremonyCardProps) {
   const { event: eventFromContext } = useEvent();
   const event = eventProp || eventFromContext;
   const [doorsOpen, setDoorsOpen] = useState(false);
@@ -368,6 +369,8 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: C
             onRSVPClick={() => setModal("rsvp")}
             onUcapanClick={() => setModal("ucapan")}
             themeConfig={themeConfig}
+            onSectionClick={onSectionClick}
+            isEditorMode={editorSection !== undefined}
           />
         </div>
 
@@ -387,7 +390,8 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig }: C
               ? `url(${themeConfig.footerBackground.value})`
               : undefined,
             color: themeConfig.footerIconColor,
-            textColor: themeConfig.footerTextColor || themeConfig.footerIconColor
+            textColor: themeConfig.footerTextColor || themeConfig.footerIconColor,
+            boxShadow: themeConfig.footerBoxShadow
           } : undefined}
           customIcons={themeConfig?.footerIcons}
         />

@@ -11,9 +11,9 @@ export function Page7Form() {
 
   return (
     <div className="bg-white p-6">
-      <div className="space-y-6">
+      <div className="space-y-0">
         {/* 1. RSVP Mode - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. RSVP Mode</Label>
           <div className="space-y-2">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -80,7 +80,7 @@ export function Page7Form() {
         </div>
 
         {/* 2. Notes - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Notes (Optional)</Label>
           <RichTextEditor
             content={event.rsvpNotes}
@@ -90,7 +90,7 @@ export function Page7Form() {
         </div>
 
         {/* 3. RSVP Closing Date - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <div className="flex items-center justify-between">
             <Label>3. RSVP Closing Date</Label>
             <Button
@@ -110,7 +110,7 @@ export function Page7Form() {
         </div>
 
         {/* 4. RSVP Input - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>4. RSVP Input (Checkboxes for fields to show in RSVP)</Label>
           <div className="grid grid-cols-2 gap-2">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -198,7 +198,7 @@ export function Page7Form() {
         </div>
 
         {/* 5. Children Attendance Separation - Grouped */}
-        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>5. Children Attendance Separation</Label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input

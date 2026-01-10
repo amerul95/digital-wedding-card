@@ -22,6 +22,7 @@ export interface ThemeConfig {
   footerIconColor: string;
   footerTextColor?: string; // Color for text under icons
   footerIcons?: FooterIcons; // Custom icons for footer
+  footerBoxShadow?: string; // Box shadow CSS value for footer container (e.g., "0 4px 6px rgba(0, 0, 0, 0.1)")
 }
 
 export const defaultThemeConfig: ThemeConfig = {
@@ -34,4 +35,5 @@ export const defaultThemeConfig: ThemeConfig = {
   footerIconColor: '#be123c', // rose-700 default
   footerTextColor: '#be123c', // rose-700 default for text
   footerIcons: {}, // No custom icons by default
+  footerBoxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)', // Default shadow
 };
