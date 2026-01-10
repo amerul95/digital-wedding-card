@@ -49,14 +49,14 @@ export function DesignerSignUpForm() {
   const redirect = searchParams.get("redirect")
   const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/designer/dashboard"
 
-  const form = useForm<SignUpFormValues>({
+  const form = useForm({
     defaultValues: {
       fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
       address: ""
-    },
+    } as SignUpFormValues,
     onSubmit: async ({ value }) => {
       const validationResult = SignUpFormSchema.safeParse(value)
       if (!validationResult.success) {

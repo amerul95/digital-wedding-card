@@ -14,14 +14,15 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useRef } from "react"
 import { useFormContext } from "../FormContext"
+import { FieldApi } from "@tanstack/react-form"
 
 export default function StepOne() {
   const form = useFormContext()
   const colorInputRef = useRef<HTMLInputElement>(null)
   const animationColorInputRef = useRef<HTMLInputElement>(null)
 
-  const fontColor = form.useStore((state) => state.values.fontColor) || "#000000"
-  const animationColor = form.useStore((state) => state.values.animationColor) || "#000000"
+  const fontColor = form.state.values.fontColor || "#000000"
+  const animationColor = form.state.values.animationColor || "#000000"
 
   const handlePreviewClick = () => {
     colorInputRef.current?.click()
@@ -33,13 +34,15 @@ export default function StepOne() {
       <form.Field
         name="choosedPackage"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.choosedPackage.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor="form-rhf-weddingcard">
               Pakej Pilihan
@@ -69,7 +72,7 @@ export default function StepOne() {
           Add-On
         </FieldLabel>
         <form.Field name="isCustomDesign">
-          {(field) => (
+          {(field: any) => (
             <div className="flex items-center space-x-2">
               <Switch 
                 checked={field.state.value} 
@@ -81,7 +84,7 @@ export default function StepOne() {
           )}
         </form.Field>
         <form.Field name="isCustomVideoCover">
-          {(field) => (
+          {(field: any) => (
             <div className="flex items-center space-x-2">
               <Switch 
                 checked={field.state.value} 
@@ -101,13 +104,15 @@ export default function StepOne() {
       <form.Field
         name="groomName"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.groomName.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor="form-rhf-weddingcard">
               Groom Name
@@ -130,13 +135,15 @@ export default function StepOne() {
       <form.Field
         name="brideName"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.brideName.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor="form-rhf-demo-description">
               Bride Name
@@ -159,13 +166,15 @@ export default function StepOne() {
       <form.Field
         name="visualId"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.visualId.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor="form-rhf-weddingcard">
               Kod Rekaan
@@ -194,13 +203,15 @@ export default function StepOne() {
         <form.Field
           name="doorStyle"
           validators={{
-            onChange: ({ value }) => {
+            onChange: ({ value }: { value: any }) => {
               const result = weddingFormSchema.shape.doorStyle.safeParse(value)
-              return result.success ? undefined : result.error.errors[0]?.message
+              if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
             },
           }}
         >
-          {(field) => (
+          {(field: any) => (
             <Field className="max-w-96">
               <FieldLabel htmlFor="form-rhf-weddingcard">
                 Door Style
@@ -229,7 +240,7 @@ export default function StepOne() {
           <Field className="flex items-center gap-2">
             <FieldLabel htmlFor="fontColor">Font Color</FieldLabel>
             <form.Field name="fontColor">
-              {(field) => (
+              {(field: any) => (
                 <>
                   <Input
                     type="color"
@@ -259,13 +270,15 @@ export default function StepOne() {
         <form.Field
           name="animationEffect"
           validators={{
-            onChange: ({ value }) => {
+            onChange: ({ value }: { value: any }) => {
               const result = weddingFormSchema.shape.animationEffect.safeParse(value)
-              return result.success ? undefined : result.error.errors[0]?.message
+              if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
             },
           }}
         >
-          {(field) => (
+          {(field: any) => (
             <Field className="max-w-96">
               <FieldLabel htmlFor="form-rhf-weddingcard">
                 Animation Effect
@@ -295,7 +308,7 @@ export default function StepOne() {
           <Field className="flex items-center gap-2">
             <FieldLabel htmlFor="animationColor">Animation Color</FieldLabel>
             <form.Field name="animationColor">
-              {(field) => (
+              {(field: any) => (
                 <>
                   <Input
                     type="color"

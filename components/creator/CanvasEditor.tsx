@@ -124,6 +124,14 @@ export function CanvasEditor({
       onSelect(null);
       return;
     }
+  }
+
+  const handleTap = (e: KonvaEventObject<TouchEvent>) => {
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      onSelect(null);
+      return;
+    }
 
     const id = e.target.id();
     if (id) {
@@ -141,7 +149,7 @@ export function CanvasEditor({
         width={width}
         height={height}
         onClick={handleClick}
-        onTap={handleClick}
+        onTap={handleTap}
         style={{ cursor: selectedId ? "move" : "default" }}
       >
         <Layer>

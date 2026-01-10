@@ -12,7 +12,7 @@ import { FormProvider } from './FormContext'
 
 export default function MultiForm() {
 
-  const form = useForm<WeddingFormSchema>({
+  const form = useForm({
     defaultValues: {
       // form 2
       couplesFontFamily: "times-roman",
@@ -33,7 +33,7 @@ export default function MultiForm() {
       message: "",
       isCustomDesign: false,
       isCustomVideoCover: false,
-    },
+    } as WeddingFormSchema,
     onSubmit: async ({ value }) => {
       const validationResult = weddingFormSchema.safeParse(value)
       if (!validationResult.success) {
@@ -53,7 +53,7 @@ export default function MultiForm() {
     let isValid = true
     for (const field of currentFields) {
       const fieldState = form.getFieldInfo(field as any)
-      if (fieldState?.meta.errors && fieldState.meta.errors.length > 0) {
+      if (fieldState && (fieldState as any).meta && (fieldState as any).meta.errors && (fieldState as any).meta.errors.length > 0) {
         isValid = false
         break
       }
@@ -66,7 +66,7 @@ export default function MultiForm() {
 
     // Check if all fields are valid
     const fieldStates = currentFields.map(field => form.getFieldInfo(field as any))
-    const allValid = fieldStates.every(state => !state?.meta.errors || state.meta.errors.length === 0)
+    const allValid = fieldStates.every(state => !state || !(state as any).meta || !(state as any).meta.errors || (state as any).meta.errors.length === 0)
 
     if (!allValid) {
       return

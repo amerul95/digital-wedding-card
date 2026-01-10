@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLoginForm } from '@/app/features/AdminLoginForm'
 import axios from 'axios'
@@ -29,7 +29,9 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-4xl">
-        <AdminLoginForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <AdminLoginForm />
+        </Suspense>
       </div>
     </div>
   )

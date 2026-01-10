@@ -16,14 +16,14 @@ export default function StepThree() {
       <form.Field
         name="message"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             if (!value) return undefined
             // Message is optional, so no validation needed unless you want to add min length
             return undefined
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor='form-rhf-message'>
               Message (Optional)
@@ -46,13 +46,15 @@ export default function StepThree() {
       <form.Field
         name="eventDate"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.eventDate.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor='form-rhf-eventDate'>
               Event Date
@@ -75,7 +77,7 @@ export default function StepThree() {
       <form.Field
         name="themeColor"
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor='form-rhf-themeColor'>
               Theme Color (Optional)

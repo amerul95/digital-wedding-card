@@ -1,16 +1,15 @@
 "use client"
 
 import React, { createContext, useContext } from "react"
-import { FormApi } from "@tanstack/react-form"
-import { WeddingFormSchema } from "@/lib/schema/schema"
+import type { FormApi } from "@tanstack/react-form"
 
-const FormContext = createContext<FormApi<WeddingFormSchema, undefined> | null>(null)
+const FormContext = createContext<any>(null)
 
 export function FormProvider({ 
   form, 
   children 
 }: { 
-  form: FormApi<WeddingFormSchema, undefined>
+  form: any
   children: React.ReactNode 
 }) {
   return <FormContext.Provider value={form}>{children}</FormContext.Provider>

@@ -54,12 +54,12 @@ export function SignUpForm({
   const redirect = searchParams.get("redirect")
   const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/"
 
-  const form = useForm<SignUpFormValues>({
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
       confirmPassword: ""
-    },
+    } as SignUpFormValues,
     onSubmit: async ({ value }) => {
       const validationResult = SignUpFormSchema.safeParse(value)
       if (!validationResult.success) {
@@ -107,7 +107,9 @@ export function SignUpForm({
                 validators={{
                   onChange: ({ value }) => {
                     const result = SignUpFormSchema.shape.email.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message
                   },
                 }}
               >
@@ -125,7 +127,7 @@ export function SignUpForm({
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -136,7 +138,9 @@ export function SignUpForm({
                 validators={{
                   onChange: ({ value }) => {
                     const result = SignUpFormSchema.shape.password.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message
                   },
                 }}
               >
@@ -154,7 +158,7 @@ export function SignUpForm({
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -163,13 +167,16 @@ export function SignUpForm({
               <form.Field
                 name="confirmPassword"
                 validators={{
-                  onChange: ({ value, formApi }) => {
-                    const password = formApi.getFieldValue("password")
-                    if (value !== password) {
+                  onChange: ({ value }) => {
+                    // Get password value from form state directly
+                    const password = form.state.values.password
+                    if (value && password && value !== password) {
                       return "Passwords do not match"
                     }
                     const result = SignUpFormSchema.shape.confirmPassword.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message || "Invalid password confirmation"
                   },
                 }}
               >
@@ -187,7 +194,7 @@ export function SignUpForm({
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}

@@ -14,8 +14,8 @@ export default function StepTwo() {
   const form = useFormContext()
   const couplesFontColor = useRef<HTMLInputElement>(null)
 
-  const fontSize = form.useStore((state) => state.values.ceremonynameFontsize) || 20
-  const color = form.useStore((state) => state.values.fontColor) || "#000000"
+  const fontSize = form.state.values.ceremonynameFontsize || 20
+  const color = form.state.values.fontColor || "#000000"
 
   const handlePreviewClick = () => {
     couplesFontColor.current?.click()
@@ -26,13 +26,15 @@ export default function StepTwo() {
       <form.Field
         name="ceremonyName"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.ceremonyName.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel htmlFor='form-rhf-weddingcard'>
               Jenis Majlis
@@ -55,13 +57,15 @@ export default function StepTwo() {
       <form.Field
         name="ceremonynameFontsize"
         validators={{
-          onChange: ({ value }) => {
+          onChange: ({ value }: { value: any }) => {
             const result = weddingFormSchema.shape.ceremonynameFontsize.safeParse(value)
-            return result.success ? undefined : result.error.errors[0]?.message
+            if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
           },
         }}
       >
-        {(field) => (
+        {(field: any) => (
           <Field>
             <FieldLabel>
               Size font
@@ -91,13 +95,15 @@ export default function StepTwo() {
         <form.Field
           name="couplesName"
           validators={{
-            onChange: ({ value }) => {
+            onChange: ({ value }: { value: any }) => {
               const result = weddingFormSchema.shape.couplesName.safeParse(value)
-              return result.success ? undefined : result.error.errors[0]?.message
+              if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
             },
           }}
         >
-          {(field) => (
+          {(field: any) => (
             <Field>
               <FieldLabel>
                 Nama Panggilan
@@ -120,13 +126,15 @@ export default function StepTwo() {
           <form.Field
             name="couplesFontFamily"
             validators={{
-              onChange: ({ value }) => {
+              onChange: ({ value }: { value: any }) => {
                 const result = weddingFormSchema.shape.couplesFontFamily.safeParse(value)
-                return result.success ? undefined : result.error.errors[0]?.message
+                if (result.success) return undefined
+            const firstError = result.error.issues?.[0]
+            return firstError?.message
               },
             }}
           >
-            {(field) => (
+            {(field: any) => (
               <Field>
                 <Select 
                   onValueChange={(value) => field.handleChange(value)} 
@@ -149,7 +157,7 @@ export default function StepTwo() {
           </form.Field>
 
           <form.Field name="fontColor">
-            {(field) => (
+            {(field: any) => (
               <Field className='flex items-center gap-2 w-fit'>
                 <Input
                   type="color"

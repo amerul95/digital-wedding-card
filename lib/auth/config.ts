@@ -1,4 +1,3 @@
-import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
@@ -20,7 +19,7 @@ export function getCookieName(route: "client" | "designer" | "admin"): string {
 // Create auth config for different routes
 export function createAuthConfig(
   route: "client" | "designer" | "admin"
-): NextAuthOptions {
+): any {
   const cookieName = getCookieName(route)
   
   return {
@@ -36,8 +35,11 @@ export function createAuthConfig(
             return null
           }
 
+          const email = credentials.email as string
+          const password = credentials.password as string
+
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+            where: { email },
             include: { role: true },
           })
 
@@ -47,7 +49,7 @@ export function createAuthConfig(
 
           // Verify password
           const isValid = await bcrypt.compare(
-            credentials.password,
+            password,
             user.password
           )
 
@@ -86,7 +88,7 @@ export function createAuthConfig(
       signIn: `/${route}/login`,
     },
     callbacks: {
-      async jwt({ token, user }) {
+      async jwt({ token, user }: { token: any; user: any }) {
         if (user) {
           token.id = user.id
           token.email = user.email
@@ -94,7 +96,7 @@ export function createAuthConfig(
         }
         return token
       },
-      async session({ session, token }) {
+      async session({ session, token }: { session: any; token: any }) {
         if (session.user) {
           session.user.id = token.id as string
           session.user.role = token.role as string

@@ -9,6 +9,7 @@ import { Controller, useForm, useFormContext } from "react-hook-form"
 import { Select,SelectContent,SelectTrigger,SelectValue ,SelectItem} from "@/components/ui/select"
 
 export default function DoorStyle() {
+  const { control } = useFormContext()
 
   return (
       <Field>

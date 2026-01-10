@@ -20,7 +20,7 @@ type CartItem = {
     image:string
 }
 
-const cartData = [
+const cartData: CartItem[] = [
 //   {
 //     id: "1",
 //     name: "Samsung Galaxy S23 Ultra S918B/DS 256GB",

@@ -1,10 +1,18 @@
 import NextAuth from "next-auth"
 import { createAuthConfig } from "@/lib/auth/config"
+import type { NextRequest } from "next/server"
 
 // Designer auth with separate cookie
-const handler = NextAuth(createAuthConfig("designer"))
+const authConfig = createAuthConfig("designer")
+const { handlers } = NextAuth(authConfig)
 
-export { handler as GET, handler as POST }
+export async function GET(request: NextRequest, context: { params: Promise<{ nextauth: string[] }> }) {
+  return handlers.GET(request)
+}
+
+export async function POST(request: NextRequest, context: { params: Promise<{ nextauth: string[] }> }) {
+  return handlers.POST(request)
+}
 
 
 

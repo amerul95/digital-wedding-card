@@ -48,11 +48,11 @@ export function LoginForm({
   const redirect = searchParams.get("redirect")
   const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/"
 
-  const form = useForm<LoginFormValues>({
+  const form = useForm({
     defaultValues: {
       email: "",
       password: ""
-    },
+    } as LoginFormValues,
     onSubmit: async ({ value }) => {
       const validationResult = formSchema.safeParse(value)
       if (!validationResult.success) {
@@ -100,7 +100,9 @@ export function LoginForm({
                 validators={{
                   onChange: ({ value }) => {
                     const result = formSchema.shape.email.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message
                   },
                 }}
               >
@@ -118,7 +120,7 @@ export function LoginForm({
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}
@@ -129,7 +131,9 @@ export function LoginForm({
                 validators={{
                   onChange: ({ value }) => {
                     const result = formSchema.shape.password.safeParse(value)
-                    return result.success ? undefined : result.error.errors[0]?.message
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message
                   },
                 }}
               >
@@ -147,7 +151,7 @@ export function LoginForm({
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}
                   </Field>
                 )}

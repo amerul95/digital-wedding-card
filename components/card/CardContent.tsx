@@ -239,57 +239,61 @@ export function CardContent({
       {shouldShowSection4 && (
         <section 
           id="card-sec-4" 
-          className={`min-h-full flex flex-col justify-center items-center text-center px-8 py-8 transition-all duration-300 ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-95 active:opacity-90 focus:outline-2 focus:outline-blue-500 focus:outline-offset-2' : ''}`}
+          className="min-h-full flex flex-col justify-center items-center text-center px-8 py-8 transition-all duration-300"
           style={getSectionBackgroundStyle(4)}
-          onClick={() => isEditorMode && onSectionClick && onSectionClick(10)}
-          onKeyDown={(e) => {
-            if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
-              e.preventDefault();
-              onSectionClick(10);
-            }
-          }}
-          tabIndex={isEditorMode && onSectionClick ? 0 : undefined}
         >
-          {/* Counting Days - Moved to top of section 4 */}
-          {event.showSegmentCountingDays && event.startEventDateTime && (
-            <div className="mb-6 pointer-events-none">
-              <CountingDays targetDate={event.startEventDateTime} />
-            </div>
-          )}
-
-          {/* Attendance - Moved to top of section 4 */}
-          {event.showSegmentAttendance && (
-            <div className="mb-6 pointer-events-none">
-              <Attendance eventId={undefined} />
-            </div>
-          )}
-
-          <h2 className="text-lg font-semibold text-rose-700 mb-2 pointer-events-none">Ucapan Tahniah</h2>
-          {event.allowCongrats ? (
-            <>
-              <p className="text-sm text-rose-900/80 mb-4 pointer-events-none">Kongsikan ucapan tahniah anda atau sahkan kehadiran.</p>
-              <div className="flex items-center justify-center gap-3 pointer-events-auto">
-                {shouldShowConfirmAttendance && (
-                  <button
-                    className="px-4 py-2 rounded-full bg-rose-600 text-white text-sm shadow hover:bg-rose-700"
-                    onClick={onRSVPClick}
-                  >
-                    Sahkan Kehadiran
-                  </button>
-                )}
-                {shouldShowWriteMessage && (
-                  <button
-                    className="px-4 py-2 rounded-full border border-rose-300 text-rose-700 bg-white text-sm shadow hover:bg-rose-50"
-                    onClick={onUcapanClick}
-                  >
-                    Tulis Ucapan Tahniah
-                  </button>
-                )}
+          <div 
+            className={`flex flex-col items-center ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
+            onClick={() => isEditorMode && onSectionClick && onSectionClick(10)}
+            onKeyDown={(e) => {
+              if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                onSectionClick(10);
+              }
+            }}
+            tabIndex={isEditorMode && onSectionClick ? 0 : undefined}
+          >
+            {/* Counting Days - Moved to top of section 4 */}
+            {event.showSegmentCountingDays && event.startEventDateTime && (
+              <div className="mb-6 pointer-events-none">
+                <CountingDays targetDate={event.startEventDateTime} />
               </div>
-            </>
-          ) : (
-            <p className="text-sm text-rose-900/80 mb-4 pointer-events-none">{event.congratsNote}</p>
-          )}
+            )}
+
+            {/* Attendance - Moved to top of section 4 */}
+            {event.showSegmentAttendance && (
+              <div className="mb-6 pointer-events-none">
+                <Attendance eventId={undefined} />
+              </div>
+            )}
+
+            <h2 className="text-lg font-semibold text-rose-700 mb-2 pointer-events-none">Ucapan Tahniah</h2>
+            {event.allowCongrats ? (
+              <>
+                <p className="text-sm text-rose-900/80 mb-4 pointer-events-none">Kongsikan ucapan tahniah anda atau sahkan kehadiran.</p>
+                <div className="flex items-center justify-center gap-3 pointer-events-auto">
+                  {shouldShowConfirmAttendance && (
+                    <button
+                      className="px-4 py-2 rounded-full bg-rose-600 text-white text-sm shadow hover:bg-rose-700"
+                      onClick={onRSVPClick}
+                    >
+                      Sahkan Kehadiran
+                    </button>
+                  )}
+                  {shouldShowWriteMessage && (
+                    <button
+                      className="px-4 py-2 rounded-full border border-rose-300 text-rose-700 bg-white text-sm shadow hover:bg-rose-50"
+                      onClick={onUcapanClick}
+                    >
+                      Tulis Ucapan Tahniah
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-rose-900/80 mb-4 pointer-events-none">{event.congratsNote}</p>
+            )}
+          </div>
         </section>
       )}
     </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { DesignerLoginForm } from '@/app/features/DesignerLoginForm'
 import axios from 'axios'
@@ -29,7 +29,9 @@ export default function DesignerLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-4xl">
-        <DesignerLoginForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <DesignerLoginForm />
+        </Suspense>
       </div>
     </div>
   )

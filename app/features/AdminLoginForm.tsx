@@ -35,11 +35,11 @@ export function AdminLoginForm() {
   const redirect = searchParams.get("redirect")
   const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/admin/dashboard"
 
-  const form = useForm<LoginFormValues>({
+  const form = useForm({
     defaultValues: {
       username: "",
       password: ""
-    },
+    } as LoginFormValues,
     onSubmit: async ({ value }) => {
       const validationResult = formSchema.safeParse(value)
       if (!validationResult.success) {

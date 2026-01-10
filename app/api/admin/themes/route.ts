@@ -74,7 +74,7 @@ export async function GET() {
       status: theme.isPublished ? "published" : "pending",
       createdAt: theme.createdAt.toISOString(),
       sales: theme.sales.length,
-      revenue: Number(theme.sales.reduce((sum, sale) => sum + sale.salePrice, 0)),
+      revenue: Number(theme.sales.reduce((sum, sale) => sum + Number(sale.salePrice), 0)),
     }))
 
     return NextResponse.json(themesWithStats)

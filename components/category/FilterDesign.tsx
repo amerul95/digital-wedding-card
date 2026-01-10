@@ -21,7 +21,7 @@ import {
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation"
 
-import { useDebouncedCallback } from 'use-debounce';
+import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { dataDummy } from "@/lib/dummyData"
 
 export function FilterDesign() {

@@ -21,13 +21,13 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>
 
 export default function ContactForm() {
-  const form = useForm<ContactFormValues>({
+  const form = useForm({
     defaultValues: {
       fullName: '',
       email: '',
       message: '',
       readTutorials: false
-    },
+    } as ContactFormValues,
     onSubmit: async ({ value }) => {
       const validationResult = contactFormSchema.safeParse(value)
       if (!validationResult.success) {
@@ -75,7 +75,9 @@ export default function ContactForm() {
           validators={{
             onChange: ({ value }) => {
               const result = contactFormSchema.shape.fullName.safeParse(value)
-              return result.success ? undefined : result.error.errors[0]?.message
+               if (result.success) return undefined
+               const firstError = result.error.issues?.[0]
+               return firstError?.message
             },
           }}
         >
@@ -104,7 +106,9 @@ export default function ContactForm() {
           validators={{
             onChange: ({ value }) => {
               const result = contactFormSchema.shape.email.safeParse(value)
-              return result.success ? undefined : result.error.errors[0]?.message
+               if (result.success) return undefined
+               const firstError = result.error.issues?.[0]
+               return firstError?.message
             },
           }}
         >
@@ -133,7 +137,9 @@ export default function ContactForm() {
           validators={{
             onChange: ({ value }) => {
               const result = contactFormSchema.shape.message.safeParse(value)
-              return result.success ? undefined : result.error.errors[0]?.message
+               if (result.success) return undefined
+               const firstError = result.error.issues?.[0]
+               return firstError?.message
             },
           }}
         >

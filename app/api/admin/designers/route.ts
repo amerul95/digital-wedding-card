@@ -75,7 +75,7 @@ export async function GET() {
       themes: designer.themes.length,
       totalSales: designer.sales.length,
       totalEarnings: Number(
-        designer.sales.reduce((sum, sale) => sum + sale.designerEarning, 0)
+        designer.sales.reduce((sum, sale) => sum + Number(sale.designerEarning), 0)
       ),
       joinedDate: designer.createdAt.toISOString(),
     }))
