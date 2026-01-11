@@ -33,6 +33,17 @@ export function IconRSVP() {
   );
 }
 
+export function IconGifts() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+      <rect x="3" y="8" width="18" height="4" rx="1"/>
+      <rect x="3" y="12" width="18" height="10" rx="1"/>
+      <path d="M12 8V3M12 8H7M12 8h5M7 3v5M17 3v5"/>
+      <path d="M7 8H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2"/>
+    </svg>
+  );
+}
+
 export function IconApple() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">

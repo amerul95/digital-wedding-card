@@ -1,7 +1,8 @@
 "use client";
 
 import { useEvent } from "@/context/EventContext";
-import { Label, Input, Row } from "@/components/card/UI";
+import { Label, Input } from "@/components/card/UI";
+import { Trash2 } from "lucide-react";
 
 export function Page8Form() {
   const { event, updateEvent } = useEvent();
@@ -41,8 +42,17 @@ export function Page8Form() {
           </div>
           <div className="space-y-3">
             {event.contacts.map((contact, index) => (
-              <div key={index} className="border border-[#36463A] rounded-xl p-3">
-                <Row>
+              <div key={index} className="border border-[#36463A] rounded-xl p-3 relative">
+                {event.contacts.length > 1 && (
+                  <button
+                    onClick={() => removeContact(index)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                    title="Delete contact"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+                <div className="space-y-3 pr-8">
                   <div>
                     <Label>Name</Label>
                     <Input
@@ -53,23 +63,13 @@ export function Page8Form() {
                   </div>
                   <div>
                     <Label>Phone</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={contact.phone}
-                        onChange={(e) => handleContactChange(index, "phone", e.target.value)}
-                        placeholder="+60123456789"
-                      />
-                      {event.contacts.length > 1 && (
-                        <button
-                          onClick={() => removeContact(index)}
-                          className="px-3 py-2 rounded-xl border border-red-300 text-red-700 text-sm hover:bg-red-50"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
+                    <Input
+                      value={contact.phone}
+                      onChange={(e) => handleContactChange(index, "phone", e.target.value)}
+                      placeholder="+60123456789"
+                    />
                   </div>
-                </Row>
+                </div>
               </div>
             ))}
           </div>

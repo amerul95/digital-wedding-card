@@ -78,6 +78,10 @@ model Wedding {
 model Theme {
   id              String      @id @default(uuid())
   name            String
+  customId        String?     @unique @map("custom_id")
+  themeName       String?     @map("theme_name")
+  color           String?
+  runningNumber   Int?        @map("running_number")
   primaryColor    String?
   secondaryColor  String?
   fontFamily      String?
@@ -91,6 +95,9 @@ model Theme {
   sales           ThemeSale[]
   weddings        Wedding[]
   products        Product[]
+  
+  @@index([designerId, themeName])
+  @@index([designerId, runningNumber])
 }
 
 model Song {

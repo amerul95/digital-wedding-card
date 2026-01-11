@@ -30,6 +30,271 @@ async function getCurrentDesignerId() {
   }
 }
 
+// Helper function to get first letter of theme name
+function getThemeLetter(themeName: string): string {
+  const themeMap: { [key: string]: string } = {
+    'baby': 'B',
+    'party': 'P',
+    'ramadan': 'R',
+    'raya': 'Y',
+    'floral': 'F',
+    'islamic': 'I',
+    'minimalist': 'M',
+    'modern': 'D',
+    'rustic': 'S',
+    'traditional': 'T',
+    'vintage': 'V',
+    'watercolor': 'W',
+  }
+  return themeMap[themeName.toLowerCase()] || themeName.charAt(0).toUpperCase()
+}
+
+// Helper function to get color code (first letter, use K for black)
+function getColorCode(color: string): string {
+  if (!color) return 'K'
+  const upperColor = color.trim().toUpperCase()
+  if (upperColor.includes('BLACK')) return 'K'
+  return upperColor.charAt(0) || 'K'
+}
+
+// Helper function to format designer ID (pad to 3 digits)
+async function formatDesignerId(designerId: string): Promise<string> {
+  // Get designer to check creation order
+  // We'll use a sequential number based on when designer was created
+  const designer = await prisma.designer.findUnique({
+    where: { id: designerId },
+    select: { createdAt: true },
+  })
+  
+  if (!designer) {
+    // Fallback: use first 3 chars of ID
+    return designerId.slice(0, 3).padStart(3, '0')
+  }
+  
+  const designers = await prisma.designer.findMany({
+    where: {
+      createdAt: {
+        lte: designer.createdAt
+      }
+    },
+    orderBy: { createdAt: 'asc' },
+    select: { id: true },
+  })
+  
+  const index = designers.findIndex(d => d.id === designerId)
+  // Return 1-indexed, padded to 3 digits (001, 002, etc.)
+  return (index + 1).toString().padStart(3, '0')
+}
+
+// Helper function to get running number for a type
+async function getNextRunningNumber(
+  designerId: string,
+  type: 'theme' | 'content' | 'template',
+  themeName?: string
+): Promise<number> {
+  const whereClause: any = {
+    designerId,
+    configJson: { not: null },
+  }
+
+      // For theme type, also filter by themeName
+      if (type === 'theme' && themeName) {
+        // Find themes with the same themeName
+        const themes = await prisma.theme.findMany({
+          where: whereClause,
+          select: { configJson: true },
+        })
+
+    // Parse configJson to check type
+    const matchingThemes = themes.filter((t) => {
+      if (!t.configJson) return false
+      try {
+        const config = JSON.parse(t.configJson)
+        return config.type === 'theme'
+      } catch {
+        return false
+      }
+    })
+
+        if (matchingThemes.length === 0) return 1
+        
+        // Get running numbers from configJson if not in DB yet
+        const runningNumbers = matchingThemes.map((t) => {
+          try {
+            const cfg = JSON.parse(t.configJson || '{}')
+            return cfg.runningNumber || 0
+          } catch {
+            return 0
+          }
+        })
+        const maxRunning = Math.max(...runningNumbers, 0)
+        return maxRunning + 1
+      }
+
+  // For content type
+  if (type === 'content') {
+    const contents = await prisma.theme.findMany({
+      where: whereClause,
+      select: { configJson: true },
+    })
+
+    const matchingContents = contents.filter((t) => {
+      if (!t.configJson) return false
+      try {
+        const config = JSON.parse(t.configJson)
+        return config.type === 'content'
+      } catch {
+        return false
+      }
+    })
+
+    if (matchingContents.length === 0) return 1
+    
+    const runningNumbers = matchingContents.map((t) => {
+      try {
+        const cfg = JSON.parse(t.configJson || '{}')
+        return cfg.runningNumber || 0
+      } catch {
+        return 0
+      }
+    })
+    const maxRunning = Math.max(...runningNumbers, 0)
+    return maxRunning + 1
+  }
+
+  // For template type
+  if (type === 'template') {
+    const templates = await prisma.theme.findMany({
+      where: whereClause,
+      select: { configJson: true },
+    })
+
+    const matchingTemplates = templates.filter((t) => {
+      if (!t.configJson) return false
+      try {
+        const config = JSON.parse(t.configJson)
+        return config.type === 'template'
+      } catch {
+        return false
+      }
+    })
+
+    if (matchingTemplates.length === 0) return 1
+    
+    const runningNumbers = matchingTemplates.map((t) => {
+      try {
+        const cfg = JSON.parse(t.configJson || '{}')
+        return cfg.runningNumber || 0
+      } catch {
+        return 0
+      }
+    })
+    const maxRunning = Math.max(...runningNumbers, 0)
+    return maxRunning + 1
+  }
+
+  return 1
+}
+
+// Helper function to generate custom ID
+async function generateCustomId(
+  designerId: string,
+  type: 'theme' | 'content' | 'template',
+  config?: any
+): Promise<string> {
+  const designerCode = await formatDesignerId(designerId)
+  const runningNumber = await getNextRunningNumber(
+    designerId,
+    type,
+    config?.themeName
+  )
+  const runningCode = runningNumber.toString().padStart(3, '0')
+
+  if (type === 'theme') {
+    const themeName = config?.themeName
+    if (!themeName) {
+      throw new Error('Theme name is required for theme type')
+    }
+    const themeLetter = getThemeLetter(themeName)
+    return `${designerCode}-${themeLetter}-${runningCode}`
+  }
+
+  if (type === 'content') {
+    return `${designerCode}-${runningCode}`
+  }
+
+  if (type === 'template') {
+    const themeName = config?.themeName
+    const color = config?.color
+    const year = new Date().getFullYear().toString().slice(-2) // Last 2 digits
+
+    if (!themeName) {
+      throw new Error('Theme name is required for template type')
+    }
+    if (!color) {
+      throw new Error('Color is required for template type')
+    }
+
+    const themeLetter = getThemeLetter(themeName)
+    const colorCode = getColorCode(color)
+
+    // For template, get the latest content running number for this designer
+    // This represents which content version this template uses
+    const latestContents = await prisma.theme.findMany({
+      where: {
+        designerId,
+        configJson: { not: null },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: { configJson: true },
+    })
+
+    let contentCode = '001'
+    // Find the latest content type and get its running number
+    for (const latestContent of latestContents) {
+      if (latestContent.configJson) {
+        try {
+          const contentConfig = JSON.parse(latestContent.configJson)
+          if (contentConfig.type === 'content') {
+            // Get running number from config or calculate it
+            if (contentConfig.runningNumber) {
+              contentCode = contentConfig.runningNumber.toString().padStart(3, '0')
+            } else {
+              // Calculate from existing contents
+              const contentRunningNumber = await getNextRunningNumber(designerId, 'content')
+              contentCode = (contentRunningNumber - 1).toString().padStart(3, '0') || '001'
+            }
+            break
+          }
+        } catch {
+          continue
+        }
+      }
+    }
+    
+    // If no content found, use 001
+    if (contentCode === '001') {
+      const allContents = latestContents.filter((t) => {
+        if (!t.configJson) return false
+        try {
+          const cfg = JSON.parse(t.configJson)
+          return cfg.type === 'content'
+        } catch {
+          return false
+        }
+      })
+      if (allContents.length > 0) {
+        // Use the count as running number
+        contentCode = allContents.length.toString().padStart(3, '0')
+      }
+    }
+
+    return `${designerCode}-${themeLetter}-${contentCode}-${year}-${runningCode}-${colorCode}`
+  }
+
+  return `${designerCode}-${runningCode}`
+}
+
 export async function GET() {
   const designerId = await getCurrentDesignerId()
 
@@ -70,6 +335,15 @@ export async function GET() {
 
         const config = theme.configJson ? JSON.parse(theme.configJson) : null
         const type = config?.type || 'theme' // Default to 'theme' for backward compatibility
+        
+        // Extract year from customId for templates (format: 001-F-001-24-001-R)
+        let year: string | null = null
+        if (type === 'template' && config?.customId) {
+          const parts = config.customId.split('-')
+          if (parts.length >= 4) {
+            year = `20${parts[3]}` // Convert 24 to 2024
+          }
+        }
 
         return {
           id: theme.id,
@@ -81,6 +355,8 @@ export async function GET() {
           previewImage: theme.previewImageUrl || null,
           config: config,
           type: type, // 'theme', 'content', or 'template'
+          customId: config?.customId || null,
+          year: year, // Extract year for templates
         }
       })
     )
@@ -107,7 +383,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { name, config, defaultEventData, type = 'theme' } = body
+    const { name, config, defaultEventData, type = 'theme', isDuplicate = false } = body
 
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return NextResponse.json(
@@ -115,6 +391,113 @@ export async function POST(req: Request) {
         { status: 400 }
       )
     }
+
+    // For template type, auto-save theme and content if they don't exist
+    if (type === 'template') {
+      if (!config?.themeName) {
+        return NextResponse.json(
+          { error: "Theme name is required for template" },
+          { status: 400 }
+        )
+      }
+      if (!config?.color) {
+        return NextResponse.json(
+          { error: "Color is required for template" },
+          { status: 400 }
+        )
+      }
+
+      // Check if theme exists for this designer with same themeName
+      const existingThemes = await prisma.theme.findMany({
+        where: {
+          designerId,
+        },
+        select: { configJson: true },
+      })
+
+      let themeExists = existingThemes.some((t) => {
+        if (!t.configJson) return false
+        try {
+          const cfg = JSON.parse(t.configJson)
+          return cfg.type === 'theme' && cfg.themeName === config.themeName
+        } catch {
+          return false
+        }
+      })
+
+      // Auto-create theme if it doesn't exist
+      if (!themeExists) {
+        const themeRunningNumber = await getNextRunningNumber(designerId, 'theme', config.themeName)
+        const themeCustomId = await generateCustomId(designerId, 'theme', config)
+        
+        const themeConfig = {
+          ...config,
+          type: 'theme',
+          defaultEventData: null,
+        }
+
+        await prisma.theme.create({
+          data: {
+            name: `${config.themeName} Theme`,
+            designerId,
+            configJson: JSON.stringify({
+              ...themeConfig,
+              runningNumber: themeRunningNumber,
+              customId: themeCustomId,
+              themeName: config.themeName,
+            }),
+            isPublished: false,
+          } as any,
+        })
+      }
+
+      // Check if content exists
+      const existingContents = await prisma.theme.findMany({
+        where: { designerId },
+        select: { configJson: true },
+      })
+
+      let contentExists = existingContents.some((t) => {
+        if (!t.configJson) return false
+        try {
+          const cfg = JSON.parse(t.configJson)
+          return cfg.type === 'content'
+        } catch {
+          return false
+        }
+      })
+
+      // Auto-create content if it doesn't exist
+      if (!contentExists && defaultEventData) {
+        const contentRunningNumber = await getNextRunningNumber(designerId, 'content')
+        const contentCustomId = await generateCustomId(designerId, 'content')
+        
+        const contentConfig = {
+          type: 'content',
+          defaultEventData: defaultEventData,
+        }
+
+        await prisma.theme.create({
+          data: {
+            name: `Content ${contentRunningNumber}`,
+            designerId,
+            configJson: JSON.stringify({
+              ...contentConfig,
+              runningNumber: contentRunningNumber,
+              customId: contentCustomId,
+            }),
+            isPublished: false,
+          } as any,
+        })
+      }
+    }
+
+    // Generate custom ID and running number
+    const runningNumber = isDuplicate
+      ? await getNextRunningNumber(designerId, type, config?.themeName)
+      : await getNextRunningNumber(designerId, type, config?.themeName)
+
+    const customId = await generateCustomId(designerId, type, config)
 
     // Merge config and defaultEventData into a single config object
     // Include type to distinguish between theme, content, and template
@@ -129,16 +512,32 @@ export async function POST(req: Request) {
       data: {
         name: name.trim(),
         designerId,
-        configJson: JSON.stringify(fullConfig),
+        configJson: JSON.stringify({
+          ...fullConfig,
+          customId,
+          themeName: config?.themeName || null,
+          color: config?.color || null,
+          runningNumber,
+        }),
         isPublished: false, // Default to draft
-      },
+      } as any,
     })
+
+    // Parse config to get customId
+    let parsedCustomId = customId
+    try {
+      const savedConfig = JSON.parse(theme.configJson || '{}')
+      parsedCustomId = savedConfig.customId || customId
+    } catch {
+      // Keep default
+    }
 
     return NextResponse.json(
       { 
-        message: "Theme created successfully",
+        message: `${type === "theme" ? "Theme" : type === "content" ? "Content" : "Template"} created successfully`,
         theme: {
           id: theme.id,
+          customId: parsedCustomId,
           name: theme.name,
         }
       },
@@ -150,7 +549,7 @@ export async function POST(req: Request) {
     // Handle unique constraint violation (duplicate theme name)
     if (error?.code === "P2002") {
       return NextResponse.json(
-        { error: "A theme with this name already exists" },
+        { error: "A theme with this name or custom ID already exists" },
         { status: 409 }
       )
     }

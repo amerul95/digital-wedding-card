@@ -18,8 +18,9 @@ export function ThemePreview({ config }: ThemePreviewProps) {
       return {
         backgroundImage: `url(${bgStyle.value})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'local'
       };
     }
     if (bgStyle.type === 'gradient') {
@@ -60,6 +61,7 @@ export function ThemePreview({ config }: ThemePreviewProps) {
           onContactClick={noOp}
           onLocationClick={noOp}
           onRSVPClick={noOp}
+          onGiftsClick={noOp}
           customStyle={{
             background: config.footerBackground.type === 'color' 
               ? config.footerBackground.value 
@@ -68,9 +70,13 @@ export function ThemePreview({ config }: ThemePreviewProps) {
               : config.footerBackground.type === 'image'
               ? `url(${config.footerBackground.value})`
               : undefined,
-            color: config.footerIconColor
+            color: config.footerIconColor,
+            fontFamily: config.footerTextFontFamily,
+            fontSize: config.footerTextFontSize,
+            fontWeight: config.footerTextFontWeight,
           }}
           customIcons={config.footerIcons}
+          containerConfig={config.footerContainerConfig}
         />
       </div>
     </div>

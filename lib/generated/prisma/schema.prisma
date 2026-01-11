@@ -8,6 +8,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Seed script configuration
+// Run with: pnpm prisma:seed
+
 model Session {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
@@ -75,6 +78,10 @@ model Wedding {
 model Theme {
   id              String      @id @default(uuid())
   name            String
+  customId        String?     @unique @map("custom_id")
+  themeName       String?     @map("theme_name")
+  color           String?
+  runningNumber   Int?        @map("running_number")
   primaryColor    String?
   secondaryColor  String?
   fontFamily      String?
@@ -88,6 +95,9 @@ model Theme {
   sales           ThemeSale[]
   weddings        Wedding[]
   products        Product[]
+
+  @@index([designerId, themeName])
+  @@index([designerId, runningNumber])
 }
 
 model Song {
@@ -188,16 +198,21 @@ model CartItem {
 }
 
 model Designer {
-  id        String      @id @default(uuid())
-  userId    String      @unique @map("user_id")
-  name      String?
-  address   String?
-  bio       String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  themes    Theme[]
-  sales     ThemeSale[]
+  id                 String              @id @default(uuid())
+  userId             String              @unique @map("user_id")
+  name               String?
+  address            String?
+  bio                String?
+  walletBalance      Decimal             @default(0.00) @map("wallet_balance")
+  bankName           String?             @map("bank_name")
+  accountOwnerName   String?             @map("account_owner_name")
+  accountNumber      String?             @map("account_number")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  themes             Theme[]
+  sales              ThemeSale[]
+  withdrawalRequests WithdrawalRequest[]
 }
 
 model ThemeSale {
@@ -224,5 +239,27 @@ enum ProductType {
 enum CartStatus {
   PENDING
   COMPLETED
+  CANCELLED
+}
+
+model WithdrawalRequest {
+  id             String           @id @default(uuid())
+  requestNumber  Int              @unique @default(autoincrement()) @map("request_number")
+  designerId     String           @map("designer_id")
+  amount         Decimal
+  status         WithdrawalStatus @default(PENDING)
+  approvedAmount Decimal?         @map("approved_amount")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  approvedAt     DateTime?        @map("approved_at")
+  cancelledAt    DateTime?        @map("cancelled_at")
+  designer       Designer         @relation(fields: [designerId], references: [id], onDelete: Cascade)
+
+  @@map("withdrawal_requests")
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  DECLINED
   CANCELLED
 }

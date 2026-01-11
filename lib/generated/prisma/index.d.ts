@@ -8552,13 +8552,27 @@ export namespace Prisma {
 
   export type AggregateTheme = {
     _count: ThemeCountAggregateOutputType | null
+    _avg: ThemeAvgAggregateOutputType | null
+    _sum: ThemeSumAggregateOutputType | null
     _min: ThemeMinAggregateOutputType | null
     _max: ThemeMaxAggregateOutputType | null
+  }
+
+  export type ThemeAvgAggregateOutputType = {
+    runningNumber: number | null
+  }
+
+  export type ThemeSumAggregateOutputType = {
+    runningNumber: number | null
   }
 
   export type ThemeMinAggregateOutputType = {
     id: string | null
     name: string | null
+    customId: string | null
+    themeName: string | null
+    color: string | null
+    runningNumber: number | null
     primaryColor: string | null
     secondaryColor: string | null
     fontFamily: string | null
@@ -8573,6 +8587,10 @@ export namespace Prisma {
   export type ThemeMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    customId: string | null
+    themeName: string | null
+    color: string | null
+    runningNumber: number | null
     primaryColor: string | null
     secondaryColor: string | null
     fontFamily: string | null
@@ -8587,6 +8605,10 @@ export namespace Prisma {
   export type ThemeCountAggregateOutputType = {
     id: number
     name: number
+    customId: number
+    themeName: number
+    color: number
+    runningNumber: number
     primaryColor: number
     secondaryColor: number
     fontFamily: number
@@ -8600,9 +8622,21 @@ export namespace Prisma {
   }
 
 
+  export type ThemeAvgAggregateInputType = {
+    runningNumber?: true
+  }
+
+  export type ThemeSumAggregateInputType = {
+    runningNumber?: true
+  }
+
   export type ThemeMinAggregateInputType = {
     id?: true
     name?: true
+    customId?: true
+    themeName?: true
+    color?: true
+    runningNumber?: true
     primaryColor?: true
     secondaryColor?: true
     fontFamily?: true
@@ -8617,6 +8651,10 @@ export namespace Prisma {
   export type ThemeMaxAggregateInputType = {
     id?: true
     name?: true
+    customId?: true
+    themeName?: true
+    color?: true
+    runningNumber?: true
     primaryColor?: true
     secondaryColor?: true
     fontFamily?: true
@@ -8631,6 +8669,10 @@ export namespace Prisma {
   export type ThemeCountAggregateInputType = {
     id?: true
     name?: true
+    customId?: true
+    themeName?: true
+    color?: true
+    runningNumber?: true
     primaryColor?: true
     secondaryColor?: true
     fontFamily?: true
@@ -8681,6 +8723,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ThemeAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ThemeSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ThemeMinAggregateInputType
@@ -8711,6 +8765,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ThemeCountAggregateInputType | true
+    _avg?: ThemeAvgAggregateInputType
+    _sum?: ThemeSumAggregateInputType
     _min?: ThemeMinAggregateInputType
     _max?: ThemeMaxAggregateInputType
   }
@@ -8718,6 +8774,10 @@ export namespace Prisma {
   export type ThemeGroupByOutputType = {
     id: string
     name: string
+    customId: string | null
+    themeName: string | null
+    color: string | null
+    runningNumber: number | null
     primaryColor: string | null
     secondaryColor: string | null
     fontFamily: string | null
@@ -8728,6 +8788,8 @@ export namespace Prisma {
     isPublished: boolean
     updatedAt: Date
     _count: ThemeCountAggregateOutputType | null
+    _avg: ThemeAvgAggregateOutputType | null
+    _sum: ThemeSumAggregateOutputType | null
     _min: ThemeMinAggregateOutputType | null
     _max: ThemeMaxAggregateOutputType | null
   }
@@ -8749,6 +8811,10 @@ export namespace Prisma {
   export type ThemeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    customId?: boolean
+    themeName?: boolean
+    color?: boolean
+    runningNumber?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
     fontFamily?: boolean
@@ -8768,6 +8834,10 @@ export namespace Prisma {
   export type ThemeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    customId?: boolean
+    themeName?: boolean
+    color?: boolean
+    runningNumber?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
     fontFamily?: boolean
@@ -8783,6 +8853,10 @@ export namespace Prisma {
   export type ThemeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    customId?: boolean
+    themeName?: boolean
+    color?: boolean
+    runningNumber?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
     fontFamily?: boolean
@@ -8798,6 +8872,10 @@ export namespace Prisma {
   export type ThemeSelectScalar = {
     id?: boolean
     name?: boolean
+    customId?: boolean
+    themeName?: boolean
+    color?: boolean
+    runningNumber?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
     fontFamily?: boolean
@@ -8809,7 +8887,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ThemeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "primaryColor" | "secondaryColor" | "fontFamily" | "previewImageUrl" | "createdAt" | "configJson" | "designerId" | "isPublished" | "updatedAt", ExtArgs["result"]["theme"]>
+  export type ThemeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "customId" | "themeName" | "color" | "runningNumber" | "primaryColor" | "secondaryColor" | "fontFamily" | "previewImageUrl" | "createdAt" | "configJson" | "designerId" | "isPublished" | "updatedAt", ExtArgs["result"]["theme"]>
   export type ThemeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     designer?: boolean | Theme$designerArgs<ExtArgs>
     sales?: boolean | Theme$salesArgs<ExtArgs>
@@ -8835,6 +8913,10 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      customId: string | null
+      themeName: string | null
+      color: string | null
+      runningNumber: number | null
       primaryColor: string | null
       secondaryColor: string | null
       fontFamily: string | null
@@ -9273,6 +9355,10 @@ export namespace Prisma {
   interface ThemeFieldRefs {
     readonly id: FieldRef<"Theme", 'String'>
     readonly name: FieldRef<"Theme", 'String'>
+    readonly customId: FieldRef<"Theme", 'String'>
+    readonly themeName: FieldRef<"Theme", 'String'>
+    readonly color: FieldRef<"Theme", 'String'>
+    readonly runningNumber: FieldRef<"Theme", 'Int'>
     readonly primaryColor: FieldRef<"Theme", 'String'>
     readonly secondaryColor: FieldRef<"Theme", 'String'>
     readonly fontFamily: FieldRef<"Theme", 'String'>
@@ -22506,6 +22592,10 @@ export namespace Prisma {
   export const ThemeScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    customId: 'customId',
+    themeName: 'themeName',
+    color: 'color',
+    runningNumber: 'runningNumber',
     primaryColor: 'primaryColor',
     secondaryColor: 'secondaryColor',
     fontFamily: 'fontFamily',
@@ -23175,6 +23265,10 @@ export namespace Prisma {
     NOT?: ThemeWhereInput | ThemeWhereInput[]
     id?: StringFilter<"Theme"> | string
     name?: StringFilter<"Theme"> | string
+    customId?: StringNullableFilter<"Theme"> | string | null
+    themeName?: StringNullableFilter<"Theme"> | string | null
+    color?: StringNullableFilter<"Theme"> | string | null
+    runningNumber?: IntNullableFilter<"Theme"> | number | null
     primaryColor?: StringNullableFilter<"Theme"> | string | null
     secondaryColor?: StringNullableFilter<"Theme"> | string | null
     fontFamily?: StringNullableFilter<"Theme"> | string | null
@@ -23193,6 +23287,10 @@ export namespace Prisma {
   export type ThemeOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    customId?: SortOrderInput | SortOrder
+    themeName?: SortOrderInput | SortOrder
+    color?: SortOrderInput | SortOrder
+    runningNumber?: SortOrderInput | SortOrder
     primaryColor?: SortOrderInput | SortOrder
     secondaryColor?: SortOrderInput | SortOrder
     fontFamily?: SortOrderInput | SortOrder
@@ -23210,10 +23308,14 @@ export namespace Prisma {
 
   export type ThemeWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    customId?: string
     AND?: ThemeWhereInput | ThemeWhereInput[]
     OR?: ThemeWhereInput[]
     NOT?: ThemeWhereInput | ThemeWhereInput[]
     name?: StringFilter<"Theme"> | string
+    themeName?: StringNullableFilter<"Theme"> | string | null
+    color?: StringNullableFilter<"Theme"> | string | null
+    runningNumber?: IntNullableFilter<"Theme"> | number | null
     primaryColor?: StringNullableFilter<"Theme"> | string | null
     secondaryColor?: StringNullableFilter<"Theme"> | string | null
     fontFamily?: StringNullableFilter<"Theme"> | string | null
@@ -23227,11 +23329,15 @@ export namespace Prisma {
     sales?: ThemeSaleListRelationFilter
     weddings?: WeddingListRelationFilter
     products?: ProductListRelationFilter
-  }, "id">
+  }, "id" | "customId">
 
   export type ThemeOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    customId?: SortOrderInput | SortOrder
+    themeName?: SortOrderInput | SortOrder
+    color?: SortOrderInput | SortOrder
+    runningNumber?: SortOrderInput | SortOrder
     primaryColor?: SortOrderInput | SortOrder
     secondaryColor?: SortOrderInput | SortOrder
     fontFamily?: SortOrderInput | SortOrder
@@ -23242,8 +23348,10 @@ export namespace Prisma {
     isPublished?: SortOrder
     updatedAt?: SortOrder
     _count?: ThemeCountOrderByAggregateInput
+    _avg?: ThemeAvgOrderByAggregateInput
     _max?: ThemeMaxOrderByAggregateInput
     _min?: ThemeMinOrderByAggregateInput
+    _sum?: ThemeSumOrderByAggregateInput
   }
 
   export type ThemeScalarWhereWithAggregatesInput = {
@@ -23252,6 +23360,10 @@ export namespace Prisma {
     NOT?: ThemeScalarWhereWithAggregatesInput | ThemeScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Theme"> | string
     name?: StringWithAggregatesFilter<"Theme"> | string
+    customId?: StringNullableWithAggregatesFilter<"Theme"> | string | null
+    themeName?: StringNullableWithAggregatesFilter<"Theme"> | string | null
+    color?: StringNullableWithAggregatesFilter<"Theme"> | string | null
+    runningNumber?: IntNullableWithAggregatesFilter<"Theme"> | number | null
     primaryColor?: StringNullableWithAggregatesFilter<"Theme"> | string | null
     secondaryColor?: StringNullableWithAggregatesFilter<"Theme"> | string | null
     fontFamily?: StringNullableWithAggregatesFilter<"Theme"> | string | null
@@ -24420,6 +24532,10 @@ export namespace Prisma {
   export type ThemeCreateInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -24437,6 +24553,10 @@ export namespace Prisma {
   export type ThemeUncheckedCreateInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -24454,6 +24574,10 @@ export namespace Prisma {
   export type ThemeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24471,6 +24595,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24488,6 +24616,10 @@ export namespace Prisma {
   export type ThemeCreateManyInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -24502,6 +24634,10 @@ export namespace Prisma {
   export type ThemeUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24515,6 +24651,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25784,6 +25924,10 @@ export namespace Prisma {
   export type ThemeCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    customId?: SortOrder
+    themeName?: SortOrder
+    color?: SortOrder
+    runningNumber?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
     fontFamily?: SortOrder
@@ -25795,9 +25939,17 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type ThemeAvgOrderByAggregateInput = {
+    runningNumber?: SortOrder
+  }
+
   export type ThemeMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    customId?: SortOrder
+    themeName?: SortOrder
+    color?: SortOrder
+    runningNumber?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
     fontFamily?: SortOrder
@@ -25812,6 +25964,10 @@ export namespace Prisma {
   export type ThemeMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    customId?: SortOrder
+    themeName?: SortOrder
+    color?: SortOrder
+    runningNumber?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
     fontFamily?: SortOrder
@@ -25821,6 +25977,10 @@ export namespace Prisma {
     designerId?: SortOrder
     isPublished?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ThemeSumOrderByAggregateInput = {
+    runningNumber?: SortOrder
   }
 
   export type SongCountOrderByAggregateInput = {
@@ -28717,6 +28877,10 @@ export namespace Prisma {
   export type ThemeCreateWithoutWeddingsInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -28733,6 +28897,10 @@ export namespace Prisma {
   export type ThemeUncheckedCreateWithoutWeddingsInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -28942,6 +29110,10 @@ export namespace Prisma {
   export type ThemeUpdateWithoutWeddingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28958,6 +29130,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateWithoutWeddingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29848,6 +30024,10 @@ export namespace Prisma {
   export type ThemeCreateWithoutProductsInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -29864,6 +30044,10 @@ export namespace Prisma {
   export type ThemeUncheckedCreateWithoutProductsInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -29951,6 +30135,10 @@ export namespace Prisma {
   export type ThemeUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29967,6 +30155,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30390,6 +30582,10 @@ export namespace Prisma {
   export type ThemeCreateWithoutDesignerInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -30406,6 +30602,10 @@ export namespace Prisma {
   export type ThemeUncheckedCreateWithoutDesignerInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -30550,6 +30750,10 @@ export namespace Prisma {
     NOT?: ThemeScalarWhereInput | ThemeScalarWhereInput[]
     id?: StringFilter<"Theme"> | string
     name?: StringFilter<"Theme"> | string
+    customId?: StringNullableFilter<"Theme"> | string | null
+    themeName?: StringNullableFilter<"Theme"> | string | null
+    color?: StringNullableFilter<"Theme"> | string | null
+    runningNumber?: IntNullableFilter<"Theme"> | number | null
     primaryColor?: StringNullableFilter<"Theme"> | string | null
     secondaryColor?: StringNullableFilter<"Theme"> | string | null
     fontFamily?: StringNullableFilter<"Theme"> | string | null
@@ -30675,6 +30879,10 @@ export namespace Prisma {
   export type ThemeCreateWithoutSalesInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -30691,6 +30899,10 @@ export namespace Prisma {
   export type ThemeUncheckedCreateWithoutSalesInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -30799,6 +31011,10 @@ export namespace Prisma {
   export type ThemeUpdateWithoutSalesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30815,6 +31031,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateWithoutSalesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31721,6 +31941,10 @@ export namespace Prisma {
   export type ThemeCreateManyDesignerInput = {
     id?: string
     name: string
+    customId?: string | null
+    themeName?: string | null
+    color?: string | null
+    runningNumber?: number | null
     primaryColor?: string | null
     secondaryColor?: string | null
     fontFamily?: string | null
@@ -31756,6 +31980,10 @@ export namespace Prisma {
   export type ThemeUpdateWithoutDesignerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31772,6 +32000,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateWithoutDesignerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31788,6 +32020,10 @@ export namespace Prisma {
   export type ThemeUncheckedUpdateManyWithoutDesignerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    customId?: NullableStringFieldUpdateOperationsInput | string | null
+    themeName?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    runningNumber?: NullableIntFieldUpdateOperationsInput | number | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     fontFamily?: NullableStringFieldUpdateOperationsInput | string | null

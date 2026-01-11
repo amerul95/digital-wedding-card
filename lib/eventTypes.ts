@@ -49,20 +49,27 @@ export type EventData = {
   eventTitle: string;  // Type of event (event title name)
   eventTitleFontSize: number;  // Font size of event name
   eventTitleFontColor: string;  // Font color for event title
+  eventTitleFontFamily: string;  // Font family for event title
   shortName: string;  // Short Name (Celebrated Person)
   shortNameFamilyFont: string;  // Family font for short name
   shortNameFontSize: number;  // Font size for short name
   shortNameFontColor: string;  // Font color for short name
   startEventDateTime: string;  // Start of Event (date and time)
   endEventDateTime: string;  // End of event (date and time)
+  showStartEndEvent: boolean;  // Toggle to show/hide start and end event in card
   dayAndDate: string;  // Day and Date format: Days - dd.mm.yy
   dayAndDateShowName: boolean;  // Checkbox for name
   dayAndDateShowPhone: boolean;  // Checkbox for phone
   dayAndDateFontSize: number;  // Font size for day and date
+  dayAndDateTextAlign: "left" | "center" | "right";  // Text alignment for day and date
+  dayAndDateFontFamily: string;  // Font family for day and date
+  showDayAndDate: boolean;  // Toggle to show/hide day and date in card
   venue: string;  // Place/hashtag/etc (venue)
+  venueFontFamily: string;  // Font family for venue
 
   // Page 3 - Invitation speech
   openingSpeech: string;  // Opening speech (Greeting with richtexteditor)
+  openingSpeechFontFamily: string;  // Font family for opening speech
   openingSpeechMarginTop?: number;  // Margin top for opening speech container
   openingSpeechMarginRight?: number;  // Margin right for opening speech container
   openingSpeechMarginBottom?: number;  // Margin bottom for opening speech container
@@ -71,22 +78,30 @@ export type EventData = {
   organizerName1: string;  // Name of organizer 1 (legacy)
   organizerName2: string;  // Name of organizer 2 (legacy)
   organizerNames?: string[];  // Array of organizer names (new implementation)
+  organizerNamesFontFamily: string;  // Font family for organizer names
   speechContent: string;  // Speech (multiline with richtexteditor)
+  speechContentFontFamily: string;  // Font family for speech content
   speechContentMarginTop?: number;  // Margin top for speech content container
   speechContentMarginRight?: number;  // Margin right for speech content container
   speechContentMarginBottom?: number;  // Margin bottom for speech content container
   speechContentMarginLeft?: number;  // Margin left for speech content container
 
   // Page 4 - Location and Navigation
+  section2DateTimeContent: string;  // Date and time content for section 2 (with richtexteditor)
+  section2DateTimeFontFamily: string;  // Font family for section 2 date and time
   hijrahDate: string;  // Hijrah date (optional)
+  hijrahDateFontFamily: string;  // Font family for hijrah date
   eventAddress: string;  // Event address (location full with richtexteditor)
+  eventAddressFontFamily: string;  // Font family for event address
   navigationGoogleMap: string;  // Google map link (optional)
   navigationWaze: string;  // Waze link (optional)
   navigationOthers: string;  // Other navigation links (optional)
 
   // Page 5 - Tentative & More
   additionalInformation1: string;  // Additional information #1 (optional, textarea + richtexteditor)
+  additionalInformation1FontFamily: string;  // Font family for additional information
   eventTentative: string;  // Event tentative (schedule Content)
+  eventTentativeFontFamily: string;  // Font family for event tentative
 
   // Page 6 - Page In-Between
   bodyTextFontFamily: string;  // Body text font family
@@ -132,6 +147,53 @@ export type EventData = {
   showSegmentSpeech: boolean;  // Show Segment: speech
   showSegmentConfirmAttendance: boolean;  // Show Segment: confirm attendance
   showSegmentWriteMessage: boolean;  // Show Segment: write a message
+
+  // Page 11 - Button Settings
+  // Save The Date button (Section 2)
+  saveDateButtonText: string;
+  saveDateButtonSize: number;  // Font size
+  saveDateButtonPaddingX: number;  // Horizontal padding
+  saveDateButtonPaddingY: number;  // Vertical padding
+  saveDateButtonBorderRadius: number;
+  saveDateButtonBackgroundColor: string;
+  saveDateButtonFontFamily: string;
+  saveDateButtonFontSize: number;
+  saveDateButtonTextColor: string;
+  saveDateButtonBoxShadow: string;
+
+  // Sahkan Kehadiran button (Section 4)
+  confirmAttendanceButtonText: string;
+  confirmAttendanceButtonSize: number;
+  confirmAttendanceButtonPaddingX: number;
+  confirmAttendanceButtonPaddingY: number;
+  confirmAttendanceButtonBorderRadius: number;
+  confirmAttendanceButtonBackgroundColor: string;
+  confirmAttendanceButtonFontFamily: string;
+  confirmAttendanceButtonFontSize: number;
+  confirmAttendanceButtonTextColor: string;
+  confirmAttendanceButtonBoxShadow: string;
+
+  // Tulis Ucapan Tahniah button (Section 4)
+  writeMessageButtonText: string;
+  writeMessageButtonSize: number;
+  writeMessageButtonPaddingX: number;
+  writeMessageButtonPaddingY: number;
+  writeMessageButtonBorderRadius: number;
+  writeMessageButtonBackgroundColor: string;
+  writeMessageButtonFontFamily: string;
+  writeMessageButtonFontSize: number;
+  writeMessageButtonTextColor: string;
+  writeMessageButtonBoxShadow: string;
+  writeMessageButtonBorderColor: string;
+
+  // Page 12 - Image Gallery Settings
+  galleryImages: string[];  // Array of image URLs
+  gallerySlidesPerView: number;  // How many images to show at once
+  galleryAutoplay: boolean;  // Autoplay toggle
+  galleryContainerWidth: "full" | "custom";  // Container width type
+  galleryCustomWidth: number;  // Custom width (max width = main container)
+  galleryEnablePagination: boolean;  // Enable pagination toggle
+  galleryPaginationType: "dot" | "number" | "none";  // Pagination style
 };
 
 export const defaultEvent: EventData = {
@@ -190,20 +252,27 @@ export const defaultEvent: EventData = {
   eventTitle: "Majlis Aqiqah",
   eventTitleFontSize: 24,
   eventTitleFontColor: "#f43f5e",
+  eventTitleFontFamily: "",
   shortName: "Aqil",
   shortNameFamilyFont: "Arial",
   shortNameFontSize: 18,
   shortNameFontColor: "#f43f5e",
   startEventDateTime: "2025-10-29T11:00:00",
   endEventDateTime: "2025-10-29T15:00:00",
+  showStartEndEvent: true,
   dayAndDate: "Rabu - 29.10.25",
   dayAndDateShowName: true,
   dayAndDateShowPhone: true,
   dayAndDateFontSize: 14,
+  dayAndDateTextAlign: "center",
+  dayAndDateFontFamily: "",
+  showDayAndDate: true,
   venue: "Dewan Seri Melati, Putrajaya",
+  venueFontFamily: "",
 
   // Page 3 - Invitation speech defaults
   openingSpeech: "Assalamualaikum, hello & selamat sejahtera",
+  openingSpeechFontFamily: "",
   openingSpeechMarginTop: 0,
   openingSpeechMarginRight: 0,
   openingSpeechMarginBottom: 0,
@@ -212,22 +281,30 @@ export const defaultEvent: EventData = {
   organizerName1: "",
   organizerName2: "",
   organizerNames: [""],
+  organizerNamesFontFamily: "",
   speechContent: "Dengan penuh kesyukuran, kami mempersilakan...",
+  speechContentFontFamily: "",
   speechContentMarginTop: 0,
   speechContentMarginRight: 0,
   speechContentMarginBottom: 0,
   speechContentMarginLeft: 0,
 
   // Page 4 - Location and Navigation defaults
+  section2DateTimeContent: "",
+  section2DateTimeFontFamily: "",
   hijrahDate: "",
+  hijrahDateFontFamily: "",
   eventAddress: "Dewan Seri Melati, Putrajaya",
+  eventAddressFontFamily: "",
   navigationGoogleMap: "",
   navigationWaze: "",
   navigationOthers: "",
 
   // Page 5 - Tentative & More defaults
   additionalInformation1: "",
+  additionalInformation1FontFamily: "",
   eventTentative: "",
+  eventTentativeFontFamily: "",
 
   // Page 6 - Page In-Between defaults
   bodyTextFontFamily: "Arial",
@@ -271,4 +348,48 @@ export const defaultEvent: EventData = {
   showSegmentSpeech: true,
   showSegmentConfirmAttendance: true,
   showSegmentWriteMessage: true,
+
+  // Page 11 - Button Settings defaults
+  saveDateButtonText: "Save The Date",
+  saveDateButtonSize: 14,
+  saveDateButtonPaddingX: 16,
+  saveDateButtonPaddingY: 8,
+  saveDateButtonBorderRadius: 9999,  // rounded-full
+  saveDateButtonBackgroundColor: "#e11d48",  // rose-600
+  saveDateButtonFontFamily: "",
+  saveDateButtonFontSize: 14,
+  saveDateButtonTextColor: "#ffffff",
+  saveDateButtonBoxShadow: "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)",
+
+  confirmAttendanceButtonText: "Sahkan Kehadiran",
+  confirmAttendanceButtonSize: 14,
+  confirmAttendanceButtonPaddingX: 16,
+  confirmAttendanceButtonPaddingY: 8,
+  confirmAttendanceButtonBorderRadius: 9999,
+  confirmAttendanceButtonBackgroundColor: "#e11d48",  // rose-600
+  confirmAttendanceButtonFontFamily: "",
+  confirmAttendanceButtonFontSize: 14,
+  confirmAttendanceButtonTextColor: "#ffffff",
+  confirmAttendanceButtonBoxShadow: "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)",
+
+  writeMessageButtonText: "Tulis Ucapan Tahniah",
+  writeMessageButtonSize: 14,
+  writeMessageButtonPaddingX: 16,
+  writeMessageButtonPaddingY: 8,
+  writeMessageButtonBorderRadius: 9999,
+  writeMessageButtonBackgroundColor: "#ffffff",
+  writeMessageButtonFontFamily: "",
+  writeMessageButtonFontSize: 14,
+  writeMessageButtonTextColor: "#be123c",  // rose-700
+  writeMessageButtonBoxShadow: "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)",
+  writeMessageButtonBorderColor: "#fda4af",  // rose-300
+
+  // Page 12 - Image Gallery defaults
+  galleryImages: [],
+  gallerySlidesPerView: 1,
+  galleryAutoplay: false,
+  galleryContainerWidth: "full",
+  galleryCustomWidth: 300,
+  galleryEnablePagination: true,
+  galleryPaginationType: "dot",
 };

@@ -7,6 +7,7 @@ interface CatalogItem {
   designName: string
   designerName: string
   isFavourited: boolean
+  year?: number | string
 }
 
 // Mock data - Replace with actual data from your API/database
@@ -16,49 +17,57 @@ const mockCatalogs: CatalogItem[] = [
     id: '1',
     designName: 'Design E',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2024
   },
   {
     id: '2',
     designName: 'Design F',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2024
   },
   {
     id: '3',
     designName: 'Design G',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2025
   },
   {
     id: '4',
     designName: 'Design H',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2024
   },
   {
     id: '5',
     designName: 'Design I',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2025
   },
   {
     id: '6',
     designName: 'Design J',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2024
   },
   {
     id: '7',
     designName: 'Design K',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2025
   },
   {
     id: '8',
     designName: 'Design L',
     designerName: 'By Payuk Lee',
-    isFavourited: false
+    isFavourited: false,
+    year: 2024
   },
 ]
 
@@ -87,6 +96,7 @@ export default function CatalogGrid() {
               designName={catalog.designName}
               designerName={catalog.designerName}
               isFavourited={catalog.isFavourited}
+              year={catalog.year}
             />
           ))}
         </div>

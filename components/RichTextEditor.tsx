@@ -10,12 +10,13 @@ import Link from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
+import { Extension } from "@tiptap/core";
 import Placeholder from "@tiptap/extension-placeholder";
 import CodeBlock from "@tiptap/extension-code-block";
 import Image from "@tiptap/extension-image";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Bold,
   Italic,
@@ -51,23 +52,127 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface RichTextEditorProps {
   content: string;
   onChange: (html: string) => void;
   placeholder?: string;
+  fontSize?: number;
+  onFontSizeChange?: (size: number) => void;
+  fontColor?: string;
+  onFontColorChange?: (color: string) => void;
 }
 
-export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
+// FontSize Extension for individual text font size control
+const FontSize = Extension.create({
+  name: 'fontSize',
+  addOptions() {
+    return {
+      types: ['textStyle'],
+    }
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: element => element.style.fontSize?.replace('px', '') || null,
+            renderHTML: attributes => {
+              if (!attributes.fontSize) {
+                return {}
+              }
+              return {
+                style: `font-size: ${attributes.fontSize}px`,
+              }
+            },
+          },
+        },
+      },
+    ]
+  },
+  addCommands() {
+    return {
+      setFontSize: (fontSize: string | number) => ({ chain }) => {
+        return chain()
+          .setMark('textStyle', { fontSize: fontSize.toString() })
+          .run()
+      },
+      unsetFontSize: () => ({ chain }) => {
+        return chain()
+          .setMark('textStyle', { fontSize: null })
+          .removeEmptyTextStyle()
+          .run()
+      },
+    }
+  },
+})
+
+// Helper function to apply gradient via inline styles
+const applyGradientToSelection = (editor: any, gradient: string) => {
+  const { from, to } = editor.state.selection;
+  const selectedText = editor.state.doc.textBetween(from, to);
+  
+  if (selectedText) {
+    // Has selection, wrap it with gradient
+    editor.chain()
+      .focus()
+      .deleteSelection()
+      .insertContent(`<span style="background: ${gradient}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent;">${selectedText}</span>`)
+      .run();
+  } else {
+    // No selection, insert gradient text at cursor
+    editor.chain()
+      .focus()
+      .insertContent(`<span style="background: ${gradient}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent;">Text</span>`)
+      .run();
+  }
+};
+
+export function RichTextEditor({ 
+  content, 
+  onChange, 
+  placeholder,
+  fontSize,
+  onFontSizeChange,
+  fontColor,
+  onFontColorChange,
+}: RichTextEditorProps) {
   const [mounted, setMounted] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showGradientPicker, setShowGradientPicker] = useState(false);
   const [textColor, setTextColor] = useState("#000000");
+  const [gradientColor1, setGradientColor1] = useState("#ff0000");
+  const [gradientColor2, setGradientColor2] = useState("#0000ff");
+  const [gradientDirection, setGradientDirection] = useState("to bottom");
+  const [currentFontSize, setCurrentFontSize] = useState(fontSize || 16);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (fontColor && !fontColor.startsWith('linear-gradient')) {
+      setTextColor(fontColor);
+    }
+  }, [fontColor]);
+
+  useEffect(() => {
+    if (fontSize) {
+      setCurrentFontSize(fontSize);
+    }
+  }, [fontSize]);
 
   const editor = useEditor({
     extensions: [
@@ -90,6 +195,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
         },
       }),
       TextStyle,
+      FontSize,
       Color,
       Highlight.configure({
         multicolor: true,
@@ -122,9 +228,10 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     editorProps: {
       attributes: {
         class: "prose prose-sm max-w-none focus:outline-none min-h-[150px] p-3",
+        style: `font-size: ${currentFontSize}px;`,
       },
     },
-  }, [mounted]);
+  }, [mounted, currentFontSize]);
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
@@ -132,10 +239,26 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     }
   }, [content, editor]);
 
+  // Update editor DOM style when fontSize changes (using ref instead of editor.view)
+  useEffect(() => {
+    if (!mounted || !editorContainerRef.current) return;
+    
+    // Update style using CSS on the editor container
+    const editorContent = editorContainerRef.current.querySelector('.ProseMirror') as HTMLElement;
+    if (editorContent) {
+      editorContent.style.fontSize = `${currentFontSize}px`;
+    }
+  }, [currentFontSize, mounted]);
+
   // Sync text color with editor's current color
   useEffect(() => {
     if (editor) {
       const currentColor = editor.getAttributes("textStyle").color;
+      const currentGradient = editor.getAttributes("textStyle").gradient;
+      if (currentGradient) {
+        // If gradient is set, don't update text color
+        return;
+      }
       if (currentColor) {
         setTextColor(currentColor);
       }
@@ -163,6 +286,33 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     editor?.chain().focus().insertContent(emoji).run();
   };
 
+  const applyGradient = () => {
+    if (!editor) return;
+    const gradientValue = `linear-gradient(${gradientDirection}, ${gradientColor1}, ${gradientColor2})`;
+    applyGradientToSelection(editor, gradientValue);
+    onFontColorChange?.(gradientValue);
+    setShowGradientPicker(false);
+  };
+
+  const applySolidColor = (color: string) => {
+    if (!editor) return;
+    editor.chain().focus().setColor(color).run();
+    setTextColor(color);
+    onFontColorChange?.(color);
+  };
+
+  const handleFontSizeChange = (size: number) => {
+    setCurrentFontSize(size);
+    onFontSizeChange?.(size);
+    // Update editor content style dynamically using ref
+    if (editorContainerRef.current) {
+      const editorContent = editorContainerRef.current.querySelector('.ProseMirror') as HTMLElement;
+      if (editorContent) {
+        editorContent.style.fontSize = `${size}px`;
+      }
+    }
+  };
+
   if (!mounted || !editor) {
     return (
       <div className="border border-green-200 rounded-xl overflow-hidden min-h-[150px] p-3 bg-white">
@@ -172,9 +322,27 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
   }
 
   return (
-    <div className="border border-green-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-300 relative">
-      {/* Toolbar */}
-      <div className="border-b border-green-200 bg-green-50 p-2 flex gap-1 flex-wrap items-center">
+    <div className="space-y-2">
+      {/* Font Size Control */}
+      {(fontSize !== undefined || onFontSizeChange) && (
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-gray-600">Font Size</label>
+          <input
+            type="number"
+            value={currentFontSize}
+            onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+            className="w-20 px-2 py-1 border border-green-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+            min="8"
+            max="72"
+          />
+          <span className="text-xs text-gray-500">px</span>
+        </div>
+      )}
+
+      {/* Editor Container */}
+      <div className="border border-green-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-300 relative">
+        {/* Toolbar */}
+        <div className="border-b border-green-200 bg-green-50 p-2 flex gap-1 flex-wrap items-center">
         {/* Text Formatting */}
         <button
           type="button"
@@ -271,10 +439,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
                     <input
                       type="color"
                       value={textColor}
-                      onChange={(e) => {
-                        setTextColor(e.target.value);
-                        editor.chain().focus().setColor(e.target.value).run();
-                      }}
+                      onChange={(e) => applySolidColor(e.target.value)}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                   </div>
@@ -282,8 +447,11 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
                     type="text"
                     value={textColor}
                     onChange={(e) => {
-                      setTextColor(e.target.value);
-                      editor.chain().focus().setColor(e.target.value).run();
+                      const color = e.target.value;
+                      setTextColor(color);
+                      if (/^#[0-9A-F]{6}$/i.test(color)) {
+                        applySolidColor(color);
+                      }
                     }}
                     placeholder="#000000"
                     className="flex-1 px-2 py-1 border border-green-200 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
@@ -295,10 +463,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
                   <button
                     key={color}
                     type="button"
-                    onClick={() => {
-                      setTextColor(color);
-                      editor.chain().focus().setColor(color).run();
-                    }}
+                    onClick={() => applySolidColor(color)}
                     className="w-6 h-6 rounded border border-gray-300 hover:scale-110 transition-transform"
                     style={{ backgroundColor: color }}
                     title={color}
@@ -308,6 +473,36 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Gradient Color Button */}
+        {(fontColor !== undefined || onFontColorChange) && (
+          <button
+            type="button"
+            onClick={() => {
+              // Check if current selection has gradient by checking HTML
+              const html = editor.getHTML();
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = html;
+              const spanWithGradient = tempDiv.querySelector('span[style*="linear-gradient"]');
+              if (spanWithGradient) {
+                const style = spanWithGradient.getAttribute('style') || '';
+                const match = style.match(/background:\s*linear-gradient\(([^,]+),\s*([^,]+),\s*([^)]+)\)/);
+                if (match) {
+                  setGradientDirection(match[1].trim());
+                  setGradientColor1(match[2].trim());
+                  setGradientColor2(match[3].trim());
+                }
+              }
+              setShowGradientPicker(true);
+            }}
+            className="p-2 rounded text-sm transition-colors bg-white text-[#36463A] hover:bg-green-100"
+            title="Gradient Color"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+            </svg>
+          </button>
+        )}
 
         {/* Highlight */}
         <DropdownMenu>
@@ -368,6 +563,66 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
                   />
                 ))}
               </div>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Font Size Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="p-2 rounded text-sm transition-colors bg-white text-[#36463A] hover:bg-green-100 flex items-center gap-1"
+              title="Font Size"
+            >
+              <span className="text-xs font-bold">Aa</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="p-2">
+            <div className="space-y-2">
+              <div>
+                <label className="text-xs font-medium text-gray-700 mb-1 block">Font Size (px)</label>
+                <input
+                  type="number"
+                  value={editor.getAttributes('textStyle').fontSize || ''}
+                  onChange={(e) => {
+                    const size = e.target.value;
+                    if (size) {
+                      editor.chain().focus().setFontSize(size).run();
+                    } else {
+                      editor.chain().focus().unsetFontSize().run();
+                    }
+                  }}
+                  placeholder="Auto"
+                  className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                  min="8"
+                  max="200"
+                />
+              </div>
+              <div className="grid grid-cols-4 gap-1">
+                {[8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48].map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => editor.chain().focus().setFontSize(size.toString()).run()}
+                    className={`px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100 ${
+                      editor.getAttributes('textStyle').fontSize === size.toString()
+                        ? 'bg-[#36463A] text-white border-[#36463A]'
+                        : 'bg-white text-gray-700'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().unsetFontSize().run()}
+                className="w-full px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100 bg-white text-gray-700"
+              >
+                Reset to Default
+              </button>
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -688,9 +943,146 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       )}
 
       {/* Editor Content */}
-      <div className="relative">
+      <div className="relative" ref={editorContainerRef}>
         <EditorContent editor={editor} />
       </div>
+    </div>
+
+    {/* Gradient Picker Dialog */}
+    {(fontColor !== undefined || onFontColorChange) && (
+      <Dialog open={showGradientPicker} onOpenChange={setShowGradientPicker}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>🎨 Gradient Text Color</DialogTitle>
+            <DialogDescription>
+              Choose two colors and direction for your gradient text
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-4">
+              {/* Color 1 */}
+              <div className="space-y-2">
+                <label htmlFor="gradientColor1Picker" className="text-sm font-medium">Color 1 (Start)</label>
+                <div className="flex items-center gap-3">
+                  <div className="relative h-10 w-10">
+                    <div
+                      className="absolute inset-0 rounded-full border border-gray-300 cursor-pointer"
+                      style={{ backgroundColor: gradientColor1 }}
+                    />
+                    <input
+                      id="gradientColor1Picker"
+                      name="gradientColor1Picker"
+                      type="color"
+                      value={gradientColor1}
+                      onChange={(e) => setGradientColor1(e.target.value)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      style={{ WebkitAppearance: "none", appearance: "none" }}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      id="gradientColor1Text"
+                      name="gradientColor1Text"
+                      type="text"
+                      value={gradientColor1}
+                      onChange={(e) => setGradientColor1(e.target.value)}
+                      className="w-full px-3 py-2 border border-green-200 rounded text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                      placeholder="#ff0000"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Color 2 */}
+              <div className="space-y-2">
+                <label htmlFor="gradientColor2Picker" className="text-sm font-medium">Color 2 (End)</label>
+                <div className="flex items-center gap-3">
+                  <div className="relative h-10 w-10">
+                    <div
+                      className="absolute inset-0 rounded-full border border-gray-300 cursor-pointer"
+                      style={{ backgroundColor: gradientColor2 }}
+                    />
+                    <input
+                      id="gradientColor2Picker"
+                      name="gradientColor2Picker"
+                      type="color"
+                      value={gradientColor2}
+                      onChange={(e) => setGradientColor2(e.target.value)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      style={{ WebkitAppearance: "none", appearance: "none" }}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      id="gradientColor2Text"
+                      name="gradientColor2Text"
+                      type="text"
+                      value={gradientColor2}
+                      onChange={(e) => setGradientColor2(e.target.value)}
+                      className="w-full px-3 py-2 border border-green-200 rounded text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                      placeholder="#0000ff"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Direction */}
+              <div className="space-y-2">
+                <label htmlFor="gradientDirection" className="text-sm font-medium">Direction</label>
+                <select
+                  id="gradientDirection"
+                  name="gradientDirection"
+                  value={gradientDirection}
+                  onChange={(e) => setGradientDirection(e.target.value)}
+                  className="w-full px-3 py-2 border border-green-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                >
+                  <option value="to bottom">Top to Bottom</option>
+                  <option value="to top">Bottom to Top</option>
+                  <option value="to right">Left to Right</option>
+                  <option value="to left">Right to Left</option>
+                  <option value="to bottom right">Top Left to Bottom Right</option>
+                  <option value="to top right">Bottom Left to Top Right</option>
+                  <option value="45deg">45° Diagonal</option>
+                  <option value="90deg">90° Vertical</option>
+                  <option value="135deg">135° Diagonal</option>
+                </select>
+              </div>
+
+              {/* Preview */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Preview</label>
+                <div 
+                  className="w-full h-16 rounded border border-gray-300 flex items-center justify-center text-xl font-semibold"
+                  style={{ 
+                    background: `linear-gradient(${gradientDirection}, ${gradientColor1}, ${gradientColor2})`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    color: 'transparent'
+                  }}
+                >
+                  Gradient Text Preview
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setShowGradientPicker(false)}
+              className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={applyGradient}
+              className="px-4 py-2 text-sm bg-[#36463A] text-white rounded hover:bg-[#2d3a2f]"
+            >
+              Apply Gradient
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )}
     </div>
   );
 }

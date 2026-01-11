@@ -19,8 +19,9 @@ export function CreatorCard({ config, updateConfig }: CreatorCardProps) {
             return {
                 backgroundImage: `url(${bgStyle.value})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+                backgroundAttachment: 'local'
             };
         }
         if (bgStyle.type === 'gradient') {
@@ -62,6 +63,7 @@ export function CreatorCard({ config, updateConfig }: CreatorCardProps) {
                     onContactClick={() => { }}
                     onLocationClick={() => { }}
                     onRSVPClick={() => { }}
+                    onGiftsClick={() => { }}
                     customStyle={{
                         background: config.footerBackground.type === 'color' 
                             ? config.footerBackground.value 
@@ -72,9 +74,13 @@ export function CreatorCard({ config, updateConfig }: CreatorCardProps) {
                             : undefined,
                         color: config.footerIconColor,
                         textColor: config.footerTextColor || config.footerIconColor,
-                        boxShadow: config.footerBoxShadow
+                        boxShadow: config.footerBoxShadow,
+                        fontFamily: config.footerTextFontFamily,
+                        fontSize: config.footerTextFontSize,
+                        fontWeight: config.footerTextFontWeight,
                     }}
                     customIcons={config.footerIcons}
+                    containerConfig={config.footerContainerConfig}
                 />
             </div>
         </div>

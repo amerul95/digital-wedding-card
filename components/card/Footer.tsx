@@ -1,5 +1,6 @@
 import { FooterButton } from "./UI";
-import { IconCalendar, IconPhone, IconPin, IconRSVP } from "./Icons";
+import { IconCalendar, IconPhone, IconPin, IconRSVP, IconGifts } from "./Icons";
+import { FooterIconConfig, FooterContainerConfig } from "../creator/ThemeTypes";
 
 interface FooterProps {
   onCalendarClick: () => void;
@@ -14,13 +15,17 @@ interface FooterStyle {
   color?: string;     // hex color for icons
   textColor?: string; // hex color for text under icons
   boxShadow?: string; // CSS box-shadow value
+  fontFamily?: string; // Font family for icon text
+  fontSize?: number; // Font size in pixels for icon text
+  fontWeight?: string | number; // Font weight for icon text
 }
 
 interface FooterIcons {
-  calendar?: string; // URL or data URL for custom icon
-  phone?: string;
-  pin?: string;
-  rsvp?: string;
+  calendar?: string | FooterIconConfig; // Support both old format (string) and new format (object)
+  phone?: string | FooterIconConfig;
+  pin?: string | FooterIconConfig;
+  rsvp?: string | FooterIconConfig;
+  gifts?: string | FooterIconConfig;
 }
 
 export function Footer({
@@ -31,14 +36,71 @@ export function Footer({
   rsvpMode,
   customStyle,
   customIcons,
-}: FooterProps & { customStyle?: FooterStyle; customIcons?: FooterIcons }) {
-  // Hide RSVP button if rsvpMode is "none" or "speech-only"
-  const shouldShowRSVP = rsvpMode !== "none" && rsvpMode !== "speech-only";
-  const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp', defaultIcon: React.ReactNode) => {
-    const customIconUrl = customIcons?.[type];
+  containerConfig,
+  onGiftsClick,
+}: FooterProps & { 
+  customStyle?: FooterStyle; 
+  customIcons?: FooterIcons;
+  containerConfig?: FooterContainerConfig;
+  onGiftsClick?: () => void;
+}) {
+  // Helper to normalize icon config
+  const getIconConfig = (icon: string | FooterIconConfig | undefined): FooterIconConfig | null => {
+    if (!icon) return null;
+    if (typeof icon === 'string') return { url: icon, visible: true };
+    return icon;
+  };
+
+  // Get all icons with their configs and filter by visibility
+  const iconDefinitions = [
+    { key: 'calendar' as const, label: 'Calendar', icon: <IconCalendar />, onClick: onCalendarClick, defaultOrder: 1 },
+    { key: 'phone' as const, label: 'Contact', icon: <IconPhone />, onClick: onContactClick, defaultOrder: 2 },
+    { key: 'pin' as const, label: 'Location', icon: <IconPin />, onClick: onLocationClick, defaultOrder: 3 },
+    { key: 'rsvp' as const, label: 'RSVP', icon: <IconRSVP />, onClick: onRSVPClick, defaultOrder: 4, shouldShow: rsvpMode !== "none" && rsvpMode !== "speech-only" },
+    { key: 'gifts' as const, label: 'Gifts', icon: <IconGifts />, onClick: onGiftsClick || (() => {}), defaultOrder: 5 },
+  ].map(def => {
+    const config = getIconConfig(customIcons?.[def.key]);
+    // If customLabel is explicitly set:
+    //   - Empty string '' means hide the label (show empty)
+    //   - Non-empty string means use that custom label
+    // If undefined, use default label
+    let displayLabel: string;
+    if (config?.customLabel !== undefined) {
+      displayLabel = config.customLabel; // Can be empty string to hide label
+    } else {
+      displayLabel = def.label; // Use default
+    }
+    return {
+      ...def,
+      label: displayLabel,
+    };
+  });
+
+  // Filter and sort icons
+  const visibleIcons = iconDefinitions
+    .filter(def => {
+      const config = getIconConfig(customIcons?.[def.key]);
+      const shouldShow = def.shouldShow !== false; // Default to true unless explicitly false
+      return shouldShow && (config?.visible !== false); // Show if visible is not explicitly false
+    })
+    .map(def => {
+      const config = getIconConfig(customIcons?.[def.key]);
+      return {
+        ...def,
+        order: config?.order ?? def.defaultOrder,
+        config,
+      };
+    })
+    .sort((a, b) => a.order - b.order);
+
+  const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp' | 'gifts', defaultIcon: React.ReactNode) => {
+    const iconValue = customIcons?.[type];
+    const iconConfig = getIconConfig(iconValue);
+    const customIconUrl = iconConfig?.url;
+    
     if (customIconUrl) {
       // Check if it's an SVG (data URL with svg+xml or starts with <svg)
-      const isSVG = customIconUrl.includes('svg+xml') || customIconUrl.trim().startsWith('<svg');
+      const isSVG = customIconUrl.includes('svg+xml') || (typeof customIconUrl === 'string' && customIconUrl.trim().startsWith('<svg'));
       
       if (isSVG && customStyle?.color) {
         // For SVG, try to inject color into the SVG string
@@ -113,30 +175,84 @@ export function Footer({
     return { background: customStyle.background, border: 'none' };
   };
 
+  // Get container styles
+  const getContainerStyles = (): React.CSSProperties => {
+    const containerStyle: React.CSSProperties = {
+      boxShadow: customStyle?.boxShadow || '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+    };
+
+    if (containerConfig) {
+      // Set width
+      if (containerConfig.width === 'full') {
+        containerStyle.width = '100%';
+        containerStyle.maxWidth = 'none';
+      } else if (containerConfig.width === 'custom' && containerConfig.customWidth) {
+        const widthValue = containerConfig.customWidth;
+        const unit = containerConfig.widthUnit || 'px';
+        containerStyle.width = `${widthValue}${unit}`;
+        containerStyle.maxWidth = 'none';
+      }
+
+      // Set bottom position
+      if (containerConfig.bottomPosition !== undefined) {
+        containerStyle.bottom = `${containerConfig.bottomPosition}px`;
+      }
+
+      // Set border radius
+      if (containerConfig.borderRadius) {
+        const { topLeft, topRight, bottomLeft, bottomRight } = containerConfig.borderRadius;
+        if (topLeft !== undefined || topRight !== undefined || bottomLeft !== undefined || bottomRight !== undefined) {
+          containerStyle.borderRadius = `${topLeft ?? 16}px ${topRight ?? 16}px ${bottomRight ?? 16}px ${bottomLeft ?? 16}px`;
+        }
+      } else {
+        // Default border radius if not specified
+        containerStyle.borderRadius = '16px';
+      }
+    } else {
+      // Default border radius if no container config
+      containerStyle.borderRadius = '16px';
+    }
+
+    return containerStyle;
+  };
+
+  const containerWidth = containerConfig?.width === 'full' ? 'w-full' : containerConfig?.width === 'custom' ? '' : 'max-w-xs';
+  const iconCount = Math.min(visibleIcons.length, 5);
+  const gridColsClass = iconCount === 1 ? 'grid-cols-1' :
+                        iconCount === 2 ? 'grid-cols-2' :
+                        iconCount === 3 ? 'grid-cols-3' :
+                        iconCount === 4 ? 'grid-cols-4' :
+                        iconCount === 5 ? 'grid-cols-5' : 'grid-cols-3';
+
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-20 p-3">
+    <div 
+      className="absolute left-0 right-0 z-20"
+      style={{
+        bottom: containerConfig?.bottomPosition !== undefined ? `${containerConfig.bottomPosition}px` : '12px',
+      }}
+    >
       <div
-        className="mx-auto max-w-xs rounded-2xl bg-white/90 backdrop-blur border border-rose-200 px-3 py-2"
+        className={`mx-auto ${containerWidth} bg-white/90 backdrop-blur border border-rose-200 px-3 py-2`}
         style={{
           ...(customStyle?.background ? getFooterBackgroundStyle() : {}),
-          boxShadow: customStyle?.boxShadow || '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+          ...getContainerStyles(),
         }}
       >
-        <div className={`grid ${shouldShowRSVP ? 'grid-cols-4' : 'grid-cols-3'} gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
-          <FooterButton label="Calendar" onClick={onCalendarClick} color={customStyle?.color} textColor={customStyle?.textColor}>
-            {renderIcon('calendar', <IconCalendar />)}
-          </FooterButton>
-          <FooterButton label="Contact" onClick={onContactClick} color={customStyle?.color} textColor={customStyle?.textColor}>
-            {renderIcon('phone', <IconPhone />)}
-          </FooterButton>
-          <FooterButton label="Location" onClick={onLocationClick} color={customStyle?.color} textColor={customStyle?.textColor}>
-            {renderIcon('pin', <IconPin />)}
-          </FooterButton>
-          {shouldShowRSVP && (
-            <FooterButton label="RSVP" onClick={onRSVPClick} color={customStyle?.color} textColor={customStyle?.textColor}>
-              {renderIcon('rsvp', <IconRSVP />)}
+        <div className={`grid ${gridColsClass} gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
+          {visibleIcons.map((iconDef) => (
+            <FooterButton 
+              key={iconDef.key}
+              label={iconDef.label} 
+              onClick={iconDef.onClick} 
+              color={customStyle?.color} 
+              textColor={customStyle?.textColor}
+              fontFamily={customStyle?.fontFamily}
+              fontSize={customStyle?.fontSize}
+              fontWeight={customStyle?.fontWeight}
+            >
+              {renderIcon(iconDef.key, iconDef.icon)}
             </FooterButton>
-          )}
+          ))}
         </div>
       </div>
     </div>

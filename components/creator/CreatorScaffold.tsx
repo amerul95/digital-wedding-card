@@ -17,8 +17,9 @@ export function CreatorScaffold({ config, updateConfig }: CreatorScaffoldProps) 
             return {
                 backgroundImage: `url(${bgStyle.value})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+                backgroundAttachment: 'local'
             };
         }
         if (bgStyle.type === 'gradient') {

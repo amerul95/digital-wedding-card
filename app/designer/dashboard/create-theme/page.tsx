@@ -1,11 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Upload } from "lucide-react";
 import { CreatorCard } from "@/components/creator/CreatorCard";
 import { CeremonyCard } from "@/components/card/CeremonyCard";
-import { defaultThemeConfig, ThemeConfig, BackgroundStyle, FooterIcons } from "@/components/creator/ThemeTypes";
+import { defaultThemeConfig, ThemeConfig, BackgroundStyle, FooterIcons, FooterIconConfig, FooterContainerConfig } from "@/components/creator/ThemeTypes";
 import { ThemeControls } from "@/components/creator/ThemeControls";
 import { IconUpload } from "@/components/creator/IconUpload";
+import { IconUploadWithControls } from "@/components/creator/IconUploadWithControls";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Switch } from "@/components/ui/switch";
 import { EditorPager } from "@/components/EditorPager";
 import { useEvent } from "@/context/EventContext";
 import { IconSave } from "@/components/card/Icons";
@@ -14,11 +20,12 @@ import { Page2Form } from "@/components/forms/Page2Form";
 import { Page3Form } from "@/components/forms/Page3Form";
 import { Page4Form } from "@/components/forms/Page4Form";
 import { Page5Form } from "@/components/forms/Page5Form";
-import { Page6Form } from "@/components/forms/Page6Form";
 import { Page7Form } from "@/components/forms/Page7Form";
 import { Page8Form } from "@/components/forms/Page8Form";
 import { Page9Form } from "@/components/forms/Page9Form";
 import { Page10Form } from "@/components/forms/Page10Form";
+import { Page11Form } from "@/components/forms/Page11Form";
+import { Page12Form } from "@/components/forms/Page12Form";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,8 +34,10 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { ChevronDown, Save } from "lucide-react";
 
 const SECTIONS = [
   { id: 1, label: "1. Main & Opening" },
@@ -36,11 +45,12 @@ const SECTIONS = [
   { id: 3, label: "3. Invitation Speech" },
   { id: 4, label: "4. Location & Navigation" },
   { id: 5, label: "5. Tentative & More" },
-  { id: 6, label: "6. Page In-Between" },
   { id: 7, label: "7. RSVP" },
   { id: 8, label: "8. Contacts" },
   { id: 9, label: "9. Music & Auto Scroll" },
   { id: 10, label: "10. Final Segment" },
+  { id: 11, label: "11. Button" },
+  { id: 12, label: "12. Image Gallery" },
 ];
 
 // Helper function to parse box shadow value
@@ -102,9 +112,91 @@ const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
     } : null;
 };
 
+// Helper function to normalize icon config (support both old string format and new object format)
+const normalizeIconConfig = (value: string | FooterIconConfig | undefined, defaultOrder: number): FooterIconConfig => {
+    if (!value) return { visible: true, order: defaultOrder };
+    if (typeof value === 'string') return { url: value, visible: true, order: defaultOrder };
+    return { ...value, order: value.order ?? defaultOrder, visible: value.visible ?? true };
+};
+
+// Helper function to get icon config from FooterIcons
+const getIconConfig = (icons: FooterIcons | undefined, key: 'calendar' | 'phone' | 'pin' | 'rsvp' | 'gifts', defaultOrder: number): FooterIconConfig => {
+    const value = icons?.[key];
+    return normalizeIconConfig(value, defaultOrder);
+};
+
+// Helper function to update icon config
+const updateIconConfig = (icons: FooterIcons | undefined, key: 'calendar' | 'phone' | 'pin' | 'rsvp' | 'gifts', config: FooterIconConfig): FooterIcons => {
+    return { ...(icons || {}), [key]: config };
+};
+
+// Icon definitions with default order
+const ICON_DEFINITIONS = [
+    { key: 'calendar' as const, label: 'Calendar', defaultOrder: 1 },
+    { key: 'phone' as const, label: 'Phone', defaultOrder: 2 },
+    { key: 'pin' as const, label: 'Location', defaultOrder: 3 },
+    { key: 'rsvp' as const, label: 'RSVP', defaultOrder: 4 },
+    { key: 'gifts' as const, label: 'Gifts', defaultOrder: 5 },
+];
+
+// Sortable Icon Item Component
+function SortableIconItem({
+    id,
+    label,
+    iconKey,
+    value,
+    order,
+    visible,
+    onChange,
+    onRemove,
+    onVisibilityChange,
+}: {
+    id: string;
+    label: string;
+    iconKey: 'calendar' | 'phone' | 'pin' | 'rsvp' | 'gifts';
+    value: FooterIconConfig;
+    order: number;
+    visible: boolean;
+    onChange: (config: FooterIconConfig) => void;
+    onRemove: () => void;
+    onVisibilityChange: (visible: boolean) => void;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    return (
+        <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
+            <IconUploadWithControls
+                label={label}
+                iconKey={iconKey}
+                value={value}
+                order={order}
+                visible={visible}
+                onChange={onChange}
+                onRemove={onRemove}
+                onOrderChange={() => {}} // Handled by drag and drop
+                onVisibilityChange={onVisibilityChange}
+                isDragging={isDragging}
+                dragHandleProps={{ ...attributes, ...listeners }}
+            />
+        </div>
+    );
+}
+
 export default function CreateThemePage() {
     const router = useRouter();
-    const { event, resetEvent } = useEvent();
+    const { event, updateEvent, resetEvent } = useEvent();
     const [config, setConfig] = useState<ThemeConfig>(defaultThemeConfig);
     const [isSavingTheme, setIsSavingTheme] = useState(false);
     const [isSavingContent, setIsSavingContent] = useState(false);
@@ -115,6 +207,10 @@ export default function CreateThemePage() {
     const [activeTab, setActiveTab] = useState<"theme" | "content">("theme");
     const cardRef = useRef<HTMLDivElement>(null);
     const previewContainerRef = useRef<HTMLDivElement>(null);
+    const fontUploadInputRef = useRef<HTMLInputElement>(null);
+    const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] = useState(false);
+    const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     
     // Ref to track if we're updating from user input (prevent useEffect from overriding)
     const isUpdatingFromUserInput = useRef(false);
@@ -144,8 +240,129 @@ export default function CreateThemePage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState<"theme" | "content" | "template" | null>(null);
     const [modalName, setModalName] = useState("");
+    const [isMounted, setIsMounted] = useState(false);
 
-    const updateConfig = (key: keyof ThemeConfig, value: BackgroundStyle | string | FooterIcons) => {
+    // Ensure component only renders drag-and-drop on client
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    // Drag and drop sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor)
+    );
+
+    // Get sorted icon list based on order
+    const getSortedIcons = () => {
+        return ICON_DEFINITIONS.map(def => ({
+            ...def,
+            config: getIconConfig(config.footerIcons, def.key, def.defaultOrder),
+        })).sort((a, b) => (a.config.order ?? a.defaultOrder) - (b.config.order ?? b.defaultOrder));
+    };
+
+    const [sortedIcons, setSortedIcons] = useState(getSortedIcons());
+
+    // Update sorted icons when config changes
+    useEffect(() => {
+        setSortedIcons(getSortedIcons());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [config.footerIcons]);
+
+    // Handle drag end for icon reordering
+    const handleIconDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = sortedIcons.findIndex(icon => icon.key === active.id);
+        const newIndex = sortedIcons.findIndex(icon => icon.key === over.id);
+
+        if (oldIndex !== -1 && newIndex !== -1) {
+            const newSortedIcons = arrayMove(sortedIcons, oldIndex, newIndex);
+            setSortedIcons(newSortedIcons);
+
+            // Update order in config
+            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+            newSortedIcons.forEach((icon, index) => {
+                const currentConfig = getIconConfig(updatedIcons, icon.key, icon.defaultOrder);
+                updatedIcons[icon.key] = { ...currentConfig, order: index + 1 };
+            });
+            updateConfig('footerIcons', updatedIcons);
+        }
+    };
+
+    const handleFontUpload = (file: File) => {
+        const url = URL.createObjectURL(file);
+        const fontFamily = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        const newFont = { name: file.name, url, fontFamily };
+        const uploadedFonts = event.uploadedFonts || [];
+        const updatedFonts = [...uploadedFonts, newFont];
+        updateEvent({ uploadedFonts: updatedFonts });
+        setHasUnsavedChanges(true);
+        toast.success("Font uploaded successfully!", {
+            description: `Font "${file.name}" is now available for use.`,
+            duration: 3000,
+        });
+    };
+
+    // Track changes to detect unsaved changes
+    useEffect(() => {
+        setHasUnsavedChanges(true);
+    }, [event, config]);
+
+    // Handle browser refresh/close
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [hasUnsavedChanges]);
+
+    const handleSaveAndContinue = () => {
+        try {
+            localStorage.setItem("ceremony-card-event", JSON.stringify(event));
+            localStorage.setItem("theme-config", JSON.stringify(config));
+            setHasUnsavedChanges(false);
+            setShowUnsavedChangesDialog(false);
+            
+            if (pendingNavigation) {
+                router.push(pendingNavigation);
+                setPendingNavigation(null);
+            } else {
+                window.location.reload();
+            }
+            
+            toast.success("Changes saved successfully!");
+        } catch (error) {
+            console.error("Error saving:", error);
+            toast.error("Error saving changes");
+        }
+    };
+
+    const handleDiscardAndContinue = () => {
+        setHasUnsavedChanges(false);
+        setShowUnsavedChangesDialog(false);
+        
+        if (pendingNavigation) {
+            router.push(pendingNavigation);
+            setPendingNavigation(null);
+        } else {
+            window.location.reload();
+        }
+    };
+
+    const handleCancelNavigation = () => {
+        setShowUnsavedChangesDialog(false);
+        setPendingNavigation(null);
+    };
+
+    const updateConfig = (key: keyof ThemeConfig, value: BackgroundStyle | string | number | FooterIcons | FooterContainerConfig) => {
         setConfig((prev) => ({
             ...prev,
             [key]: value,
@@ -436,14 +653,162 @@ export default function CreateThemePage() {
     };
 
     return (
+        <>
+            {/* Unsaved Changes Dialog */}
+            <Dialog open={showUnsavedChangesDialog} onOpenChange={setShowUnsavedChangesDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Unsaved Changes</DialogTitle>
+                        <DialogDescription>
+                            You have unsaved changes. Would you like to save your project before leaving?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={handleCancelNavigation}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDiscardAndContinue}
+                        >
+                            Discard Changes
+                        </Button>
+                        <Button
+                            onClick={handleSaveAndContinue}
+                            className="bg-[#36463A] hover:bg-[#2d3a2f]"
+                        >
+                            Save & Continue
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <div>
+                <div className="flex-1">
                     <h1 className="text-3xl font-bold mb-2">Create New Theme</h1>
                     <p className="text-muted-foreground">Design your wedding card theme. Customize backgrounds, colors, and default content.</p>
+                    
+                    {/* Theme and Color Inputs */}
+                    <div className="flex gap-4 mt-4">
+                        <div className="flex-1">
+                            <Label htmlFor="themeSelect" className="text-sm font-medium mb-1 block">Theme</Label>
+                            <Select
+                                value={config.themeName || ''}
+                                onValueChange={(value) => {
+                                    updateConfig('themeName', value);
+                                }}
+                            >
+                                <SelectTrigger id="themeSelect" className="w-full">
+                                    <SelectValue placeholder="Select theme" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="baby">Baby</SelectItem>
+                                    <SelectItem value="party">Party</SelectItem>
+                                    <SelectItem value="ramadan">Ramadan</SelectItem>
+                                    <SelectItem value="raya">Raya</SelectItem>
+                                    <SelectItem value="floral">Floral</SelectItem>
+                                    <SelectItem value="islamic">Islamic</SelectItem>
+                                    <SelectItem value="minimalist">Minimalist</SelectItem>
+                                    <SelectItem value="modern">Modern</SelectItem>
+                                    <SelectItem value="rustic">Rustic</SelectItem>
+                                    <SelectItem value="traditional">Traditional</SelectItem>
+                                    <SelectItem value="vintage">Vintage</SelectItem>
+                                    <SelectItem value="watercolor">Watercolor</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="flex-1">
+                            <Label htmlFor="colorInput" className="text-sm font-medium mb-1 block">Color</Label>
+                            <Input
+                                id="colorInput"
+                                type="text"
+                                value={config.color || ''}
+                                onChange={(e) => {
+                                    const value = e.target.value.toUpperCase();
+                                    updateConfig('color', value);
+                                }}
+                                placeholder="e.g. ROSE, BLUE, GOLD"
+                                className="w-full uppercase"
+                            />
+                        </div>
+                    </div>
                 </div>
                 
-                {/* Tab Menu */}
+                {/* Right Side - Action Buttons */}
+                <div className="flex items-center gap-3 ml-6">
+                    <Button
+                        onClick={() => {
+                            setConfig(defaultThemeConfig);
+                            resetEvent();
+                            setHasUnsavedChanges(false);
+                            toast.success("Reset to defaults");
+                        }}
+                        variant="outline"
+                        className="px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50"
+                    >
+                        Reset to Defaults
+                    </Button>
+                    
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                disabled={isSavingTheme || isSavingContent || isSavingTemplate}
+                                className="px-4 py-2 rounded-full border border-[#36463A] text-white bg-[#36463A] text-sm shadow hover:bg-[#2d3a2f] flex items-center gap-2"
+                            >
+                                <Save className="w-4 h-4" />
+                                Save
+                                <ChevronDown className="w-4 h-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                                onClick={() => openSaveModal("theme")}
+                                disabled={!config.themeName}
+                            >
+                                <span>Save Theme</span>
+                                {!config.themeName && (
+                                    <span className="ml-2 text-xs text-gray-400">(Select theme first)</span>
+                                )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => openSaveModal("content")}
+                            >
+                                Save Content
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => openSaveModal("template")}
+                                disabled={!config.themeName || !config.color}
+                            >
+                                <span>Save Template</span>
+                                {(!config.themeName || !config.color) && (
+                                    <span className="ml-2 text-xs text-gray-400">(Complete theme & color)</span>
+                                )}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    
+                    <Button
+                        onClick={() => {
+                            if (hasUnsavedChanges) {
+                                setPendingNavigation("/designer/preview");
+                                setShowUnsavedChangesDialog(true);
+                            } else {
+                                router.push("/designer/preview");
+                            }
+                        }}
+                        className="px-4 py-2 rounded-full border border-[#36463A] text-white bg-[#36463A] text-sm shadow hover:bg-[#2d3a2f]"
+                    >
+                        Preview
+                    </Button>
+                </div>
+            </div>
+            
+            {/* Tab Menu */}
+            <div className="flex items-center justify-between">
                 <div className="inline-flex rounded-2xl border border-[#36463A] overflow-hidden">
                     <button
                         onClick={() => setActiveTab("theme")}
@@ -568,26 +933,94 @@ export default function CreateThemePage() {
                                                 </div>
                                             </div>
 
-                                            {/* Text Icon Color */}
-                                            <div className="p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-rose-200 shadow-sm flex flex-col gap-1">
-                                                <label htmlFor="footerTextColor" className="text-xs font-semibold text-rose-800 uppercase tracking-wider">Text Icon Color</label>
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        id="footerTextColor"
-                                                        name="footerTextColor"
-                                                        type="color"
-                                                        value={config.footerTextColor || config.footerIconColor}
-                                                        onChange={(e) => updateConfig('footerTextColor', e.target.value as any)}
-                                                        className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                                            {/* Icon Text Font Settings */}
+                                            <div className="p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-rose-200 shadow-sm flex flex-col gap-3">
+                                                <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider">Icon Text Font Settings</span>
+                                                
+                                                {/* Text Icon Color */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="footerTextColor" className="text-[10px] text-gray-600">Text Icon Color</Label>
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            id="footerTextColor"
+                                                            name="footerTextColor"
+                                                            type="color"
+                                                            value={config.footerTextColor || config.footerIconColor}
+                                                            onChange={(e) => updateConfig('footerTextColor', e.target.value as any)}
+                                                            className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                                                        />
+                                                        <span className="text-[10px] text-gray-500 font-mono">{config.footerTextColor || config.footerIconColor}</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Font Family */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="footerTextFontFamily" className="text-[10px] text-gray-600">Font Family</Label>
+                                                    <Input
+                                                        id="footerTextFontFamily"
+                                                        type="text"
+                                                        value={config.footerTextFontFamily || 'Helvetica, Arial, sans-serif'}
+                                                        onChange={(e) => {
+                                                            updateConfig('footerTextFontFamily', e.target.value);
+                                                        }}
+                                                        placeholder="Helvetica, Arial, sans-serif"
+                                                        className="h-8 text-xs"
                                                     />
-                                                    <span className="text-[10px] text-gray-500 font-mono">{config.footerTextColor || config.footerIconColor}</span>
+                                                </div>
+
+                                                {/* Font Size */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="footerTextFontSize" className="text-[10px] text-gray-600">Font Size (px)</Label>
+                                                    <Input
+                                                        id="footerTextFontSize"
+                                                        type="number"
+                                                        value={config.footerTextFontSize ?? 10}
+                                                        onChange={(e) => {
+                                                            const value = Math.max(8, Math.min(24, parseFloat(e.target.value) || 10));
+                                                            updateConfig('footerTextFontSize', value as any);
+                                                        }}
+                                                        className="h-8 text-xs"
+                                                        min="8"
+                                                        max="24"
+                                                        step="1"
+                                                    />
+                                                </div>
+
+                                                {/* Font Weight */}
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="footerTextFontWeight" className="text-[10px] text-gray-600">Font Weight</Label>
+                                                    <Select
+                                                        value={String(config.footerTextFontWeight || 'normal')}
+                                                        onValueChange={(value) => {
+                                                            // Try to parse as number, otherwise use string
+                                                            const numValue = parseInt(value);
+                                                            updateConfig('footerTextFontWeight', (isNaN(numValue) ? value : numValue) as any);
+                                                        }}
+                                                    >
+                                                        <SelectTrigger className="h-8 text-xs">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="normal">Normal</SelectItem>
+                                                            <SelectItem value="bold">Bold</SelectItem>
+                                                            <SelectItem value="100">100 (Thin)</SelectItem>
+                                                            <SelectItem value="200">200 (Extra Light)</SelectItem>
+                                                            <SelectItem value="300">300 (Light)</SelectItem>
+                                                            <SelectItem value="400">400 (Regular)</SelectItem>
+                                                            <SelectItem value="500">500 (Medium)</SelectItem>
+                                                            <SelectItem value="600">600 (Semi Bold)</SelectItem>
+                                                            <SelectItem value="700">700 (Bold)</SelectItem>
+                                                            <SelectItem value="800">800 (Extra Bold)</SelectItem>
+                                                            <SelectItem value="900">900 (Black)</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
                                             </div>
 
-                                            {/* Box Shadow Control */}
+                                            {/* Box Shadow Footer Control */}
                                             <div className="p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-rose-200 shadow-sm flex flex-col gap-3">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider">Box Shadow</span>
+                                                    <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider">Box Shadow Footer</span>
                                                     <div className="flex gap-1 flex-wrap">
                                                         <Button
                                                             type="button"
@@ -832,56 +1265,287 @@ export default function CreateThemePage() {
                                             </div>
 
                                             {/* Custom Icons */}
-                                            <div className="p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-rose-200 shadow-sm flex flex-col gap-2">
+                                            <div className="p-2 bg-white/90 backdrop-blur-sm rounded-lg border border-rose-200 shadow-sm flex flex-col gap-3">
                                                 <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider mb-1">Custom Icons</span>
-                                                <IconUpload
-                                                    label="Calendar"
-                                                    value={config.footerIcons?.calendar}
-                                                    onChange={(url) => {
-                                                        const newIcons: FooterIcons = { ...(config.footerIcons || {}), calendar: url };
-                                                        updateConfig('footerIcons', newIcons);
-                                                    }}
-                                                    onRemove={() => {
-                                                        const { calendar, ...rest } = config.footerIcons || {};
-                                                        updateConfig('footerIcons', Object.keys(rest).length > 0 ? rest : undefined as any);
-                                                    }}
-                                                />
-                                                <IconUpload
-                                                    label="Phone"
-                                                    value={config.footerIcons?.phone}
-                                                    onChange={(url) => {
-                                                        const newIcons: FooterIcons = { ...(config.footerIcons || {}), phone: url };
-                                                        updateConfig('footerIcons', newIcons);
-                                                    }}
-                                                    onRemove={() => {
-                                                        const { phone, ...rest } = config.footerIcons || {};
-                                                        updateConfig('footerIcons', Object.keys(rest).length > 0 ? rest : undefined as any);
-                                                    }}
-                                                />
-                                                <IconUpload
-                                                    label="Location"
-                                                    value={config.footerIcons?.pin}
-                                                    onChange={(url) => {
-                                                        const newIcons: FooterIcons = { ...(config.footerIcons || {}), pin: url };
-                                                        updateConfig('footerIcons', newIcons);
-                                                    }}
-                                                    onRemove={() => {
-                                                        const { pin, ...rest } = config.footerIcons || {};
-                                                        updateConfig('footerIcons', Object.keys(rest).length > 0 ? rest : undefined as any);
-                                                    }}
-                                                />
-                                                <IconUpload
-                                                    label="RSVP"
-                                                    value={config.footerIcons?.rsvp}
-                                                    onChange={(url) => {
-                                                        const newIcons: FooterIcons = { ...(config.footerIcons || {}), rsvp: url };
-                                                        updateConfig('footerIcons', newIcons);
-                                                    }}
-                                                    onRemove={() => {
-                                                        const { rsvp, ...rest } = config.footerIcons || {};
-                                                        updateConfig('footerIcons', Object.keys(rest).length > 0 ? rest : undefined as any);
-                                                    }}
-                                                />
+                                                
+                                                {isMounted ? (
+                                                    <DndContext
+                                                        sensors={sensors}
+                                                        collisionDetection={closestCenter}
+                                                        onDragEnd={handleIconDragEnd}
+                                                    >
+                                                        <SortableContext
+                                                            items={sortedIcons.map(icon => icon.key)}
+                                                            strategy={verticalListSortingStrategy}
+                                                        >
+                                                            <div className="space-y-2">
+                                                                {sortedIcons.map((iconDef) => {
+                                                                const iconConfig = iconDef.config;
+                                                                const iconKey = iconDef.key;
+                                                                
+                                                                return (
+                                                                    <SortableIconItem
+                                                                        key={iconKey}
+                                                                        id={iconKey}
+                                                                        label={iconDef.label}
+                                                                        iconKey={iconKey}
+                                                                        value={iconConfig}
+                                                                        order={iconConfig.order ?? iconDef.defaultOrder}
+                                                                        visible={iconConfig.visible ?? true}
+                                                                        onChange={(newConfig) => {
+                                                                            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+                                                                            updatedIcons[iconKey] = newConfig;
+                                                                            updateConfig('footerIcons', updatedIcons);
+                                                                        }}
+                                                                        onRemove={() => {
+                                                                            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+                                                                            delete updatedIcons[iconKey];
+                                                                            updateConfig('footerIcons', Object.keys(updatedIcons).length > 0 ? updatedIcons : undefined as any);
+                                                                        }}
+                                                                        onVisibilityChange={(visible) => {
+                                                                            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+                                                                            const currentConfig = getIconConfig(updatedIcons, iconKey, iconDef.defaultOrder);
+                                                                            updatedIcons[iconKey] = { ...currentConfig, visible };
+                                                                            updateConfig('footerIcons', updatedIcons);
+                                                                        }}
+                                                                    />
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </SortableContext>
+                                                    </DndContext>
+                                                ) : (
+                                                    // Fallback for SSR - render without drag-and-drop
+                                                    <div className="space-y-2">
+                                                        {sortedIcons.map((iconDef) => {
+                                                            const iconConfig = iconDef.config;
+                                                            const iconKey = iconDef.key;
+                                                            
+                                                            return (
+                                                                <div key={iconKey}>
+                                                                    <IconUploadWithControls
+                                                                        label={iconDef.label}
+                                                                        iconKey={iconKey}
+                                                                        value={iconConfig}
+                                                                        order={iconConfig.order ?? iconDef.defaultOrder}
+                                                                        visible={iconConfig.visible ?? true}
+                                                                        onChange={(newConfig) => {
+                                                                            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+                                                                            updatedIcons[iconKey] = newConfig;
+                                                                            updateConfig('footerIcons', updatedIcons);
+                                                                        }}
+                                                                        onRemove={() => {
+                                                                            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+                                                                            delete updatedIcons[iconKey];
+                                                                            updateConfig('footerIcons', Object.keys(updatedIcons).length > 0 ? updatedIcons : undefined as any);
+                                                                        }}
+                                                                        onOrderChange={() => {}}
+                                                                        onVisibilityChange={(visible) => {
+                                                                            const updatedIcons: FooterIcons = { ...(config.footerIcons || {}) };
+                                                                            const currentConfig = getIconConfig(updatedIcons, iconKey, iconDef.defaultOrder);
+                                                                            updatedIcons[iconKey] = { ...currentConfig, visible };
+                                                                            updateConfig('footerIcons', updatedIcons);
+                                                                        }}
+                                                                        isDragging={false}
+                                                                        dragHandleProps={{}}
+                                                                    />
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+
+                                                {/* Container Settings */}
+                                                <div className="pt-3 border-t border-gray-200 space-y-3">
+                                                    <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider">Container Settings</span>
+                                                    
+                                                    {/* Width Control */}
+                                                    <div className="space-y-2">
+                                                        <Label className="text-[10px] text-gray-600">Container Width</Label>
+                                                        <Select
+                                                            value={config.footerContainerConfig?.width || 'custom'}
+                                                            onValueChange={(value: 'full' | 'custom') => {
+                                                                const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                updateConfig('footerContainerConfig', {
+                                                                    ...currentConfig,
+                                                                    width: value,
+                                                                } as FooterContainerConfig);
+                                                            }}
+                                                        >
+                                                            <SelectTrigger className="h-8 text-xs">
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="full">Full Width</SelectItem>
+                                                                <SelectItem value="custom">Custom Width</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+
+                                                    {/* Custom Width Input */}
+                                                    {config.footerContainerConfig?.width === 'custom' && (
+                                                        <div className="space-y-2">
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                <div>
+                                                                    <Label htmlFor="containerWidth" className="text-[10px] text-gray-600">Width Value</Label>
+                                                                    <Input
+                                                                        id="containerWidth"
+                                                                        type="number"
+                                                                        value={config.footerContainerConfig?.customWidth || 320}
+                                                                        onChange={(e) => {
+                                                                            const value = parseFloat(e.target.value) || 0;
+                                                                            const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                            updateConfig('footerContainerConfig', {
+                                                                                ...currentConfig,
+                                                                                customWidth: value,
+                                                                            } as FooterContainerConfig);
+                                                                        }}
+                                                                        className="h-8 text-xs"
+                                                                        min="0"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <Label htmlFor="widthUnit" className="text-[10px] text-gray-600">Unit</Label>
+                                                                    <Select
+                                                                        value={config.footerContainerConfig?.widthUnit || 'px'}
+                                                                        onValueChange={(value: 'px' | '%') => {
+                                                                            const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                            updateConfig('footerContainerConfig', {
+                                                                                ...currentConfig,
+                                                                                widthUnit: value,
+                                                                            } as FooterContainerConfig);
+                                                                        }}
+                                                                    >
+                                                                        <SelectTrigger className="h-8 text-xs">
+                                                                            <SelectValue />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="px">px</SelectItem>
+                                                                            <SelectItem value="%">%</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Bottom Position */}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="bottomPosition" className="text-[10px] text-gray-600">Distance from Bottom (px)</Label>
+                                                        <Input
+                                                            id="bottomPosition"
+                                                            type="number"
+                                                            value={config.footerContainerConfig?.bottomPosition ?? 12}
+                                                            onChange={(e) => {
+                                                                const value = Math.max(0, parseFloat(e.target.value) || 0);
+                                                                const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                updateConfig('footerContainerConfig', {
+                                                                    ...currentConfig,
+                                                                    bottomPosition: value,
+                                                                } as FooterContainerConfig);
+                                                            }}
+                                                            className="h-8 text-xs"
+                                                            min="0"
+                                                            placeholder="0"
+                                                        />
+                                                        <p className="text-[9px] text-gray-500">Minimum: 0 (prevents icons from going out of card)</p>
+                                                    </div>
+
+                                                    {/* Border Radius Controls */}
+                                                    <div className="space-y-2">
+                                                        <Label className="text-[10px] text-gray-600">Border Radius (px)</Label>
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            <div>
+                                                                <Label htmlFor="borderRadiusTopLeft" className="text-[9px] text-gray-600 mb-0.5 block">Top Left</Label>
+                                                                <Input
+                                                                    id="borderRadiusTopLeft"
+                                                                    type="number"
+                                                                    value={config.footerContainerConfig?.borderRadius?.topLeft ?? 16}
+                                                                    onChange={(e) => {
+                                                                        const value = Math.max(0, parseFloat(e.target.value) || 0);
+                                                                        const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                        updateConfig('footerContainerConfig', {
+                                                                            ...currentConfig,
+                                                                            borderRadius: {
+                                                                                ...currentConfig.borderRadius,
+                                                                                topLeft: value,
+                                                                            },
+                                                                        } as FooterContainerConfig);
+                                                                    }}
+                                                                    className="h-8 text-xs"
+                                                                    min="0"
+                                                                    step="1"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <Label htmlFor="borderRadiusTopRight" className="text-[9px] text-gray-600 mb-0.5 block">Top Right</Label>
+                                                                <Input
+                                                                    id="borderRadiusTopRight"
+                                                                    type="number"
+                                                                    value={config.footerContainerConfig?.borderRadius?.topRight ?? 16}
+                                                                    onChange={(e) => {
+                                                                        const value = Math.max(0, parseFloat(e.target.value) || 0);
+                                                                        const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                        updateConfig('footerContainerConfig', {
+                                                                            ...currentConfig,
+                                                                            borderRadius: {
+                                                                                ...currentConfig.borderRadius,
+                                                                                topRight: value,
+                                                                            },
+                                                                        } as FooterContainerConfig);
+                                                                    }}
+                                                                    className="h-8 text-xs"
+                                                                    min="0"
+                                                                    step="1"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <Label htmlFor="borderRadiusBottomLeft" className="text-[9px] text-gray-600 mb-0.5 block">Bottom Left</Label>
+                                                                <Input
+                                                                    id="borderRadiusBottomLeft"
+                                                                    type="number"
+                                                                    value={config.footerContainerConfig?.borderRadius?.bottomLeft ?? 16}
+                                                                    onChange={(e) => {
+                                                                        const value = Math.max(0, parseFloat(e.target.value) || 0);
+                                                                        const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                        updateConfig('footerContainerConfig', {
+                                                                            ...currentConfig,
+                                                                            borderRadius: {
+                                                                                ...currentConfig.borderRadius,
+                                                                                bottomLeft: value,
+                                                                            },
+                                                                        } as FooterContainerConfig);
+                                                                    }}
+                                                                    className="h-8 text-xs"
+                                                                    min="0"
+                                                                    step="1"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <Label htmlFor="borderRadiusBottomRight" className="text-[9px] text-gray-600 mb-0.5 block">Bottom Right</Label>
+                                                                <Input
+                                                                    id="borderRadiusBottomRight"
+                                                                    type="number"
+                                                                    value={config.footerContainerConfig?.borderRadius?.bottomRight ?? 16}
+                                                                    onChange={(e) => {
+                                                                        const value = Math.max(0, parseFloat(e.target.value) || 0);
+                                                                        const currentConfig = config.footerContainerConfig || defaultThemeConfig.footerContainerConfig!;
+                                                                        updateConfig('footerContainerConfig', {
+                                                                            ...currentConfig,
+                                                                            borderRadius: {
+                                                                                ...currentConfig.borderRadius,
+                                                                                bottomRight: value,
+                                                                            },
+                                                                        } as FooterContainerConfig);
+                                                                    }}
+                                                                    className="h-8 text-xs"
+                                                                    min="0"
+                                                                    step="1"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </AccordionContent>
                                     </AccordionItem>
@@ -907,48 +1571,6 @@ export default function CreateThemePage() {
                                 <CardDescription>Set default content for your theme. Clients can customize these later.</CardDescription>
                             </div>
                             <div className="flex gap-2">
-                                <Button
-                                    onClick={resetEvent}
-                                    variant="outline"
-                                    className="px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50"
-                                >
-                                    Reset to Defaults
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        try {
-                                            localStorage.setItem("ceremony-card-event", JSON.stringify(event));
-                                            toast.success("Content saved successfully!", {
-                                                description: "All your changes have been saved.",
-                                                duration: 3000,
-                                            });
-                                        } catch (error) {
-                                            console.error("Error saving content:", error);
-                                            toast.error("Error saving content", {
-                                                description: "Failed to save. Check console for details.",
-                                                duration: 4000,
-                                            });
-                                        }
-                                    }}
-                                    className="px-4 py-2 rounded-full border border-[#36463A] text-white bg-[#36463A] text-sm shadow hover:bg-[#2d3a2f] flex items-center gap-2"
-                                >
-                                    <IconSave />
-                                    Save
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        // Save current event data to localStorage before navigating
-                                        try {
-                                            localStorage.setItem("ceremony-card-event", JSON.stringify(event));
-                                        } catch (error) {
-                                            console.error("Error saving event data:", error);
-                                        }
-                                        router.push("/designer/preview");
-                                    }}
-                                    className="px-4 py-2 rounded-full border border-[#36463A] text-white bg-[#36463A] text-sm shadow hover:bg-[#2d3a2f]"
-                                >
-                                    Preview
-                                </Button>
                             </div>
                         </div>
                     </CardHeader>
@@ -984,11 +1606,12 @@ export default function CreateThemePage() {
                                             3: Page3Form,
                                             4: Page4Form,
                                             5: Page5Form,
-                                            6: Page6Form,
                                             7: Page7Form,
                                             8: Page8Form,
                                             9: Page9Form,
                                             10: Page10Form,
+                                            11: Page11Form,
+                                            12: Page12Form,
                                         };
                                         const SectionComponent = formComponents[section.id];
                                         
@@ -1036,6 +1659,12 @@ export default function CreateThemePage() {
                                         setCurrentContentSection(sectionNumber);
                                         scrollToSection(sectionNumber);
                                     }}
+                                    onContactFormClick={() => {
+                                        // Navigate to Form 8 (Contacts) when phone icon is clicked
+                                        setOpenAccordionSection("8");
+                                        setCurrentContentSection(8);
+                                        scrollToSection(8);
+                                    }}
                                 />
                             </div>
                         </div>
@@ -1048,25 +1677,6 @@ export default function CreateThemePage() {
                 <Link href="/designer/dashboard">
                     <Button variant="outline">Cancel</Button>
                 </Link>
-                <Button
-                    onClick={() => openSaveModal("theme")}
-                    disabled={isSavingTheme || isSavingContent || isSavingTemplate}
-                >
-                    Save Theme
-                </Button>
-                <Button
-                    onClick={() => openSaveModal("content")}
-                    disabled={isSavingTheme || isSavingContent || isSavingTemplate}
-                    variant="secondary"
-                >
-                    Save Content
-                </Button>
-                <Button
-                    onClick={() => openSaveModal("template")}
-                    disabled={isSavingTheme || isSavingContent || isSavingTemplate}
-                >
-                    Save Template
-                </Button>
             </div>
 
             {/* Save Modal */}
@@ -1122,6 +1732,7 @@ export default function CreateThemePage() {
                 </DialogContent>
             </Dialog>
         </div>
+        </>
     );
 }
 

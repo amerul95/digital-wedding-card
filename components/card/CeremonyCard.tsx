@@ -29,9 +29,10 @@ interface CeremonyCardProps {
   editorSection?: number;  // Current editor section (1-5), undefined means not in editor
   themeConfig?: ThemeConfig;  // Optional theme config to apply styling
   onSectionClick?: (sectionNumber: number) => void;  // Callback when a section is clicked in editor mode
+  onContactFormClick?: () => void;  // Callback when contact icon is clicked in editor mode (navigate to Form 8)
 }
 
-export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onSectionClick }: CeremonyCardProps) {
+export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onSectionClick, onContactFormClick }: CeremonyCardProps) {
   const { event: eventFromContext } = useEvent();
   const event = eventProp || eventFromContext;
   const [doorsOpen, setDoorsOpen] = useState(false);
@@ -281,8 +282,9 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
       return {
         backgroundImage: `url(${bgStyle.value})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'local'
       };
     }
     if (bgStyle.type === 'gradient') {
@@ -310,8 +312,9 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
       return {
         backgroundImage: `url(${bgStyle.value})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'local'
       };
     }
     if (bgStyle.type === 'gradient') {
@@ -377,9 +380,18 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
         {/* FIXED FOOTER */}
         <Footer
           onCalendarClick={() => setModal("calendar")}
-          onContactClick={() => setModal("contact")}
+          onContactClick={() => {
+            // In editor mode, navigate to Form 8 AND show contact modal
+            if (editorSection !== undefined && onContactFormClick) {
+              onContactFormClick();
+              setModal("contact");
+            } else {
+              setModal("contact");
+            }
+          }}
           onLocationClick={() => setModal("location")}
           onRSVPClick={() => setModal("rsvp")}
+          onGiftsClick={() => setModal("gifts")}
           rsvpMode={event.rsvpMode}
           customStyle={themeConfig ? {
             background: themeConfig.footerBackground?.type === 'color' 
@@ -391,9 +403,13 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
               : undefined,
             color: themeConfig.footerIconColor,
             textColor: themeConfig.footerTextColor || themeConfig.footerIconColor,
-            boxShadow: themeConfig.footerBoxShadow
+            boxShadow: themeConfig.footerBoxShadow,
+            fontFamily: themeConfig.footerTextFontFamily,
+            fontSize: themeConfig.footerTextFontSize,
+            fontWeight: themeConfig.footerTextFontWeight,
           } : undefined}
           customIcons={themeConfig?.footerIcons}
+          containerConfig={themeConfig?.footerContainerConfig}
         />
 
         {/* DOOR OVERLAY (dynamic based on doorStyle) */}
@@ -490,6 +506,20 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
                   onSubmit={() => submit("ucapan")}
                   onCancel={closeModal}
                 />
+              )}
+
+              {/* Gifts Modal */}
+              {modal === "gifts" && (
+                <div className="p-6 text-center">
+                  <h2 className="text-2xl font-bold mb-4">Gifts</h2>
+                  <p className="text-gray-600 mb-4">Gift information will be displayed here.</p>
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700"
+                  >
+                    Close
+                  </button>
+                </div>
               )}
             </Modal>
           )}

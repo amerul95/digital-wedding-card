@@ -48,12 +48,18 @@ export function FooterButton({
   onClick,
   color,
   textColor,
+  fontFamily,
+  fontSize,
+  fontWeight,
 }: {
   children: React.ReactNode;
   label: string;
   onClick: () => void;
   color?: string;
   textColor?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: string | number;
 }) {
   return (
     <button
@@ -64,7 +70,12 @@ export function FooterButton({
       <div className="h-6 w-6">{children}</div>
       <span
         className={`text-[10px] ${!textColor && !color ? "text-rose-700/80" : ""}`}
-        style={{ color: textColor || color }}
+        style={{ 
+          color: textColor || color,
+          fontFamily: fontFamily,
+          fontSize: fontSize ? `${fontSize}px` : undefined,
+          fontWeight: fontWeight,
+        }}
       >
         {label}
       </span>

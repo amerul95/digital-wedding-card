@@ -7,13 +7,15 @@ interface CatalogCardProps {
   designName: string
   designerName: string
   isFavourited: boolean
+  year?: number | string
 }
 
 export default function CatalogCard({
   id,
   designName,
   designerName,
-  isFavourited: initialIsFavourited
+  isFavourited: initialIsFavourited,
+  year
 }: CatalogCardProps) {
   const [isFavourited, setIsFavourited] = useState(initialIsFavourited)
 
@@ -52,6 +54,16 @@ export default function CatalogCard({
       >
         {designName}
       </p>
+
+      {/* Year - Between design name and designer name */}
+      {year && (
+        <p 
+          className='text-gray-700 text-sm mb-1 font-medium'
+          style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+        >
+          {year}
+        </p>
+      )}
 
       {/* Designer Name */}
       <p 
