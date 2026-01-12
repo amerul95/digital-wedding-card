@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import {
   Type,
   Sparkles,
-  Square,
   Upload,
   LayoutTemplate,
   Layers,
@@ -35,7 +34,6 @@ interface Tool {
 const tools: Tool[] = [
   { id: 'text', icon: <Type className="h-5 w-5" />, label: 'Text', shortcut: 'T' },
   { id: 'elements', icon: <Sparkles className="h-5 w-5" />, label: 'Elements', shortcut: 'E' },
-  { id: 'shapes', icon: <Square className="h-5 w-5" />, label: 'Shapes', shortcut: 'R' },
   { id: 'uploads', icon: <Upload className="h-5 w-5" />, label: 'Uploads', shortcut: 'U' },
   { id: 'sections', icon: <LayoutTemplate className="h-5 w-5" />, label: 'Pages', shortcut: 'P' },
   { id: 'layers', icon: <Layers className="h-5 w-5" />, label: 'Layers', shortcut: 'L' },
@@ -49,7 +47,6 @@ export function ToolsBar() {
   // Keyboard shortcuts (removed 'v' for select - it's now automatic)
   useHotkeys('t', () => toggleTool('text'), { enabled: true, preventDefault: true });
   useHotkeys('e', () => toggleTool('elements'), { enabled: true, preventDefault: true });
-  useHotkeys('r', () => toggleTool('shapes'), { enabled: true, preventDefault: true });
   useHotkeys('u', () => toggleTool('uploads'), { enabled: true, preventDefault: true });
   useHotkeys('p', () => toggleTool('sections'), { enabled: true, preventDefault: true });
   useHotkeys('l', () => toggleTool('layers'), { enabled: true, preventDefault: true });
@@ -61,7 +58,6 @@ export function ToolsBar() {
     const toolMap: Record<ActiveTool, 'select' | 'text' | 'rect' | 'circle' | 'line' | 'image' | null> = {
       text: 'text',
       elements: 'rect',
-      shapes: 'rect',
       uploads: 'image',
       sections: null,
       layers: null,

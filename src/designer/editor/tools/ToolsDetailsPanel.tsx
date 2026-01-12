@@ -9,7 +9,6 @@ import { useEditorUIStore } from '@/src/store/editorUIStore';
 import { useMediaQuery } from '@/src/lib/useMediaQuery';
 import { TextPanel } from './panels/TextPanel';
 import { ElementsPanel } from './panels/ElementsPanel';
-import { ShapesPanel } from './panels/ShapesPanel';
 import { UploadsPanel } from './panels/UploadsPanel';
 import { SectionsPanel } from './panels/SectionsPanel';
 import { LayersPanel } from './panels/LayersPanel';
@@ -31,8 +30,6 @@ export function ToolsDetailsPanel() {
         return <TextPanel />;
       case 'elements':
         return <ElementsPanel />;
-      case 'shapes':
-        return <ShapesPanel />;
       case 'uploads':
         return <UploadsPanel />;
       case 'sections':
@@ -52,8 +49,6 @@ export function ToolsDetailsPanel() {
         return 'Text';
       case 'elements':
         return 'Elements';
-      case 'shapes':
-        return 'Shapes';
       case 'uploads':
         return 'Uploads';
       case 'sections':
