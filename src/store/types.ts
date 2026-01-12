@@ -39,7 +39,7 @@ export interface RectObject extends BaseObject {
   fill: string;
   stroke: string;
   strokeWidth: number;
-  cornerRadius: number;
+  cornerRadius?: number;
 }
 
 export interface CircleObject extends BaseObject {

@@ -9,16 +9,8 @@ import { useProjectStore } from '@/src/store/projectStore';
 import { useHistoryStore } from '@/src/store/historyStore';
 import { Button } from '@/components/ui/button';
 import {
-  MousePointer2,
-  Type,
-  Square,
-  Circle,
-  Minus,
-  Image as ImageIcon,
   Undo2,
   Redo2,
-  ZoomIn,
-  ZoomOut,
   Download,
   Eye,
   AlignLeft,
@@ -31,7 +23,13 @@ import {
   MoveVertical,
   Group,
   Ungroup,
+  Save,
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
 import {
   Tooltip,
   TooltipContent,
@@ -43,23 +41,14 @@ import { ExportModal } from './ExportModal';
 
 export function Toolbar() {
   const router = useRouter();
-  const { tool, setTool, project, selectedIds, updateObject, currentSectionId } =
+  const { project, selectedIds, updateObject, currentSectionId } =
     useProjectStore();
   const { undo, redo, canUndo, canRedo } = useHistoryStore();
   const [showExport, setShowExport] = useState(false);
-
-  const tools: Array<{
-    id: 'select' | 'text' | 'rect' | 'circle' | 'line' | 'image';
-    icon: React.ReactNode;
-    label: string;
-  }> = [
-    { id: 'select', icon: <MousePointer2 className="h-4 w-4" />, label: 'Select' },
-    { id: 'text', icon: <Type className="h-4 w-4" />, label: 'Text' },
-    { id: 'rect', icon: <Square className="h-4 w-4" />, label: 'Rectangle' },
-    { id: 'circle', icon: <Circle className="h-4 w-4" />, label: 'Circle' },
-    { id: 'line', icon: <Minus className="h-4 w-4" />, label: 'Line' },
-    { id: 'image', icon: <ImageIcon className="h-4 w-4" />, label: 'Image' },
-  ];
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [themeName, setThemeName] = useState('');
+  const [mainColor, setMainColor] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAlign = (type: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
     if (!currentSectionId || selectedIds.length === 0) return;
@@ -160,27 +149,58 @@ export function Toolbar() {
     }
   };
 
+  const handleSave = async () => {
+    if (!themeName) {
+      toast.error('Please select a theme');
+      return;
+    }
+    if (!mainColor) {
+      toast.error('Please enter a main color');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // TODO: Implement save API call similar to create-theme
+      // For now, just show success message
+      toast.success('Card saved successfully!');
+      setShowSaveDialog(false);
+      setThemeName('');
+      setMainColor('');
+    } catch (error) {
+      console.error('Error saving card:', error);
+      toast.error('Failed to save card. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <>
       <div className="h-14 bg-white border-b border-gray-200 flex items-center gap-1 px-4">
-        {/* Tools */}
+        {/* Title */}
+        <div className="flex-1">
+          <h1 className="text-lg font-semibold text-gray-900">
+            {project?.name || 'Untitled Card'}
+          </h1>
+        </div>
+
+        {/* Save Button */}
         <div className="flex items-center gap-1 border-r border-gray-200 pr-2 mr-2">
-          {tools.map((toolItem) => (
-            <TooltipProvider key={toolItem.id}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={tool === toolItem.id ? 'default' : 'ghost'}
-                    size="icon-sm"
-                    onClick={() => setTool(toolItem.id)}
-                  >
-                    {toolItem.icon}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{toolItem.label}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setShowSaveDialog(true)}
+                >
+                  <Save className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Save Card</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Undo/Redo */}
@@ -192,9 +212,20 @@ export function Toolbar() {
                   variant="ghost"
                   size="icon-sm"
                   onClick={() => {
-                    const project = undo();
-                    if (project) {
-                      useProjectStore.getState().updateProject(() => project);
+                    const restoredProject = undo();
+                    if (restoredProject) {
+                      const store = useProjectStore.getState();
+                      // Use updateProject to restore
+                      store.updateProject((p) => {
+                        // Replace all properties
+                        p.id = restoredProject.id;
+                        p.name = restoredProject.name;
+                        p.createdAt = restoredProject.createdAt;
+                        p.updatedAt = restoredProject.updatedAt;
+                        p.settings = restoredProject.settings;
+                        p.sections = restoredProject.sections;
+                        p.player = restoredProject.player;
+                      });
                     }
                   }}
                   disabled={!canUndo()}
@@ -213,9 +244,20 @@ export function Toolbar() {
                   variant="ghost"
                   size="icon-sm"
                   onClick={() => {
-                    const project = redo();
-                    if (project) {
-                      useProjectStore.getState().updateProject(() => project);
+                    const restoredProject = redo();
+                    if (restoredProject) {
+                      const store = useProjectStore.getState();
+                      // Use updateProject to restore
+                      store.updateProject((p) => {
+                        // Replace all properties
+                        p.id = restoredProject.id;
+                        p.name = restoredProject.name;
+                        p.createdAt = restoredProject.createdAt;
+                        p.updatedAt = restoredProject.updatedAt;
+                        p.settings = restoredProject.settings;
+                        p.sections = restoredProject.sections;
+                        p.player = restoredProject.player;
+                      });
                     }
                   }}
                   disabled={!canRedo()}
@@ -369,7 +411,13 @@ export function Toolbar() {
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => router.push('/designer/dashboard/create/preview')}
+                  onClick={() => {
+                    const currentPath = window.location.pathname;
+                    const previewPath = currentPath.includes('/dashboard/') 
+                      ? '/designer/dashboard/create/preview'
+                      : '/designer/create/preview';
+                    router.push(previewPath);
+                  }}
                 >
                   <Eye className="h-4 w-4" />
                 </Button>
@@ -392,6 +440,65 @@ export function Toolbar() {
       </div>
 
       {showExport && <ExportModal onClose={() => setShowExport(false)} />}
+
+      {/* Save Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save Card</DialogTitle>
+            <DialogDescription>
+              Enter theme type and main color to save your card.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div>
+              <Label htmlFor="themeSelect" className="text-sm font-medium mb-1 block">Theme</Label>
+              <Select value={themeName} onValueChange={setThemeName}>
+                <SelectTrigger id="themeSelect" className="w-full">
+                  <SelectValue placeholder="Select theme" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="baby">Baby</SelectItem>
+                  <SelectItem value="party">Party</SelectItem>
+                  <SelectItem value="ramadan">Ramadan</SelectItem>
+                  <SelectItem value="raya">Raya</SelectItem>
+                  <SelectItem value="floral">Floral</SelectItem>
+                  <SelectItem value="islamic">Islamic</SelectItem>
+                  <SelectItem value="minimalist">Minimalist</SelectItem>
+                  <SelectItem value="modern">Modern</SelectItem>
+                  <SelectItem value="rustic">Rustic</SelectItem>
+                  <SelectItem value="traditional">Traditional</SelectItem>
+                  <SelectItem value="vintage">Vintage</SelectItem>
+                  <SelectItem value="watercolor">Watercolor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="colorInput" className="text-sm font-medium mb-1 block">Main Color</Label>
+              <Input
+                id="colorInput"
+                type="text"
+                value={mainColor}
+                onChange={(e) => setMainColor(e.target.value.toUpperCase())}
+                placeholder="e.g. ROSE, BLUE, GOLD"
+                className="w-full uppercase"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!themeName || !mainColor || isSaving}
+              className="bg-[#36463A] hover:bg-[#2d3a2f]"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

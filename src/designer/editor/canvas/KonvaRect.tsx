@@ -15,8 +15,8 @@ interface KonvaRectProps {
 export function KonvaRectComponent({ object }: KonvaRectProps) {
   return (
     <KonvaRect
-      x={object.x}
-      y={object.y}
+      x={0}
+      y={0}
       width={object.width}
       height={object.height}
       rotation={object.rotation}

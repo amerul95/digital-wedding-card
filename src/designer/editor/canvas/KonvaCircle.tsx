@@ -16,8 +16,8 @@ export function KonvaCircleComponent({ object }: KonvaCircleProps) {
   const radius = Math.min(object.width, object.height) / 2;
   return (
     <KonvaCircle
-      x={object.x + object.width / 2}
-      y={object.y + object.height / 2}
+      x={object.width / 2}
+      y={object.height / 2}
       radius={radius}
       rotation={object.rotation}
       opacity={object.opacity}

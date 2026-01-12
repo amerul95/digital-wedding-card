@@ -30,13 +30,15 @@ export const useHistoryStore = create<HistoryState>()(
 
     push: (project) => {
       set((state) => {
+        // Create a deep copy to avoid proxy issues
+        const projectCopy = JSON.parse(JSON.stringify(project)) as Project;
         if (state.present) {
           state.past.push(state.present);
           if (state.past.length > state.maxHistory) {
             state.past.shift();
           }
         }
-        state.present = project;
+        state.present = projectCopy;
         state.future = [];
       });
     },
@@ -48,8 +50,12 @@ export const useHistoryStore = create<HistoryState>()(
           return;
         }
         state.future.unshift(state.present);
-        result = state.past.pop() || null;
-        state.present = result;
+        const popped = state.past.pop();
+        if (popped) {
+          // Create a deep copy to avoid proxy issues
+          result = JSON.parse(JSON.stringify(popped)) as Project;
+          state.present = result;
+        }
       });
       return result;
     },
@@ -63,8 +69,12 @@ export const useHistoryStore = create<HistoryState>()(
         if (state.present) {
           state.past.push(state.present);
         }
-        result = state.future.shift() || null;
-        state.present = result;
+        const shifted = state.future.shift();
+        if (shifted) {
+          // Create a deep copy to avoid proxy issues
+          result = JSON.parse(JSON.stringify(shifted)) as Project;
+          state.present = result;
+        }
       });
       return result;
     },

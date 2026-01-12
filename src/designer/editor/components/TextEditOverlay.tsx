@@ -5,15 +5,23 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import type Konva from 'konva';
 import { useProjectStore } from '@/src/store/projectStore';
 import { TextObject } from '@/src/store/types';
 
 interface TextEditOverlayProps {
   objectId: string;
   onClose: () => void;
+  stageRef: React.RefObject<Konva.Stage | null>;
+  workspaceScale: number;
 }
 
-export function TextEditOverlay({ objectId, onClose }: TextEditOverlayProps) {
+export function TextEditOverlay({
+  objectId,
+  onClose,
+  stageRef,
+  workspaceScale,
+}: TextEditOverlayProps) {
   const { project, currentSectionId, updateObject } = useProjectStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
@@ -26,23 +34,19 @@ export function TextEditOverlay({ objectId, onClose }: TextEditOverlayProps) {
   useEffect(() => {
     if (!object || !textareaRef.current) return;
 
-    // Find the Konva stage and text node
-    const stage = document.querySelector('canvas')?.closest('.konvajs-content');
+    const stage = stageRef.current;
     if (!stage) return;
 
-    const stageElement = stage as HTMLElement;
-    const stageRect = stageElement.getBoundingClientRect();
+    const group = stage.findOne(`#${objectId}`);
+    if (!group) return;
 
-    // Calculate position in screen coordinates
-    // This is a simplified version - in production, you'd get the actual Konva node position
-    const scale = 1; // Get from viewport
-    const offsetX = 0; // Get from viewport
-    const offsetY = 0; // Get from viewport
+    const stageRect = stage.container().getBoundingClientRect();
+    const box = group.getClientRect({ relativeTo: stage });
 
-    const screenX = stageRect.left + object.x * scale + offsetX;
-    const screenY = stageRect.top + object.y * scale + offsetY;
-    const screenWidth = object.width * scale;
-    const screenHeight = object.height * scale;
+    const screenX = stageRect.left + box.x;
+    const screenY = stageRect.top + box.y;
+    const screenWidth = box.width;
+    const screenHeight = box.height;
 
     setPosition({
       x: screenX,
@@ -56,7 +60,7 @@ export function TextEditOverlay({ objectId, onClose }: TextEditOverlayProps) {
       textareaRef.current?.focus();
       textareaRef.current?.select();
     }, 0);
-  }, [object]);
+  }, [object, objectId, stageRef, workspaceScale]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (!currentSectionId || !object) return;

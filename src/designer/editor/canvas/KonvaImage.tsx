@@ -29,8 +29,8 @@ export function KonvaImageComponent({ object }: KonvaImageProps) {
 
   let displayWidth = object.width;
   let displayHeight = object.height;
-  let x = object.x;
-  let y = object.y;
+  let x = 0;
+  let y = 0;
 
   if (object.fit === 'cover') {
     const imageAspect = image.width / image.height;
@@ -39,11 +39,11 @@ export function KonvaImageComponent({ object }: KonvaImageProps) {
     if (imageAspect > objectAspect) {
       displayHeight = object.height;
       displayWidth = imageAspect * displayHeight;
-      x = object.x - (displayWidth - object.width) / 2;
+      x = -(displayWidth - object.width) / 2;
     } else {
       displayWidth = object.width;
       displayHeight = displayWidth / imageAspect;
-      y = object.y - (displayHeight - object.height) / 2;
+      y = -(displayHeight - object.height) / 2;
     }
   } else {
     // contain
@@ -53,11 +53,11 @@ export function KonvaImageComponent({ object }: KonvaImageProps) {
     if (imageAspect > objectAspect) {
       displayWidth = object.width;
       displayHeight = displayWidth / imageAspect;
-      y = object.y + (object.height - displayHeight) / 2;
+      y = (object.height - displayHeight) / 2;
     } else {
       displayHeight = object.height;
       displayWidth = imageAspect * displayHeight;
-      x = object.x + (object.width - displayWidth) / 2;
+      x = (object.width - displayWidth) / 2;
     }
   }
 

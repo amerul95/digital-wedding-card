@@ -204,3 +204,26 @@ button {
 .door-button-float {
   animation: buttonFloat 3s ease-in-out infinite;
 }
+
+/* Tools Panel Slide Animation */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

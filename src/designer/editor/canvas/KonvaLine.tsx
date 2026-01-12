@@ -15,8 +15,8 @@ interface KonvaLineProps {
 export function KonvaLineComponent({ object }: KonvaLineProps) {
   return (
     <KonvaLine
-      x={object.x}
-      y={object.y}
+      x={0}
+      y={0}
       points={object.points}
       rotation={object.rotation}
       opacity={object.opacity}

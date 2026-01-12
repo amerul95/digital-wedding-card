@@ -20,8 +20,8 @@ export function KonvaTextComponent({ object, onDoubleClick }: KonvaTextProps) {
 
   return (
     <KonvaText
-      x={object.x}
-      y={object.y}
+      x={0}
+      y={0}
       width={object.width}
       height={object.height}
       rotation={object.rotation}
