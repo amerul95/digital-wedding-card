@@ -1,26 +1,14 @@
 "use client";
 
 import { useEvent } from "@/context/EventContext";
+import { useDesignerFonts } from "@/context/DesignerFontContext";
 import { Label } from "@/components/card/UI";
+import { FontFamilySelect } from "@/components/forms/FontFamilySelect";
 import { useRef } from "react";
 
 export function Page6Form() {
   const { event, updateEvent } = useEvent();
-  const bodyFontInputRef = useRef<HTMLInputElement>(null);
-  const titleFontInputRef = useRef<HTMLInputElement>(null);
-  
-  const uploadedFonts = event.uploadedFonts || [];
-  
-  const handleFontUpload = (file: File, fontType: 'body' | 'title') => {
-    const url = URL.createObjectURL(file);
-    const fontFamily = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-    const newFont = { name: file.name, url, fontFamily };
-    const updatedFonts = [...uploadedFonts, newFont];
-    updateEvent({ 
-      uploadedFonts: updatedFonts,
-      ...(fontType === 'body' ? { bodyTextFontFamily: fontFamily } : { titleTextFontFamily: fontFamily })
-    });
-  };
+  const { customFonts } = useDesignerFonts();
 
   return (
     <div className="bg-white p-6">
@@ -30,39 +18,13 @@ export function Page6Form() {
           <Label>1. Body Text</Label>
           <div className="space-y-3">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs text-gray-600">Font Family</label>
-                <button
-                  onClick={() => bodyFontInputRef.current?.click()}
-                  className="px-2 py-1 rounded text-xs border border-[#36463A] text-[#36463A] bg-white hover:bg-gray-50"
-                >
-                  Upload Font
-                </button>
-              </div>
-              <input
-                type="file"
-                ref={bodyFontInputRef}
-                className="hidden"
-                accept=".ttf,.otf,.woff,.woff2,.eot"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    handleFontUpload(file, 'body');
-                  }
-                }}
+              <label className="text-xs text-gray-600 mb-1 block">Font Family</label>
+              <FontFamilySelect
+                value={event.bodyTextFontFamily || ""}
+                onValueChange={(value) => updateEvent({ bodyTextFontFamily: value || undefined })}
+                customFonts={customFonts}
+                placeholder="Select font..."
               />
-              <select
-                value={event.bodyTextFontFamily}
-                onChange={(e) => updateEvent({ bodyTextFontFamily: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
-              >
-                <option value="">Select font...</option>
-                {uploadedFonts.map((font, index) => (
-                  <option key={index} value={font.fontFamily}>
-                    {font.name}
-                  </option>
-                ))}
-              </select>
             </div>
             <div>
               <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
@@ -108,39 +70,13 @@ export function Page6Form() {
           <Label>2. Title Text</Label>
           <div className="space-y-3">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs text-gray-600">Font Family</label>
-                <button
-                  onClick={() => titleFontInputRef.current?.click()}
-                  className="px-2 py-1 rounded text-xs border border-[#36463A] text-[#36463A] bg-white hover:bg-gray-50"
-                >
-                  Upload Font
-                </button>
-              </div>
-              <input
-                type="file"
-                ref={titleFontInputRef}
-                className="hidden"
-                accept=".ttf,.otf,.woff,.woff2,.eot"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    handleFontUpload(file, 'title');
-                  }
-                }}
+              <label className="text-xs text-gray-600 mb-1 block">Font Family</label>
+              <FontFamilySelect
+                value={event.titleTextFontFamily || ""}
+                onValueChange={(value) => updateEvent({ titleTextFontFamily: value || undefined })}
+                customFonts={customFonts}
+                placeholder="Select font..."
               />
-              <select
-                value={event.titleTextFontFamily}
-                onChange={(e) => updateEvent({ titleTextFontFamily: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
-              >
-                <option value="">Select font...</option>
-                {uploadedFonts.map((font, index) => (
-                  <option key={index} value={font.fontFamily}>
-                    {font.name}
-                  </option>
-                ))}
-              </select>
             </div>
             <div>
               <label className="text-xs text-gray-600 mb-1 block">Font Size</label>

@@ -133,3 +133,74 @@ button {
     color: var(--foreground);
   }
 }
+
+/* Door Button Animations */
+@keyframes buttonPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes buttonBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes buttonShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes buttonGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(244, 63, 94, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.8), 0 0 30px rgba(244, 63, 94, 0.6);
+  }
+}
+
+@keyframes buttonFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.door-button-pulse {
+  animation: buttonPulse 2s ease-in-out infinite;
+}
+
+.door-button-bounce {
+  animation: buttonBounce 1.5s ease-in-out infinite;
+}
+
+.door-button-shake {
+  animation: buttonShake 0.5s ease-in-out infinite;
+}
+
+.door-button-glow {
+  animation: buttonGlow 2s ease-in-out infinite;
+}
+
+.door-button-float {
+  animation: buttonFloat 3s ease-in-out infinite;
+}

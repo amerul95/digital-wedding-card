@@ -2,7 +2,7 @@
 
 import { useEvent } from "@/context/EventContext";
 import { Label, Input, Row } from "@/components/card/UI";
-import { RichTextEditor } from "@/components/RichTextEditor";
+import { RichTextEditorWithMargins } from "@/components/forms/RichTextEditorWithMargins";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMemo } from "react";
 
@@ -45,31 +45,7 @@ export function Page2Form() {
         <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>1. Type of Event (Event Title Name)</Label>
           <div className="space-y-3">
-            <div>
-              <label htmlFor="eventTitleFontFamily" className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.eventTitleFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ eventTitleFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
-            </div>
-            <RichTextEditor
+            <RichTextEditorWithMargins
               content={eventTitleHtml}
               onChange={(html) => {
                 const plainText = extractTextFromHtml(html);
@@ -80,10 +56,16 @@ export function Page2Form() {
                 }
               }}
               placeholder="Majlis Aqiqah"
-              fontSize={event.eventTitleFontSize}
-              onFontSizeChange={(size) => updateEvent({ eventTitleFontSize: size })}
               fontColor={event.eventTitleFontColor}
               onFontColorChange={(color) => updateEvent({ eventTitleFontColor: color })}
+              marginTop={event.eventTitleMarginTop}
+              marginRight={event.eventTitleMarginRight}
+              marginBottom={event.eventTitleMarginBottom}
+              marginLeft={event.eventTitleMarginLeft}
+              onMarginTopChange={(value) => updateEvent({ eventTitleMarginTop: value })}
+              onMarginRightChange={(value) => updateEvent({ eventTitleMarginRight: value })}
+              onMarginBottomChange={(value) => updateEvent({ eventTitleMarginBottom: value })}
+              onMarginLeftChange={(value) => updateEvent({ eventTitleMarginLeft: value })}
             />
           </div>
         </div>
@@ -92,31 +74,7 @@ export function Page2Form() {
         <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Short Name (Celebrated Person)</Label>
           <div className="space-y-3">
-            <div>
-              <label htmlFor="shortNameFamilyFont" className="text-xs text-gray-600 mb-1 block">Family Font</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.shortNameFamilyFont || ""}
-                  onValueChange={(value) => updateEvent({ shortNameFamilyFont: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
-            </div>
-            <RichTextEditor
+            <RichTextEditorWithMargins
               content={shortNameHtml}
               onChange={(html) => {
                 const plainText = extractTextFromHtml(html);
@@ -131,6 +89,14 @@ export function Page2Form() {
               onFontSizeChange={(size) => updateEvent({ shortNameFontSize: size })}
               fontColor={event.shortNameFontColor}
               onFontColorChange={(color) => updateEvent({ shortNameFontColor: color })}
+              marginTop={event.shortNameMarginTop}
+              marginRight={event.shortNameMarginRight}
+              marginBottom={event.shortNameMarginBottom}
+              marginLeft={event.shortNameMarginLeft}
+              onMarginTopChange={(value) => updateEvent({ shortNameMarginTop: value })}
+              onMarginRightChange={(value) => updateEvent({ shortNameMarginRight: value })}
+              onMarginBottomChange={(value) => updateEvent({ shortNameMarginBottom: value })}
+              onMarginLeftChange={(value) => updateEvent({ shortNameMarginLeft: value })}
             />
           </div>
         </div>
@@ -151,30 +117,6 @@ export function Page2Form() {
             </div>
           </div>
           <div className="space-y-3">
-            <div>
-              <label htmlFor="dayAndDateFontFamily" className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.dayAndDateFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ dayAndDateFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
-            </div>
             <Input
               id="dayAndDate"
               name="dayAndDate"
@@ -235,6 +177,38 @@ export function Page2Form() {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <label htmlFor="dayAndDateFontColor" className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              <div className="flex gap-2 items-center">
+                <div className="relative h-10 w-10">
+                  <div
+                    className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                    style={{ 
+                      backgroundColor: event.dayAndDateFontColor && !event.dayAndDateFontColor.startsWith('linear-gradient') 
+                        ? event.dayAndDateFontColor 
+                        : '#be123c'
+                    }}
+                  />
+                  <input
+                    type="color"
+                    value={event.dayAndDateFontColor && !event.dayAndDateFontColor.startsWith('linear-gradient')
+                      ? event.dayAndDateFontColor
+                      : '#be123c'}
+                    onChange={(e) => updateEvent({ dayAndDateFontColor: e.target.value })}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    style={{ WebkitAppearance: "none", appearance: "none" }}
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={event.dayAndDateFontColor || ""}
+                  onChange={(e) => updateEvent({ dayAndDateFontColor: e.target.value || undefined })}
+                  placeholder="#be123c or linear-gradient(...)"
+                  className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Enter hex color (e.g., #be123c) or gradient (e.g., linear-gradient(to right, #ff0000, #0000ff))</p>
+            </div>
           </div>
         </div>
 
@@ -242,30 +216,6 @@ export function Page2Form() {
         <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>4. Place/Hashtag/Etc (Venue)</Label>
           <div className="space-y-3">
-            <div>
-              <label htmlFor="venueFontFamily" className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.venueFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ venueFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
-            </div>
             <Input
               id="venue"
               name="venue"
@@ -273,6 +223,70 @@ export function Page2Form() {
               onChange={(e) => updateEvent({ venue: e.target.value })}
               placeholder="Dewan Seri Melati, Putrajaya"
             />
+            <div className="flex gap-4 items-center">
+              <div className="flex-1">
+                <label htmlFor="venueFontSize" className="text-xs text-gray-600 mb-1 block">Font Size</label>
+                <input
+                  id="venueFontSize"
+                  name="venueFontSize"
+                  type="number"
+                  value={event.venueFontSize ?? ""}
+                  onChange={(e) => updateEvent({ venueFontSize: e.target.value ? Number(e.target.value) : undefined })}
+                  className="w-full px-4 py-3 rounded-xl border border-[#36463A] text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white"
+                  min="8"
+                  max="72"
+                  placeholder="Auto"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="venueTextAlign" className="text-xs text-gray-600 mb-1 block">Text Alignment</label>
+              <Select
+                value={event.venueTextAlign || "center"}
+                onValueChange={(value: "left" | "center" | "right") => updateEvent({ venueTextAlign: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select text alignment" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Left</SelectItem>
+                  <SelectItem value="center">Center</SelectItem>
+                  <SelectItem value="right">Right</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label htmlFor="venueFontColor" className="text-xs text-gray-600 mb-1 block">Font Color</label>
+              <div className="flex gap-2 items-center">
+                <div className="relative h-10 w-10">
+                  <div
+                    className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                    style={{ 
+                      backgroundColor: event.venueFontColor && !event.venueFontColor.startsWith('linear-gradient') 
+                        ? event.venueFontColor 
+                        : '#6b7280'
+                    }}
+                  />
+                  <input
+                    type="color"
+                    value={event.venueFontColor && !event.venueFontColor.startsWith('linear-gradient')
+                      ? event.venueFontColor
+                      : '#6b7280'}
+                    onChange={(e) => updateEvent({ venueFontColor: e.target.value })}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    style={{ WebkitAppearance: "none", appearance: "none" }}
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={event.venueFontColor || ""}
+                  onChange={(e) => updateEvent({ venueFontColor: e.target.value || undefined })}
+                  placeholder="#6b7280 or linear-gradient(...)"
+                  className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Enter hex color (e.g., #6b7280) or gradient (e.g., linear-gradient(to right, #ff0000, #0000ff))</p>
+            </div>
           </div>
         </div>
       </div>

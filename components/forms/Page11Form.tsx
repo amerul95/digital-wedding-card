@@ -1,6 +1,8 @@
 "use client";
 
 import { useEvent } from "@/context/EventContext";
+import { useDesignerFonts } from "@/context/DesignerFontContext";
+import { FontFamilySelect } from "@/components/forms/FontFamilySelect";
 import { Label, Input } from "@/components/card/UI";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input as UIInput } from "@/components/ui/input";
@@ -321,6 +323,7 @@ function BoxShadowInput({
 
 export function Page11Form() {
   const { event, updateEvent } = useEvent();
+  const { customFonts } = useDesignerFonts();
 
   return (
     <div className="bg-white p-6">
@@ -381,28 +384,12 @@ export function Page11Form() {
             </div>
             <div>
               <label className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.saveDateButtonFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ saveDateButtonFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Default</SelectItem>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
+              <FontFamilySelect
+                value={event.saveDateButtonFontFamily || ""}
+                onValueChange={(value) => updateEvent({ saveDateButtonFontFamily: value || undefined })}
+                customFonts={customFonts}
+                placeholder="Select font..."
+              />
             </div>
             <div>
               <Label>Font Size (px)</Label>
@@ -494,28 +481,12 @@ export function Page11Form() {
             </div>
             <div>
               <label className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.confirmAttendanceButtonFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ confirmAttendanceButtonFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Default</SelectItem>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
+              <FontFamilySelect
+                value={event.confirmAttendanceButtonFontFamily || ""}
+                onValueChange={(value) => updateEvent({ confirmAttendanceButtonFontFamily: value || undefined })}
+                customFonts={customFonts}
+                placeholder="Select font..."
+              />
             </div>
             <div>
               <Label>Font Size (px)</Label>
@@ -607,28 +578,12 @@ export function Page11Form() {
             </div>
             <div>
               <label className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.writeMessageButtonFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ writeMessageButtonFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Default</SelectItem>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
+              <FontFamilySelect
+                value={event.writeMessageButtonFontFamily || ""}
+                onValueChange={(value) => updateEvent({ writeMessageButtonFontFamily: value || undefined })}
+                customFonts={customFonts}
+                placeholder="Select font..."
+              />
             </div>
             <div>
               <Label>Font Size (px)</Label>

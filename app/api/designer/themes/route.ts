@@ -385,14 +385,8 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { name, config, defaultEventData, type = 'theme', isDuplicate = false } = body
 
-    if (!name || typeof name !== "string" || name.trim().length === 0) {
-      return NextResponse.json(
-        { error: "Name is required" },
-        { status: 400 }
-      )
-    }
-
-    // For template type, auto-save theme and content if they don't exist
+    // For template type, auto-save theme and content if they don't exist FIRST
+    // This must happen before generating the template's running number
     if (type === 'template') {
       if (!config?.themeName) {
         return NextResponse.json(
@@ -436,9 +430,10 @@ export async function POST(req: Request) {
           defaultEventData: null,
         }
 
+        const themeDisplay = config.themeName.charAt(0).toUpperCase() + config.themeName.slice(1)
         await prisma.theme.create({
           data: {
-            name: `${config.themeName} Theme`,
+            name: `${themeDisplay} Theme ${themeRunningNumber.toString().padStart(3, '0')}`,
             designerId,
             configJson: JSON.stringify({
               ...themeConfig,
@@ -479,7 +474,7 @@ export async function POST(req: Request) {
 
         await prisma.theme.create({
           data: {
-            name: `Content ${contentRunningNumber}`,
+            name: `Content ${contentRunningNumber.toString().padStart(3, '0')}`,
             designerId,
             configJson: JSON.stringify({
               ...contentConfig,
@@ -492,12 +487,29 @@ export async function POST(req: Request) {
       }
     }
 
-    // Generate custom ID and running number
-    const runningNumber = isDuplicate
-      ? await getNextRunningNumber(designerId, type, config?.themeName)
-      : await getNextRunningNumber(designerId, type, config?.themeName)
-
+    // Generate custom ID and running number AFTER auto-creating theme/content (for templates)
+    const runningNumber = await getNextRunningNumber(designerId, type, config?.themeName)
     const customId = await generateCustomId(designerId, type, config)
+
+    // Auto-generate name based on customId if not provided
+    let generatedName: string
+    if (name && typeof name === "string" && name.trim().length > 0) {
+      generatedName = name.trim()
+    } else {
+      // Generate friendly name from ID format
+      if (type === 'theme') {
+        const themeName = config?.themeName || 'Theme'
+        const themeDisplay = themeName.charAt(0).toUpperCase() + themeName.slice(1)
+        generatedName = `${themeDisplay} Theme ${runningNumber.toString().padStart(3, '0')}`
+      } else if (type === 'content') {
+        generatedName = `Content ${runningNumber.toString().padStart(3, '0')}`
+      } else {
+        // template
+        const themeName = config?.themeName || 'Theme'
+        const themeDisplay = themeName.charAt(0).toUpperCase() + themeName.slice(1)
+        generatedName = `${themeDisplay} Template ${runningNumber.toString().padStart(3, '0')}`
+      }
+    }
 
     // Merge config and defaultEventData into a single config object
     // Include type to distinguish between theme, content, and template
@@ -510,7 +522,7 @@ export async function POST(req: Request) {
     // Create the theme (or content/template)
     const theme = await prisma.theme.create({
       data: {
-        name: name.trim(),
+        name: generatedName,
         designerId,
         configJson: JSON.stringify({
           ...fullConfig,

@@ -158,11 +158,20 @@ export function CardContent({
     useEffect(() => {
       if (!api) return;
 
+      // Set initial selected index
       setSelectedIndex(api.selectedScrollSnap());
       
-      api.on("select", () => {
+      // Set up event listener
+      const onSelect = () => {
         setSelectedIndex(api.selectedScrollSnap());
-      });
+      };
+      
+      api.on("select", onSelect);
+      
+      // Cleanup: remove event listener when component unmounts or api changes
+      return () => {
+        api.off("select", onSelect);
+      };
     }, [api]);
 
     // Disable autoplay if setting is off
@@ -259,74 +268,137 @@ export function CardContent({
           tabIndex={isEditorMode && onSectionClick ? 0 : undefined}
         >
           <div 
-            className="text-xs tracking-[0.3em] uppercase mb-2"
+            className="w-full"
             style={{
-              fontSize: event.eventTitleFontSize ? `${event.eventTitleFontSize}px` : undefined,
-              color: event.eventTitleFontColor && !event.eventTitleFontColor.startsWith('linear-gradient') 
-                ? event.eventTitleFontColor 
-                : '#f43f5e',
-              background: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
-                ? event.eventTitleFontColor
-                : undefined,
-              WebkitBackgroundClip: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
-                ? 'text'
-                : undefined,
-              WebkitTextFillColor: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
-                ? 'transparent'
-                : undefined,
-              backgroundClip: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
-                ? 'text'
-                : undefined,
+              marginTop: event.eventTitleMarginTop ? `${event.eventTitleMarginTop}px` : undefined,
+              marginRight: event.eventTitleMarginRight ? `${event.eventTitleMarginRight}px` : undefined,
+              marginBottom: event.eventTitleMarginBottom ? `${event.eventTitleMarginBottom}px` : undefined,
+              marginLeft: event.eventTitleMarginLeft ? `${event.eventTitleMarginLeft}px` : undefined,
             }}
-            dangerouslySetInnerHTML={{ 
-              __html: event.eventTitle && event.eventTitle.includes('<') 
-                ? event.eventTitle 
-                : (event.eventTitle || event.uiTitlePrefix || '') 
-            }}
-          />
-          <h1 
-            className="font-serif text-4xl md:text-5xl lg:text-6xl"
+          >
+            <div 
+              className="text-xs tracking-[0.3em] uppercase mb-2 w-full"
+              style={{
+                fontFamily: event.eventTitleFontFamily || undefined,
+                fontSize: event.eventTitleFontSize ? `${event.eventTitleFontSize}px` : undefined,
+                color: event.eventTitleFontColor && !event.eventTitleFontColor.startsWith('linear-gradient') 
+                  ? event.eventTitleFontColor 
+                  : '#f43f5e',
+                background: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
+                  ? event.eventTitleFontColor
+                  : undefined,
+                WebkitBackgroundClip: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
+                  ? 'text'
+                  : undefined,
+                WebkitTextFillColor: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
+                  ? 'transparent'
+                  : undefined,
+                backgroundClip: event.eventTitleFontColor && event.eventTitleFontColor.startsWith('linear-gradient')
+                  ? 'text'
+                  : undefined,
+              }}
+              dangerouslySetInnerHTML={{ 
+                __html: event.eventTitle && event.eventTitle.includes('<') 
+                  ? event.eventTitle 
+                  : (event.eventTitle || event.uiTitlePrefix || '') 
+              }}
+            />
+          </div>
+          <div
+            className="w-full"
             style={{
-              fontFamily: event.shortNameFamilyFont || 'serif',
-              fontSize: event.shortNameFontSize ? `${event.shortNameFontSize}px` : undefined,
-              color: event.shortNameFontColor && !event.shortNameFontColor.startsWith('linear-gradient') 
-                ? event.shortNameFontColor 
-                : undefined,
-              background: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
-                ? event.shortNameFontColor
-                : undefined,
-              WebkitBackgroundClip: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
-                ? 'text'
-                : undefined,
-              WebkitTextFillColor: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
-                ? 'transparent'
-                : undefined,
-              backgroundClip: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
-                ? 'text'
-                : undefined,
+              marginTop: event.shortNameMarginTop ? `${event.shortNameMarginTop}px` : undefined,
+              marginRight: event.shortNameMarginRight ? `${event.shortNameMarginRight}px` : undefined,
+              marginBottom: event.shortNameMarginBottom ? `${event.shortNameMarginBottom}px` : undefined,
+              marginLeft: event.shortNameMarginLeft ? `${event.shortNameMarginLeft}px` : undefined,
             }}
-            dangerouslySetInnerHTML={{ 
-              __html: event.shortName && event.shortName.includes('<') 
-                ? event.shortName 
-                : (event.shortName || event.uiName || '') 
-            }}
-          />
+          >
+            <h1 
+              className="font-serif text-4xl md:text-5xl lg:text-6xl w-full"
+              style={{
+                fontFamily: event.shortNameFamilyFont || 'serif',
+                fontSize: event.shortNameFontSize ? `${event.shortNameFontSize}px` : undefined,
+                color: event.shortNameFontColor && !event.shortNameFontColor.startsWith('linear-gradient') 
+                  ? event.shortNameFontColor 
+                  : undefined,
+                background: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
+                  ? event.shortNameFontColor
+                  : undefined,
+                WebkitBackgroundClip: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
+                  ? 'text'
+                  : undefined,
+                WebkitTextFillColor: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
+                  ? 'transparent'
+                  : undefined,
+                backgroundClip: event.shortNameFontColor && event.shortNameFontColor.startsWith('linear-gradient')
+                  ? 'text'
+                  : undefined,
+              }}
+              dangerouslySetInnerHTML={{ 
+                __html: event.shortName && event.shortName.includes('<') 
+                  ? event.shortName 
+                  : (event.shortName || event.uiName || '') 
+              }}
+            />
+          </div>
 
           {/* Day and Date */}
           {event.showDayAndDate && (
+            <div className="w-full mt-3">
+              <p 
+                className="text-sm md:text-base w-full"
+                style={{ 
+                  textAlign: event.dayAndDateTextAlign || "center",
+                  fontSize: event.dayAndDateFontSize ? `${event.dayAndDateFontSize}px` : undefined,
+                  fontFamily: event.dayAndDateFontFamily || undefined,
+                  color: event.dayAndDateFontColor && !event.dayAndDateFontColor.startsWith('linear-gradient') 
+                    ? event.dayAndDateFontColor 
+                    : '#be123c',
+                  background: event.dayAndDateFontColor && event.dayAndDateFontColor.startsWith('linear-gradient')
+                    ? event.dayAndDateFontColor
+                    : undefined,
+                  WebkitBackgroundClip: event.dayAndDateFontColor && event.dayAndDateFontColor.startsWith('linear-gradient')
+                    ? 'text'
+                    : undefined,
+                  WebkitTextFillColor: event.dayAndDateFontColor && event.dayAndDateFontColor.startsWith('linear-gradient')
+                    ? 'transparent'
+                    : undefined,
+                  backgroundClip: event.dayAndDateFontColor && event.dayAndDateFontColor.startsWith('linear-gradient')
+                    ? 'text'
+                    : undefined,
+                }}
+              >
+                {event.dayAndDate || event.dateShort}
+              </p>
+            </div>
+          )}
+          <div className="w-full">
             <p 
-              className="mt-3 text-sm md:text-base text-rose-900/70"
+              className="text-xs md:text-sm w-full"
               style={{ 
-                textAlign: event.dayAndDateTextAlign || "center",
-                fontSize: event.dayAndDateFontSize ? `${event.dayAndDateFontSize}px` : undefined
+                textAlign: event.venueTextAlign || "center",
+                fontSize: event.venueFontSize ? `${event.venueFontSize}px` : undefined,
+                fontFamily: event.venueFontFamily || undefined,
+                color: event.venueFontColor && !event.venueFontColor.startsWith('linear-gradient') 
+                  ? event.venueFontColor 
+                  : '#6b7280',
+                background: event.venueFontColor && event.venueFontColor.startsWith('linear-gradient')
+                  ? event.venueFontColor
+                  : undefined,
+                WebkitBackgroundClip: event.venueFontColor && event.venueFontColor.startsWith('linear-gradient')
+                  ? 'text'
+                  : undefined,
+                WebkitTextFillColor: event.venueFontColor && event.venueFontColor.startsWith('linear-gradient')
+                  ? 'transparent'
+                  : undefined,
+                backgroundClip: event.venueFontColor && event.venueFontColor.startsWith('linear-gradient')
+                  ? 'text'
+                  : undefined,
               }}
             >
-              {event.dayAndDate || event.dateShort}
+              {event.venue}
             </p>
-          )}
-          <p className="text-xs md:text-sm text-rose-900/60">
-            {event.locationShort}
-          </p>
+          </div>
         </div>
       </section>
 
@@ -346,18 +418,22 @@ export function CardContent({
             }
           }}
           tabIndex={isEditorMode && onSectionClick ? 0 : undefined}
-          style={{
-            marginTop: event.openingSpeechMarginTop ? `${event.openingSpeechMarginTop}px` : undefined,
-            marginRight: event.openingSpeechMarginRight ? `${event.openingSpeechMarginRight}px` : undefined,
-            marginBottom: event.openingSpeechMarginBottom ? `${event.openingSpeechMarginBottom}px` : undefined,
-            marginLeft: event.openingSpeechMarginLeft ? `${event.openingSpeechMarginLeft}px` : undefined,
-          }}
         >
           {event.openingSpeech && (
-            <div 
-              className="text-rose-800 text-sm italic mb-2"
-              dangerouslySetInnerHTML={{ __html: event.openingSpeech }}
-            />
+            <div
+              className="w-full"
+              style={{
+                marginTop: event.openingSpeechMarginTop ? `${event.openingSpeechMarginTop}px` : undefined,
+                marginRight: event.openingSpeechMarginRight ? `${event.openingSpeechMarginRight}px` : undefined,
+                marginBottom: event.openingSpeechMarginBottom ? `${event.openingSpeechMarginBottom}px` : undefined,
+                marginLeft: event.openingSpeechMarginLeft ? `${event.openingSpeechMarginLeft}px` : undefined,
+              }}
+            >
+              <div 
+                className="text-rose-800 text-sm italic mb-2 w-full"
+                dangerouslySetInnerHTML={{ __html: event.openingSpeech }}
+              />
+            </div>
           )}
           {event.organizerNames && event.organizerNames.length > 0 && event.organizerNames.some(name => name.trim()) && (
             <div className="text-rose-900/80 text-sm mb-4">
@@ -368,15 +444,19 @@ export function CardContent({
           )}
           {event.speechContent && (
             <div 
-              className="text-rose-900/80 text-sm leading-relaxed max-w-[90%] mx-auto"
+              className="w-full"
               style={{
                 marginTop: event.speechContentMarginTop ? `${event.speechContentMarginTop}px` : undefined,
                 marginRight: event.speechContentMarginRight ? `${event.speechContentMarginRight}px` : undefined,
                 marginBottom: event.speechContentMarginBottom ? `${event.speechContentMarginBottom}px` : undefined,
                 marginLeft: event.speechContentMarginLeft ? `${event.speechContentMarginLeft}px` : undefined,
               }}
-              dangerouslySetInnerHTML={{ __html: event.speechContent }}
-            />
+            >
+              <div 
+                className="text-rose-900/80 text-sm leading-relaxed w-full"
+                dangerouslySetInnerHTML={{ __html: event.speechContent }}
+              />
+            </div>
           )}
           {/* Hijrah Date - under speech if set */}
           {event.hijrahDate && (
@@ -397,16 +477,36 @@ export function CardContent({
           tabIndex={isEditorMode && onSectionClick ? 0 : undefined}
         >
           {event.showSegmentLocation && event.eventAddress && (
-            <p><span dangerouslySetInnerHTML={{ __html: event.eventAddress }} /></p>
+            <div
+              className="w-full"
+              style={{
+                marginTop: event.eventAddressMarginTop ? `${event.eventAddressMarginTop}px` : undefined,
+                marginRight: event.eventAddressMarginRight ? `${event.eventAddressMarginRight}px` : undefined,
+                marginBottom: event.eventAddressMarginBottom ? `${event.eventAddressMarginBottom}px` : undefined,
+                marginLeft: event.eventAddressMarginLeft ? `${event.eventAddressMarginLeft}px` : undefined,
+              }}
+            >
+              <p className="w-full"><span className="w-full" dangerouslySetInnerHTML={{ __html: event.eventAddress }} /></p>
+            </div>
           )}
           {event.showStartEndEvent && event.section2DateTimeContent && (
-            <div 
-              className="text-sm text-rose-700"
+            <div
+              className="w-full"
               style={{
-                fontFamily: event.section2DateTimeFontFamily || undefined,
+                marginTop: event.section2DateTimeMarginTop ? `${event.section2DateTimeMarginTop}px` : undefined,
+                marginRight: event.section2DateTimeMarginRight ? `${event.section2DateTimeMarginRight}px` : undefined,
+                marginBottom: event.section2DateTimeMarginBottom ? `${event.section2DateTimeMarginBottom}px` : undefined,
+                marginLeft: event.section2DateTimeMarginLeft ? `${event.section2DateTimeMarginLeft}px` : undefined,
               }}
-              dangerouslySetInnerHTML={{ __html: event.section2DateTimeContent }}
-            />
+            >
+              <div 
+                className="text-sm text-rose-700 w-full"
+                style={{
+                  fontFamily: event.section2DateTimeFontFamily || undefined,
+                }}
+                dangerouslySetInnerHTML={{ __html: event.section2DateTimeContent }}
+              />
+            </div>
           )}
         </div>
         {event.showSegmentSaveDate && (
@@ -451,16 +551,36 @@ export function CardContent({
             {/* Additional Information at top if content exists */}
             {event.additionalInformation1 && (
               <div
-                className="text-sm text-rose-800 mb-4 max-w-[90%] [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:pl-6 [&_ol]:pl-6 [&_li]:my-1 [&_strong]:font-semibold [&_em]:italic"
-                dangerouslySetInnerHTML={{ __html: event.additionalInformation1 }}
-              />
+                className="w-full"
+                style={{
+                  marginTop: event.additionalInformation1MarginTop ? `${event.additionalInformation1MarginTop}px` : undefined,
+                  marginRight: event.additionalInformation1MarginRight ? `${event.additionalInformation1MarginRight}px` : undefined,
+                  marginBottom: event.additionalInformation1MarginBottom ? `${event.additionalInformation1MarginBottom}px` : undefined,
+                  marginLeft: event.additionalInformation1MarginLeft ? `${event.additionalInformation1MarginLeft}px` : undefined,
+                }}
+              >
+                <div
+                  className="text-sm text-rose-800 mb-4 w-full [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:pl-6 [&_ol]:pl-6 [&_li]:my-1 [&_strong]:font-semibold [&_em]:italic"
+                  dangerouslySetInnerHTML={{ __html: event.additionalInformation1 }}
+                />
+              </div>
             )}
             {/* Event Tentative */}
             {event.eventTentative && (
               <div
-                className="text-sm text-rose-800 text-left max-w-[90%] [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:pl-6 [&_ol]:pl-6 [&_li]:my-1 [&_strong]:font-semibold [&_em]:italic"
-                dangerouslySetInnerHTML={{ __html: event.eventTentative }}
-              />
+                className="w-full"
+                style={{
+                  marginTop: event.eventTentativeMarginTop ? `${event.eventTentativeMarginTop}px` : undefined,
+                  marginRight: event.eventTentativeMarginRight ? `${event.eventTentativeMarginRight}px` : undefined,
+                  marginBottom: event.eventTentativeMarginBottom ? `${event.eventTentativeMarginBottom}px` : undefined,
+                  marginLeft: event.eventTentativeMarginLeft ? `${event.eventTentativeMarginLeft}px` : undefined,
+                }}
+              >
+                <div
+                  className="text-sm text-rose-800 w-full [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:pl-6 [&_ol]:pl-6 [&_li]:my-1 [&_strong]:font-semibold [&_em]:italic"
+                  dangerouslySetInnerHTML={{ __html: event.eventTentative }}
+                />
+              </div>
             )}
           </div>
         </section>

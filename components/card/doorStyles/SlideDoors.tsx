@@ -11,6 +11,27 @@ interface SlideDoorsProps {
   onAnimationComplete: () => void;
   color?: string;
   showReplayButton?: boolean;
+  doorButtonText?: string;  // HTML content for door button text
+  doorButtonTextFontFamily?: string;  // Font family for door button text
+  doorButtonTextMarginTop?: number;  // Margin top for door button text container
+  doorButtonTextMarginRight?: number;  // Margin right for door button text container
+  doorButtonTextMarginBottom?: number;  // Margin bottom for door button text container
+  doorButtonTextMarginLeft?: number;  // Margin left for door button text container
+  doorButtonType?: "circle" | "square" | "rectangle";
+  doorButtonPaddingX?: number;
+  doorButtonPaddingY?: number;
+  doorButtonMarginTop?: number;
+  doorButtonMarginRight?: number;
+  doorButtonMarginBottom?: number;
+  doorButtonMarginLeft?: number;
+  doorButtonBorderRadius?: number;
+  doorButtonWidth?: number;
+  doorButtonBorderSize?: number;
+  doorButtonBorderColor?: string;
+  doorButtonBackgroundColor?: string;
+  doorButtonBoxShadow?: string;
+  doorButtonOpenTextColor?: string;
+  doorButtonAnimation?: "none" | "pulse" | "bounce" | "shake" | "glow" | "float";
 }
 
 // Helper function to convert hex to rgb
@@ -32,11 +53,73 @@ export function SlideDoors({
   onAnimationComplete,
   color = "#f43f5e",
   showReplayButton = true,
+  doorButtonText,
+  doorButtonTextFontFamily,
+  doorButtonTextMarginTop,
+  doorButtonTextMarginRight,
+  doorButtonTextMarginBottom,
+  doorButtonTextMarginLeft,
+  doorButtonType,
+  doorButtonPaddingX = 24,
+  doorButtonPaddingY = 12,
+  doorButtonMarginTop = 0,
+  doorButtonMarginRight = 0,
+  doorButtonMarginBottom = 0,
+  doorButtonMarginLeft = 0,
+  doorButtonBorderRadius = 9999,
+  doorButtonWidth,
+  doorButtonBorderSize = 1,
+  doorButtonBorderColor,
+  doorButtonBackgroundColor,
+  doorButtonBoxShadow,
+  doorButtonOpenTextColor = "#36463A",
+  doorButtonAnimation = "none",
 }: SlideDoorsProps) {
   const rgb = hexToRgb(color);
   const lightColor = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05)` : "rgba(244, 63, 94, 0.05)";
   const gradient = `linear-gradient(to right, ${lightColor}, #ffffff)`;
   const gradientReverse = `linear-gradient(to left, ${lightColor}, #ffffff)`;
+  
+  // Calculate button dimensions based on type
+  let buttonWidth: number | undefined = doorButtonWidth;
+  let buttonHeight: number | undefined = undefined;
+  
+  if (doorButtonType === "circle") {
+    buttonWidth = 126;
+    buttonHeight = 126;
+  } else if (doorButtonType === "square") {
+    buttonWidth = 126;
+    buttonHeight = 126;
+  } else if (doorButtonType === "rectangle") {
+    buttonWidth = 140;
+    buttonHeight = 126;
+  }
+  
+  // Build button container styles
+  const buttonContainerStyle: React.CSSProperties = {
+    marginTop: doorButtonMarginTop !== undefined ? `${doorButtonMarginTop}px` : undefined,
+    marginRight: doorButtonMarginRight !== undefined ? `${doorButtonMarginRight}px` : undefined,
+    marginBottom: doorButtonMarginBottom !== undefined ? `${doorButtonMarginBottom}px` : undefined,
+    marginLeft: doorButtonMarginLeft !== undefined ? `${doorButtonMarginLeft}px` : undefined,
+  };
+
+  // Build button styles
+  const buttonStyle: React.CSSProperties = {
+    paddingLeft: doorButtonPaddingX !== undefined ? `${doorButtonPaddingX}px` : undefined,
+    paddingRight: doorButtonPaddingX !== undefined ? `${doorButtonPaddingX}px` : undefined,
+    paddingTop: doorButtonPaddingY !== undefined ? `${doorButtonPaddingY}px` : undefined,
+    paddingBottom: doorButtonPaddingY !== undefined ? `${doorButtonPaddingY}px` : undefined,
+    borderRadius: doorButtonBorderRadius !== undefined ? `${doorButtonBorderRadius}px` : undefined,
+    width: buttonWidth !== undefined ? `${buttonWidth}px` : undefined,
+    height: buttonHeight !== undefined ? `${buttonHeight}px` : undefined,
+    borderWidth: doorButtonBorderSize !== undefined ? `${doorButtonBorderSize}px` : undefined,
+    borderColor: doorButtonBorderColor || undefined,
+    backgroundColor: doorButtonBackgroundColor || undefined,
+    boxShadow: doorButtonBoxShadow || undefined,
+  };
+
+  // Determine button content - use HTML if provided, otherwise fallback to eventTitle
+  const hasCustomText = doorButtonText && doorButtonText.trim().length > 0;
   
   return (
     <>
@@ -69,13 +152,46 @@ export function SlideDoors({
 
       {/* OPEN BUTTON (before doors open) */}
       {showDoors && !doorsOpen && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+        <div className="absolute inset-0 z-20 flex items-center justify-center p-4" style={buttonContainerStyle}>
           <button
             onClick={onOpen}
-            className="px-6 py-3 rounded-full bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors"
+            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center ${
+              doorButtonAnimation !== "none" ? `door-button-${doorButtonAnimation}` : ""
+            }`}
             aria-label="Buka kad jemputan"
+            style={buttonStyle}
           >
-            {eventTitle} — Buka
+            <div 
+              className="flex-1 flex items-center justify-center"
+              style={{
+                marginTop: doorButtonTextMarginTop ? `${doorButtonTextMarginTop}px` : undefined,
+                marginRight: doorButtonTextMarginRight ? `${doorButtonTextMarginRight}px` : undefined,
+                marginBottom: doorButtonTextMarginBottom ? `${doorButtonTextMarginBottom}px` : undefined,
+                marginLeft: doorButtonTextMarginLeft ? `${doorButtonTextMarginLeft}px` : undefined,
+              }}
+            >
+              {hasCustomText ? (
+                <span 
+                  dangerouslySetInnerHTML={{ __html: doorButtonText }}
+                  style={{ fontFamily: doorButtonTextFontFamily || undefined }}
+                />
+              ) : (
+                <span style={{ fontFamily: doorButtonTextFontFamily || undefined }}>
+                  {eventTitle} — Buka
+                </span>
+              )}
+            </div>
+            {/* OPEN Text at bottom inside button */}
+            <span
+              style={{
+                fontSize: "11px",
+                color: doorButtonOpenTextColor || "#36463A",
+                marginBottom: "8px",
+                fontWeight: 500,
+              }}
+            >
+              OPEN
+            </span>
           </button>
         </div>
       )}

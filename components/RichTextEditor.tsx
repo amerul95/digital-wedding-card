@@ -46,6 +46,8 @@ import {
   ChevronDown,
   Palette,
 } from "lucide-react";
+import { useDesignerFonts } from "@/context/DesignerFontContext";
+import { CURATED_GOOGLE_FONTS, loadAllCuratedFonts } from "@/lib/fonts";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -116,6 +118,135 @@ const FontSize = Extension.create({
   },
 })
 
+// FontFamily Extension for text font family control
+const FontFamily = Extension.create({
+  name: 'fontFamily',
+  addOptions() {
+    return {
+      types: ['textStyle'],
+    }
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontFamily: {
+            default: null,
+            parseHTML: element => {
+              const fontFamily = element.style.fontFamily;
+              if (!fontFamily) return null;
+              // Remove quotes if present
+              return fontFamily.replace(/['"]/g, '') || null;
+            },
+            renderHTML: attributes => {
+              if (!attributes.fontFamily) {
+                return {}
+              }
+              return {
+                style: `font-family: ${attributes.fontFamily}`,
+              }
+            },
+          },
+        },
+      },
+    ]
+  },
+  addCommands() {
+    return {
+      setFontFamily: (fontFamily: string | null) => ({ chain }) => {
+        if (!fontFamily) {
+          return chain()
+            .setMark('textStyle', { fontFamily: null })
+            .removeEmptyTextStyle()
+            .run()
+        }
+        return chain()
+          .setMark('textStyle', { fontFamily })
+          .run()
+      },
+      unsetFontFamily: () => ({ chain }) => {
+        return chain()
+          .setMark('textStyle', { fontFamily: null })
+          .removeEmptyTextStyle()
+          .run()
+      },
+    }
+  },
+})
+
+// LineHeight Extension for paragraph line height control
+// Line-height must be applied to block elements (paragraphs), not inline text marks
+const LineHeight = Extension.create({
+  name: 'lineHeight',
+  addOptions() {
+    return {
+      types: ['paragraph', 'heading'],
+    }
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          lineHeight: {
+            default: null,
+            parseHTML: element => {
+              // Get line-height from the element's style
+              const lineHeight = element.style.lineHeight;
+              return lineHeight || null;
+            },
+            renderHTML: attributes => {
+              if (!attributes.lineHeight) {
+                return {}
+              }
+              return {
+                style: `line-height: ${attributes.lineHeight}`,
+              }
+            },
+          },
+        },
+      },
+    ]
+  },
+  addCommands() {
+    return {
+      setLineHeight: (lineHeight: string | number) => ({ commands, state }) => {
+        const { $from } = state.selection;
+        const node = $from.parent;
+        const nodeType = node.type.name;
+        
+        if (nodeType === 'paragraph') {
+          return commands.updateAttributes('paragraph', {
+            lineHeight: lineHeight.toString(),
+          });
+        } else if (nodeType.startsWith('heading')) {
+          return commands.updateAttributes('heading', {
+            lineHeight: lineHeight.toString(),
+          });
+        }
+        return false;
+      },
+      unsetLineHeight: () => ({ commands, state }) => {
+        const { $from } = state.selection;
+        const node = $from.parent;
+        const nodeType = node.type.name;
+        
+        if (nodeType === 'paragraph') {
+          return commands.updateAttributes('paragraph', {
+            lineHeight: null,
+          });
+        } else if (nodeType.startsWith('heading')) {
+          return commands.updateAttributes('heading', {
+            lineHeight: null,
+          });
+        }
+        return false;
+      },
+    }
+  },
+})
+
 // Helper function to apply gradient via inline styles
 const applyGradientToSelection = (editor: any, gradient: string) => {
   const { from, to } = editor.state.selection;
@@ -157,6 +288,14 @@ export function RichTextEditor({
   const [gradientDirection, setGradientDirection] = useState("to bottom");
   const [currentFontSize, setCurrentFontSize] = useState(fontSize || 16);
   const editorContainerRef = useRef<HTMLDivElement>(null);
+  const { customFonts } = useDesignerFonts();
+
+  // Load Google Fonts on mount
+  useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
+      loadAllCuratedFonts();
+    }
+  }, [mounted]);
 
   useEffect(() => {
     setMounted(true);
@@ -196,6 +335,8 @@ export function RichTextEditor({
       }),
       TextStyle,
       FontSize,
+      FontFamily,
+      LineHeight,
       Color,
       Highlight.configure({
         multicolor: true,
@@ -229,6 +370,28 @@ export function RichTextEditor({
       attributes: {
         class: "prose prose-sm max-w-none focus:outline-none min-h-[150px] p-3",
         style: `font-size: ${currentFontSize}px;`,
+      },
+      handleDOMEvents: {
+        keydown: (view, event) => {
+          // Prevent form submission and navigation on all keydown events
+          // This prevents any unwanted navigation when typing
+          if (event.key === 'Enter' && !event.shiftKey) {
+            // Allow Enter to work normally in the editor, but prevent form submission
+            const target = event.target as HTMLElement;
+            if (target.closest('form')) {
+              event.preventDefault();
+              return true;
+            }
+          }
+          // Stop propagation for all keyboard events to prevent navigation
+          event.stopPropagation();
+          return false;
+        },
+        beforeinput: (view, event) => {
+          // Prevent any form-related behavior
+          event.stopPropagation();
+          return false;
+        },
       },
     },
   }, [mounted, currentFontSize]);
@@ -340,7 +503,23 @@ export function RichTextEditor({
       )}
 
       {/* Editor Container */}
-      <div className="border border-green-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-300 relative">
+      <div 
+        className="border border-green-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-300 relative"
+        onKeyDown={(e) => {
+          // Prevent all keyboard events from bubbling up
+          e.stopPropagation();
+        }}
+        onKeyPress={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyUp={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          // Prevent clicks from bubbling
+          e.stopPropagation();
+        }}
+      >
         {/* Toolbar */}
         <div className="border-b border-green-200 bg-green-50 p-2 flex gap-1 flex-wrap items-center">
         {/* Text Formatting */}
@@ -619,6 +798,131 @@ export function RichTextEditor({
               <button
                 type="button"
                 onClick={() => editor.chain().focus().unsetFontSize().run()}
+                className="w-full px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100 bg-white text-gray-700"
+              >
+                Reset to Default
+              </button>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Font Family Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="p-2 rounded text-sm transition-colors bg-white text-[#36463A] hover:bg-green-100 flex items-center gap-1"
+              title="Font Family"
+              style={{
+                fontFamily: editor.getAttributes('textStyle').fontFamily || undefined,
+              }}
+            >
+              <span className="text-xs">Aa</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="max-h-64 overflow-y-auto p-2">
+            <div className="space-y-2">
+              <div>
+                <label className="text-xs font-medium text-gray-700 mb-1 block">Font Family</label>
+                <div className="max-h-48 overflow-y-auto space-y-1">
+                  <DropdownMenuItem
+                    onClick={() => editor.chain().focus().unsetFontFamily().run()}
+                    className={`text-xs cursor-pointer ${
+                      !editor.getAttributes('textStyle').fontFamily
+                        ? 'bg-green-100 font-semibold'
+                        : ''
+                    }`}
+                  >
+                    Default
+                  </DropdownMenuItem>
+                  {CURATED_GOOGLE_FONTS.map((fontName) => (
+                    <DropdownMenuItem
+                      key={fontName}
+                      onClick={() => editor.chain().focus().setFontFamily(fontName).run()}
+                      className={`text-xs cursor-pointer ${
+                        editor.getAttributes('textStyle').fontFamily === fontName
+                          ? 'bg-green-100 font-semibold'
+                          : ''
+                      }`}
+                      style={{ fontFamily: fontName }}
+                    >
+                      {fontName}
+                    </DropdownMenuItem>
+                  ))}
+                  {customFonts.map((font) => (
+                    <DropdownMenuItem
+                      key={font.fontFamily}
+                      onClick={() => editor.chain().focus().setFontFamily(font.fontFamily).run()}
+                      className={`text-xs cursor-pointer ${
+                        editor.getAttributes('textStyle').fontFamily === font.fontFamily
+                          ? 'bg-green-100 font-semibold'
+                          : ''
+                      }`}
+                      style={{ fontFamily: font.fontFamily }}
+                    >
+                      {font.fontFamily}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Line Height Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="p-2 rounded text-sm transition-colors bg-white text-[#36463A] hover:bg-green-100 flex items-center gap-1"
+              title="Line Height"
+            >
+              <span className="text-xs">┃</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="p-2">
+            <div className="space-y-2">
+              <div>
+                <label className="text-xs font-medium text-gray-700 mb-1 block">Line Height</label>
+                <input
+                  type="text"
+                  value={editor.getAttributes('paragraph').lineHeight || editor.getAttributes('heading').lineHeight || ''}
+                  onChange={(e) => {
+                    const lineHeight = e.target.value;
+                    if (lineHeight) {
+                      editor.chain().focus().setLineHeight(lineHeight).run();
+                    } else {
+                      editor.chain().focus().unsetLineHeight().run();
+                    }
+                  }}
+                  placeholder="Auto (e.g., 0.6, 1.5, 24px, 150%)"
+                  className="w-32 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-1">
+                {['0.6', '0.8', '1', '1.2', '1.5', '1.8', '2', '2.5'].map((lh) => {
+                  const currentLineHeight = editor.getAttributes('paragraph').lineHeight || editor.getAttributes('heading').lineHeight;
+                  return (
+                    <button
+                      key={lh}
+                      type="button"
+                      onClick={() => editor.chain().focus().setLineHeight(lh).run()}
+                      className={`px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100 ${
+                        currentLineHeight === lh
+                          ? 'bg-[#36463A] text-white border-[#36463A]'
+                          : 'bg-white text-gray-700'
+                      }`}
+                    >
+                      {lh}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().unsetLineHeight().run()}
                 className="w-full px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100 bg-white text-gray-700"
               >
                 Reset to Default
@@ -944,7 +1248,28 @@ export function RichTextEditor({
 
       {/* Editor Content */}
       <div className="relative" ref={editorContainerRef}>
-        <EditorContent editor={editor} />
+        <div
+          onKeyDown={(e) => {
+            e.stopPropagation();
+          }}
+          onKeyPress={(e) => {
+            e.stopPropagation();
+          }}
+          onKeyUp={(e) => {
+            e.stopPropagation();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onFocus={(e) => {
+            e.stopPropagation();
+          }}
+          onBlur={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <EditorContent editor={editor} />
+        </div>
       </div>
     </div>
 

@@ -2,7 +2,7 @@
 
 import { useEvent } from "@/context/EventContext";
 import { Label, Input } from "@/components/card/UI";
-import { RichTextEditor } from "@/components/RichTextEditor";
+import { RichTextEditorWithMargins } from "@/components/forms/RichTextEditorWithMargins";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { Button } from "@/components/ui/button";
 
@@ -82,10 +82,18 @@ export function Page7Form() {
         {/* 2. Notes - Grouped */}
         <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>2. Notes (Optional)</Label>
-          <RichTextEditor
+          <RichTextEditorWithMargins
             content={event.rsvpNotes}
             onChange={(html) => updateEvent({ rsvpNotes: html })}
             placeholder="RSVP notes..."
+            marginTop={event.rsvpNotesMarginTop}
+            marginRight={event.rsvpNotesMarginRight}
+            marginBottom={event.rsvpNotesMarginBottom}
+            marginLeft={event.rsvpNotesMarginLeft}
+            onMarginTopChange={(value) => updateEvent({ rsvpNotesMarginTop: value })}
+            onMarginRightChange={(value) => updateEvent({ rsvpNotesMarginRight: value })}
+            onMarginBottomChange={(value) => updateEvent({ rsvpNotesMarginBottom: value })}
+            onMarginLeftChange={(value) => updateEvent({ rsvpNotesMarginLeft: value })}
           />
         </div>
 

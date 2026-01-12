@@ -1,14 +1,17 @@
 "use client";
 
 import { useEvent } from "@/context/EventContext";
+import { useDesignerFonts } from "@/context/DesignerFontContext";
 import { Label, Input } from "@/components/card/UI";
-import { RichTextEditor } from "@/components/RichTextEditor";
+import { RichTextEditorWithMargins } from "@/components/forms/RichTextEditorWithMargins";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { FontFamilySelect } from "@/components/forms/FontFamilySelect";
 
 export function Page4Form() {
   const { event, updateEvent } = useEvent();
+  const { customFonts } = useDesignerFonts();
 
   return (
     <div className="bg-white p-6">
@@ -60,34 +63,18 @@ export function Page4Form() {
             </div>
           </div>
           <div className="space-y-3">
-            <div>
-              <label htmlFor="section2DateTimeFontFamily" className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.section2DateTimeFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ section2DateTimeFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
-            </div>
-            <RichTextEditor
+            <RichTextEditorWithMargins
               content={event.section2DateTimeContent}
               onChange={(html) => updateEvent({ section2DateTimeContent: html })}
               placeholder="Tarikh: 29 Oktober 2025&#10;Masa: 11:00 pagi - 3:00 petang&#10;Masa Tamat: 3:00 petang"
+              marginTop={event.section2DateTimeMarginTop}
+              marginRight={event.section2DateTimeMarginRight}
+              marginBottom={event.section2DateTimeMarginBottom}
+              marginLeft={event.section2DateTimeMarginLeft}
+              onMarginTopChange={(value) => updateEvent({ section2DateTimeMarginTop: value })}
+              onMarginRightChange={(value) => updateEvent({ section2DateTimeMarginRight: value })}
+              onMarginBottomChange={(value) => updateEvent({ section2DateTimeMarginBottom: value })}
+              onMarginLeftChange={(value) => updateEvent({ section2DateTimeMarginLeft: value })}
             />
           </div>
         </div>
@@ -98,27 +85,12 @@ export function Page4Form() {
           <div className="space-y-3">
             <div>
               <label htmlFor="hijrahDateFontFamily" className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.hijrahDateFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ hijrahDateFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
+              <FontFamilySelect
+                value={event.hijrahDateFontFamily || ""}
+                onValueChange={(value) => updateEvent({ hijrahDateFontFamily: value || undefined })}
+                customFonts={customFonts}
+                placeholder="Select font..."
+              />
             </div>
             <Input
               value={event.hijrahDate}
@@ -132,34 +104,18 @@ export function Page4Form() {
         <div className="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50 mb-0">
           <Label>3. Event Address (Location Full)</Label>
           <div className="space-y-3">
-            <div>
-              <label htmlFor="eventAddressFontFamily" className="text-xs text-gray-600 mb-1 block">Font Family</label>
-              {(event.uploadedFonts && event.uploadedFonts.length > 0) ? (
-                <Select
-                  value={event.eventAddressFontFamily || ""}
-                  onValueChange={(value) => updateEvent({ eventAddressFontFamily: value })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select font..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(event.uploadedFonts || []).map((font, index) => (
-                      <SelectItem key={index} value={font.fontFamily}>
-                        {font.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm text-gray-500 bg-gray-50">
-                  Please upload font first
-                </div>
-              )}
-            </div>
-            <RichTextEditor
+            <RichTextEditorWithMargins
               content={event.eventAddress}
               onChange={(html) => updateEvent({ eventAddress: html })}
               placeholder="Dewan Seri Melati, Putrajaya"
+              marginTop={event.eventAddressMarginTop}
+              marginRight={event.eventAddressMarginRight}
+              marginBottom={event.eventAddressMarginBottom}
+              marginLeft={event.eventAddressMarginLeft}
+              onMarginTopChange={(value) => updateEvent({ eventAddressMarginTop: value })}
+              onMarginRightChange={(value) => updateEvent({ eventAddressMarginRight: value })}
+              onMarginBottomChange={(value) => updateEvent({ eventAddressMarginBottom: value })}
+              onMarginLeftChange={(value) => updateEvent({ eventAddressMarginLeft: value })}
             />
           </div>
         </div>

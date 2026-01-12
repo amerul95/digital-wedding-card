@@ -44,16 +44,45 @@ export type EventData = {
   doorOpacity?: number;  // Door opacity (0-100)
   animationEffect: "none" | "snow" | "petals" | "bubbles";  // Animation & effects
   animationEffectColor: string;  // Effect color
+  doorButtonText: string;  // Door button text (HTML content from RichTextEditor)
+  doorButtonTextFontFamily?: string;  // Font family for door button text
+  doorButtonTextMarginTop?: number;  // Margin top for door button text container
+  doorButtonTextMarginRight?: number;  // Margin right for door button text container
+  doorButtonTextMarginBottom?: number;  // Margin bottom for door button text container
+  doorButtonTextMarginLeft?: number;  // Margin left for door button text container
+  doorButtonType?: "circle" | "square" | "rectangle";  // Door button type/shape
+  doorButtonPaddingX?: number;  // Door button padding X (px)
+  doorButtonPaddingY?: number;  // Door button padding Y (px)
+  doorButtonMarginTop?: number;  // Door button margin top (px)
+  doorButtonMarginRight?: number;  // Door button margin right (px)
+  doorButtonMarginBottom?: number;  // Door button margin bottom (px)
+  doorButtonMarginLeft?: number;  // Door button margin left (px)
+  doorButtonBorderRadius?: number;  // Door button border radius (px)
+  doorButtonWidth?: number;  // Door button container width (px)
+  doorButtonBorderSize?: number;  // Door button border size (px)
+  doorButtonBorderColor?: string;  // Door button border color (hex)
+  doorButtonBackgroundColor?: string;  // Door button background color (hex)
+  doorButtonBoxShadow?: string;  // Door button box shadow (CSS value)
+  doorButtonOpenTextColor?: string;  // "OPEN" text color at bottom of button (hex)
+  doorButtonAnimation?: "none" | "pulse" | "bounce" | "shake" | "glow" | "float";  // Button animation type
 
   // Page 2 - Front Page
   eventTitle: string;  // Type of event (event title name)
   eventTitleFontSize: number;  // Font size of event name
   eventTitleFontColor: string;  // Font color for event title
   eventTitleFontFamily: string;  // Font family for event title
+  eventTitleMarginTop?: number;  // Margin top for event title container
+  eventTitleMarginRight?: number;  // Margin right for event title container
+  eventTitleMarginBottom?: number;  // Margin bottom for event title container
+  eventTitleMarginLeft?: number;  // Margin left for event title container
   shortName: string;  // Short Name (Celebrated Person)
   shortNameFamilyFont: string;  // Family font for short name
   shortNameFontSize: number;  // Font size for short name
   shortNameFontColor: string;  // Font color for short name
+  shortNameMarginTop?: number;  // Margin top for short name container
+  shortNameMarginRight?: number;  // Margin right for short name container
+  shortNameMarginBottom?: number;  // Margin bottom for short name container
+  shortNameMarginLeft?: number;  // Margin left for short name container
   startEventDateTime: string;  // Start of Event (date and time)
   endEventDateTime: string;  // End of event (date and time)
   showStartEndEvent: boolean;  // Toggle to show/hide start and end event in card
@@ -63,9 +92,13 @@ export type EventData = {
   dayAndDateFontSize: number;  // Font size for day and date
   dayAndDateTextAlign: "left" | "center" | "right";  // Text alignment for day and date
   dayAndDateFontFamily: string;  // Font family for day and date
+  dayAndDateFontColor?: string;  // Font color for day and date (supports gradient)
   showDayAndDate: boolean;  // Toggle to show/hide day and date in card
   venue: string;  // Place/hashtag/etc (venue)
   venueFontFamily: string;  // Font family for venue
+  venueFontSize?: number;  // Font size for venue
+  venueTextAlign?: "left" | "center" | "right";  // Text alignment for venue
+  venueFontColor?: string;  // Font color for venue (supports gradient)
 
   // Page 3 - Invitation speech
   openingSpeech: string;  // Opening speech (Greeting with richtexteditor)
@@ -89,10 +122,18 @@ export type EventData = {
   // Page 4 - Location and Navigation
   section2DateTimeContent: string;  // Date and time content for section 2 (with richtexteditor)
   section2DateTimeFontFamily: string;  // Font family for section 2 date and time
+  section2DateTimeMarginTop?: number;  // Margin top for section 2 date/time container
+  section2DateTimeMarginRight?: number;  // Margin right for section 2 date/time container
+  section2DateTimeMarginBottom?: number;  // Margin bottom for section 2 date/time container
+  section2DateTimeMarginLeft?: number;  // Margin left for section 2 date/time container
   hijrahDate: string;  // Hijrah date (optional)
   hijrahDateFontFamily: string;  // Font family for hijrah date
   eventAddress: string;  // Event address (location full with richtexteditor)
   eventAddressFontFamily: string;  // Font family for event address
+  eventAddressMarginTop?: number;  // Margin top for event address container
+  eventAddressMarginRight?: number;  // Margin right for event address container
+  eventAddressMarginBottom?: number;  // Margin bottom for event address container
+  eventAddressMarginLeft?: number;  // Margin left for event address container
   navigationGoogleMap: string;  // Google map link (optional)
   navigationWaze: string;  // Waze link (optional)
   navigationOthers: string;  // Other navigation links (optional)
@@ -100,8 +141,16 @@ export type EventData = {
   // Page 5 - Tentative & More
   additionalInformation1: string;  // Additional information #1 (optional, textarea + richtexteditor)
   additionalInformation1FontFamily: string;  // Font family for additional information
+  additionalInformation1MarginTop?: number;  // Margin top for additional information container
+  additionalInformation1MarginRight?: number;  // Margin right for additional information container
+  additionalInformation1MarginBottom?: number;  // Margin bottom for additional information container
+  additionalInformation1MarginLeft?: number;  // Margin left for additional information container
   eventTentative: string;  // Event tentative (schedule Content)
   eventTentativeFontFamily: string;  // Font family for event tentative
+  eventTentativeMarginTop?: number;  // Margin top for event tentative container
+  eventTentativeMarginRight?: number;  // Margin right for event tentative container
+  eventTentativeMarginBottom?: number;  // Margin bottom for event tentative container
+  eventTentativeMarginLeft?: number;  // Margin left for event tentative container
 
   // Page 6 - Page In-Between
   bodyTextFontFamily: string;  // Body text font family
@@ -111,11 +160,15 @@ export type EventData = {
   titleTextFontSize: number;  // Title text font size
   backgroundColor: string;  // Background Color
   sideMargin: number;  // Side margin (range input)
-  uploadedFonts?: Array<{ name: string; url: string; fontFamily: string }>;  // Uploaded font files
+  uploadedFonts?: Array<{ name: string; url: string; fontFamily: string; format?: string }>;  // Uploaded font files
 
   // Page 7 - RSVP
   rsvpMode: "rsvp-speech" | "speech-only" | "thirdparty" | "none";  // RSVP Mode
   rsvpNotes: string;  // Notes (richtexteditor, optional)
+  rsvpNotesMarginTop?: number;  // Margin top for RSVP notes container
+  rsvpNotesMarginRight?: number;  // Margin right for RSVP notes container
+  rsvpNotesMarginBottom?: number;  // Margin bottom for RSVP notes container
+  rsvpNotesMarginLeft?: number;  // Margin left for RSVP notes container
   rsvpClosingDate: string;  // RSVP Closing Date (date and time)
   rsvpInputName: boolean;  // RSVP Input: Name checkbox
   rsvpInputPhone: boolean;  // RSVP Input: Phone checkbox
@@ -247,16 +300,45 @@ export const defaultEvent: EventData = {
   doorOpacity: 100,
   animationEffect: "none",
   animationEffectColor: "#f43f5e",
+  doorButtonText: "",  // Default empty, will be rendered as eventTitle — Buka if empty
+  doorButtonTextFontFamily: undefined,  // Default undefined uses component default
+  doorButtonTextMarginTop: undefined,
+  doorButtonTextMarginRight: undefined,
+  doorButtonTextMarginBottom: undefined,
+  doorButtonTextMarginLeft: undefined,
+  doorButtonType: undefined,  // Default undefined means auto size based on content
+  doorButtonPaddingX: 24,
+  doorButtonPaddingY: 12,
+  doorButtonMarginTop: 0,
+  doorButtonMarginRight: 0,
+  doorButtonMarginBottom: 0,
+  doorButtonMarginLeft: 0,
+  doorButtonBorderRadius: 9999,
+  doorButtonWidth: undefined,  // Default undefined means auto width
+  doorButtonBorderSize: 1,  // Default 1px border
+  doorButtonBorderColor: undefined,  // Default undefined uses component default (rose-200)
+  doorButtonBackgroundColor: undefined,  // Default undefined uses component default
+  doorButtonBoxShadow: undefined,  // Default undefined means no box shadow
+  doorButtonOpenTextColor: "#36463A",  // Default dark green color for "OPEN" text
+  doorButtonAnimation: "none",  // Default no animation
 
   // Page 2 - Front Page defaults
   eventTitle: "Majlis Aqiqah",
   eventTitleFontSize: 24,
   eventTitleFontColor: "#f43f5e",
   eventTitleFontFamily: "",
+  eventTitleMarginTop: undefined,
+  eventTitleMarginRight: undefined,
+  eventTitleMarginBottom: undefined,
+  eventTitleMarginLeft: undefined,
   shortName: "Aqil",
   shortNameFamilyFont: "Arial",
   shortNameFontSize: 18,
   shortNameFontColor: "#f43f5e",
+  shortNameMarginTop: undefined,
+  shortNameMarginRight: undefined,
+  shortNameMarginBottom: undefined,
+  shortNameMarginLeft: undefined,
   startEventDateTime: "2025-10-29T11:00:00",
   endEventDateTime: "2025-10-29T15:00:00",
   showStartEndEvent: true,
@@ -266,9 +348,13 @@ export const defaultEvent: EventData = {
   dayAndDateFontSize: 14,
   dayAndDateTextAlign: "center",
   dayAndDateFontFamily: "",
+  dayAndDateFontColor: undefined,
   showDayAndDate: true,
   venue: "Dewan Seri Melati, Putrajaya",
   venueFontFamily: "",
+  venueFontSize: undefined,
+  venueTextAlign: undefined,
+  venueFontColor: undefined,
 
   // Page 3 - Invitation speech defaults
   openingSpeech: "Assalamualaikum, hello & selamat sejahtera",
@@ -292,10 +378,18 @@ export const defaultEvent: EventData = {
   // Page 4 - Location and Navigation defaults
   section2DateTimeContent: "",
   section2DateTimeFontFamily: "",
+  section2DateTimeMarginTop: undefined,
+  section2DateTimeMarginRight: undefined,
+  section2DateTimeMarginBottom: undefined,
+  section2DateTimeMarginLeft: undefined,
   hijrahDate: "",
   hijrahDateFontFamily: "",
   eventAddress: "Dewan Seri Melati, Putrajaya",
   eventAddressFontFamily: "",
+  eventAddressMarginTop: undefined,
+  eventAddressMarginRight: undefined,
+  eventAddressMarginBottom: undefined,
+  eventAddressMarginLeft: undefined,
   navigationGoogleMap: "",
   navigationWaze: "",
   navigationOthers: "",
@@ -319,6 +413,10 @@ export const defaultEvent: EventData = {
   // Page 7 - RSVP defaults
   rsvpMode: "rsvp-speech",
   rsvpNotes: "",
+  rsvpNotesMarginTop: undefined,
+  rsvpNotesMarginRight: undefined,
+  rsvpNotesMarginBottom: undefined,
+  rsvpNotesMarginLeft: undefined,
   rsvpClosingDate: "",
   rsvpInputName: true,
   rsvpInputPhone: true,

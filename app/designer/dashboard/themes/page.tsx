@@ -301,7 +301,7 @@ export default function ThemesPage() {
 
               {/* Actions */}
               <div className="flex gap-1.5">
-                <Link href={`/designer/dashboard/themes/${theme.id}/edit`} className="flex-1">
+                <Link href={`/designer/dashboard/create-theme?id=${theme.id}`} className="flex-1">
                   <Button className="w-full" size="sm" variant="outline">Edit</Button>
                 </Link>
                 <Link href={`/designer/dashboard/themes/${theme.id}/preview`} className="flex-1">

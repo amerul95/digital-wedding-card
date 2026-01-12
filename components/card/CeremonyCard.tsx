@@ -425,6 +425,27 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
             onAnimationComplete={() => {
               if (doorsOpen) setShowDoors(false);
             }}
+            doorButtonText={event.doorButtonText}
+            doorButtonTextFontFamily={event.doorButtonTextFontFamily}
+            doorButtonTextMarginTop={event.doorButtonTextMarginTop}
+            doorButtonTextMarginRight={event.doorButtonTextMarginRight}
+            doorButtonTextMarginBottom={event.doorButtonTextMarginBottom}
+            doorButtonTextMarginLeft={event.doorButtonTextMarginLeft}
+            doorButtonType={event.doorButtonType}
+            doorButtonPaddingX={event.doorButtonPaddingX}
+            doorButtonPaddingY={event.doorButtonPaddingY}
+            doorButtonMarginTop={event.doorButtonMarginTop}
+            doorButtonMarginRight={event.doorButtonMarginRight}
+            doorButtonMarginBottom={event.doorButtonMarginBottom}
+            doorButtonMarginLeft={event.doorButtonMarginLeft}
+            doorButtonBorderRadius={event.doorButtonBorderRadius}
+            doorButtonWidth={event.doorButtonWidth}
+            doorButtonBorderSize={event.doorButtonBorderSize}
+            doorButtonBorderColor={event.doorButtonBorderColor}
+            doorButtonBackgroundColor={event.doorButtonBackgroundColor}
+            doorButtonBoxShadow={event.doorButtonBoxShadow}
+            doorButtonOpenTextColor={event.doorButtonOpenTextColor}
+            doorButtonAnimation={event.doorButtonAnimation}
           />
         )}
         {event.doorStyle === "slide" && (
@@ -439,6 +460,27 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
             onAnimationComplete={() => {
               if (doorsOpen) setShowDoors(false);
             }}
+            doorButtonText={event.doorButtonText}
+            doorButtonTextFontFamily={event.doorButtonTextFontFamily}
+            doorButtonTextMarginTop={event.doorButtonTextMarginTop}
+            doorButtonTextMarginRight={event.doorButtonTextMarginRight}
+            doorButtonTextMarginBottom={event.doorButtonTextMarginBottom}
+            doorButtonTextMarginLeft={event.doorButtonTextMarginLeft}
+            doorButtonType={event.doorButtonType}
+            doorButtonPaddingX={event.doorButtonPaddingX}
+            doorButtonPaddingY={event.doorButtonPaddingY}
+            doorButtonMarginTop={event.doorButtonMarginTop}
+            doorButtonMarginRight={event.doorButtonMarginRight}
+            doorButtonMarginBottom={event.doorButtonMarginBottom}
+            doorButtonMarginLeft={event.doorButtonMarginLeft}
+            doorButtonBorderRadius={event.doorButtonBorderRadius}
+            doorButtonWidth={event.doorButtonWidth}
+            doorButtonBorderSize={event.doorButtonBorderSize}
+            doorButtonBorderColor={event.doorButtonBorderColor}
+            doorButtonBackgroundColor={event.doorButtonBackgroundColor}
+            doorButtonBoxShadow={event.doorButtonBoxShadow}
+            doorButtonOpenTextColor={event.doorButtonOpenTextColor}
+            doorButtonAnimation={event.doorButtonAnimation}
           />
         )}
         {event.doorStyle === "envelope" && (
@@ -453,6 +495,27 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
             onAnimationComplete={() => {
               if (doorsOpen) setShowDoors(false);
             }}
+            doorButtonText={event.doorButtonText}
+            doorButtonTextFontFamily={event.doorButtonTextFontFamily}
+            doorButtonTextMarginTop={event.doorButtonTextMarginTop}
+            doorButtonTextMarginRight={event.doorButtonTextMarginRight}
+            doorButtonTextMarginBottom={event.doorButtonTextMarginBottom}
+            doorButtonTextMarginLeft={event.doorButtonTextMarginLeft}
+            doorButtonType={event.doorButtonType}
+            doorButtonPaddingX={event.doorButtonPaddingX}
+            doorButtonPaddingY={event.doorButtonPaddingY}
+            doorButtonMarginTop={event.doorButtonMarginTop}
+            doorButtonMarginRight={event.doorButtonMarginRight}
+            doorButtonMarginBottom={event.doorButtonMarginBottom}
+            doorButtonMarginLeft={event.doorButtonMarginLeft}
+            doorButtonBorderRadius={event.doorButtonBorderRadius}
+            doorButtonWidth={event.doorButtonWidth}
+            doorButtonBorderSize={event.doorButtonBorderSize}
+            doorButtonBorderColor={event.doorButtonBorderColor}
+            doorButtonBackgroundColor={event.doorButtonBackgroundColor}
+            doorButtonBoxShadow={event.doorButtonBoxShadow}
+            doorButtonOpenTextColor={event.doorButtonOpenTextColor}
+            doorButtonAnimation={event.doorButtonAnimation}
           />
         )}
 

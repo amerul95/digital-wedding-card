@@ -36,8 +36,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { ChevronDown, Save } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ChevronDown, Save, Type } from "lucide-react";
+import { CURATED_GOOGLE_FONTS, loadAllCuratedFonts } from "@/lib/fonts";
+import { saveDesignerFont, CustomFont } from "@/lib/fontStorage";
+import { useDesignerFonts } from "@/context/DesignerFontContext";
 
 const SECTIONS = [
   { id: 1, label: "1. Main & Opening" },
@@ -196,6 +199,10 @@ function SortableIconItem({
 
 export default function CreateThemePage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const editingId = searchParams.get('id');
+    const isEditing = !!editingId;
+    
     const { event, updateEvent, resetEvent } = useEvent();
     const [config, setConfig] = useState<ThemeConfig>(defaultThemeConfig);
     const [isSavingTheme, setIsSavingTheme] = useState(false);
@@ -204,13 +211,34 @@ export default function CreateThemePage() {
     const [activeSection, setActiveSection] = useState<1 | 2 | 3 | 4>(1);
     const [currentContentSection, setCurrentContentSection] = useState(1);
     const [openAccordionSection, setOpenAccordionSection] = useState<string>("1");
+    
+    // Persist activeTab in localStorage to prevent reset on page refresh/event changes
     const [activeTab, setActiveTab] = useState<"theme" | "content">("theme");
+    
+    // Load activeTab from localStorage on mount (client-side only to avoid hydration error)
+    useEffect(() => {
+        const saved = localStorage.getItem("create-theme-activeTab");
+        if (saved === "theme" || saved === "content") {
+            setActiveTab(saved);
+        }
+    }, []);
+    
+    // Update localStorage when activeTab changes
+    useEffect(() => {
+        localStorage.setItem("create-theme-activeTab", activeTab);
+    }, [activeTab]);
+    const [isLoadingTheme, setIsLoadingTheme] = useState(false);
+    const [editingType, setEditingType] = useState<'theme' | 'content' | 'template' | null>(null);
     const cardRef = useRef<HTMLDivElement>(null);
     const previewContainerRef = useRef<HTMLDivElement>(null);
     const fontUploadInputRef = useRef<HTMLInputElement>(null);
     const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [showFontNameDialog, setShowFontNameDialog] = useState(false);
+    const [pendingFontFile, setPendingFontFile] = useState<File | null>(null);
+    const [fontFamilyName, setFontFamilyName] = useState("");
+    const { designerId, customFonts: designerCustomFonts, refreshFonts } = useDesignerFonts();
     
     // Ref to track if we're updating from user input (prevent useEffect from overriding)
     const isUpdatingFromUserInput = useRef(false);
@@ -237,15 +265,70 @@ export default function CreateThemePage() {
     }, [config.footerBoxShadow]);
     
     // Modal state
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState<"theme" | "content" | "template" | null>(null);
-    const [modalName, setModalName] = useState("");
     const [isMounted, setIsMounted] = useState(false);
 
     // Ensure component only renders drag-and-drop on client
     useEffect(() => {
         setIsMounted(true);
     }, []);
+
+    // Load theme/content/template data when editing
+    useEffect(() => {
+        async function loadThemeData() {
+            if (!editingId) return;
+
+            setIsLoadingTheme(true);
+            try {
+                const response = await fetch(`/api/designer/themes/${editingId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const themeConfig = data.config || {};
+                    const themeType = themeConfig.type || 'theme';
+                    
+                    setEditingType(themeType);
+                    
+                    // Load theme config
+                    if (themeType === 'theme' || themeType === 'template') {
+                        setConfig(themeConfig as ThemeConfig);
+                        // Only set active tab on initial load if localStorage doesn't have a saved value
+                        const savedTab = localStorage.getItem("create-theme-activeTab");
+                        if (!savedTab) {
+                            setActiveTab('theme');
+                        }
+                    }
+                    
+                    // Load content/event data
+                    if (themeType === 'content' || themeType === 'template') {
+                        if (themeConfig.defaultEventData) {
+                            // Update event context with loaded data (merge all fields at once)
+                            updateEvent(themeConfig.defaultEventData);
+                        }
+                        // Only set active tab on initial load if localStorage doesn't have a saved value
+                        const savedTab = localStorage.getItem("create-theme-activeTab");
+                        if (!savedTab) {
+                            if (themeType === 'content') {
+                                setActiveTab('content');
+                            }
+                        }
+                    }
+                } else {
+                    toast.error("Failed to load theme");
+                    router.push("/designer/dashboard/themes");
+                }
+            } catch (error) {
+                console.error("Error loading theme:", error);
+                toast.error("Failed to load theme");
+                router.push("/designer/dashboard/themes");
+            } finally {
+                setIsLoadingTheme(false);
+            }
+        }
+
+        if (editingId) {
+            loadThemeData();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editingId, router]);
 
     // Drag and drop sensors
     const sensors = useSensors(
@@ -291,18 +374,101 @@ export default function CreateThemePage() {
         }
     };
 
-    const handleFontUpload = (file: File) => {
-        const url = URL.createObjectURL(file);
-        const fontFamily = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-        const newFont = { name: file.name, url, fontFamily };
-        const uploadedFonts = event.uploadedFonts || [];
-        const updatedFonts = [...uploadedFonts, newFont];
-        updateEvent({ uploadedFonts: updatedFonts });
-        setHasUnsavedChanges(true);
-        toast.success("Font uploaded successfully!", {
-            description: `Font "${file.name}" is now available for use.`,
-            duration: 3000,
+    // Inject @font-face CSS into the document
+    const injectFontFaces = (fonts: Array<{ name: string; url: string; fontFamily: string; format?: string }>) => {
+        if (typeof window === 'undefined') return;
+        
+        const styleId = 'custom-fonts-style';
+        let styleElement = document.getElementById(styleId) as HTMLStyleElement;
+        
+        if (!styleElement) {
+            styleElement = document.createElement('style');
+            styleElement.id = styleId;
+            document.head.appendChild(styleElement);
+        }
+
+        let css = styleElement.textContent || '';
+        
+        fonts.forEach(font => {
+            const format = font.format || 'woff';
+            const fontFaceRule = `
+@font-face {
+    font-family: "${font.fontFamily}";
+    src: url("${font.url}") format("${format}");
+}
+`;
+            // Check if this font is already injected
+            if (!css.includes(`font-family: "${font.fontFamily}"`)) {
+                css += fontFaceRule;
+            }
         });
+
+        styleElement.textContent = css;
+    };
+
+
+    // Load Google Fonts on mount
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            loadAllCuratedFonts();
+        }
+    }, []);
+
+    const handleFontFileSelect = (files: FileList | null) => {
+        if (!files || files.length === 0) return;
+
+        const file = files[0]; // Only accept single file
+        if (!file.name.toLowerCase().endsWith('.woff')) {
+            toast.error('Only .woff files are supported. Please upload a variable font file.');
+            if (fontUploadInputRef.current) {
+                fontUploadInputRef.current.value = '';
+            }
+            return;
+        }
+
+        // Show dialog to ask for font family name
+        setPendingFontFile(file);
+        setShowFontNameDialog(true);
+        if (fontUploadInputRef.current) {
+            fontUploadInputRef.current.value = '';
+        }
+    };
+
+    const handleConfirmFontUpload = async () => {
+        if (!pendingFontFile || !fontFamilyName.trim() || !designerId) {
+            toast.error('Please provide a font family name.');
+            return;
+        }
+
+        try {
+            const url = URL.createObjectURL(pendingFontFile);
+            const customFont: CustomFont = {
+                name: pendingFontFile.name,
+                url: url,
+                fontFamily: fontFamilyName.trim(),
+                format: 'woff',
+            };
+
+            // Save to designer's font storage
+            saveDesignerFont(designerId, customFont);
+
+            // Refresh fonts from context
+            refreshFonts();
+
+            toast.success('Font uploaded successfully!', {
+                description: `Font "${fontFamilyName}" is now available for use.`,
+                duration: 3000,
+            });
+
+            // Reset dialog state
+            setShowFontNameDialog(false);
+            setPendingFontFile(null);
+            setFontFamilyName('');
+            setHasUnsavedChanges(true);
+        } catch (error) {
+            console.error('Error uploading font:', error);
+            toast.error('Failed to upload font. Please try again.');
+        }
     };
 
     // Track changes to detect unsaved changes
@@ -571,51 +737,53 @@ export default function CreateThemePage() {
         };
     }, []);
 
-    // Open modal for save
-    const openSaveModal = (type: "theme" | "content" | "template") => {
-        setModalType(type);
-        setModalName("");
-        setIsModalOpen(true);
-    };
-
-    // Handle actual save after modal confirms
-    const handleConfirmSave = async () => {
-        if (!modalName.trim()) {
-            toast.error(`Please enter a ${modalType} name`);
+    // Handle save directly without modal - name will be auto-generated
+    const handleSave = async (type: "theme" | "content" | "template") => {
+        // Validation
+        if (type === "theme" && !config.themeName) {
+            toast.error("Please select a theme first");
+            return;
+        }
+        if (type === "template" && (!config.themeName || !config.color)) {
+            toast.error("Please select a theme and enter a color first");
             return;
         }
 
-        if (!modalType) return;
-
         // Set loading state based on type
-        if (modalType === "theme") {
+        if (type === "theme") {
             setIsSavingTheme(true);
-        } else if (modalType === "content") {
+        } else if (type === "content") {
             setIsSavingContent(true);
         } else {
             setIsSavingTemplate(true);
         }
 
         try {
+            // If editing, use PUT; otherwise POST
+            const url = isEditing && editingId 
+                ? `/api/designer/themes/${editingId}`
+                : '/api/designer/themes';
+            const method = isEditing && editingId ? 'PUT' : 'POST';
+
             const payload: any = {
-                name: modalName.trim(),
-                type: modalType,
+                type: type,
+                // Name will be auto-generated by the API based on customId (only for new items)
             };
 
-            if (modalType === "theme" || modalType === "template") {
+            if (type === "theme" || type === "template") {
                 payload.config = config;
             }
 
-            if (modalType === "content" || modalType === "template") {
+            if (type === "content" || type === "template") {
                 payload.defaultEventData = event;
             }
 
-            if (modalType === "content") {
+            if (type === "content") {
                 payload.config = {};
             }
 
-            const response = await fetch('/api/designer/themes', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -625,26 +793,27 @@ export default function CreateThemePage() {
             const data = await response.json();
 
             if (response.ok) {
-                toast.success(`${modalType === "theme" ? "Theme" : modalType === "content" ? "Content" : "Template"} saved successfully!`);
-                setIsModalOpen(false);
-                setModalName("");
-                setModalType(null);
+                const typeName = type === "theme" ? "Theme" : type === "content" ? "Content" : "Template";
+                const action = isEditing ? "updated" : "saved";
+                toast.success(`${typeName} ${action} successfully! ${data.theme?.customId ? `(ID: ${data.theme.customId})` : ''}`);
                 
-                // Reset based on type
-                if (modalType === "theme" || modalType === "template") {
-                    setConfig(defaultThemeConfig);
-                }
-                if (modalType === "content" || modalType === "template") {
-                    resetEvent();
+                // Only reset if creating new, not editing
+                if (!isEditing) {
+                    if (type === "theme" || type === "template") {
+                        setConfig(defaultThemeConfig);
+                    }
+                    if (type === "content" || type === "template") {
+                        resetEvent();
+                    }
                 }
                 
                 router.push("/designer/dashboard/themes");
             } else {
-                toast.error(data.error || `Failed to save ${modalType}. Please try again.`);
+                toast.error(data.error || `Failed to ${isEditing ? 'update' : 'save'} ${type}. Please try again.`);
             }
         } catch (error) {
-            console.error(`Error saving ${modalType}:`, error);
-            toast.error(`An error occurred while saving the ${modalType}.`);
+            console.error(`Error saving ${type}:`, error);
+            toast.error(`An error occurred while ${isEditing ? 'updating' : 'saving'} the ${type}.`);
         } finally {
             setIsSavingTheme(false);
             setIsSavingContent(false);
@@ -686,11 +855,79 @@ export default function CreateThemePage() {
                 </DialogContent>
             </Dialog>
 
+            {/* Font Name Dialog */}
+            <Dialog open={showFontNameDialog} onOpenChange={(open) => {
+                if (!open) {
+                    setShowFontNameDialog(false);
+                    setPendingFontFile(null);
+                    setFontFamilyName('');
+                }
+            }}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Font Family Name</DialogTitle>
+                        <DialogDescription>
+                            Please enter a name for this font family. This name will appear in the font dropdown.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Label htmlFor="fontFamilyName">Font Family Name</Label>
+                        <Input
+                            id="fontFamilyName"
+                            value={fontFamilyName}
+                            onChange={(e) => setFontFamilyName(e.target.value)}
+                            placeholder="e.g., My Custom Font"
+                            className="mt-2"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && fontFamilyName.trim()) {
+                                    handleConfirmFontUpload();
+                                }
+                            }}
+                        />
+                        <p className="text-xs text-gray-500 mt-2">
+                            Uploaded file: {pendingFontFile?.name}
+                        </p>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setShowFontNameDialog(false);
+                                setPendingFontFile(null);
+                                setFontFamilyName('');
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleConfirmFontUpload}
+                            disabled={!fontFamilyName.trim()}
+                            className="bg-[#36463A] hover:bg-[#2d3a2f]"
+                        >
+                            Upload Font
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         <div className="space-y-6">
+            {isLoadingTheme ? (
+                <div className="flex items-center justify-center py-12">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#36463A] mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">Loading theme...</p>
+                    </div>
+                </div>
+            ) : (
+                <>
             <div className="flex items-center justify-between">
                 <div className="flex-1">
-                    <h1 className="text-3xl font-bold mb-2">Create New Theme</h1>
-                    <p className="text-muted-foreground">Design your wedding card theme. Customize backgrounds, colors, and default content.</p>
+                    <h1 className="text-3xl font-bold mb-2">
+                        {isEditing ? `Edit ${editingType === 'theme' ? 'Theme' : editingType === 'content' ? 'Content' : 'Template'}` : "Create New Theme"}
+                    </h1>
+                    <p className="text-muted-foreground">
+                        {isEditing ? "Update your theme, content, or template. Make changes and save." : "Design your wedding card theme. Customize backgrounds, colors, and default content."}
+                    </p>
                     
                     {/* Theme and Color Inputs */}
                     <div className="flex gap-4 mt-4">
@@ -740,6 +977,23 @@ export default function CreateThemePage() {
                 
                 {/* Right Side - Action Buttons */}
                 <div className="flex items-center gap-3 ml-6">
+                    {/* Font Upload Button */}
+                    <Button
+                        onClick={() => fontUploadInputRef.current?.click()}
+                        variant="outline"
+                        className="px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50 flex items-center gap-2"
+                    >
+                        <Type className="w-4 h-4" />
+                        Upload Font
+                    </Button>
+                    <input
+                        ref={fontUploadInputRef}
+                        type="file"
+                        accept=".woff"
+                        onChange={(e) => handleFontFileSelect(e.target.files)}
+                        className="hidden"
+                    />
+                    
                     <Button
                         onClick={() => {
                             setConfig(defaultThemeConfig);
@@ -765,29 +1019,36 @@ export default function CreateThemePage() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                                onClick={() => openSaveModal("theme")}
-                                disabled={!config.themeName}
-                            >
-                                <span>Save Theme</span>
-                                {!config.themeName && (
-                                    <span className="ml-2 text-xs text-gray-400">(Select theme first)</span>
-                                )}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => openSaveModal("content")}
-                            >
-                                Save Content
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => openSaveModal("template")}
-                                disabled={!config.themeName || !config.color}
-                            >
-                                <span>Save Template</span>
-                                {(!config.themeName || !config.color) && (
-                                    <span className="ml-2 text-xs text-gray-400">(Complete theme & color)</span>
-                                )}
-                            </DropdownMenuItem>
+                            {(!isEditing || editingType === 'theme') && (
+                                <DropdownMenuItem
+                                    onClick={() => handleSave("theme")}
+                                    disabled={!config.themeName || isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
+                                >
+                                    <span>{isEditing ? "Update Theme" : "Save Theme"}</span>
+                                    {!config.themeName && (
+                                        <span className="ml-2 text-xs text-gray-400">(Select theme first)</span>
+                                    )}
+                                </DropdownMenuItem>
+                            )}
+                            {(!isEditing || editingType === 'content') && (
+                                <DropdownMenuItem
+                                    onClick={() => handleSave("content")}
+                                    disabled={isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
+                                >
+                                    {isEditing ? "Update Content" : "Save Content"}
+                                </DropdownMenuItem>
+                            )}
+                            {(!isEditing || editingType === 'template') && (
+                                <DropdownMenuItem
+                                    onClick={() => handleSave("template")}
+                                    disabled={!config.themeName || !config.color || isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
+                                >
+                                    <span>{isEditing ? "Update Template" : "Save Template"}</span>
+                                    {(!config.themeName || !config.color) && (
+                                        <span className="ml-2 text-xs text-gray-400">(Complete theme & color)</span>
+                                    )}
+                                </DropdownMenuItem>
+                            )}
                         </DropdownMenuContent>
                     </DropdownMenu>
                     
@@ -811,7 +1072,12 @@ export default function CreateThemePage() {
             <div className="flex items-center justify-between">
                 <div className="inline-flex rounded-2xl border border-[#36463A] overflow-hidden">
                     <button
-                        onClick={() => setActiveTab("theme")}
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setActiveTab("theme");
+                        }}
                         className={`px-6 py-2 text-sm font-medium transition-colors ${
                             activeTab === "theme"
                                 ? "bg-[#36463A] text-white"
@@ -1672,65 +1938,14 @@ export default function CreateThemePage() {
                 </Card>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 justify-end">
-                <Link href="/designer/dashboard">
-                    <Button variant="outline">Cancel</Button>
-                </Link>
-            </div>
-
-            {/* Save Modal */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>
-                            Save {modalType === "theme" ? "Theme" : modalType === "content" ? "Content" : "Template"}
-                        </DialogTitle>
-                        <DialogDescription>
-                            Enter a name for your {modalType}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="modalName">
-                                {modalType === "theme" ? "Theme" : modalType === "content" ? "Content" : "Template"} Name *
-                            </Label>
-                            <Input
-                                id="modalName"
-                                type="text"
-                                value={modalName}
-                                onChange={(e) => setModalName(e.target.value)}
-                                placeholder={`Enter ${modalType} name`}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && modalName.trim()) {
-                                        handleConfirmSave();
-                                    }
-                                }}
-                                autoFocus
-                            />
-                        </div>
+                    {/* Action Buttons */}
+                    <div className="flex gap-4 justify-end">
+                        <Link href="/designer/dashboard">
+                            <Button variant="outline">Cancel</Button>
+                        </Link>
                     </div>
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setIsModalOpen(false);
-                                setModalName("");
-                                setModalType(null);
-                            }}
-                            disabled={isSavingTheme || isSavingContent || isSavingTemplate}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleConfirmSave}
-                            disabled={!modalName.trim() || isSavingTheme || isSavingContent || isSavingTemplate}
-                        >
-                            {isSavingTheme || isSavingContent || isSavingTemplate ? "Saving..." : "Save"}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                </>
+            )}
         </div>
         </>
     );

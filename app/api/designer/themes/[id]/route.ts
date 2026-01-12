@@ -102,7 +102,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await req.json()
-    const { name, config, isPublished } = body
+    const { name, config, defaultEventData, type = 'theme', isPublished } = body
 
     // Verify theme belongs to designer
     const existingTheme = await prisma.theme.findFirst({
@@ -119,20 +119,52 @@ export async function PUT(
       )
     }
 
+    // Parse existing config to preserve customId, runningNumber, etc.
+    let existingConfig: any = {}
+    try {
+      if (existingTheme.configJson) {
+        existingConfig = JSON.parse(existingTheme.configJson)
+      }
+    } catch {
+      // If parsing fails, start fresh
+    }
+
+    // Merge config and defaultEventData into a single config object
+    const fullConfig = {
+      ...config,
+      defaultEventData: defaultEventData || config?.defaultEventData || null,
+      type: type || existingConfig.type || 'theme',
+      // Preserve existing IDs and metadata
+      customId: existingConfig.customId,
+      themeName: config?.themeName || existingConfig.themeName,
+      color: config?.color || existingConfig.color,
+      runningNumber: existingConfig.runningNumber,
+    }
+
     // Update the theme
     const theme = await prisma.theme.update({
       where: { id },
       data: {
         ...(name && { name: name.trim() }),
-        ...(config && { configJson: JSON.stringify(config) }),
+        ...(config && { configJson: JSON.stringify(fullConfig) }),
         ...(typeof isPublished === "boolean" && { isPublished }),
       },
     })
 
+    // Parse config to get customId for response
+    let parsedCustomId = existingConfig.customId || null
+    try {
+      const savedConfig = JSON.parse(theme.configJson || '{}')
+      parsedCustomId = savedConfig.customId || parsedCustomId
+    } catch {
+      // Keep existing value
+    }
+
     return NextResponse.json({
-      message: "Theme updated successfully",
+      message: `${type === "theme" ? "Theme" : type === "content" ? "Content" : "Template"} updated successfully`,
       theme: {
         id: theme.id,
+        customId: parsedCustomId,
         name: theme.name,
       },
     })
