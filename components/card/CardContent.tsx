@@ -25,6 +25,63 @@ export function CardContent({
   onSectionClick,
   isEditorMode = false,
 }: CardContentProps) {
+  // Auto-scroll ref for congratulations messages
+  const congratsScrollRef = useRef<HTMLDivElement>(null);
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollDirectionRef = useRef<'down' | 'up'>('down');
+
+  // Auto-scroll effect for congratulations messages
+  useEffect(() => {
+    if (!event.congratsSectionAutoScroll || !event.congratsSectionHeight || !congratsScrollRef.current) {
+      // Clear interval if autoscroll is disabled
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+      return;
+    }
+
+    const container = congratsScrollRef.current;
+    const scrollSpeed = 1; // pixels per frame
+    const frameRate = 16; // ~60fps
+
+    const scroll = () => {
+      if (!container) return;
+
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      
+      if (maxScroll <= 0) {
+        // Content doesn't exceed container, no need to scroll
+        return;
+      }
+
+      if (scrollDirectionRef.current === 'down') {
+        container.scrollTop += scrollSpeed;
+        
+        // If reached bottom, loop back to top
+        if (container.scrollTop >= maxScroll) {
+          container.scrollTop = 0;
+        }
+      } else {
+        container.scrollTop -= scrollSpeed;
+        
+        // If reached top, loop to bottom
+        if (container.scrollTop <= 0) {
+          container.scrollTop = maxScroll;
+        }
+      }
+    };
+
+    scrollIntervalRef.current = setInterval(scroll, frameRate);
+
+    return () => {
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+    };
+  }, [event.congratsSectionAutoScroll, event.congratsSectionHeight, event.congratsMessages]);
+
   // Helper function to get section background style - memoized to prevent infinite loops
   const getSectionBackgroundStyle = useCallback((sectionNumber: 1 | 2 | 3 | 4): React.CSSProperties => {
     if (!themeConfig) return {};
@@ -805,10 +862,11 @@ export function CardContent({
                 {/* Show messages if: not in editor mode (client view) OR in editor mode and toggle is enabled */}
                 {event.congratsMessages && event.congratsMessages.length > 0 && (!isEditorMode || event.showCongratsMessages !== false) && (
                   <div
-                    className="mb-4"
+                    className="mb-4 congrats-messages-container scrollbar-hide"
                     style={{
                       width: event.congratsSectionWidth ? `${event.congratsSectionWidth}px` : '100%',
-                      height: event.congratsSectionHeight ? `${event.congratsSectionHeight}px` : undefined,
+                      height: event.congratsSectionHeight ? `${Math.max(event.congratsSectionHeight, 150)}px` : undefined,
+                      minHeight: event.congratsSectionHeight ? '150px' : undefined,
                       overflowY: event.congratsSectionHeight ? 'auto' : undefined,
                       overflowX: 'hidden',
                       marginTop: event.congratsSectionMarginTop ? `${event.congratsSectionMarginTop}px` : undefined,
@@ -832,6 +890,7 @@ export function CardContent({
                         event.congratsSectionBorderLeft,
                       ].some((v) => !!v) ? '#e5e7eb' : undefined,
                     }}
+                    ref={congratsScrollRef}
                   >
                     <div className="space-y-4">
                       {event.congratsMessages.map((message) => (

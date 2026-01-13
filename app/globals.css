@@ -66,6 +66,16 @@ button {
   scrollbar-width: none;
 }
 
+/* Hide scrollbar for congratulations messages container */
+.congrats-messages-container::-webkit-scrollbar {
+  display: none;
+}
+
+.congrats-messages-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* TipTap editor content styling */
 .ProseMirror {
   outline: none;

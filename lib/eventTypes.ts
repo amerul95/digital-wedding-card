@@ -341,7 +341,8 @@ export type EventData = {
   congratsSectionBorderBottom?: number;  // Border bottom size for congratulations section container (px)
   congratsSectionBorderLeft?: number;  // Border left size for congratulations section container (px)
   congratsSectionWidth?: number;  // Width for congratulations messages container (px)
-  congratsSectionHeight?: number;  // Height for congratulations messages container (px) - will auto-scroll if content exceeds
+  congratsSectionHeight?: number;  // Height for congratulations messages container (px) - will auto-scroll if content exceeds (min 150px)
+  congratsSectionAutoScroll?: boolean;  // Enable auto-scrolling with loop for congratulations messages
   showCongratsMessages?: boolean;  // Show/hide congratulations messages (designer preview only, always true for clients)
 };
 
@@ -680,6 +681,7 @@ export const defaultEvent: EventData = {
   congratsSectionBorderBottom: 0,
   congratsSectionBorderLeft: 0,
   congratsSectionWidth: undefined,  // Default undefined (full width)
-  congratsSectionHeight: undefined,  // Default undefined (auto height)
+  congratsSectionHeight: undefined,  // Default undefined (auto height, min 150px when set)
+  congratsSectionAutoScroll: false,  // Default no auto-scroll
   showCongratsMessages: true,  // Default show messages for designer preview
 };

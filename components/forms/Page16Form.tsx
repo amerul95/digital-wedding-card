@@ -695,12 +695,33 @@ export function Page16Form() {
                 <Input
                   type="number"
                   value={event.congratsSectionHeight ?? ''}
-                  onChange={(e) => updateEvent({ congratsSectionHeight: e.target.value ? Number(e.target.value) : undefined })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '') {
+                      updateEvent({ congratsSectionHeight: undefined });
+                    } else {
+                      const numValue = Number(value);
+                      // Enforce minimum 150px
+                      updateEvent({ congratsSectionHeight: Math.max(numValue, 150) });
+                    }
+                  }}
                   placeholder="Auto (no scroll)"
-                  min="0"
+                  min="150"
                   step="1"
                 />
-                <p className="text-xs text-gray-500 mt-1">Auto-scrolls if content exceeds height</p>
+                <p className="text-xs text-gray-500 mt-1">Minimum 150px. Auto-scrolls if content exceeds height</p>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Auto Scroll (Loop)</Label>
+                  <p className="text-xs text-gray-500 mt-1">Enable continuous auto-scrolling</p>
+                </div>
+                <Switch
+                  checked={event.congratsSectionAutoScroll || false}
+                  onCheckedChange={(checked) => updateEvent({ congratsSectionAutoScroll: checked })}
+                />
               </div>
             </div>
           </div>
