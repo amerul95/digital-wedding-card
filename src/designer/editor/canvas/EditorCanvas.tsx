@@ -34,9 +34,10 @@ interface EditorCanvasProps {
   onTextEdit: (objectId: string) => void;
   workspaceScale: number;
   stageRef?: React.RefObject<Konva.Stage | null>;
+  editingTextId?: string | null;
 }
 
-export function EditorCanvas({ onTextEdit, workspaceScale, stageRef }: EditorCanvasProps) {
+export function EditorCanvas({ onTextEdit, workspaceScale, stageRef, editingTextId }: EditorCanvasProps) {
   const internalStageRef = useRef<Konva.Stage>(null);
   const activeStageRef = stageRef ?? internalStageRef;
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -524,6 +525,7 @@ export function EditorCanvas({ onTextEdit, workspaceScale, stageRef }: EditorCan
               currentSectionId={currentSectionId}
               selectedIds={selectedIds}
               tool={tool}
+              editingTextId={editingTextId}
               onSectionClick={handleSectionCanvasClick}
               onObjectClick={handleObjectClick}
               onObjectDragMove={handleDragMove}

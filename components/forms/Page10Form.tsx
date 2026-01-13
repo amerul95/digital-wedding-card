@@ -91,6 +91,13 @@ export function Page10Form() {
               onCheckedChange={(checked) => updateEvent({ showSegmentConfirmAttendance: checked })}
             />
           </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700">Gallery</span>
+            <Switch
+              checked={event.showSegmentGallery ?? true}
+              onCheckedChange={(checked) => updateEvent({ showSegmentGallery: checked })}
+            />
+          </div>
           </div>
         </div>
       </div>

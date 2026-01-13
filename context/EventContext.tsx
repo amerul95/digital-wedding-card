@@ -27,7 +27,13 @@ export function EventProvider({ children }: { children: ReactNode }) {
       if (stored) {
         const parsed = JSON.parse(stored);
         // Merge with defaults to ensure new fields are included
-        setEvent({ ...defaultEvent, ...parsed });
+        // Special handling: if congratsMessages is empty array, use default instead
+        const mergedEvent = { ...defaultEvent, ...parsed };
+        if (parsed.congratsMessages && Array.isArray(parsed.congratsMessages) && parsed.congratsMessages.length === 0) {
+          // If stored messages are empty, use default mockup messages
+          mergedEvent.congratsMessages = defaultEvent.congratsMessages;
+        }
+        setEvent(mergedEvent);
       }
     } catch (error) {
       console.error("Failed to load event from localStorage:", error);

@@ -59,6 +59,14 @@ export function TextPanel() {
       align: 'center',
       lineHeight: 1.5,
       letterSpacing: 0,
+      // Konva Text defaults
+      wrap: 'word',
+      ellipsis: false,
+      padding: 0,
+      verticalAlign: 'top',
+      textDecoration: '',
+      fontVariant: 'normal',
+      direction: 'inherit',
     };
 
     addObject(currentSectionId, textObject);

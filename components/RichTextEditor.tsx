@@ -494,7 +494,7 @@ export function RichTextEditor({
             type="number"
             value={currentFontSize}
             onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-            className="w-20 px-2 py-1 border border-green-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+            className="w-20 px-2 py-1 border border-green-200 rounded text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
             min="8"
             max="72"
           />
@@ -605,7 +605,7 @@ export function RichTextEditor({
               <Palette className="w-4 h-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="p-3">
+          <DropdownMenuContent align="start" className="p-3 bg-white">
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-gray-700 mb-2 block">Text Color</label>
@@ -633,7 +633,7 @@ export function RichTextEditor({
                       }
                     }}
                     placeholder="#000000"
-                    className="flex-1 px-2 py-1 border border-green-200 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                    className="flex-1 px-2 py-1 border border-green-200 rounded text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                   />
                 </div>
               </div>
@@ -698,7 +698,7 @@ export function RichTextEditor({
               <Highlighter className="w-4 h-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="p-3">
+          <DropdownMenuContent align="start" className="p-3 bg-white">
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-gray-700 mb-2 block">Highlight Color</label>
@@ -724,7 +724,7 @@ export function RichTextEditor({
                       editor.chain().focus().toggleHighlight({ color: e.target.value }).run();
                     }}
                     placeholder="#FFFF00"
-                    className="flex-1 px-2 py-1 border border-green-200 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                    className="flex-1 px-2 py-1 border border-green-200 rounded text-xs font-mono bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                   />
                 </div>
               </div>
@@ -758,7 +758,7 @@ export function RichTextEditor({
               <ChevronDown className="w-3 h-3" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="p-2">
+          <DropdownMenuContent align="start" className="p-2 bg-white">
             <div className="space-y-2">
               <div>
                 <label className="text-xs font-medium text-gray-700 mb-1 block">Font Size (px)</label>
@@ -774,7 +774,7 @@ export function RichTextEditor({
                     }
                   }}
                   placeholder="Auto"
-                  className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                  className="w-24 px-2 py-1 border border-gray-300 rounded text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                   min="8"
                   max="200"
                 />
@@ -821,7 +821,7 @@ export function RichTextEditor({
               <ChevronDown className="w-3 h-3" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-64 overflow-y-auto p-2">
+          <DropdownMenuContent align="start" className="max-h-64 overflow-y-auto p-2 bg-white">
             <div className="space-y-2">
               <div>
                 <label className="text-xs font-medium text-gray-700 mb-1 block">Font Family</label>
@@ -882,7 +882,7 @@ export function RichTextEditor({
               <ChevronDown className="w-3 h-3" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="p-2">
+          <DropdownMenuContent align="start" className="p-2 bg-white">
             <div className="space-y-2">
               <div>
                 <label className="text-xs font-medium text-gray-700 mb-1 block">Line Height</label>
@@ -898,7 +898,7 @@ export function RichTextEditor({
                     }
                   }}
                   placeholder="Auto (e.g., 0.6, 1.5, 24px, 150%)"
-                  className="w-32 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                  className="w-32 px-2 py-1 border border-gray-300 rounded text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                 />
               </div>
               <div className="grid grid-cols-3 gap-1">
@@ -1011,7 +1011,7 @@ export function RichTextEditor({
               <ChevronDown className="w-3 h-3" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
+          <DropdownMenuContent align="start" className="bg-white">
             <DropdownMenuItem
               onClick={() => editor.chain().focus().setParagraph().run()}
               className={editor.isActive("paragraph") ? "bg-green-100" : ""}
@@ -1074,7 +1074,7 @@ export function RichTextEditor({
               <ChevronDown className="w-3 h-3" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
+          <DropdownMenuContent align="start" className="bg-white">
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleBulletList().run()}
               className={editor.isActive("bulletList") ? "bg-green-100" : ""}
@@ -1188,7 +1188,7 @@ export function RichTextEditor({
               <Smile className="w-4 h-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-64 overflow-y-auto">
+          <DropdownMenuContent align="start" className="max-h-64 overflow-y-auto bg-white">
             <div className="grid grid-cols-8 gap-1 p-2">
               {["😀", "😂", "🥰", "😍", "🤔", "😎", "👍", "❤️", "🎉", "🔥", "⭐", "💯", "✅", "❌", "⚠️", "💡", "🎊", "🎁", "🌸", "🌺", "🌻", "🌷", "🌹", "🌼", "💐", "🌿", "🍀", "🌱", "🌾", "🌵", "🌲", "🌳", "🌴", "🌊", "🌈", "☀️", "⭐", "🌟", "💫", "✨", "🌙", "☁️", "⛅", "🌤️", "🌦️", "🌧️", "⛈️", "🌩️", "⚡", "❄️", "☃️", "⛄", "🌨️", "💨", "🌪️", "🌫️"].map((emoji) => (
                 <button
@@ -1214,7 +1214,7 @@ export function RichTextEditor({
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="Enter URL"
-              className="flex-1 px-3 py-2 border border-green-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#36463A]"
+              className="flex-1 px-3 py-2 border border-green-200 rounded text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#36463A]"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   setLink();
@@ -1311,7 +1311,7 @@ export function RichTextEditor({
                       type="text"
                       value={gradientColor1}
                       onChange={(e) => setGradientColor1(e.target.value)}
-                      className="w-full px-3 py-2 border border-green-200 rounded text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                      className="w-full px-3 py-2 border border-green-200 rounded text-sm font-mono bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                       placeholder="#ff0000"
                     />
                   </div>
@@ -1344,7 +1344,7 @@ export function RichTextEditor({
                       type="text"
                       value={gradientColor2}
                       onChange={(e) => setGradientColor2(e.target.value)}
-                      className="w-full px-3 py-2 border border-green-200 rounded text-sm font-mono focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                      className="w-full px-3 py-2 border border-green-200 rounded text-sm font-mono bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                       placeholder="#0000ff"
                     />
                   </div>
@@ -1359,7 +1359,7 @@ export function RichTextEditor({
                   name="gradientDirection"
                   value={gradientDirection}
                   onChange={(e) => setGradientDirection(e.target.value)}
-                  className="w-full px-3 py-2 border border-green-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#36463A]"
+                  className="w-full px-3 py-2 border border-green-200 rounded text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#36463A]"
                 >
                   <option value="to bottom">Top to Bottom</option>
                   <option value="to top">Bottom to Top</option>

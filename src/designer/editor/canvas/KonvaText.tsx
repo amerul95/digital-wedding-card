@@ -1,5 +1,6 @@
 /**
  * Konva Text component
+ * Implements all Konva Text API properties according to https://konvajs.org/api/Konva.Text.html
  */
 
 'use client';
@@ -31,9 +32,17 @@ export function KonvaTextComponent({ object, onDoubleClick }: KonvaTextProps) {
       fontFamily={object.fontFamily}
       fontStyle={isBold && isItalic ? 'bold italic' : isBold ? 'bold' : isItalic ? 'italic' : 'normal'}
       fill={object.fill}
-      align={object.align}
-      lineHeight={object.lineHeight}
-      letterSpacing={object.letterSpacing}
+      align={object.align || 'left'}
+      lineHeight={object.lineHeight ?? 1}
+      letterSpacing={object.letterSpacing ?? 0}
+      // Additional Konva Text properties
+      wrap={object.wrap || 'word'}
+      ellipsis={object.ellipsis ?? false}
+      padding={object.padding ?? 0}
+      verticalAlign={object.verticalAlign || 'top'}
+      textDecoration={object.textDecoration || ''}
+      fontVariant={object.fontVariant || 'normal'}
+      direction={object.direction || 'inherit'}
       listening={!object.locked}
       onDblClick={onDoubleClick}
     />

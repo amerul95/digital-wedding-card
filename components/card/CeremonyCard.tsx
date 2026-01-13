@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EventData, FormData, ModalView } from "./types";
 import { downloadICS } from "./utils";
@@ -268,8 +268,8 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
     downloadICS(event);
   };
 
-  // Helper function to get background style from theme config
-  const getCardBackgroundStyle = (): React.CSSProperties => {
+  // Helper function to get background style from theme config - memoized to prevent infinite loops
+  const getCardBackgroundStyle = useMemo((): React.CSSProperties => {
     if (!themeConfig?.cardBackground) {
       return {};
     }
@@ -291,10 +291,10 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
       return { background: bgStyle.value };
     }
     return {};
-  };
+  }, [themeConfig?.cardBackground]);
 
-  // Helper function to get section background style
-  const getSectionBackgroundStyle = (sectionNumber: 1 | 2 | 3 | 4): React.CSSProperties => {
+  // Helper function to get section background style - memoized to prevent infinite loops
+  const getSectionBackgroundStyle = useCallback((sectionNumber: 1 | 2 | 3 | 4): React.CSSProperties => {
     if (!themeConfig) return {};
     
     const bgStyle: BackgroundStyle | undefined = 
@@ -321,7 +321,7 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
       return { background: bgStyle.value };
     }
     return {};
-  };
+  }, [themeConfig]);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center overflow-hidden">
@@ -341,7 +341,7 @@ export function CeremonyCard({ event: eventProp, editorSection, themeConfig, onS
           className="absolute inset-0 transition-all duration-300 ease-in-out"
           style={
             themeConfig?.cardBackground 
-              ? getCardBackgroundStyle()
+              ? getCardBackgroundStyle
               : { background: 'linear-gradient(to bottom, #fff1f2, #ffffff, #ffe4e6)' }
           }
         />

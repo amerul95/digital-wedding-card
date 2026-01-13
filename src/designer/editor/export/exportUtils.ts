@@ -298,10 +298,18 @@ function renderObjectToGroup(group: Konva.Group, object: CanvasObject, scale: nu
         fontSize: textObj.fontSize,
         fontFamily: textObj.fontFamily,
         fill: textObj.fill,
-        align: textObj.align,
-        lineHeight: textObj.lineHeight,
-        letterSpacing: textObj.letterSpacing,
+        align: textObj.align || 'left',
+        lineHeight: textObj.lineHeight ?? 1,
+        letterSpacing: textObj.letterSpacing ?? 0,
         fontStyle: textObj.fontStyle || 'normal',
+        // Additional Konva Text properties
+        wrap: textObj.wrap || 'word',
+        ellipsis: textObj.ellipsis ?? false,
+        padding: textObj.padding ?? 0,
+        verticalAlign: textObj.verticalAlign || 'top',
+        textDecoration: textObj.textDecoration || '',
+        fontVariant: textObj.fontVariant || 'normal',
+        direction: textObj.direction || 'inherit',
       });
       group.add(text);
       break;

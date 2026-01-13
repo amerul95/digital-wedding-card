@@ -449,6 +449,7 @@ export default function EditorPage() {
               onTextEdit={(id) => setEditingTextId(id)}
               workspaceScale={workspaceScale}
               stageRef={stageRef}
+              editingTextId={editingTextId}
             />
           </div>
         </div>

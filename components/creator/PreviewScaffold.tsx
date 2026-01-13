@@ -7,7 +7,10 @@ interface PreviewScaffoldProps {
 }
 
 export function PreviewScaffold({ config }: PreviewScaffoldProps) {
-    const getStyle = (bgStyle: BackgroundStyle): React.CSSProperties => {
+    const getStyle = (bgStyle: BackgroundStyle | undefined): React.CSSProperties => {
+        if (!bgStyle || !bgStyle.type) {
+            return {}; // none
+        }
         if (bgStyle.type === 'color') {
             return { backgroundColor: bgStyle.value };
         }

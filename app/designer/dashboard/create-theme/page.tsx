@@ -26,6 +26,10 @@ import { Page9Form } from "@/components/forms/Page9Form";
 import { Page10Form } from "@/components/forms/Page10Form";
 import { Page11Form } from "@/components/forms/Page11Form";
 import { Page12Form } from "@/components/forms/Page12Form";
+import { Page13Form } from "@/components/forms/Page13Form";
+import { Page14Form } from "@/components/forms/Page14Form";
+import { Page15Form } from "@/components/forms/Page15Form";
+import { Page16Form } from "@/components/forms/Page16Form";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,6 +58,10 @@ const SECTIONS = [
   { id: 10, label: "10. Final Segment" },
   { id: 11, label: "11. Button" },
   { id: 12, label: "12. Image Gallery" },
+  { id: 13, label: "13. Body Card" },
+  { id: 14, label: "14. Counting Days" },
+  { id: 15, label: "15. Attendance" },
+  { id: 16, label: "16. Congratulations" },
 ];
 
 // Helper function to parse box shadow value
@@ -239,6 +247,11 @@ export default function CreateThemePage() {
     const [pendingFontFile, setPendingFontFile] = useState<File | null>(null);
     const [fontFamilyName, setFontFamilyName] = useState("");
     const { designerId, customFonts: designerCustomFonts, refreshFonts } = useDesignerFonts();
+    const [showLoadThemeDialog, setShowLoadThemeDialog] = useState(false);
+    const [showLoadContentDialog, setShowLoadContentDialog] = useState(false);
+    const [loadingProjects, setLoadingProjects] = useState(false);
+    const [savedThemes, setSavedThemes] = useState<any[]>([]);
+    const [savedContent, setSavedContent] = useState<any[]>([]);
     
     // Ref to track if we're updating from user input (prevent useEffect from overriding)
     const isUpdatingFromUserInput = useRef(false);
@@ -528,7 +541,7 @@ export default function CreateThemePage() {
         setPendingNavigation(null);
     };
 
-    const updateConfig = (key: keyof ThemeConfig, value: BackgroundStyle | string | number | FooterIcons | FooterContainerConfig) => {
+    const updateConfig = (key: keyof ThemeConfig, value: BackgroundStyle | string | number | FooterIcons | FooterContainerConfig | undefined) => {
         setConfig((prev) => ({
             ...prev,
             [key]: value,
@@ -797,6 +810,15 @@ export default function CreateThemePage() {
                 const action = isEditing ? "updated" : "saved";
                 toast.success(`${typeName} ${action} successfully! ${data.theme?.customId ? `(ID: ${data.theme.customId})` : ''}`);
                 
+                // Update editingId if this was a new save (so URL reflects the saved item)
+                if (!isEditing && data.theme?.id) {
+                    router.replace(`/designer/dashboard/create-theme?id=${data.theme.id}`, { scroll: false });
+                    setEditingType(type);
+                }
+                
+                // Mark as no unsaved changes
+                setHasUnsavedChanges(false);
+                
                 // Only reset if creating new, not editing
                 if (!isEditing) {
                     if (type === "theme" || type === "template") {
@@ -806,8 +828,6 @@ export default function CreateThemePage() {
                         resetEvent();
                     }
                 }
-                
-                router.push("/designer/dashboard/themes");
             } else {
                 toast.error(data.error || `Failed to ${isEditing ? 'update' : 'save'} ${type}. Please try again.`);
             }
@@ -905,6 +925,160 @@ export default function CreateThemePage() {
                             className="bg-[#36463A] hover:bg-[#2d3a2f]"
                         >
                             Upload Font
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Load Theme Dialog */}
+            <Dialog open={showLoadThemeDialog} onOpenChange={setShowLoadThemeDialog}>
+                <DialogContent className="max-w-2xl max-h-[80vh]">
+                    <DialogHeader>
+                        <DialogTitle>Load Saved Theme</DialogTitle>
+                        <DialogDescription>
+                            Select a saved theme to continue working on it.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {loadingProjects ? (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#36463A]"></div>
+                            </div>
+                        ) : savedThemes.length === 0 ? (
+                            <div className="text-center py-8 text-gray-500">
+                                No saved themes found. Create and save a theme first.
+                            </div>
+                        ) : (
+                            <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+                                {savedThemes.map((theme) => (
+                                    <div
+                                        key={theme.id}
+                                        onClick={async () => {
+                                            try {
+                                                const response = await fetch(`/api/designer/themes/${theme.id}`);
+                                                if (response.ok) {
+                                                    const data = await response.json();
+                                                    const themeConfig = data.config || {};
+                                                    setConfig(themeConfig as ThemeConfig);
+                                                    setShowLoadThemeDialog(false);
+                                                    toast.success("Theme loaded successfully");
+                                                    setHasUnsavedChanges(false);
+                                                } else {
+                                                    toast.error("Failed to load theme");
+                                                }
+                                            } catch (error) {
+                                                console.error("Error loading theme:", error);
+                                                toast.error("Failed to load theme");
+                                            }
+                                        }}
+                                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900">{theme.name}</h3>
+                                                <p className="text-sm text-gray-500">
+                                                    {new Date(theme.createdAt).toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-xs px-2 py-1 rounded ${
+                                                    theme.status === 'published' 
+                                                        ? 'bg-green-100 text-green-700' 
+                                                        : 'bg-yellow-100 text-yellow-700'
+                                                }`}>
+                                                    {theme.status}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowLoadThemeDialog(false)}
+                        >
+                            Cancel
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Load Content Dialog */}
+            <Dialog open={showLoadContentDialog} onOpenChange={setShowLoadContentDialog}>
+                <DialogContent className="max-w-2xl max-h-[80vh]">
+                    <DialogHeader>
+                        <DialogTitle>Load Saved Content</DialogTitle>
+                        <DialogDescription>
+                            Select saved content to continue working on it.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {loadingProjects ? (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#36463A]"></div>
+                            </div>
+                        ) : savedContent.length === 0 ? (
+                            <div className="text-center py-8 text-gray-500">
+                                No saved content found. Create and save content first.
+                            </div>
+                        ) : (
+                            <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+                                {savedContent.map((content) => (
+                                    <div
+                                        key={content.id}
+                                        onClick={async () => {
+                                            try {
+                                                const response = await fetch(`/api/designer/themes/${content.id}`);
+                                                if (response.ok) {
+                                                    const data = await response.json();
+                                                    const themeConfig = data.config || {};
+                                                    if (themeConfig.defaultEventData) {
+                                                        updateEvent(themeConfig.defaultEventData);
+                                                    }
+                                                    setShowLoadContentDialog(false);
+                                                    toast.success("Content loaded successfully");
+                                                    setHasUnsavedChanges(false);
+                                                } else {
+                                                    toast.error("Failed to load content");
+                                                }
+                                            } catch (error) {
+                                                console.error("Error loading content:", error);
+                                                toast.error("Failed to load content");
+                                            }
+                                        }}
+                                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900">{content.name}</h3>
+                                                <p className="text-sm text-gray-500">
+                                                    {new Date(content.createdAt).toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-xs px-2 py-1 rounded ${
+                                                    content.status === 'published' 
+                                                        ? 'bg-green-100 text-green-700' 
+                                                        : 'bg-yellow-100 text-yellow-700'
+                                                }`}>
+                                                    {content.status}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowLoadContentDialog(false)}
+                        >
+                            Cancel
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -1019,36 +1193,30 @@ export default function CreateThemePage() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            {(!isEditing || editingType === 'theme') && (
-                                <DropdownMenuItem
-                                    onClick={() => handleSave("theme")}
-                                    disabled={!config.themeName || isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
-                                >
-                                    <span>{isEditing ? "Update Theme" : "Save Theme"}</span>
-                                    {!config.themeName && (
-                                        <span className="ml-2 text-xs text-gray-400">(Select theme first)</span>
-                                    )}
-                                </DropdownMenuItem>
-                            )}
-                            {(!isEditing || editingType === 'content') && (
-                                <DropdownMenuItem
-                                    onClick={() => handleSave("content")}
-                                    disabled={isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
-                                >
-                                    {isEditing ? "Update Content" : "Save Content"}
-                                </DropdownMenuItem>
-                            )}
-                            {(!isEditing || editingType === 'template') && (
-                                <DropdownMenuItem
-                                    onClick={() => handleSave("template")}
-                                    disabled={!config.themeName || !config.color || isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
-                                >
-                                    <span>{isEditing ? "Update Template" : "Save Template"}</span>
-                                    {(!config.themeName || !config.color) && (
-                                        <span className="ml-2 text-xs text-gray-400">(Complete theme & color)</span>
-                                    )}
-                                </DropdownMenuItem>
-                            )}
+                            <DropdownMenuItem
+                                onClick={() => handleSave("theme")}
+                                disabled={!config.themeName || isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
+                            >
+                                <span>{isEditing ? "Update Theme" : "Save Theme"}</span>
+                                {!config.themeName && (
+                                    <span className="ml-2 text-xs text-gray-400">(Select theme first)</span>
+                                )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => handleSave("content")}
+                                disabled={isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
+                            >
+                                {isEditing ? "Update Content" : "Save Content"}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => handleSave("template")}
+                                disabled={!config.themeName || !config.color || isSavingTheme || isSavingContent || isSavingTemplate || isLoadingTheme}
+                            >
+                                <span>{isEditing ? "Update Template" : "Save Template"}</span>
+                                {(!config.themeName || !config.color) && (
+                                    <span className="ml-2 text-xs text-gray-400">(Complete theme & color)</span>
+                                )}
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                     
@@ -1112,8 +1280,38 @@ export default function CreateThemePage() {
             {activeTab === "theme" && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Theme Designer</CardTitle>
-                        <CardDescription>Customize your theme appearance</CardDescription>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle>Theme Designer</CardTitle>
+                                <CardDescription>Customize your theme appearance</CardDescription>
+                            </div>
+                            <Button
+                                onClick={async () => {
+                                    setShowLoadThemeDialog(true);
+                                    setLoadingProjects(true);
+                                    try {
+                                        const response = await fetch('/api/designer/themes');
+                                        if (response.ok) {
+                                            const themes = await response.json();
+                                            // Filter only themes (not content or template)
+                                            const themeProjects = themes.filter((t: any) => t.type === 'theme');
+                                            setSavedThemes(themeProjects);
+                                        } else {
+                                            toast.error("Failed to load saved themes");
+                                        }
+                                    } catch (error) {
+                                        console.error("Error loading themes:", error);
+                                        toast.error("Failed to load saved themes");
+                                    } finally {
+                                        setLoadingProjects(false);
+                                    }
+                                }}
+                                variant="outline"
+                                className="px-4 py-2"
+                            >
+                                Load
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <div className="flex gap-4 items-start">
@@ -1148,21 +1346,81 @@ export default function CreateThemePage() {
                                                     value={config.section1Background}
                                                     onChange={(val) => updateConfig('section1Background', val)}
                                                 />
+                                                <div className="flex items-center gap-2">
+                                                    <Label className="text-xs text-gray-600 w-24">Height (px)</Label>
+                                                    <Input
+                                                        type="number"
+                                                        value={config.section1Height ?? ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            updateConfig('section1Height', value ? Number(value) : (undefined as any));
+                                                        }}
+                                                        placeholder="Auto"
+                                                        className="h-8 text-xs"
+                                                        min="0"
+                                                        step="1"
+                                                    />
+                                                </div>
                                                 <ThemeControls
                                                     label="Section 2"
                                                     value={config.section2Background}
                                                     onChange={(val) => updateConfig('section2Background', val)}
                                                 />
+                                                <div className="flex items-center gap-2">
+                                                    <Label className="text-xs text-gray-600 w-24">Height (px)</Label>
+                                                    <Input
+                                                        type="number"
+                                                        value={config.section2Height ?? ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            updateConfig('section2Height', value ? Number(value) : (undefined as any));
+                                                        }}
+                                                        placeholder="Auto"
+                                                        className="h-8 text-xs"
+                                                        min="0"
+                                                        step="1"
+                                                    />
+                                                </div>
                                                 <ThemeControls
                                                     label="Section 3"
                                                     value={config.section3Background}
                                                     onChange={(val) => updateConfig('section3Background', val)}
                                                 />
+                                                <div className="flex items-center gap-2">
+                                                    <Label className="text-xs text-gray-600 w-24">Height (px)</Label>
+                                                    <Input
+                                                        type="number"
+                                                        value={config.section3Height ?? ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            updateConfig('section3Height', value ? Number(value) : (undefined as any));
+                                                        }}
+                                                        placeholder="Auto"
+                                                        className="h-8 text-xs"
+                                                        min="0"
+                                                        step="1"
+                                                    />
+                                                </div>
                                                 <ThemeControls
                                                     label="Section 4"
                                                     value={config.section4Background}
                                                     onChange={(val) => updateConfig('section4Background', val)}
                                                 />
+                                                <div className="flex items-center gap-2">
+                                                    <Label className="text-xs text-gray-600 w-24">Height (px)</Label>
+                                                    <Input
+                                                        type="number"
+                                                        value={config.section4Height ?? ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            updateConfig('section4Height', value ? Number(value) : (undefined as any));
+                                                        }}
+                                                        placeholder="Auto"
+                                                        className="h-8 text-xs"
+                                                        min="0"
+                                                        step="1"
+                                                    />
+                                                </div>
                                                 <p className="text-xs text-gray-500 mt-2">
                                                     Scroll the card to see which section is active.
                                                 </p>
@@ -1836,8 +2094,32 @@ export default function CreateThemePage() {
                                 <CardTitle>Content Editor</CardTitle>
                                 <CardDescription>Set default content for your theme. Clients can customize these later.</CardDescription>
                             </div>
-                            <div className="flex gap-2">
-                            </div>
+                            <Button
+                                onClick={async () => {
+                                    setShowLoadContentDialog(true);
+                                    setLoadingProjects(true);
+                                    try {
+                                        const response = await fetch('/api/designer/themes');
+                                        if (response.ok) {
+                                            const themes = await response.json();
+                                            // Filter only content (not theme or template)
+                                            const contentProjects = themes.filter((t: any) => t.type === 'content');
+                                            setSavedContent(contentProjects);
+                                        } else {
+                                            toast.error("Failed to load saved content");
+                                        }
+                                    } catch (error) {
+                                        console.error("Error loading content:", error);
+                                        toast.error("Failed to load saved content");
+                                    } finally {
+                                        setLoadingProjects(false);
+                                    }
+                                }}
+                                variant="outline"
+                                className="px-4 py-2"
+                            >
+                                Load
+                            </Button>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -1845,9 +2127,17 @@ export default function CreateThemePage() {
                             {/* Left Sidebar - Accordion Menus with Forms */}
                             <div className="w-80 shrink-0">
                                 <style dangerouslySetInnerHTML={{__html: `
+                                    .content-form-wrapper {
+                                        width: 100% !important;
+                                    }
                                     .content-form-wrapper > div.bg-white {
-                                        padding: 0 !important;
+                                        padding: 1.5rem 0 !important;
                                         background: transparent !important;
+                                        width: 100% !important;
+                                        max-width: 100% !important;
+                                    }
+                                    .content-form-wrapper > div.bg-white > div {
+                                        width: 100% !important;
                                     }
                                 `}} />
                                 <Accordion 
@@ -1878,6 +2168,10 @@ export default function CreateThemePage() {
                                             10: Page10Form,
                                             11: Page11Form,
                                             12: Page12Form,
+                                            13: Page13Form,
+                                            14: Page14Form,
+                                            15: Page15Form,
+                                            16: Page16Form,
                                         };
                                         const SectionComponent = formComponents[section.id];
                                         
@@ -1898,7 +2192,7 @@ export default function CreateThemePage() {
                                                     </div>
                                                 </AccordionTrigger>
                                                 <AccordionContent className="px-0 pb-0">
-                                                    <div className="bg-white rounded-lg border border-gray-200 max-h-[600px] overflow-y-auto content-form-wrapper">
+                                                    <div className="bg-white rounded-lg border border-gray-200 max-h-[600px] overflow-y-auto content-form-wrapper w-full">
                                                         {SectionComponent && <SectionComponent />}
                                                     </div>
                                                 </AccordionContent>

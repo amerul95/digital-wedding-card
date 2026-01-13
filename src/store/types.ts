@@ -28,10 +28,18 @@ export interface TextObject extends BaseObject {
   fontFamily: string;
   fontSize: number;
   fill: string;
-  align: 'left' | 'center' | 'right';
+  align: 'left' | 'center' | 'right' | 'justify';
   lineHeight: number;
   letterSpacing: number;
   fontStyle: 'normal' | 'bold' | 'italic' | 'bold italic';
+  // Additional Konva Text properties
+  wrap?: 'word' | 'char' | 'none';
+  ellipsis?: boolean;
+  padding?: number;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
+  textDecoration?: '' | 'underline' | 'line-through' | 'underline line-through';
+  fontVariant?: 'normal' | 'small-caps';
+  direction?: 'inherit' | 'ltr' | 'rtl';
 }
 
 export interface RectObject extends BaseObject {

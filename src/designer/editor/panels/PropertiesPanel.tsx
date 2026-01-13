@@ -211,6 +211,9 @@ function TextProperties({
             <SelectItem value="Times New Roman">Times New Roman</SelectItem>
             <SelectItem value="Georgia">Georgia</SelectItem>
             <SelectItem value="Courier New">Courier New</SelectItem>
+            <SelectItem value="Inter">Inter</SelectItem>
+            <SelectItem value="Roboto">Roboto</SelectItem>
+            <SelectItem value="Open Sans">Open Sans</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -240,8 +243,8 @@ function TextProperties({
       <div className="space-y-2">
         <Label className="text-xs font-medium">Align</Label>
         <Select
-          value={object.align}
-          onValueChange={(value: 'left' | 'center' | 'right') =>
+          value={object.align || 'left'}
+          onValueChange={(value: 'left' | 'center' | 'right' | 'justify') =>
             onUpdate({ align: value })
           }
         >
@@ -252,6 +255,26 @@ function TextProperties({
             <SelectItem value="left">Left</SelectItem>
             <SelectItem value="center">Center</SelectItem>
             <SelectItem value="right">Right</SelectItem>
+            <SelectItem value="justify">Justify</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Vertical Align</Label>
+        <Select
+          value={object.verticalAlign || 'top'}
+          onValueChange={(value: 'top' | 'middle' | 'bottom') =>
+            onUpdate({ verticalAlign: value })
+          }
+        >
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="top">Top</SelectItem>
+            <SelectItem value="middle">Middle</SelectItem>
+            <SelectItem value="bottom">Bottom</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -272,6 +295,133 @@ function TextProperties({
             <SelectItem value="bold">Bold</SelectItem>
             <SelectItem value="italic">Italic</SelectItem>
             <SelectItem value="bold italic">Bold Italic</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Line Height</Label>
+        <Input
+          type="number"
+          step="0.1"
+          value={object.lineHeight ?? 1}
+          onChange={(e) =>
+            onUpdate({ lineHeight: Math.max(0.5, parseFloat(e.target.value) || 1) })
+          }
+          className="h-8 text-xs"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Letter Spacing</Label>
+        <Input
+          type="number"
+          step="0.1"
+          value={object.letterSpacing ?? 0}
+          onChange={(e) =>
+            onUpdate({ letterSpacing: parseFloat(e.target.value) || 0 })
+          }
+          className="h-8 text-xs"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Padding</Label>
+        <Input
+          type="number"
+          value={object.padding ?? 0}
+          onChange={(e) =>
+            onUpdate({ padding: Math.max(0, parseFloat(e.target.value) || 0) })
+          }
+          className="h-8 text-xs"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Text Wrap</Label>
+        <Select
+          value={object.wrap || 'word'}
+          onValueChange={(value: 'word' | 'char' | 'none') =>
+            onUpdate({ wrap: value })
+          }
+        >
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="word">Word</SelectItem>
+            <SelectItem value="char">Character</SelectItem>
+            <SelectItem value="none">None</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label className="text-xs font-medium">Ellipsis</Label>
+          <Switch
+            checked={object.ellipsis ?? false}
+            onCheckedChange={(checked) => onUpdate({ ellipsis: checked })}
+          />
+        </div>
+        <p className="text-xs text-gray-500">
+          Add "..." when text overflows (requires width/height limits)
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Text Decoration</Label>
+        <Select
+          value={object.textDecoration || ''}
+          onValueChange={(value: '' | 'underline' | 'line-through' | 'underline line-through') =>
+            onUpdate({ textDecoration: value })
+          }
+        >
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">None</SelectItem>
+            <SelectItem value="underline">Underline</SelectItem>
+            <SelectItem value="line-through">Line Through</SelectItem>
+            <SelectItem value="underline line-through">Both</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Font Variant</Label>
+        <Select
+          value={object.fontVariant || 'normal'}
+          onValueChange={(value: 'normal' | 'small-caps') =>
+            onUpdate({ fontVariant: value })
+          }
+        >
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="normal">Normal</SelectItem>
+            <SelectItem value="small-caps">Small Caps</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">Text Direction</Label>
+        <Select
+          value={object.direction || 'inherit'}
+          onValueChange={(value: 'inherit' | 'ltr' | 'rtl') =>
+            onUpdate({ direction: value })
+          }
+        >
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="inherit">Inherit</SelectItem>
+            <SelectItem value="ltr">Left to Right</SelectItem>
+            <SelectItem value="rtl">Right to Left</SelectItem>
           </SelectContent>
         </Select>
       </div>

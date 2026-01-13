@@ -10,7 +10,12 @@ interface ThemePreviewProps {
 }
 
 export function ThemePreview({ config }: ThemePreviewProps) {
-  const getStyle = (bgStyle: BackgroundStyle): React.CSSProperties => {
+  const getStyle = (bgStyle: BackgroundStyle | undefined): React.CSSProperties => {
+    if (!bgStyle || !bgStyle.type) {
+      return {
+        background: 'linear-gradient(to bottom, #fff1f2, #ffffff, #ffe4e6)'
+      };
+    }
     if (bgStyle.type === 'color') {
       return { backgroundColor: bgStyle.value };
     }
@@ -63,11 +68,11 @@ export function ThemePreview({ config }: ThemePreviewProps) {
           onRSVPClick={noOp}
           onGiftsClick={noOp}
           customStyle={{
-            background: config.footerBackground.type === 'color' 
+            background: config.footerBackground?.type === 'color' 
               ? config.footerBackground.value 
-              : config.footerBackground.type === 'gradient'
+              : config.footerBackground?.type === 'gradient'
               ? config.footerBackground.value
-              : config.footerBackground.type === 'image'
+              : config.footerBackground?.type === 'image'
               ? `url(${config.footerBackground.value})`
               : undefined,
             color: config.footerIconColor,

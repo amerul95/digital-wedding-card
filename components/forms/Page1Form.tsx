@@ -27,6 +27,68 @@ export function Page1Form() {
   const editorWrapperRef = useRef<HTMLDivElement>(null);
   const isInternalUpdateRef = useRef(false);
   const updateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Local state for color pickers to prevent excessive updates
+  const [doorColor, setDoorColor] = useState(event.openingStyleColor || event.doorColor || "#f43f5e");
+  const [effectColor, setEffectColor] = useState(event.animationEffectColor || event.effectColor || "#f43f5e");
+  const [borderColor, setBorderColor] = useState(event.doorButtonBorderColor || "#fecdd3");
+  const [backgroundColor, setBackgroundColor] = useState(event.doorButtonBackgroundColor || "#ffffff");
+  const [openTextColor, setOpenTextColor] = useState(event.doorButtonOpenTextColor || "#36463A");
+  
+  // Refs for color preview divs to update directly without re-renders
+  const doorColorPreviewRef = useRef<HTMLDivElement>(null);
+  const effectColorPreviewRef = useRef<HTMLDivElement>(null);
+  const borderColorPreviewRef = useRef<HTMLDivElement>(null);
+  const backgroundColorPreviewRef = useRef<HTMLDivElement>(null);
+  const openTextColorPreviewRef = useRef<HTMLDivElement>(null);
+  
+  // Timeout refs for debouncing
+  const doorColorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const effectColorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const borderColorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const backgroundColorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openTextColorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Sync local state with event when event changes externally
+  useEffect(() => {
+    const newColor = event.openingStyleColor || event.doorColor || "#f43f5e";
+    setDoorColor(newColor);
+    if (doorColorPreviewRef.current) {
+      doorColorPreviewRef.current.style.backgroundColor = newColor;
+    }
+  }, [event.openingStyleColor, event.doorColor]);
+  
+  useEffect(() => {
+    const newColor = event.animationEffectColor || event.effectColor || "#f43f5e";
+    setEffectColor(newColor);
+    if (effectColorPreviewRef.current) {
+      effectColorPreviewRef.current.style.backgroundColor = newColor;
+    }
+  }, [event.animationEffectColor, event.effectColor]);
+  
+  useEffect(() => {
+    const newColor = event.doorButtonBorderColor || "#fecdd3";
+    setBorderColor(newColor);
+    if (borderColorPreviewRef.current) {
+      borderColorPreviewRef.current.style.backgroundColor = newColor;
+    }
+  }, [event.doorButtonBorderColor]);
+  
+  useEffect(() => {
+    const newColor = event.doorButtonBackgroundColor || "#ffffff";
+    setBackgroundColor(newColor);
+    if (backgroundColorPreviewRef.current) {
+      backgroundColorPreviewRef.current.style.backgroundColor = newColor;
+    }
+  }, [event.doorButtonBackgroundColor]);
+  
+  useEffect(() => {
+    const newColor = event.doorButtonOpenTextColor || "#36463A";
+    setOpenTextColor(newColor);
+    if (openTextColorPreviewRef.current) {
+      openTextColorPreviewRef.current.style.backgroundColor = newColor;
+    }
+  }, [event.doorButtonOpenTextColor]);
 
   // Sync local state with event when event changes externally (but not from our updates)
   useEffect(() => {
@@ -108,14 +170,41 @@ export function Page1Form() {
               <div className="flex gap-2 items-center">
                 <div className="relative h-10 w-10">
                   <div
+                    ref={doorColorPreviewRef}
                     className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
-                    style={{ backgroundColor: event.openingStyleColor || event.doorColor }}
+                    style={{ backgroundColor: doorColor }}
                   />
                   <input
                     type="color"
-                    value={event.openingStyleColor || event.doorColor}
+                    value={doorColor}
                     onChange={(e) => {
-                      updateEvent({ openingStyleColor: e.target.value, doorColor: e.target.value });
+                      const newColor = e.target.value;
+                      // Update preview directly without re-render
+                      if (doorColorPreviewRef.current) {
+                        doorColorPreviewRef.current.style.backgroundColor = newColor;
+                      }
+                      setDoorColor(newColor);
+                      // Debounce the context update
+                      if (doorColorTimeoutRef.current) {
+                        clearTimeout(doorColorTimeoutRef.current);
+                      }
+                      doorColorTimeoutRef.current = setTimeout(() => {
+                        updateEvent({ openingStyleColor: newColor, doorColor: newColor });
+                      }, 100);
+                    }}
+                    onMouseUp={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      if (doorColorTimeoutRef.current) {
+                        clearTimeout(doorColorTimeoutRef.current);
+                      }
+                      updateEvent({ openingStyleColor: value, doorColor: value });
+                    }}
+                    onBlur={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      if (doorColorTimeoutRef.current) {
+                        clearTimeout(doorColorTimeoutRef.current);
+                      }
+                      updateEvent({ openingStyleColor: value, doorColor: value });
                     }}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     style={{ WebkitAppearance: "none", appearance: "none" }}
@@ -123,9 +212,21 @@ export function Page1Form() {
                 </div>
                 <input
                   type="text"
-                  value={event.openingStyleColor || event.doorColor}
+                  value={doorColor}
                   onChange={(e) => {
-                    updateEvent({ openingStyleColor: e.target.value, doorColor: e.target.value });
+                    const value = e.target.value;
+                    setDoorColor(value);
+                    if (/^#[0-9A-F]{6}$/i.test(value)) {
+                      updateEvent({ openingStyleColor: value, doorColor: value });
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value;
+                    if (/^#[0-9A-F]{6}$/i.test(value)) {
+                      updateEvent({ openingStyleColor: value, doorColor: value });
+                    } else {
+                      setDoorColor(event.openingStyleColor || event.doorColor || "#f43f5e");
+                    }
                   }}
                   placeholder="#f43f5e"
                   className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
@@ -184,26 +285,65 @@ export function Page1Form() {
                 <label className="text-xs text-gray-600 mb-1 block">Effect Color</label>
                 <div className="flex gap-2 items-center">
                   <div className="relative h-10 w-10">
-                    <div
-                      className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
-                      style={{ backgroundColor: event.animationEffectColor || event.effectColor }}
-                    />
-                    <input
-                      type="color"
-                      value={event.animationEffectColor || event.effectColor}
-                      onChange={(e) => {
-                        updateEvent({ animationEffectColor: e.target.value, effectColor: e.target.value });
-                      }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      style={{ WebkitAppearance: "none", appearance: "none" }}
-                    />
-                  </div>
+                  <div
+                    ref={effectColorPreviewRef}
+                    className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
+                    style={{ backgroundColor: effectColor }}
+                  />
                   <input
-                    type="text"
-                    value={event.animationEffectColor || event.effectColor}
+                    type="color"
+                    value={effectColor}
                     onChange={(e) => {
-                      updateEvent({ animationEffectColor: e.target.value, effectColor: e.target.value });
+                      const newColor = e.target.value;
+                      // Update preview directly without re-render
+                      if (effectColorPreviewRef.current) {
+                        effectColorPreviewRef.current.style.backgroundColor = newColor;
+                      }
+                      setEffectColor(newColor);
+                      // Debounce the context update
+                      if (effectColorTimeoutRef.current) {
+                        clearTimeout(effectColorTimeoutRef.current);
+                      }
+                      effectColorTimeoutRef.current = setTimeout(() => {
+                        updateEvent({ animationEffectColor: newColor, effectColor: newColor });
+                      }, 100);
                     }}
+                    onMouseUp={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      if (effectColorTimeoutRef.current) {
+                        clearTimeout(effectColorTimeoutRef.current);
+                      }
+                      updateEvent({ animationEffectColor: value, effectColor: value });
+                    }}
+                    onBlur={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      if (effectColorTimeoutRef.current) {
+                        clearTimeout(effectColorTimeoutRef.current);
+                      }
+                      updateEvent({ animationEffectColor: value, effectColor: value });
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    style={{ WebkitAppearance: "none", appearance: "none" }}
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={effectColor}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setEffectColor(value);
+                    if (/^#[0-9A-F]{6}$/i.test(value)) {
+                      updateEvent({ animationEffectColor: value, effectColor: value });
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value;
+                    if (/^#[0-9A-F]{6}$/i.test(value)) {
+                      updateEvent({ animationEffectColor: value, effectColor: value });
+                    } else {
+                      setEffectColor(event.animationEffectColor || event.effectColor || "#f43f5e");
+                    }
+                  }}
                     placeholder="#f43f5e"
                     className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
                   />
@@ -372,21 +512,64 @@ export function Page1Form() {
                 <div className="flex gap-2 items-center">
                   <div className="relative h-10 w-10">
                     <div
+                      ref={borderColorPreviewRef}
                       className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
-                      style={{ backgroundColor: event.doorButtonBorderColor || "#fecdd3" }}
+                      style={{ backgroundColor: borderColor }}
                     />
                     <input
                       type="color"
-                      value={event.doorButtonBorderColor || "#fecdd3"}
-                      onChange={(e) => updateEvent({ doorButtonBorderColor: e.target.value })}
+                      value={borderColor}
+                      onChange={(e) => {
+                        const newColor = e.target.value;
+                        // Update preview directly without re-render
+                        if (borderColorPreviewRef.current) {
+                          borderColorPreviewRef.current.style.backgroundColor = newColor;
+                        }
+                        setBorderColor(newColor);
+                        // Debounce the context update
+                        if (borderColorTimeoutRef.current) {
+                          clearTimeout(borderColorTimeoutRef.current);
+                        }
+                        borderColorTimeoutRef.current = setTimeout(() => {
+                          updateEvent({ doorButtonBorderColor: newColor || undefined });
+                        }, 100);
+                      }}
+                      onMouseUp={(e) => {
+                        const value = (e.target as HTMLInputElement).value;
+                        if (borderColorTimeoutRef.current) {
+                          clearTimeout(borderColorTimeoutRef.current);
+                        }
+                        updateEvent({ doorButtonBorderColor: value || undefined });
+                      }}
+                      onBlur={(e) => {
+                        const value = (e.target as HTMLInputElement).value;
+                        if (borderColorTimeoutRef.current) {
+                          clearTimeout(borderColorTimeoutRef.current);
+                        }
+                        updateEvent({ doorButtonBorderColor: value || undefined });
+                      }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       style={{ WebkitAppearance: "none", appearance: "none" }}
                     />
                   </div>
                   <input
                     type="text"
-                    value={event.doorButtonBorderColor || ""}
-                    onChange={(e) => updateEvent({ doorButtonBorderColor: e.target.value || undefined })}
+                    value={borderColor}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setBorderColor(value);
+                      if (/^#[0-9A-F]{6}$/i.test(value) || value === "") {
+                        updateEvent({ doorButtonBorderColor: value || undefined });
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      if (/^#[0-9A-F]{6}$/i.test(value) || value === "") {
+                        updateEvent({ doorButtonBorderColor: value || undefined });
+                      } else {
+                        setBorderColor(event.doorButtonBorderColor || "#fecdd3");
+                      }
+                    }}
                     placeholder="#fecdd3"
                     className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
                   />
@@ -399,21 +582,64 @@ export function Page1Form() {
                 <div className="flex gap-2 items-center">
                   <div className="relative h-10 w-10">
                     <div
+                      ref={backgroundColorPreviewRef}
                       className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
-                      style={{ backgroundColor: event.doorButtonBackgroundColor || "#ffffff" }}
+                      style={{ backgroundColor: backgroundColor }}
                     />
                     <input
                       type="color"
-                      value={event.doorButtonBackgroundColor || "#ffffff"}
-                      onChange={(e) => updateEvent({ doorButtonBackgroundColor: e.target.value })}
+                      value={backgroundColor}
+                      onChange={(e) => {
+                        const newColor = e.target.value;
+                        // Update preview directly without re-render
+                        if (backgroundColorPreviewRef.current) {
+                          backgroundColorPreviewRef.current.style.backgroundColor = newColor;
+                        }
+                        setBackgroundColor(newColor);
+                        // Debounce the context update
+                        if (backgroundColorTimeoutRef.current) {
+                          clearTimeout(backgroundColorTimeoutRef.current);
+                        }
+                        backgroundColorTimeoutRef.current = setTimeout(() => {
+                          updateEvent({ doorButtonBackgroundColor: newColor || undefined });
+                        }, 100);
+                      }}
+                      onMouseUp={(e) => {
+                        const value = (e.target as HTMLInputElement).value;
+                        if (backgroundColorTimeoutRef.current) {
+                          clearTimeout(backgroundColorTimeoutRef.current);
+                        }
+                        updateEvent({ doorButtonBackgroundColor: value || undefined });
+                      }}
+                      onBlur={(e) => {
+                        const value = (e.target as HTMLInputElement).value;
+                        if (backgroundColorTimeoutRef.current) {
+                          clearTimeout(backgroundColorTimeoutRef.current);
+                        }
+                        updateEvent({ doorButtonBackgroundColor: value || undefined });
+                      }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       style={{ WebkitAppearance: "none", appearance: "none" }}
                     />
                   </div>
                   <input
                     type="text"
-                    value={event.doorButtonBackgroundColor || ""}
-                    onChange={(e) => updateEvent({ doorButtonBackgroundColor: e.target.value || undefined })}
+                    value={backgroundColor}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setBackgroundColor(value);
+                      if (/^#[0-9A-F]{6}$/i.test(value) || value === "") {
+                        updateEvent({ doorButtonBackgroundColor: value || undefined });
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      if (/^#[0-9A-F]{6}$/i.test(value) || value === "") {
+                        updateEvent({ doorButtonBackgroundColor: value || undefined });
+                      } else {
+                        setBackgroundColor(event.doorButtonBackgroundColor || "#ffffff");
+                      }
+                    }}
                     placeholder="#ffffff"
                     className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
                   />
@@ -439,21 +665,64 @@ export function Page1Form() {
                 <div className="flex gap-2 items-center">
                   <div className="relative h-10 w-10">
                     <div
+                      ref={openTextColorPreviewRef}
                       className="absolute inset-0 rounded-full border border-[#36463A] cursor-pointer"
-                      style={{ backgroundColor: event.doorButtonOpenTextColor || "#36463A" }}
+                      style={{ backgroundColor: openTextColor }}
                     />
                     <input
                       type="color"
-                      value={event.doorButtonOpenTextColor || "#36463A"}
-                      onChange={(e) => updateEvent({ doorButtonOpenTextColor: e.target.value })}
+                      value={openTextColor}
+                      onChange={(e) => {
+                        const newColor = e.target.value;
+                        // Update preview directly without re-render
+                        if (openTextColorPreviewRef.current) {
+                          openTextColorPreviewRef.current.style.backgroundColor = newColor;
+                        }
+                        setOpenTextColor(newColor);
+                        // Debounce the context update
+                        if (openTextColorTimeoutRef.current) {
+                          clearTimeout(openTextColorTimeoutRef.current);
+                        }
+                        openTextColorTimeoutRef.current = setTimeout(() => {
+                          updateEvent({ doorButtonOpenTextColor: newColor || undefined });
+                        }, 100);
+                      }}
+                      onMouseUp={(e) => {
+                        const value = (e.target as HTMLInputElement).value;
+                        if (openTextColorTimeoutRef.current) {
+                          clearTimeout(openTextColorTimeoutRef.current);
+                        }
+                        updateEvent({ doorButtonOpenTextColor: value || undefined });
+                      }}
+                      onBlur={(e) => {
+                        const value = (e.target as HTMLInputElement).value;
+                        if (openTextColorTimeoutRef.current) {
+                          clearTimeout(openTextColorTimeoutRef.current);
+                        }
+                        updateEvent({ doorButtonOpenTextColor: value || undefined });
+                      }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       style={{ WebkitAppearance: "none", appearance: "none" }}
                     />
                   </div>
                   <input
                     type="text"
-                    value={event.doorButtonOpenTextColor || ""}
-                    onChange={(e) => updateEvent({ doorButtonOpenTextColor: e.target.value || undefined })}
+                    value={openTextColor}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setOpenTextColor(value);
+                      if (/^#[0-9A-F]{6}$/i.test(value) || value === "") {
+                        updateEvent({ doorButtonOpenTextColor: value || undefined });
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      if (/^#[0-9A-F]{6}$/i.test(value) || value === "") {
+                        updateEvent({ doorButtonOpenTextColor: value || undefined });
+                      } else {
+                        setOpenTextColor(event.doorButtonOpenTextColor || "#36463A");
+                      }
+                    }}
                     placeholder="#36463A"
                     className="flex-1 px-3 py-2 rounded-xl border border-[#36463A] text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36463A] bg-white font-mono"
                   />

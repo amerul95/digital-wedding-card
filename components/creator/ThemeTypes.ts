@@ -39,6 +39,10 @@ export interface ThemeConfig {
   section2Background: BackgroundStyle;
   section3Background: BackgroundStyle;
   section4Background: BackgroundStyle;
+  section1Height?: number; // Section 1 height in pixels (undefined = auto/min-h-full)
+  section2Height?: number; // Section 2 height in pixels (undefined = auto/min-h-full)
+  section3Height?: number; // Section 3 height in pixels (undefined = auto/min-h-full)
+  section4Height?: number; // Section 4 height in pixels (undefined = auto/min-h-full)
   footerBackground: BackgroundStyle;
   footerIconColor: string;
   footerTextColor?: string; // Color for text under icons

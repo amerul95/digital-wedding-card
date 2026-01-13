@@ -30,6 +30,7 @@ interface SectionRendererProps {
   currentSectionId: string | null;
   selectedIds: string[];
   tool: string;
+  editingTextId?: string | null;
   onSectionClick: (sectionId: string) => void;
   onObjectClick: (objectId: string) => void;
   onObjectDragMove?: (e: any, objectId: string, sectionId: string) => void;
@@ -59,6 +60,7 @@ export function SectionRenderer({
   currentSectionId,
   selectedIds,
   tool,
+  editingTextId,
   onSectionClick,
   onObjectClick,
   onObjectDragMove,
@@ -303,7 +305,11 @@ export function SectionRenderer({
             )}
 
             {/* Objects */}
-            {section.objects.map((object) => (
+            {section.objects.map((object) => {
+              // Hide text object when it's being edited (to prevent duplicate display)
+              const isEditing = object.type === 'text' && object.id === editingTextId;
+              
+              return (
               <Group
                 key={object.id}
                 id={object.id}
@@ -312,7 +318,7 @@ export function SectionRenderer({
                 width={object.width}
                 height={object.height}
                 rotation={object.rotation}
-                opacity={object.opacity}
+                opacity={isEditing ? 0 : object.opacity}
                 draggable={!object.locked && isActive}
                 onDragMove={(e) => {
                   // Real-time drag with snapping (polotno pattern)
@@ -365,7 +371,8 @@ export function SectionRenderer({
                   onDoubleClick={onTextEdit}
                 />
               </Group>
-            ))}
+              );
+            })}
 
             {/* Transformer - only for active section */}
             {isActive && transformerRef && (

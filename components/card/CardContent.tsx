@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { EventData } from "./types";
 import { ThemeConfig, BackgroundStyle } from "@/components/creator/ThemeTypes";
 import { CountingDays } from "./CountingDays";
@@ -25,8 +25,8 @@ export function CardContent({
   onSectionClick,
   isEditorMode = false,
 }: CardContentProps) {
-  // Helper function to get section background style
-  const getSectionBackgroundStyle = (sectionNumber: 1 | 2 | 3 | 4): React.CSSProperties => {
+  // Helper function to get section background style - memoized to prevent infinite loops
+  const getSectionBackgroundStyle = useCallback((sectionNumber: 1 | 2 | 3 | 4): React.CSSProperties => {
     if (!themeConfig) return {};
     
     const bgStyle: BackgroundStyle | undefined = 
@@ -53,7 +53,7 @@ export function CardContent({
       return { background: bgStyle.value };
     }
     return {};
-  };
+  }, [themeConfig]);
 
   // Format date and time from dateTimeString
   const formatDateTime = (dateTimeString: string): string => {
@@ -145,37 +145,43 @@ export function CardContent({
 
   // Image Gallery Component
   function ImageGallery({ event }: { event: EventData }) {
-    const autoplayPlugin = useRef(
-      Autoplay({
-        delay: 3000,
-        stopOnInteraction: true,
-      })
-    );
+  const autoplayPlugin = useRef(
+    Autoplay({
+      delay: 3000,
+      stopOnInteraction: true,
+    })
+  );
+  
+  const [api, setApi] = useState<any>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const initialIndex = api.selectedScrollSnap();
+    if (selectedIndex !== initialIndex) {
+      setSelectedIndex(initialIndex);
+    }
     
-    const [api, setApi] = useState<any>(null);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    // Set up event listener
+    const onSelect = () => {
+      const idx = api.selectedScrollSnap();
+      setSelectedIndex((prev: number) => (prev === idx ? prev : idx));
+    };
+    
+    api.on("select", onSelect);
+    
+    // Cleanup: remove event listener when component unmounts or api changes
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api, selectedIndex]);
 
-    useEffect(() => {
-      if (!api) return;
-
-      // Set initial selected index
-      setSelectedIndex(api.selectedScrollSnap());
-      
-      // Set up event listener
-      const onSelect = () => {
-        setSelectedIndex(api.selectedScrollSnap());
-      };
-      
-      api.on("select", onSelect);
-      
-      // Cleanup: remove event listener when component unmounts or api changes
-      return () => {
-        api.off("select", onSelect);
-      };
-    }, [api]);
-
-    // Disable autoplay if setting is off
-    const plugins = event.galleryAutoplay ? [autoplayPlugin.current] : [];
+  // Disable autoplay if setting is off, memoized to prevent re-inits
+  const plugins = React.useMemo(
+    () => (event.galleryAutoplay ? [autoplayPlugin.current] : []),
+    [event.galleryAutoplay]
+  );
 
     const isFullWidth = event.galleryContainerWidth === "full";
     
@@ -251,13 +257,20 @@ export function CardContent({
   return (
     <div className="absolute inset-0 overflow-y-auto scrollbar-hide pb-24 scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
       {/* Section 1 */}
-      <section 
-        id="card-sec-1" 
-        className="min-h-full flex flex-col justify-center items-center text-center px-8 py-8 transition-all duration-300"
-        style={getSectionBackgroundStyle(1)}
+      <section
+        id="card-sec-1"
+        className={`flex flex-col justify-center items-center text-center transition-all duration-300 ${themeConfig?.section1Height ? '' : 'min-h-full'}`}
+        style={{
+          ...getSectionBackgroundStyle(1),
+          paddingTop: `${event.cardPaddingTop ?? 32}px`,
+          paddingRight: `${event.cardPaddingRight ?? 32}px`,
+          paddingBottom: `${event.cardPaddingBottom ?? 32}px`,
+          paddingLeft: `${event.cardPaddingLeft ?? 32}px`,
+          ...(themeConfig?.section1Height ? { height: `${themeConfig.section1Height}px` } : {}),
+        }}
       >
         <div 
-          className={`flex flex-col items-center ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
+          className={`flex flex-col items-center w-full ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
           onClick={() => isEditorMode && onSectionClick && onSectionClick(2)}
           onKeyDown={(e) => {
             if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -403,13 +416,20 @@ export function CardContent({
       </section>
 
       {/* Section 2 */}
-      <section 
-        id="card-sec-2" 
-        className="min-h-full flex flex-col justify-center items-center text-center px-8 py-8 transition-all duration-300"
-        style={getSectionBackgroundStyle(2)}
+      <section
+        id="card-sec-2"
+        className={`flex flex-col justify-center items-center text-center transition-all duration-300 ${themeConfig?.section2Height ? '' : 'min-h-full'}`}
+        style={{
+          ...getSectionBackgroundStyle(2),
+          paddingTop: `${event.cardPaddingTop ?? 32}px`,
+          paddingRight: `${event.cardPaddingRight ?? 32}px`,
+          paddingBottom: `${event.cardPaddingBottom ?? 32}px`,
+          paddingLeft: `${event.cardPaddingLeft ?? 32}px`,
+          ...(themeConfig?.section2Height ? { height: `${themeConfig.section2Height}px` } : {}),
+        }}
       >
         <div 
-          className={`flex flex-col items-center ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
+          className={`flex flex-col items-center w-full ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
           onClick={() => isEditorMode && onSectionClick && onSectionClick(3)}
           onKeyDown={(e) => {
             if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -430,7 +450,7 @@ export function CardContent({
               }}
             >
               <div 
-                className="text-rose-800 text-sm italic mb-2 w-full"
+                className="text-rose-800 text-sm mb-2 w-full"
                 dangerouslySetInnerHTML={{ __html: event.openingSpeech }}
               />
             </div>
@@ -466,7 +486,7 @@ export function CardContent({
           )}
         </div>
         <div 
-          className={`mt-4 text-sm text-rose-700 ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
+          className={`mt-4 text-sm text-rose-700 w-full ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
           onClick={() => isEditorMode && onSectionClick && onSectionClick(4)}
           onKeyDown={(e) => {
             if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -486,7 +506,7 @@ export function CardContent({
                 marginLeft: event.eventAddressMarginLeft ? `${event.eventAddressMarginLeft}px` : undefined,
               }}
             >
-              <p className="w-full"><span className="w-full" dangerouslySetInnerHTML={{ __html: event.eventAddress }} /></p>
+              <p className="w-full break-words"><span className="w-full" dangerouslySetInnerHTML={{ __html: event.eventAddress }} /></p>
             </div>
           )}
           {event.showStartEndEvent && event.section2DateTimeContent && (
@@ -500,7 +520,7 @@ export function CardContent({
               }}
             >
               <div 
-                className="text-sm text-rose-700 w-full"
+                className="text-sm text-rose-700 w-full break-words"
                 style={{
                   fontFamily: event.section2DateTimeFontFamily || undefined,
                 }}
@@ -534,11 +554,18 @@ export function CardContent({
       {event.showSegmentEventTentative && (event.additionalInformation1 || event.eventTentative) && (
         <section
           id="card-sec-3"
-          className="min-h-full flex flex-col justify-center items-center text-center px-8 py-8 transition-all duration-300"
-          style={getSectionBackgroundStyle(3)}
+          className={`flex flex-col justify-center items-center text-center transition-all duration-300 ${themeConfig?.section3Height ? '' : 'min-h-full'}`}
+          style={{
+            ...getSectionBackgroundStyle(3),
+            paddingTop: `${event.cardPaddingTop ?? 32}px`,
+            paddingRight: `${event.cardPaddingRight ?? 32}px`,
+            paddingBottom: `${event.cardPaddingBottom ?? 32}px`,
+            paddingLeft: `${event.cardPaddingLeft ?? 32}px`,
+            ...(themeConfig?.section3Height ? { height: `${themeConfig.section3Height}px` } : {}),
+          }}
         >
           <div
-            className={`flex flex-col items-center ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
+            className={`flex flex-col items-center w-full ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
             onClick={() => isEditorMode && onSectionClick && onSectionClick(5)}
             onKeyDown={(e) => {
               if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -588,13 +615,20 @@ export function CardContent({
 
       {/* Section 4 */}
       {shouldShowSection4 && (
-        <section 
-          id="card-sec-4" 
-          className="min-h-full flex flex-col justify-center items-center text-center px-8 py-8 transition-all duration-300"
-          style={getSectionBackgroundStyle(4)}
+        <section
+          id="card-sec-4"
+          className={`flex flex-col justify-center items-center text-center transition-all duration-300 ${themeConfig?.section4Height ? '' : 'min-h-full'}`}
+          style={{
+            ...getSectionBackgroundStyle(4),
+            paddingTop: `${event.cardPaddingTop ?? 32}px`,
+            paddingRight: `${event.cardPaddingRight ?? 32}px`,
+            paddingBottom: `${event.cardPaddingBottom ?? 32}px`,
+            paddingLeft: `${event.cardPaddingLeft ?? 32}px`,
+            ...(themeConfig?.section4Height ? { height: `${themeConfig.section4Height}px` } : {}),
+          }}
         >
           <div 
-            className={`flex flex-col items-center ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
+            className={`flex flex-col items-center w-full ${isEditorMode && onSectionClick ? 'cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 rounded px-4 py-2' : ''}`}
             onClick={() => isEditorMode && onSectionClick && onSectionClick(10)}
             onKeyDown={(e) => {
               if (isEditorMode && onSectionClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -606,27 +640,231 @@ export function CardContent({
           >
             {/* Counting Days - Moved to top of section 4 */}
             {event.showSegmentCountingDays && event.startEventDateTime && (
-              <div className="mb-6 pointer-events-none">
-                <CountingDays targetDate={event.startEventDateTime} />
+              <div className="mb-6 pointer-events-none w-full">
+                {/* Text Above Counter Container */}
+                {event.countingDaysTextAbove && (
+                  <div 
+                    className="w-full"
+                    style={{
+                      marginTop: event.countingDaysTextMarginTop ? `${event.countingDaysTextMarginTop}px` : undefined,
+                      marginRight: event.countingDaysTextMarginRight ? `${event.countingDaysTextMarginRight}px` : undefined,
+                      marginBottom: event.countingDaysTextMarginBottom ? `${event.countingDaysTextMarginBottom}px` : undefined,
+                      marginLeft: event.countingDaysTextMarginLeft ? `${event.countingDaysTextMarginLeft}px` : undefined,
+                      borderTopWidth: (event.countingDaysTextBorderTop ?? event.countingDaysTextBorderSize) ? `${event.countingDaysTextBorderTop ?? event.countingDaysTextBorderSize}px` : undefined,
+                      borderRightWidth: (event.countingDaysTextBorderRight ?? event.countingDaysTextBorderSize) ? `${event.countingDaysTextBorderRight ?? event.countingDaysTextBorderSize}px` : undefined,
+                      borderBottomWidth: (event.countingDaysTextBorderBottom ?? event.countingDaysTextBorderSize) ? `${event.countingDaysTextBorderBottom ?? event.countingDaysTextBorderSize}px` : undefined,
+                      borderLeftWidth: (event.countingDaysTextBorderLeft ?? event.countingDaysTextBorderSize) ? `${event.countingDaysTextBorderLeft ?? event.countingDaysTextBorderSize}px` : undefined,
+                      borderStyle: [
+                        event.countingDaysTextBorderTop ?? event.countingDaysTextBorderSize,
+                        event.countingDaysTextBorderRight ?? event.countingDaysTextBorderSize,
+                        event.countingDaysTextBorderBottom ?? event.countingDaysTextBorderSize,
+                        event.countingDaysTextBorderLeft ?? event.countingDaysTextBorderSize,
+                      ].some((v) => !!v) ? 'solid' : undefined,
+                      borderColor: [
+                        event.countingDaysTextBorderTop ?? event.countingDaysTextBorderSize,
+                        event.countingDaysTextBorderRight ?? event.countingDaysTextBorderSize,
+                        event.countingDaysTextBorderBottom ?? event.countingDaysTextBorderSize,
+                        event.countingDaysTextBorderLeft ?? event.countingDaysTextBorderSize,
+                      ].some((v) => !!v) ? '#e5e7eb' : undefined,
+                      borderRadius: event.countingDaysTextBorderRadius ? `${event.countingDaysTextBorderRadius}px` : undefined,
+                      color: event.countingDaysTextAboveFontColor && !event.countingDaysTextAboveFontColor.startsWith('linear-gradient') 
+                        ? event.countingDaysTextAboveFontColor 
+                        : undefined,
+                      background: event.countingDaysTextAboveFontColor && event.countingDaysTextAboveFontColor.startsWith('linear-gradient')
+                        ? event.countingDaysTextAboveFontColor
+                        : undefined,
+                      WebkitBackgroundClip: event.countingDaysTextAboveFontColor && event.countingDaysTextAboveFontColor.startsWith('linear-gradient')
+                        ? 'text'
+                        : undefined,
+                      WebkitTextFillColor: event.countingDaysTextAboveFontColor && event.countingDaysTextAboveFontColor.startsWith('linear-gradient')
+                        ? 'transparent'
+                        : undefined,
+                      backgroundClip: event.countingDaysTextAboveFontColor && event.countingDaysTextAboveFontColor.startsWith('linear-gradient')
+                        ? 'text'
+                        : undefined,
+                    }}
+                    dangerouslySetInnerHTML={{ __html: event.countingDaysTextAbove }}
+                  />
+                )}
+                {/* Counter Container */}
+                <div
+                  style={{
+                    marginTop: event.countingDaysCounterMarginTop ? `${event.countingDaysCounterMarginTop}px` : undefined,
+                    marginRight: event.countingDaysCounterMarginRight ? `${event.countingDaysCounterMarginRight}px` : undefined,
+                    marginBottom: event.countingDaysCounterMarginBottom ? `${event.countingDaysCounterMarginBottom}px` : undefined,
+                    marginLeft: event.countingDaysCounterMarginLeft ? `${event.countingDaysCounterMarginLeft}px` : undefined,
+                    borderTopWidth: (event.countingDaysCounterBorderTop ?? event.countingDaysCounterBorderSize) ? `${event.countingDaysCounterBorderTop ?? event.countingDaysCounterBorderSize}px` : undefined,
+                    borderRightWidth: (event.countingDaysCounterBorderRight ?? event.countingDaysCounterBorderSize) ? `${event.countingDaysCounterBorderRight ?? event.countingDaysCounterBorderSize}px` : undefined,
+                    borderBottomWidth: (event.countingDaysCounterBorderBottom ?? event.countingDaysCounterBorderSize) ? `${event.countingDaysCounterBorderBottom ?? event.countingDaysCounterBorderSize}px` : undefined,
+                    borderLeftWidth: (event.countingDaysCounterBorderLeft ?? event.countingDaysCounterBorderSize) ? `${event.countingDaysCounterBorderLeft ?? event.countingDaysCounterBorderSize}px` : undefined,
+                    borderStyle: [
+                      event.countingDaysCounterBorderTop ?? event.countingDaysCounterBorderSize,
+                      event.countingDaysCounterBorderRight ?? event.countingDaysCounterBorderSize,
+                      event.countingDaysCounterBorderBottom ?? event.countingDaysCounterBorderSize,
+                      event.countingDaysCounterBorderLeft ?? event.countingDaysCounterBorderSize,
+                    ].some((v) => !!v) ? 'solid' : undefined,
+                    borderColor: [
+                      event.countingDaysCounterBorderTop ?? event.countingDaysCounterBorderSize,
+                      event.countingDaysCounterBorderRight ?? event.countingDaysCounterBorderSize,
+                      event.countingDaysCounterBorderBottom ?? event.countingDaysCounterBorderSize,
+                      event.countingDaysCounterBorderLeft ?? event.countingDaysCounterBorderSize,
+                    ].some((v) => !!v) ? '#e5e7eb' : undefined,
+                    borderRadius: event.countingDaysCounterBorderRadius ? `${event.countingDaysCounterBorderRadius}px` : undefined,
+                  }}
+                >
+                  <CountingDays 
+                    targetDate={event.startEventDateTime}
+                    color={event.countingDaysColor}
+                    fontSize={event.countingDaysFontSize}
+                    spacing={event.countingDaysSpacing}
+                  />
+                </div>
               </div>
             )}
 
             {/* Image Gallery - Between countdown and attendance */}
-            {event.galleryImages && event.galleryImages.length > 0 && (
+            {event.showSegmentGallery && event.galleryImages && event.galleryImages.length > 0 && (
               <ImageGallery event={event} />
             )}
 
             {/* Attendance - Moved to top of section 4 */}
             {event.showSegmentAttendance && (
-              <div className="mb-6 pointer-events-none">
-                <Attendance eventId={undefined} />
+              <div className="mb-6 pointer-events-none w-full">
+                {/* Attendance Text Container */}
+                {event.attendanceText && (
+                  <div 
+                    className="w-full mb-4"
+                    style={{
+                      marginTop: event.attendanceTextMarginTop ? `${event.attendanceTextMarginTop}px` : undefined,
+                      marginRight: event.attendanceTextMarginRight ? `${event.attendanceTextMarginRight}px` : undefined,
+                      marginBottom: event.attendanceTextMarginBottom ? `${event.attendanceTextMarginBottom}px` : undefined,
+                      marginLeft: event.attendanceTextMarginLeft ? `${event.attendanceTextMarginLeft}px` : undefined,
+                      borderTopWidth: event.attendanceTextBorderTop ? `${event.attendanceTextBorderTop}px` : undefined,
+                      borderRightWidth: event.attendanceTextBorderRight ? `${event.attendanceTextBorderRight}px` : undefined,
+                      borderBottomWidth: event.attendanceTextBorderBottom ? `${event.attendanceTextBorderBottom}px` : undefined,
+                      borderLeftWidth: event.attendanceTextBorderLeft ? `${event.attendanceTextBorderLeft}px` : undefined,
+                      borderStyle: [
+                        event.attendanceTextBorderTop,
+                        event.attendanceTextBorderRight,
+                        event.attendanceTextBorderBottom,
+                        event.attendanceTextBorderLeft,
+                      ].some((v) => !!v) ? 'solid' : undefined,
+                      borderColor: [
+                        event.attendanceTextBorderTop,
+                        event.attendanceTextBorderRight,
+                        event.attendanceTextBorderBottom,
+                        event.attendanceTextBorderLeft,
+                      ].some((v) => !!v) ? '#e5e7eb' : undefined,
+                    }}
+                    dangerouslySetInnerHTML={{ __html: event.attendanceText }}
+                  />
+                )}
+                {/* Attendance Counter */}
+                <Attendance eventId={undefined} event={event} />
               </div>
             )}
 
-            <h2 className="text-lg font-semibold text-rose-700 mb-2 pointer-events-none">Ucapan Tahniah</h2>
+            {/* Congratulations Title */}
+            {(event.congratsTitleText || !event.allowCongrats) && (
+              <div
+                className="w-full mb-4"
+                style={{
+                  marginTop: event.congratsTitleMarginTop ? `${event.congratsTitleMarginTop}px` : undefined,
+                  marginRight: event.congratsTitleMarginRight ? `${event.congratsTitleMarginRight}px` : undefined,
+                  marginBottom: event.congratsTitleMarginBottom ? `${event.congratsTitleMarginBottom}px` : undefined,
+                  marginLeft: event.congratsTitleMarginLeft ? `${event.congratsTitleMarginLeft}px` : undefined,
+                  borderTopWidth: event.congratsTitleBorderTop ? `${event.congratsTitleBorderTop}px` : undefined,
+                  borderRightWidth: event.congratsTitleBorderRight ? `${event.congratsTitleBorderRight}px` : undefined,
+                  borderBottomWidth: event.congratsTitleBorderBottom ? `${event.congratsTitleBorderBottom}px` : undefined,
+                  borderLeftWidth: event.congratsTitleBorderLeft ? `${event.congratsTitleBorderLeft}px` : undefined,
+                  borderStyle: [
+                    event.congratsTitleBorderTop,
+                    event.congratsTitleBorderRight,
+                    event.congratsTitleBorderBottom,
+                    event.congratsTitleBorderLeft,
+                  ].some((v) => !!v) ? 'solid' : undefined,
+                  borderColor: [
+                    event.congratsTitleBorderTop,
+                    event.congratsTitleBorderRight,
+                    event.congratsTitleBorderBottom,
+                    event.congratsTitleBorderLeft,
+                  ].some((v) => !!v) ? '#e5e7eb' : undefined,
+                }}
+              >
+                {event.congratsTitleText ? (
+                  <div dangerouslySetInnerHTML={{ __html: event.congratsTitleText }} />
+                ) : (
+                  <h2 className="text-lg font-semibold text-rose-700 mb-2 pointer-events-none">Ucapan Tahniah</h2>
+                )}
+              </div>
+            )}
+
             {event.allowCongrats ? (
               <>
-                <p className="text-sm text-rose-900/80 mb-4 pointer-events-none">Kongsikan ucapan tahniah anda atau sahkan kehadiran.</p>
+                {/* Congratulations Messages Section */}
+                {/* Show messages if: not in editor mode (client view) OR in editor mode and toggle is enabled */}
+                {event.congratsMessages && event.congratsMessages.length > 0 && (!isEditorMode || event.showCongratsMessages !== false) && (
+                  <div
+                    className="mb-4"
+                    style={{
+                      width: event.congratsSectionWidth ? `${event.congratsSectionWidth}px` : '100%',
+                      height: event.congratsSectionHeight ? `${event.congratsSectionHeight}px` : undefined,
+                      overflowY: event.congratsSectionHeight ? 'auto' : undefined,
+                      overflowX: 'hidden',
+                      marginTop: event.congratsSectionMarginTop ? `${event.congratsSectionMarginTop}px` : undefined,
+                      marginRight: event.congratsSectionMarginRight ? `${event.congratsSectionMarginRight}px` : undefined,
+                      marginBottom: event.congratsSectionMarginBottom ? `${event.congratsSectionMarginBottom}px` : undefined,
+                      marginLeft: event.congratsSectionMarginLeft ? `${event.congratsSectionMarginLeft}px` : undefined,
+                      borderTopWidth: event.congratsSectionBorderTop ? `${event.congratsSectionBorderTop}px` : undefined,
+                      borderRightWidth: event.congratsSectionBorderRight ? `${event.congratsSectionBorderRight}px` : undefined,
+                      borderBottomWidth: event.congratsSectionBorderBottom ? `${event.congratsSectionBorderBottom}px` : undefined,
+                      borderLeftWidth: event.congratsSectionBorderLeft ? `${event.congratsSectionBorderLeft}px` : undefined,
+                      borderStyle: [
+                        event.congratsSectionBorderTop,
+                        event.congratsSectionBorderRight,
+                        event.congratsSectionBorderBottom,
+                        event.congratsSectionBorderLeft,
+                      ].some((v) => !!v) ? 'solid' : undefined,
+                      borderColor: [
+                        event.congratsSectionBorderTop,
+                        event.congratsSectionBorderRight,
+                        event.congratsSectionBorderBottom,
+                        event.congratsSectionBorderLeft,
+                      ].some((v) => !!v) ? '#e5e7eb' : undefined,
+                    }}
+                  >
+                    <div className="space-y-4">
+                      {event.congratsMessages.map((message) => (
+                        <div key={message.id} className="w-full">
+                          {/* Speech with quotes */}
+                          <div
+                            style={{
+                              fontFamily: event.congratsSpeechFontFamily || undefined,
+                              color: event.congratsSpeechFontColor || "#1f2937",
+                              fontWeight: event.congratsSpeechFontWeight || "normal",
+                              fontSize: `${event.congratsSpeechFontSize ?? 14}px`,
+                            }}
+                          >
+                            &ldquo;{message.speech}&rdquo;
+                          </div>
+                          {/* Author */}
+                          <div
+                            style={{
+                              marginTop: `${event.congratsSpeechGap ?? 8}px`,
+                              fontFamily: event.congratsAuthorFontFamily || undefined,
+                              color: event.congratsAuthorFontColor || "#6b7280",
+                              fontWeight: event.congratsAuthorFontWeight || "normal",
+                              fontSize: `${event.congratsAuthorFontSize ?? 12}px`,
+                            }}
+                          >
+                            — {message.author}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-center gap-3 pointer-events-auto">
                   {shouldShowConfirmAttendance && (
                     <button

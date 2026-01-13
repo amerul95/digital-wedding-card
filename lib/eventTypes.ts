@@ -200,6 +200,60 @@ export type EventData = {
   showSegmentSpeech: boolean;  // Show Segment: speech
   showSegmentConfirmAttendance: boolean;  // Show Segment: confirm attendance
   showSegmentWriteMessage: boolean;  // Show Segment: write a message
+  showSegmentGallery: boolean;  // Show Segment: gallery
+
+  // Page 14 - Counting Days Settings
+  countingDaysTextAbove?: string;  // Text above counter (HTML from RichTextEditor)
+  countingDaysTextAboveFontColor?: string;  // Font color for text above counter
+  countingDaysTextMarginTop?: number;  // Margin top for text container
+  countingDaysTextMarginRight?: number;  // Margin right for text container
+  countingDaysTextMarginBottom?: number;  // Margin bottom for text container
+  countingDaysTextMarginLeft?: number;  // Margin left for text container
+  countingDaysTextBorderSize?: number;  // Border size for text container (px) - legacy
+  countingDaysTextBorderTop?: number;  // Border top size for text container (px)
+  countingDaysTextBorderRight?: number;  // Border right size for text container (px)
+  countingDaysTextBorderBottom?: number;  // Border bottom size for text container (px)
+  countingDaysTextBorderLeft?: number;  // Border left size for text container (px)
+  countingDaysTextBorderRadius?: number;  // Border radius for text container (px)
+  countingDaysCounterMarginTop?: number;  // Margin top for counter container
+  countingDaysCounterMarginRight?: number;  // Margin right for counter container
+  countingDaysCounterMarginBottom?: number;  // Margin bottom for counter container
+  countingDaysCounterMarginLeft?: number;  // Margin left for counter container
+  countingDaysCounterBorderSize?: number;  // Border size for counter container (px) - legacy
+  countingDaysCounterBorderTop?: number;  // Border top size for counter container (px)
+  countingDaysCounterBorderRight?: number;  // Border right size for counter container (px)
+  countingDaysCounterBorderBottom?: number;  // Border bottom size for counter container (px)
+  countingDaysCounterBorderLeft?: number;  // Border left size for counter container (px)
+  countingDaysCounterBorderRadius?: number;  // Border radius for counter container (px)
+  countingDaysColor?: string;  // Color for counter numbers and labels
+  countingDaysFontSize?: number;  // Font size for counter numbers
+  countingDaysSpacing?: number;  // Spacing between counter units (days, hours, minutes, seconds) in px
+
+  // Page 15 - Attendance Settings
+  attendanceText?: string;  // Attendance text/content (HTML from RichTextEditor)
+  attendanceTextMarginTop?: number;  // Margin top for attendance text container
+  attendanceTextMarginRight?: number;  // Margin right for attendance text container
+  attendanceTextMarginBottom?: number;  // Margin bottom for attendance text container
+  attendanceTextMarginLeft?: number;  // Margin left for attendance text container
+  attendanceTextBorderTop?: number;  // Border top size for attendance text container (px)
+  attendanceTextBorderRight?: number;  // Border right size for attendance text container (px)
+  attendanceTextBorderBottom?: number;  // Border bottom size for attendance text container (px)
+  attendanceTextBorderLeft?: number;  // Border left size for attendance text container (px)
+  attendanceCounterMarginTop?: number;  // Margin top for attendance counter container
+  attendanceCounterMarginRight?: number;  // Margin right for attendance counter container
+  attendanceCounterMarginBottom?: number;  // Margin bottom for attendance counter container
+  attendanceCounterMarginLeft?: number;  // Margin left for attendance counter container
+  attendanceCounterBorderTop?: number;  // Border top size for attendance counter container (px)
+  attendanceCounterBorderRight?: number;  // Border right size for attendance counter container (px)
+  attendanceCounterBorderBottom?: number;  // Border bottom size for attendance counter container (px)
+  attendanceCounterBorderLeft?: number;  // Border left size for attendance counter container (px)
+  attendanceLabelFontSize?: number;  // Font size for attendance labels ("Attending", "Not Attending")
+  attendanceLabelColor?: string;  // Color for attendance labels
+  attendanceLabelFontFamily?: string;  // Font family for attendance labels
+  attendanceNumberFontSize?: number;  // Font size for attendance numbers
+  attendanceNumberColor?: string;  // Color for attendance numbers
+  attendanceNumberFontFamily?: string;  // Font family for attendance numbers
+  attendanceShowSeparator?: boolean;  // Show/hide separator between "Attending" and "Not Attending"
 
   // Page 11 - Button Settings
   // Save The Date button (Section 2)
@@ -247,6 +301,48 @@ export type EventData = {
   galleryCustomWidth: number;  // Custom width (max width = main container)
   galleryEnablePagination: boolean;  // Enable pagination toggle
   galleryPaginationType: "dot" | "number" | "none";  // Pagination style
+
+  // Page 13 - Body Card Settings
+  cardPaddingTop?: number;  // Padding top inside card (px)
+  cardPaddingRight?: number;  // Padding right inside card (px)
+  cardPaddingBottom?: number;  // Padding bottom inside card (px)
+  cardPaddingLeft?: number;  // Padding left inside card (px)
+
+  // Page 16 - Congratulations Settings
+  congratsTitleText?: string;  // "Ucapan Tahniah" title text (HTML from RichTextEditor)
+  congratsTitleMarginTop?: number;  // Margin top for title container
+  congratsTitleMarginRight?: number;  // Margin right for title container
+  congratsTitleMarginBottom?: number;  // Margin bottom for title container
+  congratsTitleMarginLeft?: number;  // Margin left for title container
+  congratsTitleBorderTop?: number;  // Border top size for title container (px)
+  congratsTitleBorderRight?: number;  // Border right size for title container (px)
+  congratsTitleBorderBottom?: number;  // Border bottom size for title container (px)
+  congratsTitleBorderLeft?: number;  // Border left size for title container (px)
+  congratsMessages?: Array<{  // Array of congratulations messages
+    id: string;
+    speech: string;  // The congratulation speech
+    author: string;  // Who gave the speech
+  }>;
+  congratsSpeechGap?: number;  // Gap between speech and author (px)
+  congratsSpeechFontFamily?: string;  // Font family for speech text
+  congratsSpeechFontColor?: string;  // Font color for speech text
+  congratsSpeechFontWeight?: string;  // Font weight for speech text (e.g., "normal", "bold", "600")
+  congratsSpeechFontSize?: number;  // Font size for speech text (px)
+  congratsAuthorFontFamily?: string;  // Font family for author text
+  congratsAuthorFontColor?: string;  // Font color for author text
+  congratsAuthorFontWeight?: string;  // Font weight for author text
+  congratsAuthorFontSize?: number;  // Font size for author text (px)
+  congratsSectionMarginTop?: number;  // Margin top for congratulations section container
+  congratsSectionMarginRight?: number;  // Margin right for congratulations section container
+  congratsSectionMarginBottom?: number;  // Margin bottom for congratulations section container
+  congratsSectionMarginLeft?: number;  // Margin left for congratulations section container
+  congratsSectionBorderTop?: number;  // Border top size for congratulations section container (px)
+  congratsSectionBorderRight?: number;  // Border right size for congratulations section container (px)
+  congratsSectionBorderBottom?: number;  // Border bottom size for congratulations section container (px)
+  congratsSectionBorderLeft?: number;  // Border left size for congratulations section container (px)
+  congratsSectionWidth?: number;  // Width for congratulations messages container (px)
+  congratsSectionHeight?: number;  // Height for congratulations messages container (px) - will auto-scroll if content exceeds
+  showCongratsMessages?: boolean;  // Show/hide congratulations messages (designer preview only, always true for clients)
 };
 
 export const defaultEvent: EventData = {
@@ -446,6 +542,60 @@ export const defaultEvent: EventData = {
   showSegmentSpeech: true,
   showSegmentConfirmAttendance: true,
   showSegmentWriteMessage: true,
+  showSegmentGallery: true,
+
+  // Page 14 - Counting Days defaults
+  countingDaysTextAbove: "",
+  countingDaysTextAboveFontColor: undefined,
+  countingDaysTextMarginTop: undefined,
+  countingDaysTextMarginRight: undefined,
+  countingDaysTextMarginBottom: undefined,
+  countingDaysTextMarginLeft: undefined,
+  countingDaysTextBorderSize: 0,  // Default no border (legacy)
+  countingDaysTextBorderTop: 0,
+  countingDaysTextBorderRight: 0,
+  countingDaysTextBorderBottom: 0,
+  countingDaysTextBorderLeft: 0,
+  countingDaysTextBorderRadius: 0,  // Default no border radius
+  countingDaysCounterMarginTop: undefined,
+  countingDaysCounterMarginRight: undefined,
+  countingDaysCounterMarginBottom: undefined,
+  countingDaysCounterMarginLeft: undefined,
+  countingDaysCounterBorderSize: 0,  // Default no border (legacy)
+  countingDaysCounterBorderTop: 0,
+  countingDaysCounterBorderRight: 0,
+  countingDaysCounterBorderBottom: 0,
+  countingDaysCounterBorderLeft: 0,
+  countingDaysCounterBorderRadius: 0,  // Default no border radius
+  countingDaysColor: "#be123c",  // rose-700 default
+  countingDaysFontSize: 20,  // Default font size
+  countingDaysSpacing: 8,  // Default spacing between units (px)
+
+  // Page 15 - Attendance defaults
+  attendanceText: "",  // Default empty attendance text
+  attendanceTextMarginTop: undefined,
+  attendanceTextMarginRight: undefined,
+  attendanceTextMarginBottom: undefined,
+  attendanceTextMarginLeft: undefined,
+  attendanceTextBorderTop: 0,
+  attendanceTextBorderRight: 0,
+  attendanceTextBorderBottom: 0,
+  attendanceTextBorderLeft: 0,
+  attendanceCounterMarginTop: undefined,
+  attendanceCounterMarginRight: undefined,
+  attendanceCounterMarginBottom: undefined,
+  attendanceCounterMarginLeft: undefined,
+  attendanceCounterBorderTop: 0,
+  attendanceCounterBorderRight: 0,
+  attendanceCounterBorderBottom: 0,
+  attendanceCounterBorderLeft: 0,
+  attendanceLabelFontSize: 12,  // Default 12px for labels
+  attendanceLabelColor: "#6b7280",  // Default gray-500
+  attendanceLabelFontFamily: "",
+  attendanceNumberFontSize: 24,  // Default 24px for numbers
+  attendanceNumberColor: undefined,  // Will use green-600 for attending, red-600 for not attending if undefined
+  attendanceNumberFontFamily: "",
+  attendanceShowSeparator: true,  // Default show separator
 
   // Page 11 - Button Settings defaults
   saveDateButtonText: "Save The Date",
@@ -490,4 +640,46 @@ export const defaultEvent: EventData = {
   galleryCustomWidth: 300,
   galleryEnablePagination: true,
   galleryPaginationType: "dot",
+
+  // Page 13 - Body Card defaults
+  cardPaddingTop: 32,  // Default 32px (equivalent to px-8)
+  cardPaddingRight: 32,  // Default 32px (equivalent to px-8)
+  cardPaddingBottom: 32,  // Default 32px (equivalent to py-8)
+  cardPaddingLeft: 32,  // Default 32px (equivalent to px-8)
+
+  // Page 16 - Congratulations defaults
+  congratsTitleText: "",  // Default empty, will use "Ucapan Tahniah" if empty
+  congratsTitleMarginTop: undefined,
+  congratsTitleMarginRight: undefined,
+  congratsTitleMarginBottom: undefined,
+  congratsTitleMarginLeft: undefined,
+  congratsTitleBorderTop: 0,
+  congratsTitleBorderRight: 0,
+  congratsTitleBorderBottom: 0,
+  congratsTitleBorderLeft: 0,
+  congratsMessages: [
+    { id: "1", speech: "Tahniah! Semoga berbahagia selalu.", author: "Ahmad bin Hassan" },
+    { id: "2", speech: "Selamat atas majlis yang berlangsung dengan jayanya. Semoga keluarga sentiasa diberkati dan dikurniakan kebahagiaan yang berpanjangan. Doa kami sentiasa bersama anda.", author: "Siti Nurhaliza binti Abdul Rahman" },
+    { id: "3", speech: "Dengan penuh rasa syukur dan kegembiraan, kami ingin mengucapkan tahniah yang tidak terhingga atas majlis yang sungguh bermakna ini. Semoga ikatan kasih sayang yang terjalin pada hari ini akan terus berkembang dan menjadi lebih kukuh dari masa ke semasa. Semoga kehidupan berkeluarga yang baru ini dipenuhi dengan kebahagiaan, kesabaran, dan saling memahami. Doa kami sentiasa mengiringi perjalanan hidup anda berdua. Semoga Allah SWT memberkati setiap langkah yang diambil dan memberikan rezeki yang melimpah ruah. Amin.", author: "Dato' Seri Dr. Mohd Zulkifli bin Abdullah" },
+  ],  // Default mock messages: short, medium, long
+  congratsSpeechGap: 8,  // Default 8px gap between speech and author
+  congratsSpeechFontFamily: "",
+  congratsSpeechFontColor: "#1f2937",  // Default gray-800
+  congratsSpeechFontWeight: "normal",
+  congratsSpeechFontSize: 14,
+  congratsAuthorFontFamily: "",
+  congratsAuthorFontColor: "#6b7280",  // Default gray-500
+  congratsAuthorFontWeight: "normal",
+  congratsAuthorFontSize: 12,
+  congratsSectionMarginTop: undefined,
+  congratsSectionMarginRight: undefined,
+  congratsSectionMarginBottom: undefined,
+  congratsSectionMarginLeft: undefined,
+  congratsSectionBorderTop: 0,
+  congratsSectionBorderRight: 0,
+  congratsSectionBorderBottom: 0,
+  congratsSectionBorderLeft: 0,
+  congratsSectionWidth: undefined,  // Default undefined (full width)
+  congratsSectionHeight: undefined,  // Default undefined (auto height)
+  showCongratsMessages: true,  // Default show messages for designer preview
 };
