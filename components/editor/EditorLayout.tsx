@@ -1,0 +1,96 @@
+"use client";
+
+import { useEditorStore } from "@/components/editor/store";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
+import { Sidebar } from "@/components/editor/Sidebar";
+import { Canvas } from "@/components/editor/Canvas";
+import { TopBar } from "@/components/editor/TopBar";
+import { PropertyPanel } from "@/components/editor/PropertyPanel";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+
+export function EditorLayout() {
+    const addNode = useEditorStore((state) => state.addNode);
+    const [activeDragItem, setActiveDragItem] = useState<any>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
+    );
+
+    const handleDragStart = (event: DragStartEvent) => {
+        setActiveDragItem(event.active.data.current);
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveDragItem(null);
+
+        if (!over) return;
+
+        // Check if we dropped a sidebar item
+        if (active.data.current?.isSidebarItem) {
+            const type = active.data.current.type;
+            const parentId = over.id as string; // distinct id of the drop target (section, container, or root)
+
+            // Generate a unique ID
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 1000);
+            const newNodeId = `${type}-${timestamp}-${random}`;
+
+            const newNode = {
+                id: newNodeId,
+                type,
+                parentId,
+                children: [],
+                data: {
+                    label: `New ${type}`,
+                    content: type === 'text' ? 'Start typing...' : undefined,
+                    // Default slider data
+                    images: type === 'slider' ? [] : undefined,
+                    // Default countdown data
+                    targetDate: type === 'countdown' ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16) : undefined,
+                },
+                style: {},
+            };
+
+            addNode(newNode, parentId);
+        }
+        // Handle reordering later
+    };
+
+    return (
+        <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+        >
+            <div className="flex h-screen w-full flex-col overflow-hidden bg-gray-50">
+                <TopBar />
+                <div className="flex flex-1 overflow-hidden">
+                    <Sidebar />
+                    <Canvas />
+                    <PropertyPanel />
+                </div>
+            </div>
+            {mounted && createPortal(
+                <DragOverlay>
+                    {activeDragItem ? (
+                        <div className="p-3 border rounded bg-white shadow-lg opacity-80 cursor-grabbing w-40">
+                            {activeDragItem.label || activeDragItem.type}
+                        </div>
+                    ) : null}
+                </DragOverlay>,
+                document.body
+            )}
+        </DndContext>
+    );
+}
