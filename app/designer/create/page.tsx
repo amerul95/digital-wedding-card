@@ -6,15 +6,15 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import type Konva from 'konva';
-import { useProjectStore } from '@/src/store/projectStore';
-import { useHistoryStore } from '@/src/store/historyStore';
+import { useProjectStore } from '@/lib/store/projectStore';
+import { useHistoryStore } from '@/lib/store/historyStore';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { EditorCanvas } from '@/src/designer/editor/canvas/EditorCanvas';
-import { Toolbar } from '@/src/designer/editor/components/Toolbar';
-import { ToolsBar } from '@/src/designer/editor/tools/ToolsBar';
-import { ToolsDetailsPanel } from '@/src/designer/editor/tools/ToolsDetailsPanel';
-import { SectionsBar } from '@/src/designer/editor/panels/SectionsBar';
-import { TextEditOverlay } from '@/src/designer/editor/components/TextEditOverlay';
+import { EditorCanvas } from '@/components/designer/editor/canvas/EditorCanvas';
+import { Toolbar } from '@/components/designer/editor/components/Toolbar';
+import { ToolsBar } from '@/components/designer/editor/tools/ToolsBar';
+import { ToolsDetailsPanel } from '@/components/designer/editor/tools/ToolsDetailsPanel';
+import { SectionsBar } from '@/components/designer/editor/panels/SectionsBar';
+import { TextEditOverlay } from '@/components/designer/editor/components/TextEditOverlay';
 import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 import {
@@ -24,9 +24,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEditorUIStore } from '@/src/store/editorUIStore';
-import { useRafScroll } from '@/src/designer/editor/hooks/useRafScroll';
-import { getActiveSectionFromScroll } from '@/src/designer/editor/utils/getActiveSectionFromScroll';
+import { useEditorUIStore } from '@/lib/store/editorUIStore';
+import { useRafScroll } from '@/components/designer/editor/hooks/useRafScroll';
+import { getActiveSectionFromScroll } from '@/components/designer/editor/utils/getActiveSectionFromScroll';
 
 export default function EditorPage() {
   const router = useRouter();

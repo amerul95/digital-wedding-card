@@ -54,8 +54,8 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
         } : {}),
-        ...(boxStyle.gradientType === 'linear' && boxStyle.gradientColor1 && boxStyle.gradientColor2 ? {
-            background: `linear-gradient(${style.gradientDirection || 'to bottom'}, ${boxStyle.gradientColor1}, ${boxStyle.gradientColor2})`,
+        ...((style as any).gradientType === 'linear' && (style as any).gradientColor1 && (style as any).gradientColor2 ? {
+            background: `linear-gradient(${style.gradientDirection || 'to bottom'}, ${(style as any).gradientColor1}, ${(style as any).gradientColor2})`,
         } : {}),
     };
 

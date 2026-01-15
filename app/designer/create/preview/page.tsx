@@ -5,11 +5,11 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useProjectStore } from '@/src/store/projectStore';
-import { useArtboardViewport } from '@/src/designer/editor/hooks/useArtboardViewport';
+import { useProjectStore } from '@/lib/store/projectStore';
+import { useArtboardViewport } from '@/components/designer/editor/hooks/useArtboardViewport';
 import { Stage, Layer, Group, Rect } from 'react-konva';
-import { CanvasObjectRenderer } from '@/src/designer/editor/canvas/CanvasObjectRenderer';
-import { DESIGN_W, DESIGN_H } from '@/src/store/types';
+import { CanvasObjectRenderer } from '@/components/designer/editor/canvas/CanvasObjectRenderer';
+import { DESIGN_W, DESIGN_H } from '@/lib/store/types';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';

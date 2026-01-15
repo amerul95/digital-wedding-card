@@ -1,215 +1,179 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import NavBar from '@/components/NavBar'
-import { CeremonyCard } from "@/components/card/CeremonyCard";
-import { EditorPager } from "@/components/EditorPager";
-import { useEvent } from "@/context/EventContext";
-import { IconSave } from "@/components/card/Icons";
-import { toast } from "sonner";
+import React from 'react';
+import { useClientStore } from '@/components/studio/clientStore';
+import { Save, Eye, EyeOff } from 'lucide-react';
 
-const SECTIONS = [
-  { id: 1, label: "1. Main & Opening" },
-  { id: 2, label: "2. Front Page" },
-  { id: 3, label: "3. Invitation Speech" },
-  { id: 4, label: "4. Location & Navigation" },
-  { id: 5, label: "5. Tentative & More" },
-  { id: 6, label: "6. Page In-Between" },
-  { id: 7, label: "7. RSVP" },
-  { id: 8, label: "8. Contacts" },
-  { id: 9, label: "9. Music & Auto Scroll" },
-  { id: 10, label: "10. Final Segment" },
-];
+export default function StudioPage() {
+  const { clientData, updateClientData } = useClientStore();
 
-export default function EditorPage() {
-  const { resetEvent, event } = useEvent();
-  const previewContainerRef = useRef<HTMLDivElement>(null);
-  const [currentSection, setCurrentSection] = useState(1);
-  const [activeTab, setActiveTab] = useState<"standard" | "custom">("standard");
+  const handleChange = (key: string, value: any) => {
+    updateClientData({ [key]: value });
+  };
 
-  const scrollToSection = useCallback((section: number) => {
-    // Find the scrollable container within the CeremonyCard
-    const container = previewContainerRef.current;
-    if (!container) return;
-
-    // The card content has a scrollable div, find it
-    const scrollableDiv = container.querySelector('[class*="overflow-y-auto"]');
-    if (!scrollableDiv) return;
-
-    // Find the target section
-    const targetSection = scrollableDiv.querySelector(`#card-sec-${section}`);
-    if (targetSection) {
-      targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, []);
+  const handleGiftChange = (key: string, value: any) => {
+    updateClientData({ giftDetails: { ...clientData.giftDetails, [key]: value } });
+  };
 
   return (
-    <div>
-      <NavBar />
-      <div className="min-h-screen  py-8 max-w-7xl mx-auto">
-      <div className="container mx-auto px-4">
-        <div className="mb-6 text-center flex flex-col items-center">
-          <h1 className="font-bold mb-2" style={{ fontSize: '24px', color: '#36463A' }}>Studio</h1>
-          
-          {/* Tab Menu */}
-          <div className="inline-flex rounded-2xl border border-[#36463A] overflow-hidden mb-4">
-            <button
-              onClick={() => setActiveTab("standard")}
-              className={`px-6 py-2 text-sm font-medium transition-colors ${
-                activeTab === "standard"
-                  ? "bg-[#36463A] text-white"
-                  : "bg-white text-[#36463A] hover:bg-gray-50"
-              }`}
-              style={{ 
-                borderTopLeftRadius: '16px',
-                borderBottomLeftRadius: '16px'
-              }}
-            >
-              Standard
-            </button>
-            <button
-              onClick={() => setActiveTab("custom")}
-              className={`px-6 py-2 text-sm font-medium transition-colors ${
-                activeTab === "custom"
-                  ? "bg-[#36463A] text-white"
-                  : "bg-white text-[#36463A] hover:bg-gray-50"
-              }`}
-              style={{ 
-                borderTopRightRadius: '16px',
-                borderBottomRightRadius: '16px'
-              }}
-            >
-              Custom
-            </button>
-          </div>
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={resetEvent}
-              className="px-4 py-2 rounded-full border border-[#36463A] text-[#36463A] bg-white text-sm shadow hover:bg-gray-50"
-            >
-              Reset to Defaults
-            </button>
-            <button
-              onClick={() => {
-                // Save current event data to localStorage before navigating
-                try {
-                  localStorage.setItem("ceremony-card-event", JSON.stringify(event));
-                } catch (error) {
-                  console.error("Error saving event data:", error);
-                }
-                window.location.href = "/preview";
-              }}
-              className="px-4 py-2 rounded-full border border-[#36463A] text-white bg-[#36463A] text-sm shadow hover:bg-[#2d3a2f]"
-            >
-              Preview
-            </button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Your Wedding Studio</h1>
+          <p className="text-gray-600">Customize your wedding card details.</p>
+        </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Editor Forms - Paginated */}
-          <div className="flex flex-col mx-auto lg:mx-0 lg:justify-self-center" style={{ width: '571px' }}>
-            {/* Form Container */}
-            <div className="bg-white rounded-2xl shadow-lg border border-[#36463A] p-6" style={{ height: '592px', overflowY: 'auto' }}>
-              <EditorPager 
-                onSectionChange={scrollToSection}
-                onCurrentSectionChange={setCurrentSection}
-                currentSection={currentSection}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Basic Info */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border space-y-4 h-fit">
+            <h2 className="text-xl font-semibold text-rose-600 border-b pb-2">Couple Details</h2>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Bride Name</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.brideName}
+                onChange={(e) => handleChange('brideName', e.target.value)}
               />
             </div>
-            
-            {/* Pagination Outside Form */}
-            <div className="mt-4 bg-white rounded-2xl shadow-lg border border-[#36463A] p-4">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <button
-                  onClick={() => {
-                    if (currentSection > 1) {
-                      setCurrentSection(currentSection - 1);
-                    }
-                  }}
-                  disabled={currentSection === 1}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    currentSection === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-[#36463A] text-white hover:bg-[#2d3a2f] shadow"
-                  }`}
-                >
-                  ←
-                </button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Groom Name</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.groomName}
+                onChange={(e) => handleChange('groomName', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Welcoming Speech</label>
+              <textarea
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                rows={4}
+                value={clientData.welcomingSpeech}
+                onChange={(e) => handleChange('welcomingSpeech', e.target.value)}
+              />
+            </div>
+          </div>
 
-                {SECTIONS.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => setCurrentSection(section.id)}
-                    className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
-                      section.id === currentSection
-                        ? "bg-[#36463A] text-white shadow"
-                        : "bg-white text-gray-700 border border-gray-300 hover:border-[#36463A]"
-                    }`}
-                  >
-                    {section.id}
-                  </button>
-                ))}
-
-                <button
-                  onClick={() => {
-                    if (currentSection < 10) {
-                      setCurrentSection(currentSection + 1);
-                    }
-                  }}
-                  disabled={currentSection === 10}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    currentSection === 10
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-[#36463A] text-white hover:bg-[#2d3a2f] shadow"
-                  }`}
-                >
-                  →
-                </button>
-
-                <button
-                  onClick={() => {
-                    try {
-                      localStorage.setItem("ceremony-card-event", JSON.stringify(event));
-                      toast.success("Data saved successfully!", {
-                        description: "All your changes have been saved to local storage.",
-                        duration: 3000,
-                      });
-                    } catch (error) {
-                      console.error("Error saving data:", error);
-                      toast.error("Error saving data", {
-                        description: "Failed to save. Check console for details.",
-                        duration: 4000,
-                      });
-                    }
-                  }}
-                  className="ml-4 px-4 py-1 rounded-full bg-[#36463A] text-white hover:bg-[#2d3a2f] shadow text-sm font-medium transition-colors flex items-center gap-2"
-                  title="Save current data"
-                >
-                  <IconSave />
-                  <span className="hidden sm:inline">Save</span>
-                </button>
+          {/* Event Info */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border space-y-4 h-fit">
+            <h2 className="text-xl font-semibold text-rose-600 border-b pb-2">Ceremony Details</h2>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Title</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.ceremonyTitle}
+                onChange={(e) => handleChange('ceremonyTitle', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Date</label>
+              <input
+                type="date"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.ceremonyDate}
+                onChange={(e) => handleChange('ceremonyDate', e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Start Time</label>
+                <input
+                  type="time"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                  value={clientData.ceremonyStartTime}
+                  onChange={(e) => handleChange('ceremonyStartTime', e.target.value)}
+                />
               </div>
-
-              {/* Section Label */}
-              <div className="text-center">
-                <p className="text-sm font-medium text-[#36463A] uppercase tracking-wide">
-                  {SECTIONS.find((s) => s.id === currentSection)?.label.replace(/^\d+\.\s*/, "") || ""}
-                </p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">End Time</label>
+                <input
+                  type="time"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                  value={clientData.ceremonyEndTime}
+                  onChange={(e) => handleChange('ceremonyEndTime', e.target.value)}
+                />
               </div>
             </div>
           </div>
 
-          {/* Preview */}
-          <div className="lg:sticky lg:top-8 lg:h-fit flex items-start justify-center">
-            <div ref={previewContainerRef} className="overflow-visible [&>div]:min-h-0 [&>div]:h-auto [&>div]:w-full [&>div]:flex-none [&>div]:items-start [&>div]:rounded-3xl [&>div>div]:rounded-3xl [&>div>div]:overflow-hidden" style={{ width: '294px', height: '509px', backgroundColor: 'transparent' }}>
-              <CeremonyCard editorSection={currentSection} />
+          {/* Gift Info */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border space-y-4 h-fit">
+            <h2 className="text-xl font-semibold text-rose-600 border-b pb-2">Gift Information</h2>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Bank Name</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.giftDetails.bankName}
+                onChange={(e) => handleGiftChange('bankName', e.target.value)}
+              />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Account Number</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.giftDetails.accountNumber}
+                onChange={(e) => handleGiftChange('accountNumber', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Account Owner</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"
+                value={clientData.giftDetails.accountName}
+                onChange={(e) => handleGiftChange('accountName', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">QR Image (Upload)</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="mt-1 block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-full file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-rose-50 file:text-rose-700
+                                hover:file:bg-rose-100"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    handleGiftChange('qrImage', url);
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Preview / Instructions */}
+          <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 h-fit">
+            <h2 className="text-xl font-semibold text-blue-800 mb-2">How it works</h2>
+            <ul className="list-disc list-inside text-sm text-blue-700 space-y-1">
+              <li>Fill in your details here.</li>
+              <li>The card will automatically update where the designer used placeholders:</li>
+              <ul className="list-square list-inside ml-4 text-xs opacity-80">
+                <li>%groom%, %bride%</li>
+                <li>%title%, %date%</li>
+                <li>%speech%</li>
+              </ul>
+              <li>Use the "Preview Card" button to see your live changes.</li>
+            </ul>
+            <a
+              href="/preview"
+              target="_blank"
+              className="mt-6 flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              <Eye size={18} /> Preview Card
+            </a>
           </div>
         </div>
       </div>
     </div>
-    </div>
   );
 }
-
