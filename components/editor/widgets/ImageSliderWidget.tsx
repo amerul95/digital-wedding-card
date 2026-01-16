@@ -35,13 +35,38 @@ export function ImageSliderWidget({ id, data, style }: ImageSliderWidgetProps) {
     const isSelected = selectedId === id;
     const images = data.images || [];
 
+    // Container width handling
+    const isFullWidth = data.containerWidth === 'full' || !data.containerWidth;
+    
+    // Padding handling - individual sides
+    const paddingTop = data.sliderPaddingTop !== undefined ? `${data.sliderPaddingTop}px` : undefined;
+    const paddingRight = data.sliderPaddingRight !== undefined ? `${data.sliderPaddingRight}px` : undefined;
+    const paddingBottom = data.sliderPaddingBottom !== undefined ? `${data.sliderPaddingBottom}px` : undefined;
+    const paddingLeft = data.sliderPaddingLeft !== undefined ? `${data.sliderPaddingLeft}px` : undefined;
+    
+    const containerStyle: React.CSSProperties = {
+        ...style,
+        width: isFullWidth ? '100%' : `${Math.min(data.customWidth || 300, 100)}%`,
+        maxWidth: isFullWidth ? 'none' : '100%',
+        paddingTop,
+        paddingRight,
+        paddingBottom,
+        paddingLeft,
+    };
+
+    // Pagination handling - use enablePagination to determine if pagination should be shown
+    const shouldShowPagination = data.enablePagination !== false; // Default to true if not set
+    const paginationConfig = shouldShowPagination && data.paginationType && data.paginationType !== 'none'
+        ? { clickable: true, type: data.paginationType }
+        : false;
+
     return (
         <div
             className={cn(
-                "relative transition-all p-1 group z-0", // z-0 important for swiper context
+                "relative transition-all group z-0", // Removed p-1 padding - now controlled by data properties
                 isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
             )}
-            style={style}
+            style={containerStyle}
             onClick={handleClick}
         >
             {images.length > 0 ? (
@@ -50,7 +75,7 @@ export function ImageSliderWidget({ id, data, style }: ImageSliderWidgetProps) {
                     spaceBetween={data.spaceBetween || 0}
                     slidesPerView={data.slidesPerView || 1}
                     navigation={data.showNavigation}
-                    pagination={data.paginationType ? { clickable: true, type: data.paginationType } : false}
+                    pagination={paginationConfig}
                     autoplay={data.autoPlay ? { delay: 3000, disableOnInteraction: false } : false}
                     effect={data.effect || 'slide'}
                     className="w-full h-full rounded"

@@ -31,6 +31,7 @@ interface SlideDoorsProps {
   doorButtonBackgroundColor?: string;
   doorButtonBoxShadow?: string;
   doorButtonOpenTextColor?: string;
+  doorButtonOpenTextFontFamily?: string;
   doorButtonAnimation?: "none" | "pulse" | "bounce" | "shake" | "glow" | "float";
 }
 
@@ -73,6 +74,7 @@ export function SlideDoors({
   doorButtonBackgroundColor,
   doorButtonBoxShadow,
   doorButtonOpenTextColor = "#36463A",
+  doorButtonOpenTextFontFamily,
   doorButtonAnimation = "none",
 }: SlideDoorsProps) {
   const rgb = hexToRgb(color);
@@ -129,7 +131,7 @@ export function SlideDoors({
           <>
             <motion.div
               key={`left-slide-${color}`}
-              className="absolute left-0 top-0 h-full w-1/2 z-10"
+              className="absolute left-0 top-0 h-full w-1/2 z-10 pointer-events-none"
               style={{ background: gradient }}
               initial={{ x: 0, opacity: 1 }}
               animate={doorsOpen ? { x: "-100%", opacity: [1, 1, 0.001] } : { x: 0, opacity: 1 }}
@@ -138,7 +140,7 @@ export function SlideDoors({
             />
             <motion.div
               key={`right-slide-${color}`}
-              className="absolute right-0 top-0 h-full w-1/2 z-10"
+              className="absolute right-0 top-0 h-full w-1/2 z-10 pointer-events-none"
               style={{ background: gradientReverse }}
               initial={{ x: 0, opacity: 1 }}
               animate={doorsOpen ? { x: "100%", opacity: [1, 1, 0.001] } : { x: 0, opacity: 1 }}
@@ -152,10 +154,10 @@ export function SlideDoors({
 
       {/* OPEN BUTTON (before doors open) */}
       {showDoors && !doorsOpen && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center p-4" style={buttonContainerStyle}>
+        <div className="absolute inset-0 z-20 flex items-center justify-center p-4 pointer-events-none" style={buttonContainerStyle}>
           <button
             onClick={onOpen}
-            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center ${
+            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center pointer-events-auto ${
               doorButtonAnimation !== "none" ? `door-button-${doorButtonAnimation}` : ""
             }`}
             aria-label="Buka kad jemputan"
@@ -186,8 +188,9 @@ export function SlideDoors({
               style={{
                 fontSize: "11px",
                 color: doorButtonOpenTextColor || "#36463A",
-                marginBottom: "8px",
+                marginBottom: "4px",
                 fontWeight: 500,
+                fontFamily: doorButtonOpenTextFontFamily || undefined,
               }}
             >
               OPEN

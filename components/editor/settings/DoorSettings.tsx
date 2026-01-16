@@ -120,6 +120,26 @@ export function DoorSettings({ node, onUpdate }: DoorSettingsProps) {
                         </select>
                     </div>
 
+                    {/* OPEN Text Settings */}
+                    <div className="space-y-1 pt-2 border-t border-dashed">
+                        <label className="text-[10px] font-semibold text-gray-500">OPEN Text</label>
+                        <div className="space-y-1">
+                            <label className="text-[9px] text-gray-400">Font Family</label>
+                            <select
+                                className="w-full text-xs border rounded p-1"
+                                value={node.data.doorButtonOpenTextFontFamily || ''}
+                                onChange={(e) => onUpdate({ doorButtonOpenTextFontFamily: e.target.value || undefined })}
+                            >
+                                <option value="">Default</option>
+                                <option value="sans-serif">Sans Serif</option>
+                                <option value="serif">Serif</option>
+                                <option value="monospace">Monospace</option>
+                                <option value="cursive">Cursive</option>
+                                <option value="fantasy">Fantasy</option>
+                            </select>
+                        </div>
+                    </div>
+
                     {/* Compact Container/Style Settings */}
                     <div className="space-y-2">
                         <div className="grid grid-cols-2 gap-2">

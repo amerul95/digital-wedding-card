@@ -61,6 +61,7 @@ export function Sidebar() {
                 <DraggableItem type="event-details" label="Event Details" />
                 <DraggableItem type="countdown" label="Countdown" />
                 <DraggableItem type="slider" label="Image Slider" />
+                <DraggableItem type="congratulation-speech" label="Congratulation Speech" />
                 <DraggableItem type="bottom-nav" label="Bottom Nav" />
             </div>
 

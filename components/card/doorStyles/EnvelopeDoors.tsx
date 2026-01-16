@@ -31,6 +31,7 @@ interface EnvelopeDoorsProps {
   doorButtonBackgroundColor?: string;
   doorButtonBoxShadow?: string;
   doorButtonOpenTextColor?: string;
+  doorButtonOpenTextFontFamily?: string;
   doorButtonAnimation?: "none" | "pulse" | "bounce" | "shake" | "glow" | "float";
 }
 
@@ -73,6 +74,7 @@ export function EnvelopeDoors({
   doorButtonBackgroundColor,
   doorButtonBoxShadow,
   doorButtonOpenTextColor = "#36463A",
+  doorButtonOpenTextFontFamily,
   doorButtonAnimation = "none",
 }: EnvelopeDoorsProps) {
   const rgb = hexToRgb(color);
@@ -130,7 +132,7 @@ export function EnvelopeDoors({
             {/* TOP FLAP */}
             <motion.div
               key={`top-flap-${color}`}
-              className="absolute left-0 top-0 w-full h-1/2 z-10"
+              className="absolute left-0 top-0 w-full h-1/2 z-10 pointer-events-none"
               style={{
                 transformOrigin: "top center",
                 background: gradientTop,
@@ -148,7 +150,7 @@ export function EnvelopeDoors({
             {/* BOTTOM FLAP */}
             <motion.div
               key={`bottom-flap-${color}`}
-              className="absolute left-0 bottom-0 w-full h-1/2 z-10"
+              className="absolute left-0 bottom-0 w-full h-1/2 z-10 pointer-events-none"
               style={{
                 transformOrigin: "bottom center",
                 background: gradientBottom,
@@ -170,10 +172,10 @@ export function EnvelopeDoors({
 
       {/* OPEN BUTTON (before doors open) */}
       {showDoors && !doorsOpen && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center p-4" style={buttonContainerStyle}>
+        <div className="absolute inset-0 z-20 flex items-center justify-center p-4 pointer-events-none" style={buttonContainerStyle}>
           <button
             onClick={onOpen}
-            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center ${
+            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center pointer-events-auto ${
               doorButtonAnimation !== "none" ? `door-button-${doorButtonAnimation}` : ""
             }`}
             aria-label="Buka kad jemputan"
@@ -204,8 +206,9 @@ export function EnvelopeDoors({
               style={{
                 fontSize: "11px",
                 color: doorButtonOpenTextColor || "#36463A",
-                marginBottom: "8px",
+                marginBottom: "4px",
                 fontWeight: 500,
+                fontFamily: doorButtonOpenTextFontFamily || undefined,
               }}
             >
               OPEN

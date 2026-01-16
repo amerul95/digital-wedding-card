@@ -81,6 +81,60 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
         return modalNode;
     };
 
+    const openMap = (address: string, mapProvider?: string) => {
+        if (!address || !address.trim()) return;
+        
+        // Encode the address for URL
+        const encodedAddress = encodeURIComponent(address.trim());
+        
+        // Detect if user is on mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isMac = /Macintosh/.test(navigator.userAgent);
+        const isAppleDevice = isIOS || isMac;
+        
+        // Determine which map to use
+        const provider = mapProvider || data.mapProvider || 'auto';
+        
+        let mapUrl = '';
+        
+        if (provider === 'waze' || (provider === 'auto' && isMobile)) {
+            // Try Waze first on mobile devices (or if explicitly selected)
+            // Waze URL scheme: waze://?navigate=yes&q=ADDRESS
+            // Web fallback: https://www.waze.com/ul?q=ADDRESS
+            if (isMobile) {
+                // Try native Waze app first
+                const wazeAppUrl = `waze://?navigate=yes&q=${encodedAddress}`;
+                const wazeWebUrl = `https://www.waze.com/ul?q=${encodedAddress}`;
+                
+                // Try to open Waze app, fallback to web if app not installed
+                const link = document.createElement('a');
+                link.href = wazeAppUrl;
+                link.target = '_blank';
+                link.click();
+                
+                // Fallback to web Waze after a short delay if app doesn't open
+                setTimeout(() => {
+                    window.open(wazeWebUrl, '_blank');
+                }, 500);
+                return;
+            } else {
+                // Desktop: use web Waze
+                mapUrl = `https://www.waze.com/ul?q=${encodedAddress}`;
+            }
+        } else if (provider === 'apple' || (provider === 'auto' && isAppleDevice)) {
+            // Apple Maps
+            mapUrl = `https://maps.apple.com/?q=${encodedAddress}`;
+        } else {
+            // Google Maps (default)
+            mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+        }
+        
+        if (mapUrl) {
+            window.open(mapUrl, '_blank');
+        }
+    };
+
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         selectNode(id);
@@ -92,6 +146,8 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
                 // If internal link or same tab
                 window.location.href = data.linkUrl;
             }
+        } else if (data.actionType === 'map' && data.mapAddress) {
+            openMap(data.mapAddress, data.mapProvider);
         } else if (['calendar', 'rsvp', 'speech'].includes(data.actionType)) {
             const modalNode = getOrCreateModalWidget();
             selectNode(modalNode.id); // Select modal widget when opening

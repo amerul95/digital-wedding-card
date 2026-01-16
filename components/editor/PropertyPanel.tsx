@@ -804,6 +804,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             >
                                                 <option value="none">None</option>
                                                 <option value="link">Redirect to Link</option>
+                                                <option value="map">Open Map</option>
                                                 <option value="calendar">Save Date</option>
                                                 <option value="rsvp">Open RSVP</option>
                                                 <option value="speech">Write Speech (Wishes)</option>
@@ -831,6 +832,37 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                                             <option value="_blank">New Tab</option>
                                                             <option value="_self">Same Tab</option>
                                                         </select>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {node.data.actionType === 'map' && (
+                                                <div className="bg-gray-50 p-2 rounded space-y-2">
+                                                    <div className="flex flex-col gap-1">
+                                                        <label className="text-[10px] text-gray-500">Address or Location</label>
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs"
+                                                            placeholder="e.g., 123 Main St, City, Country"
+                                                            value={node.data.mapAddress || ''}
+                                                            onChange={(e) => updateNodeData(targetId, { mapAddress: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        <label className="text-[10px] text-gray-500">Map Provider</label>
+                                                        <select
+                                                            className="border rounded p-1 text-xs"
+                                                            value={node.data.mapProvider || 'auto'}
+                                                            onChange={(e) => updateNodeData(targetId, { mapProvider: e.target.value })}
+                                                        >
+                                                            <option value="auto">Auto (Waze on mobile, Google/Apple on desktop)</option>
+                                                            <option value="waze">Waze</option>
+                                                            <option value="google">Google Maps</option>
+                                                            <option value="apple">Apple Maps</option>
+                                                        </select>
+                                                        <p className="text-[9px] text-gray-400 mt-1">
+                                                            Auto: Waze on mobile, Google Maps (Android/Web) or Apple Maps (iOS/Mac) on desktop
+                                                        </p>
                                                     </div>
                                                 </div>
                                             )}
@@ -1011,6 +1043,749 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                 {/* Door Settings */}
                                 {node.type === 'door' && (
                                     <DoorSettings node={node} onUpdate={(data) => updateNodeData(targetId, data)} />
+                                )}
+
+                                {/* Countdown Widget Specifics */}
+                                {node.type === 'countdown' && (
+                                    <div className="flex flex-col gap-3">
+                                        {/* Numbers Properties */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-blue-600 flex items-center gap-2 border-b pb-2">
+                                                <Type size={14} /> Countdown Numbers Properties
+                                            </h4>
+                                            
+                                            {/* Font Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.data.numberColor || '#000000'}
+                                                        onChange={(e) => updateNodeData(targetId, { numberColor: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.data.numberColor || '#000000'}
+                                                        onChange={(e) => updateNodeData(targetId, { numberColor: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Font Weight */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Weight</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.numberFontWeight || 'bold'}
+                                                    onChange={(e) => updateNodeData(targetId, { numberFontWeight: e.target.value })}
+                                                >
+                                                    <option value="normal">Normal</option>
+                                                    <option value="bold">Bold</option>
+                                                    <option value="100">100 (Thin)</option>
+                                                    <option value="200">200 (Extra Light)</option>
+                                                    <option value="300">300 (Light)</option>
+                                                    <option value="400">400 (Regular)</option>
+                                                    <option value="500">500 (Medium)</option>
+                                                    <option value="600">600 (Semi Bold)</option>
+                                                    <option value="700">700 (Bold)</option>
+                                                    <option value="800">800 (Extra Bold)</option>
+                                                    <option value="900">900 (Black)</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Font Family */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Family</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.numberFontFamily || 'sans'}
+                                                    onChange={(e) => updateNodeData(targetId, { numberFontFamily: e.target.value })}
+                                                >
+                                                    <option value="sans">Sans Serif</option>
+                                                    <option value="serif">Serif</option>
+                                                    <option value="mono">Monospace</option>
+                                                    <option value="cursive">Cursive</option>
+                                                    <option value="fantasy">Fantasy</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {/* Text Labels Properties */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-green-600 flex items-center gap-2 border-b pb-2">
+                                                <Type size={14} /> Text Labels Properties
+                                            </h4>
+
+                                            {/* Show/Hide Labels Toggle */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] text-gray-500">Show Labels</label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-4 h-4 cursor-pointer"
+                                                    checked={node.data.showLabels !== false}
+                                                    onChange={(e) => updateNodeData(targetId, { showLabels: e.target.checked })}
+                                                />
+                                            </div>
+
+                                            {/* Font Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.data.labelColor || '#666666'}
+                                                        onChange={(e) => updateNodeData(targetId, { labelColor: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.data.labelColor || '#666666'}
+                                                        onChange={(e) => updateNodeData(targetId, { labelColor: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Font Family */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Family</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.labelFontFamily || 'sans'}
+                                                    onChange={(e) => updateNodeData(targetId, { labelFontFamily: e.target.value })}
+                                                >
+                                                    <option value="sans">Sans Serif</option>
+                                                    <option value="serif">Serif</option>
+                                                    <option value="mono">Monospace</option>
+                                                    <option value="cursive">Cursive</option>
+                                                    <option value="fantasy">Fantasy</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {/* Layout Properties */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-orange-600 flex items-center gap-2 border-b pb-2">
+                                                <Layout size={14} /> Layout Properties
+                                            </h4>
+
+                                            {/* Gap Between Counters */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Gap Between Counters (px)</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.gap || 20}
+                                                    onChange={(e) => updateNodeData(targetId, { gap: parseInt(e.target.value) || 20 })}
+                                                    min="0"
+                                                />
+                                                <p className="text-[9px] text-gray-400 mt-1">Space between each counter item</p>
+                                            </div>
+
+                                            {/* Padding Controls */}
+                                            <div className="space-y-2 pt-2 border-t border-dashed">
+                                                <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Padding (px)</h5>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Top</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.countdownPaddingTop ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { countdownPaddingTop: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Right</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.countdownPaddingRight ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { countdownPaddingRight: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Bottom</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.countdownPaddingBottom ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { countdownPaddingBottom: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Left</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.countdownPaddingLeft ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { countdownPaddingLeft: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Image Slider Widget Specifics */}
+                                {node.type === 'slider' && (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-purple-600 flex items-center gap-2 border-b pb-2">
+                                                <Settings size={14} /> Image Slider Settings
+                                            </h4>
+                                            
+                                            {/* Images List */}
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-[10px] text-gray-500">Images</label>
+                                                    <button
+                                                        onClick={() => {
+                                                            const input = document.createElement('input');
+                                                            input.type = 'file';
+                                                            input.accept = 'image/*';
+                                                            input.multiple = true;
+                                                            input.onchange = (e: any) => {
+                                                                const files = e.target.files;
+                                                                if (files) {
+                                                                    const newImages: string[] = [];
+                                                                    Array.from(files as FileList).forEach((file: File) => {
+                                                                        const url = URL.createObjectURL(file);
+                                                                        newImages.push(url);
+                                                                    });
+                                                                    updateNodeData(targetId, { images: [...(node.data.images || []), ...newImages] });
+                                                                }
+                                                            };
+                                                            input.click();
+                                                        }}
+                                                        className="px-2 py-1 rounded bg-blue-600 text-white text-[10px] hover:bg-blue-700 flex items-center gap-1"
+                                                    >
+                                                        <Plus size={12} /> Add Images
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-2 max-h-40 overflow-y-auto border rounded p-2 bg-gray-50">
+                                                    {(node.data.images || []).map((img: string, idx: number) => (
+                                                        <div key={idx} className="flex items-center gap-2 p-2 border border-gray-300 rounded bg-white">
+                                                            <img src={img} alt={`Slide ${idx + 1}`} className="w-12 h-12 object-cover rounded" />
+                                                            <span className="flex-1 text-[10px] text-gray-600 truncate">Image {idx + 1}</span>
+                                                            <button
+                                                                onClick={() => {
+                                                                    const newImages = (node.data.images || []).filter((_: string, i: number) => i !== idx);
+                                                                    updateNodeData(targetId, { images: newImages });
+                                                                }}
+                                                                className="p-1 rounded text-red-600 hover:bg-red-50"
+                                                                title="Remove image"
+                                                            >
+                                                                <Trash2 size={12} />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                    {(!node.data.images || node.data.images.length === 0) && (
+                                                        <p className="text-[10px] text-gray-400 text-center py-4">No images added yet</p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Slides Per View */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Slides Per View</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.slidesPerView || 1}
+                                                    onChange={(e) => updateNodeData(targetId, { slidesPerView: Math.max(1, parseInt(e.target.value) || 1) })}
+                                                    min="1"
+                                                />
+                                                <p className="text-[9px] text-gray-400 mt-1">Number of images to show at once</p>
+                                            </div>
+
+                                            {/* Autoplay */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] text-gray-500">Autoplay</label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-4 h-4 cursor-pointer"
+                                                    checked={node.data.autoPlay ?? false}
+                                                    onChange={(e) => updateNodeData(targetId, { autoPlay: e.target.checked })}
+                                                />
+                                            </div>
+
+                                            {/* Container Width */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Container Width</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.containerWidth || 'full'}
+                                                    onChange={(e) => updateNodeData(targetId, { containerWidth: e.target.value })}
+                                                >
+                                                    <option value="full">Full Width</option>
+                                                    <option value="custom">Custom Width</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Custom Width (only shown when custom is selected) */}
+                                            {node.data.containerWidth === 'custom' && (
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Custom Width (px)</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full text-xs border rounded px-2 py-1"
+                                                        value={node.data.customWidth || 300}
+                                                        onChange={(e) => updateNodeData(targetId, { customWidth: Math.max(100, parseInt(e.target.value) || 300) })}
+                                                        min="100"
+                                                    />
+                                                    <p className="text-[9px] text-gray-400 mt-1">Maximum: Container width</p>
+                                                </div>
+                                            )}
+
+                                            {/* Enable Pagination */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] text-gray-500">Enable Pagination</label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-4 h-4 cursor-pointer"
+                                                    checked={node.data.enablePagination ?? true}
+                                                    onChange={(e) => updateNodeData(targetId, { enablePagination: e.target.checked })}
+                                                />
+                                            </div>
+
+                                            {/* Pagination Type (only shown when pagination is enabled) */}
+                                            {node.data.enablePagination && (
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Pagination Type</label>
+                                                    <select
+                                                        className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                        value={node.data.paginationType || 'dot'}
+                                                        onChange={(e) => updateNodeData(targetId, { paginationType: e.target.value })}
+                                                    >
+                                                        <option value="dot">Dot</option>
+                                                        <option value="number">Number</option>
+                                                        <option value="none">None</option>
+                                                    </select>
+                                                </div>
+                                            )}
+
+                                            {/* Padding Controls */}
+                                            <div className="space-y-2 pt-2 border-t border-dashed">
+                                                <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Padding (px)</h5>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Top</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.sliderPaddingTop ?? 0}
+                                                            onChange={(e) => updateNodeData(targetId, { sliderPaddingTop: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Right</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.sliderPaddingRight ?? 0}
+                                                            onChange={(e) => updateNodeData(targetId, { sliderPaddingRight: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Bottom</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.sliderPaddingBottom ?? 0}
+                                                            onChange={(e) => updateNodeData(targetId, { sliderPaddingBottom: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Left</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.sliderPaddingLeft ?? 0}
+                                                            onChange={(e) => updateNodeData(targetId, { sliderPaddingLeft: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Congratulation Speech Widget Specifics */}
+                                {node.type === 'congratulation-speech' && (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-indigo-600 flex items-center gap-2 border-b pb-2">
+                                                <Type size={14} /> Congratulation Speech Settings
+                                            </h4>
+
+                                            {/* Auto Scroll Toggle */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] text-gray-500">Enable Auto Scroll Loop</label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-4 h-4 cursor-pointer"
+                                                    checked={node.data.enableAutoScroll ?? false}
+                                                    onChange={(e) => updateNodeData(targetId, { enableAutoScroll: e.target.checked })}
+                                                />
+                                            </div>
+
+                                            {/* Auto Scroll Delay (only shown when auto scroll is enabled) */}
+                                            {node.data.enableAutoScroll && (
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Auto Scroll Delay (ms)</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full text-xs border rounded px-2 py-1"
+                                                        value={node.data.autoScrollDelay || 3000}
+                                                        onChange={(e) => updateNodeData(targetId, { autoScrollDelay: parseInt(e.target.value) || 3000 })}
+                                                        min="1000"
+                                                        step="500"
+                                                    />
+                                                    <p className="text-[9px] text-gray-400 mt-1">Time to display each speech before scrolling to next</p>
+                                                </div>
+                                            )}
+
+                                            {/* Speech Text Properties */}
+                                            <div className="space-y-2 pt-2 border-t border-dashed">
+                                                <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Speech Text</h5>
+                                                
+                                                {/* Font Color */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Color</label>
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="color"
+                                                            className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                            value={node.data.speechTextColor || '#333333'}
+                                                            onChange={(e) => updateNodeData(targetId, { speechTextColor: e.target.value })}
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className="flex-1 text-xs border rounded px-2"
+                                                            value={node.data.speechTextColor || '#333333'}
+                                                            onChange={(e) => updateNodeData(targetId, { speechTextColor: e.target.value })}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Font Size */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Size (px)</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full text-xs border rounded px-2 py-1"
+                                                        value={node.data.speechTextFontSize || 14}
+                                                        onChange={(e) => updateNodeData(targetId, { speechTextFontSize: parseInt(e.target.value) || 14 })}
+                                                        min="8"
+                                                        max="72"
+                                                    />
+                                                </div>
+
+                                                {/* Font Weight */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Weight</label>
+                                                    <select
+                                                        className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                        value={node.data.speechTextFontWeight || 'normal'}
+                                                        onChange={(e) => updateNodeData(targetId, { speechTextFontWeight: e.target.value })}
+                                                    >
+                                                        <option value="normal">Normal</option>
+                                                        <option value="bold">Bold</option>
+                                                        <option value="100">100 (Thin)</option>
+                                                        <option value="200">200 (Extra Light)</option>
+                                                        <option value="300">300 (Light)</option>
+                                                        <option value="400">400 (Regular)</option>
+                                                        <option value="500">500 (Medium)</option>
+                                                        <option value="600">600 (Semi Bold)</option>
+                                                        <option value="700">700 (Bold)</option>
+                                                        <option value="800">800 (Extra Bold)</option>
+                                                        <option value="900">900 (Black)</option>
+                                                    </select>
+                                                </div>
+
+                                                {/* Font Family */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Family</label>
+                                                    <select
+                                                        className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                        value={node.data.speechTextFontFamily || 'sans'}
+                                                        onChange={(e) => updateNodeData(targetId, { speechTextFontFamily: e.target.value })}
+                                                    >
+                                                        <option value="sans">Sans Serif</option>
+                                                        <option value="serif">Serif</option>
+                                                        <option value="mono">Monospace</option>
+                                                        <option value="cursive">Cursive</option>
+                                                        <option value="fantasy">Fantasy</option>
+                                                    </select>
+                                                </div>
+
+                                                {/* Text Align */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Text Align</label>
+                                                    <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
+                                                        {['left', 'center', 'right'].map((align) => (
+                                                            <button
+                                                                key={align}
+                                                                className={`p-1 rounded ${node.data.speechTextAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
+                                                                onClick={() => updateNodeData(targetId, { speechTextAlign: align })}
+                                                                title={align}
+                                                            >
+                                                                {align === 'left' && <AlignLeft size={14} />}
+                                                                {align === 'center' && <AlignCenter size={14} />}
+                                                                {align === 'right' && <AlignRight size={14} />}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Author Text Properties */}
+                                            <div className="space-y-2 pt-2 border-t border-dashed">
+                                                <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Author Text</h5>
+                                                
+                                                {/* Font Color */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Color</label>
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="color"
+                                                            className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                            value={node.data.authorTextColor || '#666666'}
+                                                            onChange={(e) => updateNodeData(targetId, { authorTextColor: e.target.value })}
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className="flex-1 text-xs border rounded px-2"
+                                                            value={node.data.authorTextColor || '#666666'}
+                                                            onChange={(e) => updateNodeData(targetId, { authorTextColor: e.target.value })}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Font Size */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Size (px)</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full text-xs border rounded px-2 py-1"
+                                                        value={node.data.authorTextFontSize || 12}
+                                                        onChange={(e) => updateNodeData(targetId, { authorTextFontSize: parseInt(e.target.value) || 12 })}
+                                                        min="8"
+                                                        max="72"
+                                                    />
+                                                </div>
+
+                                                {/* Font Weight */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Weight</label>
+                                                    <select
+                                                        className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                        value={node.data.authorTextFontWeight || 'normal'}
+                                                        onChange={(e) => updateNodeData(targetId, { authorTextFontWeight: e.target.value })}
+                                                    >
+                                                        <option value="normal">Normal</option>
+                                                        <option value="bold">Bold</option>
+                                                        <option value="100">100 (Thin)</option>
+                                                        <option value="200">200 (Extra Light)</option>
+                                                        <option value="300">300 (Light)</option>
+                                                        <option value="400">400 (Regular)</option>
+                                                        <option value="500">500 (Medium)</option>
+                                                        <option value="600">600 (Semi Bold)</option>
+                                                        <option value="700">700 (Bold)</option>
+                                                        <option value="800">800 (Extra Bold)</option>
+                                                        <option value="900">900 (Black)</option>
+                                                    </select>
+                                                </div>
+
+                                                {/* Font Family */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Font Family</label>
+                                                    <select
+                                                        className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                        value={node.data.authorTextFontFamily || 'sans'}
+                                                        onChange={(e) => updateNodeData(targetId, { authorTextFontFamily: e.target.value })}
+                                                    >
+                                                        <option value="sans">Sans Serif</option>
+                                                        <option value="serif">Serif</option>
+                                                        <option value="mono">Monospace</option>
+                                                        <option value="cursive">Cursive</option>
+                                                        <option value="fantasy">Fantasy</option>
+                                                    </select>
+                                                </div>
+
+                                                {/* Text Align */}
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] text-gray-500">Text Align</label>
+                                                    <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
+                                                        {['left', 'center', 'right'].map((align) => (
+                                                            <button
+                                                                key={align}
+                                                                className={`p-1 rounded ${node.data.authorTextAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
+                                                                onClick={() => updateNodeData(targetId, { authorTextAlign: align })}
+                                                                title={align}
+                                                            >
+                                                                {align === 'left' && <AlignLeft size={14} />}
+                                                                {align === 'center' && <AlignCenter size={14} />}
+                                                                {align === 'right' && <AlignRight size={14} />}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Mockup Speeches */}
+                                            <div className="space-y-2 pt-2 border-t border-dashed">
+                                                <div className="flex items-center justify-between">
+                                                    <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Mockup Speeches</h5>
+                                                    <button
+                                                        onClick={() => {
+                                                            const currentMockups = node.data.mockupSpeeches || [];
+                                                            updateNodeData(targetId, {
+                                                                mockupSpeeches: [
+                                                                    ...currentMockups,
+                                                                    { id: `mockup-${Date.now()}`, speech: '', author: '', timestamp: Date.now() }
+                                                                ]
+                                                            });
+                                                        }}
+                                                        className="px-2 py-1 rounded bg-blue-600 text-white text-[10px] hover:bg-blue-700 flex items-center gap-1"
+                                                    >
+                                                        <Plus size={12} /> Add New
+                                                    </button>
+                                                </div>
+                                                
+                                                <div className="space-y-2 max-h-60 overflow-y-auto border rounded p-2 bg-gray-50">
+                                                    {(node.data.mockupSpeeches || []).map((mockup: any, idx: number) => (
+                                                        <div key={mockup.id || idx} className="flex flex-col gap-2 p-2 border border-gray-300 rounded bg-white">
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <span className="text-[9px] text-gray-400 font-medium">Mockup {idx + 1}</span>
+                                                                <div className="flex gap-1">
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const currentMockups = node.data.mockupSpeeches || [];
+                                                                            const newMockups = [...currentMockups, {
+                                                                                id: `mockup-${Date.now()}`,
+                                                                                speech: mockup.speech || '',
+                                                                                author: mockup.author || '',
+                                                                                timestamp: Date.now()
+                                                                            }];
+                                                                            updateNodeData(targetId, { mockupSpeeches: newMockups });
+                                                                        }}
+                                                                        className="p-1 rounded text-blue-600 hover:bg-blue-50"
+                                                                        title="Duplicate"
+                                                                    >
+                                                                        <Copy size={12} />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const currentMockups = node.data.mockupSpeeches || [];
+                                                                            const newMockups = currentMockups.filter((_: any, i: number) => i !== idx);
+                                                                            updateNodeData(targetId, { mockupSpeeches: newMockups });
+                                                                        }}
+                                                                        className="p-1 rounded text-red-600 hover:bg-red-50"
+                                                                        title="Delete"
+                                                                    >
+                                                                        <Trash2 size={12} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <label className="text-[9px] text-gray-400">Speech</label>
+                                                                <textarea
+                                                                    className="w-full text-xs border rounded px-2 py-1 resize-none"
+                                                                    rows={2}
+                                                                    value={mockup.speech || ''}
+                                                                    onChange={(e) => {
+                                                                        const currentMockups = node.data.mockupSpeeches || [];
+                                                                        const newMockups = [...currentMockups];
+                                                                        newMockups[idx] = { ...newMockups[idx], speech: e.target.value };
+                                                                        updateNodeData(targetId, { mockupSpeeches: newMockups });
+                                                                    }}
+                                                                    placeholder="Enter speech text..."
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <label className="text-[9px] text-gray-400">Author</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                                    value={mockup.author || ''}
+                                                                    onChange={(e) => {
+                                                                        const currentMockups = node.data.mockupSpeeches || [];
+                                                                        const newMockups = [...currentMockups];
+                                                                        newMockups[idx] = { ...newMockups[idx], author: e.target.value };
+                                                                        updateNodeData(targetId, { mockupSpeeches: newMockups });
+                                                                    }}
+                                                                    placeholder="Enter author name..."
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {(!node.data.mockupSpeeches || node.data.mockupSpeeches.length === 0) && (
+                                                        <p className="text-[10px] text-gray-400 text-center py-4">No mockup speeches added yet</p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Padding Controls */}
+                                            <div className="space-y-2 pt-2 border-t border-dashed">
+                                                <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Container Padding (px)</h5>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Top</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.speechPaddingTop ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { speechPaddingTop: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Right</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.speechPaddingRight ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { speechPaddingRight: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Bottom</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.speechPaddingBottom ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { speechPaddingBottom: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] text-gray-400">Left</label>
+                                                        <input
+                                                            type="number"
+                                                            className="w-full text-xs border rounded px-2 py-1"
+                                                            value={node.data.speechPaddingLeft ?? 16}
+                                                            onChange={(e) => updateNodeData(targetId, { speechPaddingLeft: parseInt(e.target.value) || 0 })}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
 
                                 {/* Image Widget Specifics */}

@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 
 export function EditorLayout() {
     const addNode = useEditorStore((state) => state.addNode);
+    const selectedId = useEditorStore((state) => state.selectedId);
     const [activeDragItem, setActiveDragItem] = useState<any>(null);
     const [mounted, setMounted] = useState(false);
     const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
@@ -20,6 +21,13 @@ export function EditorLayout() {
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Auto-open property panel when a node is selected or page settings are accessed
+    useEffect(() => {
+        if (selectedId) {
+            setPropertyPanelOpen(true);
+        }
+    }, [selectedId]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -61,6 +69,9 @@ export function EditorLayout() {
                     images: type === 'slider' ? [] : undefined,
                     // Default countdown data
                     targetDate: type === 'countdown' ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16) : undefined,
+                    // Default congratulation speech data
+                    enableAutoScroll: type === 'congratulation-speech' ? false : undefined,
+                    autoScrollDelay: type === 'congratulation-speech' ? 3000 : undefined,
                 },
                 style: {},
             };

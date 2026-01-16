@@ -19,6 +19,7 @@ export interface ClientData {
     galleryImages: string[];
     hiddenSectionIds: string[];
     hiddenNavbarItemIds: string[];
+    speeches: Array<{ author: string; content: string; timestamp: number }>; // Congratulation speeches from visitors
     // We can add more fields as needed
 }
 
@@ -45,7 +46,8 @@ export const defaultClientData: ClientData = {
     },
     galleryImages: [],
     hiddenSectionIds: [],
-    hiddenNavbarItemIds: []
+    hiddenNavbarItemIds: [],
+    speeches: [] // Array of { author, content, timestamp }
 };
 
 export const useClientStore = create<ClientStore>()(

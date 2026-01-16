@@ -89,29 +89,47 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
         doorButtonBackgroundColor: data.doorButtonBackgroundColor,
         doorButtonBoxShadow: data.doorButtonBoxShadow,
         doorButtonOpenTextColor: data.doorButtonOpenTextColor,
+        doorButtonOpenTextFontFamily: data.doorButtonOpenTextFontFamily,
         doorButtonAnimation: data.doorButtonAnimation,
     };
 
     return (
         <div
             className={cn(
-                "relative z-30 transition-all duration-200 group min-h-[50vh]",
+                "absolute inset-0 z-30 transition-all duration-200 group",
                 isSelected ? "ring-2 ring-blue-500" : "hover:ring-1 hover:ring-blue-300"
             )}
             style={{
                 ...style,
+                position: 'absolute',
+                top: style.top ?? 0,
+                left: style.left ?? 0,
+                right: style.right ?? 0,
+                bottom: style.bottom ?? 0,
+                width: style.width || '100%',
                 height: style.height || '100%',
-                width: style.width || '100%'
+                pointerEvents: 'none', // Allow clicks to pass through by default
             }}
-            onClick={handleClick}
         >
-            {/* Wrapper to ensure Door takes full space */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-auto">
+            {/* Wrapper to ensure Door takes full space - only capture events on door elements */}
+            <div 
+                className="absolute inset-0 overflow-hidden pointer-events-none"
+            >
                 <DoorComponent {...doorProps} />
             </div>
 
             {/* Editor Overlay to allow selection even if doors are "open" or interaction is complex */}
-            <div className="absolute inset-0 z-40 pointer-events-none border-2 border-transparent group-hover:border-blue-300/30" />
+            <div 
+                className="absolute inset-0 z-40 border-2 border-transparent group-hover:border-blue-300/30" 
+                style={{ pointerEvents: 'none' }}
+            />
+
+            {/* Small selection area at top-left corner - allows selecting door widget without blocking content */}
+            <div 
+                className="absolute top-0 left-0 w-16 h-16 z-50 cursor-pointer"
+                onClick={handleClick}
+                title="Click to select door widget"
+            />
 
             {isSelected && (
                 <div className="absolute top-2 right-2 z-50 flex gap-2">

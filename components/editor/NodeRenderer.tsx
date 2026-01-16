@@ -13,6 +13,7 @@ import { BottomNavWidget } from "@/components/editor/widgets/BottomNavWidget";
 import { ButtonWidget } from "@/components/editor/widgets/ButtonWidget";
 import { DoorWidget } from "@/components/editor/widgets/DoorWidget";
 import { ModalWidget } from "@/components/editor/widgets/ModalWidget";
+import { CongratulationSpeechWidget } from "@/components/editor/widgets/CongratulationSpeechWidget";
 
 import { useClientStore, defaultClientData } from "@/components/studio/clientStore";
 
@@ -126,6 +127,8 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
             return <DoorWidget id={nodeId} data={processedData} style={node.style} />;
         case 'modal':
             return <ModalWidget id={nodeId} data={processedData} style={node.style} />;
+        case 'congratulation-speech':
+            return <CongratulationSpeechWidget id={nodeId} data={processedData} style={node.style} />;
         default:
             return (
                 <div

@@ -32,6 +32,7 @@ interface SwingDoorProps {
   doorButtonBackgroundColor?: string;
   doorButtonBoxShadow?: string;
   doorButtonOpenTextColor?: string;
+  doorButtonOpenTextFontFamily?: string;
   doorButtonAnimation?: "none" | "pulse" | "bounce" | "shake" | "glow" | "float";
 }
 
@@ -64,6 +65,7 @@ export function SwingDoor({
   doorButtonBackgroundColor,
   doorButtonBoxShadow,
   doorButtonOpenTextColor = "#36463A",
+  doorButtonOpenTextFontFamily,
   doorButtonAnimation = "none",
 }: SwingDoorProps) {
   // Calculate button dimensions based on type
@@ -134,7 +136,7 @@ export function SwingDoor({
             </motion.div>
             <motion.div
               key={`right-door-${color}`}
-              className="absolute right-0 top-0 h-full w-1/2 z-10"
+              className="absolute right-0 top-0 h-full w-1/2 z-10 pointer-events-none"
               style={{
                 transformOrigin: "left center",
                 backfaceVisibility: "hidden",
@@ -158,10 +160,10 @@ export function SwingDoor({
 
       {/* OPEN BUTTON (before doors open) */}
       {showDoors && !doorsOpen && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center p-4" style={buttonContainerStyle}>
+        <div className="absolute inset-0 z-20 flex items-center justify-center p-4 pointer-events-none" style={buttonContainerStyle}>
           <button
             onClick={onOpen}
-            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center ${
+            className={`bg-white/90 backdrop-blur border border-rose-200 shadow-lg text-rose-700 text-base font-medium hover:bg-white transition-colors flex flex-col items-center pointer-events-auto ${
               doorButtonAnimation !== "none" ? `door-button-${doorButtonAnimation}` : ""
             }`}
             aria-label="Buka kad jemputan"
@@ -192,8 +194,9 @@ export function SwingDoor({
               style={{
                 fontSize: "11px",
                 color: doorButtonOpenTextColor || "#36463A",
-                marginBottom: "8px",
+                marginBottom: "4px",
                 fontWeight: 500,
+                fontFamily: doorButtonOpenTextFontFamily || undefined,
               }}
             >
               OPEN

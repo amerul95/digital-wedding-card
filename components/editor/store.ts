@@ -20,7 +20,8 @@ export type WidgetType =
     | 'countdown'
     | 'bottom-nav'
     | 'door'
-    | 'modal';
+    | 'modal'
+    | 'congratulation-speech';
 
 export interface EditorNode {
     id: string;

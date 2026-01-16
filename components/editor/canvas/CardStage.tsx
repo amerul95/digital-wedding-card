@@ -8,6 +8,9 @@ import { SectionNavigator } from "./SectionNavigator";
 import { MobileFrameProvider } from "@/components/editor/context/MobileFrameContext";
 import { usePreview } from "@/components/editor/context/PreviewContext";
 import React from "react";
+import Snow from "@/components/card/effects/Snow";
+import Petals from "@/components/card/effects/PetalsFlow";
+import Bubbles from "@/components/card/effects/Bubbles";
 
 interface CardStageProps {
     isMobile: boolean;
@@ -17,6 +20,8 @@ export function CardStage({ isMobile }: CardStageProps) {
     const rootId = useEditorStore((state) => state.rootId);
     const rootNode = useEditorStore((state) => state.nodes[rootId]);
     const { isPreview } = usePreview();
+    const nodes = useEditorStore((state) => state.nodes);
+    const viewOptions = useEditorStore((state) => state.viewOptions);
 
     const { setNodeRef, isOver } = useDroppable({
         id: rootId,
@@ -25,6 +30,17 @@ export function CardStage({ isMobile }: CardStageProps) {
         },
         disabled: isPreview, // Disable drag and drop in preview mode
     });
+
+    // Find door node to render as overlay
+    const doorNodeEntry = Object.entries(nodes).find(([_, n]) => n.type === 'door');
+    const doorNodeId = doorNodeEntry ? doorNodeEntry[0] : null;
+    const doorNode = doorNodeEntry ? doorNodeEntry[1] : null;
+    const shouldShowDoor = doorNode && !doorNode.data.isHidden && viewOptions.showDoorOverlay;
+    
+    // Animation effects from door node
+    const animationEffect = doorNode?.data.animationEffect || 'none';
+    const effectColor = doorNode?.data.effectColor || '#f43f5e';
+    const shouldShowAnimation = viewOptions.showAnimation && animationEffect !== 'none';
 
     return (
         <div className="flex flex-col items-center w-full min-h-0">
@@ -63,9 +79,11 @@ export function CardStage({ isMobile }: CardStageProps) {
                                 {/* Notch spacing handled by first section padding if needed, or overlay */}
                                 {/* {isMobile && <div className="h-[30px] w-full pointer-events-none" />} */}
 
-                                {rootNode?.children.map((childId) => (
-                                    <NodeRenderer key={childId} nodeId={childId} />
-                                ))}
+                                {rootNode?.children
+                                    .filter((childId) => nodes[childId]?.type !== 'door') // Filter out door - rendered as overlay
+                                    .map((childId) => (
+                                        <NodeRenderer key={childId} nodeId={childId} />
+                                    ))}
 
                                 {rootNode?.children.length === 0 && (
                                     <div className={cn(
@@ -98,6 +116,22 @@ export function CardStage({ isMobile }: CardStageProps) {
                         </div>
                     </MobileFrameProvider>
                 </div>
+
+                {/* Animation Effects Overlay - rendered between content and door, z-20 */}
+                {shouldShowAnimation && (
+                    <div className="absolute inset-0 z-20 pointer-events-none">
+                        {animationEffect === "snow" && <Snow zIndex={20} color={effectColor} />}
+                        {animationEffect === "petals" && <Petals zIndex={20} color={effectColor} />}
+                        {animationEffect === "bubbles" && <Bubbles zIndex={20} color={effectColor} />}
+                    </div>
+                )}
+
+                {/* Door Overlay - rendered directly in frame container to cover full viewport, z-30 (topmost) */}
+                {shouldShowDoor && doorNodeId && (
+                    <div className="absolute inset-0 z-30 pointer-events-none">
+                        <NodeRenderer nodeId={doorNodeId} />
+                    </div>
+                )}
             </div>
         </div>
     );
