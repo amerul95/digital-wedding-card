@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { Upload } from "lucide-react";
 import { CreatorCard } from "@/components/creator/CreatorCard";
 import { CeremonyCard } from "@/components/card/CeremonyCard";
@@ -205,7 +205,7 @@ function SortableIconItem({
     );
 }
 
-export default function CreateThemePage() {
+function CreateThemePageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const editingId = searchParams.get('id');
@@ -2242,6 +2242,18 @@ export default function CreateThemePage() {
             )}
         </div>
         </>
+    );
+}
+
+export default function CreateThemePage() {
+    return (
+        <Suspense fallback={
+            <div className="w-full h-screen flex items-center justify-center">
+                <div className="text-gray-500">Loading...</div>
+            </div>
+        }>
+            <CreateThemePageContent />
+        </Suspense>
     );
 }
 

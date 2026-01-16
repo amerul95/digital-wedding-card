@@ -4,10 +4,11 @@
 
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import type Konva from 'konva';
 import { useProjectStore } from '@/lib/store/projectStore';
 import { useHistoryStore } from '@/lib/store/historyStore';
+import type { TextObject, RectObject, CircleObject } from '@/lib/store/types';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { EditorCanvas } from '@/components/designer/editor/canvas/EditorCanvas';
 import { Toolbar } from '@/components/designer/editor/components/Toolbar';
@@ -28,7 +29,7 @@ import { useEditorUIStore } from '@/lib/store/editorUIStore';
 import { useRafScroll } from '@/components/designer/editor/hooks/useRafScroll';
 import { getActiveSectionFromScroll } from '@/components/designer/editor/utils/getActiveSectionFromScroll';
 
-export default function EditorPage() {
+function EditorPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { loadProject, project, currentSectionId, setCurrentSection, selectedIds, setSelectedIds, deleteObject, duplicateObject, setClipboard, clipboard, setClipboardStyle, clipboardStyle, updateObject } = useProjectStore();
@@ -161,13 +162,13 @@ export default function EditorPage() {
     const { addObject, setSelectedIds } = useProjectStore.getState();
     const newIds: string[] = [];
     clipboard.forEach((obj) => {
-      const id = addObject(currentSectionId, {
-        ...obj,
-        id: '', // Will be generated
+      const { id, ...objWithoutId } = obj;
+      const newId = addObject(currentSectionId, {
+        ...objWithoutId,
         x: obj.x + 20,
         y: obj.y + 20,
       });
-      newIds.push(id);
+      newIds.push(newId);
     });
     setSelectedIds(newIds);
   }, { enabled: true });
@@ -228,18 +229,20 @@ export default function EditorPage() {
       if (!obj) return;
       
       // Apply style if types match
-      if (obj.type === 'text' && clipboardStyle.fontFamily) {
+      if (obj.type === 'text' && 'fontFamily' in clipboardStyle && clipboardStyle.fontFamily) {
+        const textStyle = clipboardStyle as Partial<TextObject>;
         updateObject(currentSectionId, id, {
-          fontFamily: clipboardStyle.fontFamily,
-          fontSize: clipboardStyle.fontSize,
-          fill: clipboardStyle.fill,
-          fontStyle: clipboardStyle.fontStyle,
+          fontFamily: textStyle.fontFamily!,
+          fontSize: textStyle.fontSize,
+          fill: textStyle.fill,
+          fontStyle: textStyle.fontStyle,
         });
-      } else if ((obj.type === 'rect' || obj.type === 'circle') && clipboardStyle.fill) {
+      } else if ((obj.type === 'rect' || obj.type === 'circle') && 'fill' in clipboardStyle && clipboardStyle.fill) {
+        const shapeStyle = clipboardStyle as Partial<RectObject | CircleObject>;
         updateObject(currentSectionId, id, {
-          fill: clipboardStyle.fill,
-          stroke: clipboardStyle.stroke,
-          strokeWidth: clipboardStyle.strokeWidth,
+          fill: shapeStyle.fill!,
+          stroke: shapeStyle.stroke,
+          strokeWidth: shapeStyle.strokeWidth,
         });
       }
     });
@@ -540,5 +543,17 @@ export default function EditorPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    }>
+      <EditorPageContent />
+    </Suspense>
   );
 }

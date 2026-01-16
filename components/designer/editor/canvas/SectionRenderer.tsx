@@ -208,8 +208,9 @@ export function SectionRenderer({
           const clickedOnBackground = target.getType() === 'Rect' && target.name() === 'background';
           
           // Check if we clicked on the Transformer
+          const parent = target.getParent();
           const clickedOnTransformer = target.getType() === 'Transformer' || 
-            (target.getParent() && target.getParent().getType() === 'Transformer');
+            (parent !== null && parent.getType() === 'Transformer');
           
           // Check if we clicked on any object (Group with id, or child elements like Rect, Text, Circle, etc.)
           // If target has a parent Group with an id, it's part of an object
@@ -347,7 +348,7 @@ export function SectionRenderer({
                   if (isActive) {
                     // Prevent event from bubbling to stage
                     e.cancelBubble = true;
-                    onObjectClick(object.id, e);
+                    onObjectClick(object.id);
                   } else {
                     onSectionClick(section.id);
                   }

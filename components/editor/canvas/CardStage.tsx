@@ -5,43 +5,30 @@ import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { NodeRenderer } from "@/components/editor/NodeRenderer";
 import { SectionNavigator } from "./SectionNavigator";
+import { MobileFrameProvider } from "@/components/editor/context/MobileFrameContext";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 import React from "react";
 
-export function CardStage() {
+interface CardStageProps {
+    isMobile: boolean;
+}
+
+export function CardStage({ isMobile }: CardStageProps) {
     const rootId = useEditorStore((state) => state.rootId);
     const rootNode = useEditorStore((state) => state.nodes[rootId]);
-    const [isMobile, setIsMobile] = React.useState(true);
+    const { isPreview } = usePreview();
 
     const { setNodeRef, isOver } = useDroppable({
         id: rootId,
         data: {
             type: 'root',
-        }
+        },
+        disabled: isPreview, // Disable drag and drop in preview mode
     });
 
     return (
         <div className="flex flex-col items-center w-full min-h-0">
-            {/* View Toggle */}
-            <div className="flex gap-2 mb-4 bg-white p-1 rounded-lg border shadow-sm flex-shrink-0">
-                <button
-                    onClick={() => setIsMobile(true)}
-                    className={cn(
-                        "px-3 py-1.5 text-xs rounded transition-all font-medium",
-                        isMobile ? "bg-gray-900 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"
-                    )}
-                >
-                    Mobile Frame
-                </button>
-                <button
-                    onClick={() => setIsMobile(false)}
-                    className={cn(
-                        "px-3 py-1.5 text-xs rounded transition-all font-medium",
-                        !isMobile ? "bg-gray-900 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"
-                    )}
-                >
-                    Desktop (Full)
-                </button>
-            </div>
+            {/* View Toggle removed - moved to RightSidebar */}
 
             {/* Frame Container - handles scrolling internally for desktop, or constraints for mobile */}
             <div
@@ -66,26 +53,50 @@ export function CardStage() {
                     )}
                     style={rootNode?.style}
                 >
-                    <div className="flex flex-1 overflow-hidden relative min-h-full">
-                        {/* Main Content Area */}
-                        <div className={cn("flex-1 min-h-full", isMobile ? "pb-0 pt-0" : "pb-0 pt-0")}>
-                            {/* Notch spacing handled by first section padding if needed, or overlay */}
-                            {/* {isMobile && <div className="h-[30px] w-full pointer-events-none" />} */}
+                    <MobileFrameProvider isMobile={isMobile}>
+                        <div className={cn("relative", isMobile ? "w-full" : "flex flex-1 min-h-full")}>
+                            {/* Main Content Area */}
+                            <div className={cn(
+                                isMobile ? "w-full" : "flex-1 min-h-full",
+                                isMobile ? "pb-32" : "pb-0 pt-0" // Add bottom padding in mobile frame for drop zone
+                            )}>
+                                {/* Notch spacing handled by first section padding if needed, or overlay */}
+                                {/* {isMobile && <div className="h-[30px] w-full pointer-events-none" />} */}
 
-                            {rootNode?.children.map((childId) => (
-                                <NodeRenderer key={childId} nodeId={childId} />
-                            ))}
+                                {rootNode?.children.map((childId) => (
+                                    <NodeRenderer key={childId} nodeId={childId} />
+                                ))}
 
-                            {rootNode?.children.length === 0 && (
-                                <div className="h-full flex flex-col items-center justify-center text-gray-400 p-8 text-center border-2 border-dashed border-gray-200 m-4 rounded-xl">
-                                    <p>Drop sections here</p>
-                                </div>
-                            )}
+                                {rootNode?.children.length === 0 && (
+                                    <div className={cn(
+                                        "flex flex-col items-center justify-center text-gray-400 p-8 text-center border-2 border-dashed border-gray-200 m-4 rounded-xl",
+                                        isMobile ? "min-h-[812px]" : "h-full"
+                                    )}>
+                                        <p>Drop sections here</p>
+                                    </div>
+                                )}
+
+                                {/* Drop Zone Indicator - only show in mobile frame when there are sections and not in preview */}
+                                {isMobile && !isPreview && rootNode?.children.length > 0 && (
+                                    <div className={cn(
+                                        "h-24 flex items-center justify-center border-2 border-dashed rounded-lg mt-4 mx-4 transition-colors",
+                                        "w-[calc(100%-2rem)]", // Account for mx-4 margins (1rem each side = 2rem total)
+                                        isOver ? "border-blue-400 bg-blue-50/50" : "border-gray-300 bg-gray-50/50"
+                                    )}>
+                                        <p className={cn(
+                                            "text-xs transition-colors",
+                                            isOver ? "text-blue-600" : "text-gray-400"
+                                        )}>
+                                            Drop new sections here
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Overlays */}
+                            {isMobile && <SectionNavigator />}
                         </div>
-
-                        {/* Overlays */}
-                        {isMobile && <SectionNavigator />}
-                    </div>
+                    </MobileFrameProvider>
                 </div>
             </div>
         </div>

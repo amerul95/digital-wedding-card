@@ -5,6 +5,7 @@ import { useEditorStore } from "@/components/editor/store";
 import { NodeRenderer } from "@/components/editor/NodeRenderer";
 import { BottomNavBar } from "@/components/editor/canvas/BottomNavBar";
 import { SectionNavigator } from "@/components/editor/canvas/SectionNavigator";
+import { PreviewProvider } from "@/components/editor/context/PreviewContext";
 
 export default function PreviewPage() {
   const [loading, setLoading] = useState(true);
@@ -52,15 +53,16 @@ export default function PreviewPage() {
   // Let's implement the standard "Central Column" layout for desktop views
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
-      <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative">
-        {/* Render Root */}
-        <PreviewRoot />
+    <PreviewProvider isPreview={true}>
+      <div className="min-h-screen bg-gray-100 flex justify-center">
+        <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative">
+          {/* Render Root */}
+          <PreviewRoot />
 
-        {/* Overlays */}
-        <SectionNavigator />
+          {/* Overlays - SectionNavigator hidden in preview mode */}
+        </div>
       </div>
-    </div>
+    </PreviewProvider>
   );
 }
 
@@ -71,7 +73,7 @@ function PreviewRoot() {
   if (!rootNode) return null;
 
   return (
-    <div style={rootNode.style} className="min-h-screen">
+    <div style={rootNode.style} className="min-h-screen relative">
       {rootNode.children.map((childId) => (
         <NodeRenderer key={childId} nodeId={childId} />
       ))}

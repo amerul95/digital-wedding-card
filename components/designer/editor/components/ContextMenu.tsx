@@ -37,7 +37,7 @@ export function ContextMenu({ objectId, children }: ContextMenuProps) {
 
   const currentSection = project?.sections.find((s) => s.id === currentSectionId);
   const object = currentSection?.objects.find((o) => o.id === objectId);
-  if (!object) return <>{children}</>;
+  if (!object || !currentSection) return <>{children}</>;
 
   const isGroup = object.type === 'group';
   const objectIndex = currentSection.objects.findIndex((o) => o.id === objectId);

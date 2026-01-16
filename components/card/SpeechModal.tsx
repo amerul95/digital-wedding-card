@@ -2,18 +2,39 @@
 
 import React, { useState } from "react";
 
+interface ModalStyles {
+    title?: {
+        fontSize?: string | number;
+        color?: string;
+        fontFamily?: string;
+        fontWeight?: string;
+    };
+    input?: {
+        fontSize?: string | number;
+        color?: string;
+        fontFamily?: string;
+    };
+    placeholder?: {
+        fontSize?: string | number;
+        color?: string;
+        fontFamily?: string;
+    };
+}
+
 interface SpeechModalProps {
     placeholderName?: string;
     placeholderMessage?: string;
     submitButtonText?: string;
     submitButtonStyle?: React.CSSProperties;
+    styles?: ModalStyles;
 }
 
 export function SpeechModal({
     placeholderName = "Your Name",
     placeholderMessage = "Write your wishes...",
     submitButtonText = "Send Wishes",
-    submitButtonStyle
+    submitButtonStyle,
+    styles = {}
 }: SpeechModalProps) {
     const [author, setAuthor] = useState("");
     const [content, setContent] = useState("");
@@ -37,6 +58,11 @@ export function SpeechModal({
                     type="text"
                     placeholder={placeholderName}
                     className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white/80"
+                    style={{
+                        fontSize: styles.input?.fontSize || undefined,
+                        color: styles.input?.color || undefined,
+                        fontFamily: styles.input?.fontFamily || undefined,
+                    }}
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
                 />
@@ -44,6 +70,11 @@ export function SpeechModal({
                     placeholder={placeholderMessage}
                     className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none resize-none bg-white/80"
                     rows={4}
+                    style={{
+                        fontSize: styles.input?.fontSize || undefined,
+                        color: styles.input?.color || undefined,
+                        fontFamily: styles.input?.fontFamily || undefined,
+                    }}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                 />

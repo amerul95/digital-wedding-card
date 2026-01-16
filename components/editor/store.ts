@@ -18,7 +18,9 @@ export type WidgetType =
     | 'event-details'
     | 'slider'
     | 'countdown'
-    | 'bottom-nav';
+    | 'bottom-nav'
+    | 'door'
+    | 'modal';
 
 export interface EditorNode {
     id: string;
@@ -29,16 +31,34 @@ export interface EditorNode {
     style: Record<string, any>;
 }
 
+export interface GlobalSettings {
+    autoscroll: boolean;
+    backgroundMusic: {
+        url: string;
+        showVideo: boolean;
+        duration: number; // in seconds
+    };
+}
+
 interface EditorState {
     nodes: Record<string, EditorNode>;
     rootId: string;
     selectedId: string | null;
+    globalSettings: GlobalSettings;
+
+    // View Options (Transient)
+    viewOptions: {
+        showDoorOverlay: boolean;
+        showAnimation: boolean;
+    };
+    toggleViewOption: (key: 'showDoorOverlay' | 'showAnimation') => void;
 
     // Actions
     addNode: (node: EditorNode, parentId: string, index?: number) => void;
     removeNode: (id: string) => void;
     updateNodeData: (id: string, data: Partial<Record<string, any>>) => void;
     updateNodeStyle: (id: string, style: Partial<Record<string, any>>) => void;
+    updateGlobalSettings: (settings: Partial<GlobalSettings | GlobalSettings['backgroundMusic']>) => void;
     moveNode: (id: string, newParentId: string, index: number) => void;
     selectNode: (id: string | null) => void;
 
@@ -65,11 +85,28 @@ const createInitialState = () => ({
     },
     rootId: INITIAL_ROOT_ID,
     selectedId: null,
+    globalSettings: {
+        autoscroll: false,
+        backgroundMusic: {
+            url: '',
+            showVideo: false,
+            duration: 0,
+        },
+    },
+    viewOptions: {
+        showDoorOverlay: true,
+        showAnimation: true,
+    },
 });
 
 export const useEditorStore = create<EditorState>()(
     immer((set, get) => ({
         ...createInitialState(),
+
+        toggleViewOption: (key) =>
+            set((state) => {
+                state.viewOptions[key] = !state.viewOptions[key];
+            }),
 
         addNode: (node, parentId, index) =>
             set((state) => {
@@ -124,6 +161,19 @@ export const useEditorStore = create<EditorState>()(
             set((state) => {
                 if (state.nodes[id]) {
                     state.nodes[id].style = { ...state.nodes[id].style, ...style };
+                }
+            }),
+
+        updateGlobalSettings: (settings) =>
+            set((state) => {
+                // handle nested backgroundMusic updates carefully if passed as a partial of the sub-object
+                // But simplified: accept Partial<GlobalSettings> and merge.
+                // Actually, let's make it robust to handle top-level keys.
+                if ('url' in settings || 'showVideo' in settings || 'duration' in settings) {
+                    state.globalSettings.backgroundMusic = { ...state.globalSettings.backgroundMusic, ...settings };
+                } else {
+                    // It's a top level update (like autoscroll)
+                    Object.assign(state.globalSettings, settings);
                 }
             }),
 

@@ -8,6 +8,7 @@ import { Modal } from "@/components/card/Modal";
 import { CalendarModal, ContactModal, LocationModal, RSVPModal } from "@/components/card/ModalContent";
 import { VideoModal } from "@/components/card/VideoModal";
 import { GiftModal } from "@/components/card/GiftModal";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 interface BottomNavWidgetProps {
     id: string;
@@ -18,6 +19,8 @@ interface BottomNavWidgetProps {
 export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
+    const globalSettings = useEditorStore((state) => state.globalSettings);
+    const { isPreview } = usePreview();
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
     const handleClick = (e: React.MouseEvent) => {
@@ -40,6 +43,7 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
     const layoutType = data.layoutType || 'float'; // 'float' | 'full'
 
     const getIcon = (item: any, size: number) => {
+        // Handle custom icon type
         if (item.iconType === 'custom' && item.customIcon) {
             // eslint-disable-next-line @next/next/no-img-element
             return (
@@ -55,6 +59,7 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
             );
         }
 
+        // Handle text icon type
         if (item.iconType === 'text') {
             return (
                 <span style={{
@@ -68,8 +73,10 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
             );
         }
 
-        // Default icons
-        switch (item.icon) {
+        // Default icon type (or when iconType is 'default' or undefined)
+        // Use the icon name from item.icon to render the appropriate icon
+        const iconName = item.icon || 'home';
+        switch (iconName) {
             case 'home': return <Home size={size} />;
             case 'calendar': return <Calendar size={size} />;
             case 'image': return <ImageIcon size={size} />;
@@ -108,14 +115,35 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
     ];
 
     // Layout Specific Styles
+    // In preview mode, use absolute positioning relative to card container
+    // In editor mode, use fixed positioning relative to viewport
     let layoutStyles: React.CSSProperties = {
-        position: 'fixed',
+        position: isPreview ? 'absolute' : 'fixed',
         bottom: navStyle.bottomPosition ? `${navStyle.bottomPosition}px` : (layoutType === 'float' ? '16px' : '0px'),
-        left: layoutType === 'float' ? '16px' : '0px',
-        right: layoutType === 'float' ? '16px' : '0px',
         height: navStyle.height ? `${navStyle.height}px` : '64px',
         ...style
     };
+
+    // Set left/right/width based on layout type and preview mode
+    if (layoutType === 'float') {
+        if (isPreview) {
+            // In preview, use left/right with calculated width to fit container
+            layoutStyles.left = '16px';
+            layoutStyles.right = '16px';
+            layoutStyles.width = 'calc(100% - 32px)';
+        } else {
+            // In editor, use left/right for fixed positioning
+            layoutStyles.left = '16px';
+            layoutStyles.right = '16px';
+        }
+    } else {
+        // Full width layout
+        layoutStyles.left = '0px';
+        layoutStyles.right = '0px';
+        if (isPreview) {
+            layoutStyles.width = '100%';
+        }
+    }
 
     // Border Radius Logic
     if (layoutType === 'float') {
@@ -153,7 +181,8 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
                     mapQuery={item.locationMapQuery || item.locationAddress || ''}
                 />;
             case 'video':
-                return <VideoModal videoUrl={item.videoUrl} />;
+                // Use global background music URL if available, otherwise fallback to item config (though we are removing item config)
+                return <VideoModal videoUrl={globalSettings?.backgroundMusic?.url || item.videoUrl} />;
             case 'gift':
                 return <GiftModal
                     bankName={item.giftBankName}

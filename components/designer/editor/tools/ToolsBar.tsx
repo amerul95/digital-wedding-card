@@ -56,8 +56,10 @@ export function ToolsBar() {
   // Note: 'select' is now automatic when mouse enters canvas, so it's not in the toolMap
   useEffect(() => {
     const toolMap: Record<ActiveTool, 'select' | 'text' | 'rect' | 'circle' | 'line' | 'image' | null> = {
+      select: 'select',
       text: 'text',
       elements: 'rect',
+      shapes: 'rect',
       uploads: 'image',
       sections: null,
       layers: null,

@@ -8,6 +8,7 @@ import { Modal } from "@/components/card/Modal";
 import { RSVPModal, CalendarModal } from "@/components/card/ModalContent";
 import { SpeechModal } from "@/components/card/SpeechModal";
 import { useRouter } from "next/navigation";
+import { useEvent } from "@/context/EventContext";
 
 interface ButtonWidgetProps {
     id: string;
@@ -18,8 +19,67 @@ interface ButtonWidgetProps {
 export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
+    const addNode = useEditorStore((state) => state.addNode);
+    const updateNodeData = useEditorStore((state) => state.updateNodeData);
+    const nodes = useEditorStore((state) => state.nodes);
+    const rootId = useEditorStore((state) => state.rootId);
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
+    const { event } = useEvent();
+
+    // Get or create modal widget for this button
+    const getOrCreateModalWidget = () => {
+        const modalId = `modal-${id}`;
+        let modalNode = nodes[modalId];
+        
+        if (!modalNode) {
+            // Create new modal widget
+            modalNode = {
+                id: modalId,
+                type: 'modal' as any,
+                parentId: rootId,
+                children: [],
+                data: {
+                    modalType: data.actionType,
+                    buttonId: id,
+                    modalStyles: {},
+                    dateFormat: 'dd full month name years',
+                    timeFormat: 'start a.m/p.m - end a.m/p.m',
+                    // Copy modal container styles from button
+                    modalBackgroundColor: data.modalBackgroundColor || '#ffffff',
+                    modalBorderTopWidth: data.modalBorderTopWidth || 0,
+                    modalBorderRightWidth: data.modalBorderRightWidth || 0,
+                    modalBorderBottomWidth: data.modalBorderBottomWidth || 0,
+                    modalBorderLeftWidth: data.modalBorderLeftWidth || 0,
+                    modalBorderTopColor: data.modalBorderTopColor || '#e5e7eb',
+                    modalBorderRightColor: data.modalBorderRightColor || '#e5e7eb',
+                    modalBorderBottomColor: data.modalBorderBottomColor || '#e5e7eb',
+                    modalBorderLeftColor: data.modalBorderLeftColor || '#e5e7eb',
+                    modalBorderRadius: '16px',
+                    // Speech modal specific
+                    speechPlaceholderName: data.speechPlaceholderName,
+                    speechPlaceholderMessage: data.speechPlaceholderMessage,
+                    speechSubmitText: data.speechSubmitText,
+                    speechBtnBgColor: data.speechBtnBgColor,
+                    speechBtnColor: data.speechBtnColor,
+                    speechBtnFontFamily: data.speechBtnFontFamily,
+                    speechBtnFontSize: data.speechBtnFontSize,
+                    speechBtnBorderTopWidth: data.speechBtnBorderTopWidth,
+                    speechBtnBorderRightWidth: data.speechBtnBorderRightWidth,
+                    speechBtnBorderBottomWidth: data.speechBtnBorderBottomWidth,
+                    speechBtnBorderLeftWidth: data.speechBtnBorderLeftWidth,
+                    speechBtnBorderTopColor: data.speechBtnBorderTopColor,
+                    speechBtnBorderRightColor: data.speechBtnBorderRightColor,
+                    speechBtnBorderBottomColor: data.speechBtnBorderBottomColor,
+                    speechBtnBorderLeftColor: data.speechBtnBorderLeftColor,
+                },
+                style: {}
+            };
+            addNode(modalNode, rootId);
+        }
+        
+        return modalNode;
+    };
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -33,11 +93,22 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
                 window.location.href = data.linkUrl;
             }
         } else if (['calendar', 'rsvp', 'speech'].includes(data.actionType)) {
+            const modalNode = getOrCreateModalWidget();
+            selectNode(modalNode.id); // Select modal widget when opening
             setShowModal(true);
         }
     };
 
-    const closeModal = () => setShowModal(false);
+    const closeModal = () => {
+        setShowModal(false);
+        selectNode(id); // Return selection to button
+    };
+
+    const handleModalClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const modalId = `modal-${id}`;
+        selectNode(modalId); // Select modal widget when clicking on modal
+    };
 
     const isSelected = selectedId === id;
 
@@ -96,40 +167,49 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
 
     const displayType = data.displayType || 'text'; // 'text' | 'icon' | 'both'
 
+    // Get modal widget data
+    const modalId = `modal-${id}`;
+    const modalNode = nodes[modalId];
+    const modalData = modalNode?.data || {};
+
     const renderModalContent = () => {
-        switch (data.actionType) {
+        const modalType = modalData.modalType || data.actionType;
+        switch (modalType) {
             case 'calendar':
-                // Using dummy data or existing logic, could be enhanced to use global event data
                 return <CalendarModal
-                    event={{ dateFull: 'Your Wedding Date', timeRange: 'Start Time - End Time' }}
+                    event={event}
                     onDownloadICS={() => console.log("Download ICS")}
+                    styles={modalData.modalStyles || {}}
+                    dateFormat={modalData.dateFormat}
+                    timeFormat={modalData.timeFormat}
                 />;
             case 'rsvp':
                 return <RSVPModal
                     onSelectHadir={() => alert("Hadir")}
                     onSelectTidak={() => alert("Tidak")}
+                    styles={modalData.modalStyles || {}}
                 />;
             case 'speech':
                 return <SpeechModal
-                    placeholderName={data.speechPlaceholderName}
-                    placeholderMessage={data.speechPlaceholderMessage}
-                    submitButtonText={data.speechSubmitText}
+                    placeholderName={modalData.speechPlaceholderName || data.speechPlaceholderName}
+                    placeholderMessage={modalData.speechPlaceholderMessage || data.speechPlaceholderMessage}
+                    submitButtonText={modalData.speechSubmitText || data.speechSubmitText}
                     submitButtonStyle={{
-                        backgroundColor: data.speechBtnBgColor,
-                        color: data.speechBtnColor,
-                        fontFamily: data.speechBtnFontFamily,
-                        fontSize: data.speechBtnFontSize,
-                        borderTopWidth: data.speechBtnBorderTopWidth,
-                        borderRightWidth: data.speechBtnBorderRightWidth,
-                        borderBottomWidth: data.speechBtnBorderBottomWidth,
-                        borderLeftWidth: data.speechBtnBorderLeftWidth,
-                        borderColor: data.speechBtnBorderTopColor, // simplify using one color for all if separate colors not strictly requested, but we can map all
-                        // If granular border colors needed for button
-                        borderTopColor: data.speechBtnBorderTopColor,
-                        borderRightColor: data.speechBtnBorderRightColor,
-                        borderBottomColor: data.speechBtnBorderBottomColor,
-                        borderLeftColor: data.speechBtnBorderLeftColor,
+                        backgroundColor: modalData.speechBtnBgColor || data.speechBtnBgColor,
+                        color: modalData.speechBtnColor || data.speechBtnColor,
+                        fontFamily: modalData.speechBtnFontFamily || data.speechBtnFontFamily,
+                        fontSize: modalData.speechBtnFontSize || data.speechBtnFontSize,
+                        borderTopWidth: modalData.speechBtnBorderTopWidth || data.speechBtnBorderTopWidth,
+                        borderRightWidth: modalData.speechBtnBorderRightWidth || data.speechBtnBorderRightWidth,
+                        borderBottomWidth: modalData.speechBtnBorderBottomWidth || data.speechBtnBorderBottomWidth,
+                        borderLeftWidth: modalData.speechBtnBorderLeftWidth || data.speechBtnBorderLeftWidth,
+                        borderColor: modalData.speechBtnBorderTopColor || data.speechBtnBorderTopColor,
+                        borderTopColor: modalData.speechBtnBorderTopColor || data.speechBtnBorderTopColor,
+                        borderRightColor: modalData.speechBtnBorderRightColor || data.speechBtnBorderRightColor,
+                        borderBottomColor: modalData.speechBtnBorderBottomColor || data.speechBtnBorderBottomColor,
+                        borderLeftColor: modalData.speechBtnBorderLeftColor || data.speechBtnBorderLeftColor,
                     }}
+                    styles={modalData.modalStyles || {}}
                 />;
             default:
                 return null;
@@ -137,16 +217,17 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
     };
 
     const modalStyle: React.CSSProperties = {
-        backgroundColor: data.modalBackgroundColor,
-        borderTopWidth: data.modalBorderTopWidth,
-        borderRightWidth: data.modalBorderRightWidth,
-        borderBottomWidth: data.modalBorderBottomWidth,
-        borderLeftWidth: data.modalBorderLeftWidth,
-        borderTopColor: data.modalBorderTopColor,
-        borderRightColor: data.modalBorderRightColor,
-        borderBottomColor: data.modalBorderBottomColor,
-        borderLeftColor: data.modalBorderLeftColor,
-        borderStyle: 'solid', // Ensure border is visible if width > 0
+        backgroundColor: modalData.modalBackgroundColor || data.modalBackgroundColor || '#ffffff',
+        borderTopWidth: modalData.modalBorderTopWidth ?? data.modalBorderTopWidth ?? 0,
+        borderRightWidth: modalData.modalBorderRightWidth ?? data.modalBorderRightWidth ?? 0,
+        borderBottomWidth: modalData.modalBorderBottomWidth ?? data.modalBorderBottomWidth ?? 0,
+        borderLeftWidth: modalData.modalBorderLeftWidth ?? data.modalBorderLeftWidth ?? 0,
+        borderTopColor: modalData.modalBorderTopColor || data.modalBorderTopColor || '#e5e7eb',
+        borderRightColor: modalData.modalBorderRightColor || data.modalBorderRightColor || '#e5e7eb',
+        borderBottomColor: modalData.modalBorderBottomColor || data.modalBorderBottomColor || '#e5e7eb',
+        borderLeftColor: modalData.modalBorderLeftColor || data.modalBorderLeftColor || '#e5e7eb',
+        borderStyle: 'solid',
+        borderRadius: modalData.modalBorderRadius || '16px',
     };
 
     return (
@@ -172,7 +253,9 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
 
             {showModal && (
                 <Modal onClose={closeModal} contentStyle={modalStyle}>
-                    {renderModalContent()}
+                    <div onClick={handleModalClick} className="cursor-pointer">
+                        {renderModalContent()}
+                    </div>
                 </Modal>
             )}
         </>

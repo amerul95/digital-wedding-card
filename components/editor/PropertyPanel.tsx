@@ -2,7 +2,9 @@
 
 import { useEditorStore } from "@/components/editor/store";
 import { RichTextEditor } from "@/components/RichTextEditor";
-import { Copy, Plus, Trash2, Upload, Settings, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Layout, Square, GripVertical, ChevronDown, ChevronUp, X } from "lucide-react";
+import { Copy, Plus, Trash2, Upload, Settings, AlignLeft, AlignCenter, AlignRight, AlignJustify, Type, Layout, Square, GripVertical, ChevronDown, ChevronUp, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { DoorSettings } from "@/components/editor/settings/DoorSettings";
+import { AnimationSettings } from "@/components/editor/settings/AnimationSettings";
 import React, { useState } from "react";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
@@ -402,12 +404,7 @@ function SortableNavItem({ item, onRemove, onUpdate, isExpanded, onToggleExpand 
                             </div>
                         )}
 
-                        {item.type === 'video' && (
-                            <div className="flex flex-col gap-1">
-                                <label className="text-[10px] text-gray-500">Video URL (YouTube/Vimeo)</label>
-                                <input type="text" className="border rounded p-1 text-xs" value={item.videoUrl || ''} onChange={(e) => onUpdate(item.id, { videoUrl: e.target.value })} />
-                            </div>
-                        )}
+                        {/* Video URL input removed - controlled by Global Settings now */}
 
                         {item.type === 'map' && (
                             <div className="flex flex-col gap-1">
@@ -587,7 +584,11 @@ function BottomNavSettings({ node, updateNodeData }: { node: any, updateNodeData
     );
 }
 
-export function PropertyPanel() {
+interface PropertyPanelProps {
+    isOpen: boolean;
+}
+
+export function PropertyPanel({ isOpen }: PropertyPanelProps) {
     const selectedId = useEditorStore((state) => state.selectedId);
     const rootId = useEditorStore((state) => state.rootId);
     const targetId = selectedId || null;
@@ -597,12 +598,38 @@ export function PropertyPanel() {
     const updateNodeStyle = useEditorStore((state) => state.updateNodeStyle);
     const removeNode = useEditorStore((state) => state.removeNode);
 
+    // Special case: Show only animation settings
+    if (targetId === 'animation-settings') {
+        return (
+            <div className={cn(
+                "border-l bg-white flex flex-col h-full shadow-xl z-20 transition-all duration-300",
+                isOpen ? "w-80" : "w-0 overflow-hidden border-none"
+            )}>
+                {isOpen && (
+                    <>
+                        <div className="p-4 border-b flex items-center justify-between bg-gray-50">
+                            <h2 className="font-semibold text-sm uppercase tracking-wider">Animation Properties</h2>
+                        </div>
+                        <div className="p-4 overflow-y-auto flex-1 space-y-6">
+                            <AnimationSettings />
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    }
+
     if (!targetId || !node) {
         return (
-            <div className="w-80 border-l bg-white p-4 h-full">
-                <div className="text-gray-400 text-sm text-center mt-10">
-                    Select an element to edit
-                </div>
+            <div className={cn(
+                "border-l bg-white p-4 h-full transition-all duration-300",
+                isOpen ? "w-80" : "w-0 overflow-hidden border-none p-0"
+            )}>
+                {isOpen && (
+                    <div className="text-gray-400 text-sm text-center mt-10">
+                        Select an element to edit
+                    </div>
+                )}
             </div>
         );
     }
@@ -620,35 +647,39 @@ export function PropertyPanel() {
     };
 
     return (
-        <div className="w-80 border-l bg-white flex flex-col h-full shadow-xl z-20">
-            <div className="p-4 border-b flex items-center justify-between bg-gray-50">
-                <h2 className="font-semibold text-sm uppercase tracking-wider">{node.type} Properties</h2>
-                {node.type !== 'root' && (
-                    <button
-                        onClick={() => removeNode(targetId)}
-                        className="text-red-500 hover:bg-red-50 p-1 rounded"
-                        title="Delete Widget"
-                    >
-                        <Trash2 size={16} />
-                    </button>
-                )}
-            </div>
+        <div className={cn(
+            "border-l bg-white flex flex-col h-full shadow-xl z-20 transition-all duration-300",
+            isOpen ? "w-80" : "w-0 overflow-hidden border-none"
+        )}>
+            {isOpen && (
+                <>
+                    <div className="p-4 border-b flex items-center justify-between bg-gray-50">
+                        <h2 className="font-semibold text-sm uppercase tracking-wider">{node.type} Properties</h2>
+                        {node.type !== 'root' && (
+                            <button
+                                onClick={() => removeNode(targetId)}
+                                className="text-red-500 hover:bg-red-50 p-1 rounded"
+                                title="Delete Widget"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        )}
+                    </div>
 
-            <div className="p-4 overflow-y-auto flex-1 space-y-6">
+                    <div className="p-4 overflow-y-auto flex-1 space-y-6">
+                        {/* === BOTTOM NAV WIDGET SETTINGS === */}
+                        {node.type === 'bottom-nav' && (
+                            <BottomNavSettings node={node} updateNodeData={updateNodeData} />
+                        )}
 
-                {/* === BOTTOM NAV WIDGET SETTINGS === */}
-                {node.type === 'bottom-nav' && (
-                    <BottomNavSettings node={node} updateNodeData={updateNodeData} />
-                )}
-
-                {/* === CONTENT SETTINGS === */}
-                {node.type !== 'bottom-nav' && (
-                    <div className="space-y-3">
-                        {/* Text Widget Specifics */}
-                        {node.type === 'text' && (
-                            <div className="flex flex-col gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs text-gray-600">Content</label>
+                        {/* === CONTENT SETTINGS === */}
+                        {node.type !== 'bottom-nav' && (
+                            <div className="space-y-3">
+                                {/* Text Widget Specifics */}
+                                {node.type === 'text' && (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs text-gray-600">Content</label>
                                     <RichTextEditor
                                         content={node.data.content || ''}
                                         onChange={(html) => updateNodeData(targetId, { content: html })}
@@ -657,494 +688,832 @@ export function PropertyPanel() {
                                         fontColor={node.style.color || '#000000'}
                                         onFontColorChange={(color) => updateNodeStyle(targetId, { color })}
                                         placeholder="Enter text..."
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs text-gray-600">Alignment (Wrapper)</label>
-                                    <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
-                                        {['left', 'center', 'right', 'justify'].map((align) => (
-                                            <button
-                                                key={align}
-                                                className={`p-1 rounded ${node.style.textAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
-                                                onClick={() => updateNodeStyle(targetId, { textAlign: align })}
-                                                title={align}
-                                            >
-                                                {align === 'left' && <AlignLeft size={14} />}
-                                                {align === 'center' && <AlignCenter size={14} />}
-                                                {align === 'right' && <AlignRight size={14} />}
-                                                {align === 'justify' && <AlignJustify size={14} />}
-                                            </button>
-                                        ))}
+                                        />
                                     </div>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs text-gray-600">Font Family</label>
-                                    <select
-                                        className="border rounded p-2 text-sm"
-                                        value={node.style.fontFamily || 'sans'}
-                                        onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
-                                    >
-                                        <option value="sans">Sans Serif</option>
-                                        <option value="serif">Serif</option>
-                                        <option value="mono">Monospace</option>
-                                        <option value="cursive">Cursive</option>
-                                        <option value="fantasy">Fantasy</option>
-                                    </select>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Button Widget Specifics */}
-                        {node.type === 'button' && (
-                            <div className="flex flex-col gap-3">
-                                {/* General Label / Display */}
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] uppercase font-bold text-gray-500">General</label>
 
                                     <div className="flex flex-col gap-1">
-                                        <label className="text-xs text-gray-600">Display Type</label>
+                                        <label className="text-xs text-gray-600">Alignment (Wrapper)</label>
                                         <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
-                                            {[
-                                                { id: 'text', label: 'Text' },
-                                                { id: 'icon', label: 'Icon' },
-                                                { id: 'both', label: 'Both' }
-                                            ].map((mode) => (
+                                            {['left', 'center', 'right', 'justify'].map((align) => (
                                                 <button
-                                                    key={mode.id}
-                                                    className={`px-2 py-1 text-[10px] rounded ${node.data.displayType === mode.id || (!node.data.displayType && mode.id === 'text') ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}
-                                                    onClick={() => updateNodeData(targetId, { displayType: mode.id })}
+                                                    key={align}
+                                                    className={`p-1 rounded ${node.style.textAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
+                                                    onClick={() => updateNodeStyle(targetId, { textAlign: align })}
+                                                    title={align}
                                                 >
-                                                    {mode.label}
+                                                    {align === 'left' && <AlignLeft size={14} />}
+                                                    {align === 'center' && <AlignCenter size={14} />}
+                                                    {align === 'right' && <AlignRight size={14} />}
+                                                    {align === 'justify' && <AlignJustify size={14} />}
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-xs text-gray-600">Font Family</label>
+                                        <select
+                                            className="border rounded p-2 text-sm"
+                                            value={node.style.fontFamily || 'sans'}
+                                            onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
+                                        >
+                                            <option value="sans">Sans Serif</option>
+                                            <option value="serif">Serif</option>
+                                            <option value="mono">Monospace</option>
+                                            <option value="cursive">Cursive</option>
+                                            <option value="fantasy">Fantasy</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                )}
 
-                                    {(node.data.displayType !== 'icon') && (
+                                {/* Button Widget Specifics */}
+                                {node.type === 'button' && (
+                                    <div className="flex flex-col gap-3">
+                                        {/* General Label / Display */}
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] uppercase font-bold text-gray-500">General</label>
+
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs text-gray-600">Display Type</label>
+                                                <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
+                                                    {[
+                                                        { id: 'text', label: 'Text' },
+                                                        { id: 'icon', label: 'Icon' },
+                                                        { id: 'both', label: 'Both' }
+                                                    ].map((mode) => (
+                                                        <button
+                                                            key={mode.id}
+                                                            className={`px-2 py-1 text-[10px] rounded ${node.data.displayType === mode.id || (!node.data.displayType && mode.id === 'text') ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}
+                                                            onClick={() => updateNodeData(targetId, { displayType: mode.id })}
+                                                        >
+                                                            {mode.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {(node.data.displayType !== 'icon') && (
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs text-gray-600">Label</label>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-2 text-sm w-full"
+                                                        value={node.data.label || ''}
+                                                        onChange={(e) => updateNodeData(targetId, { label: e.target.value })}
+                                                        placeholder="Button Text"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {(node.data.displayType === 'icon' || node.data.displayType === 'both') && (
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-xs text-gray-600">Icon</label>
+                                                    <select
+                                                        className="border rounded p-1 text-sm bg-gray-50 mb-1"
+                                                        value={node.data.icon || 'star'}
+                                                        onChange={(e) => updateNodeData(targetId, { icon: e.target.value })}
+                                                    >
+                                                        <option value="link">Link</option>
+                                                        <option value="calendar">Calendar</option>
+                                                        <option value="rsvp">Mail (RSVP)</option>
+                                                        <option value="speech">Speech</option>
+                                                        <option value="heart">Heart</option>
+                                                        <option value="star">Star</option>
+                                                        <option value="map">Map Pin</option>
+                                                        <option value="phone">Phone</option>
+                                                        <option value="video">Video</option>
+                                                    </select>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-1 text-xs"
+                                                        placeholder="Custom Icon URL (Optional)"
+                                                        value={node.data.customIcon || ''}
+                                                        onChange={(e) => updateNodeData(targetId, { customIcon: e.target.value })}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Action Config */}
+                                        <div className="flex flex-col gap-2 border-t pt-2">
+                                            <label className="text-[10px] uppercase font-bold text-gray-500">Action</label>
+                                            <select
+                                                className="border rounded p-2 text-sm w-full bg-blue-50/50"
+                                                value={node.data.actionType || 'none'}
+                                                onChange={(e) => updateNodeData(targetId, { actionType: e.target.value })}
+                                            >
+                                                <option value="none">None</option>
+                                                <option value="link">Redirect to Link</option>
+                                                <option value="calendar">Save Date</option>
+                                                <option value="rsvp">Open RSVP</option>
+                                                <option value="speech">Write Speech (Wishes)</option>
+                                            </select>
+
+                                            {node.data.actionType === 'link' && (
+                                                <div className="bg-gray-50 p-2 rounded space-y-2">
+                                                    <div className="flex flex-col gap-1">
+                                                        <label className="text-[10px] text-gray-500">URL</label>
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs"
+                                                            placeholder="https://google.com"
+                                                            value={node.data.linkUrl || ''}
+                                                            onChange={(e) => updateNodeData(targetId, { linkUrl: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        <label className="text-[10px] text-gray-500">Target</label>
+                                                        <select
+                                                            className="border rounded p-1 text-xs"
+                                                            value={node.data.linkTarget || '_blank'}
+                                                            onChange={(e) => updateNodeData(targetId, { linkTarget: e.target.value })}
+                                                        >
+                                                            <option value="_blank">New Tab</option>
+                                                            <option value="_self">Same Tab</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {node.data.actionType === 'calendar' && (
+                                                <div className="bg-gray-50 p-2 rounded text-[10px] text-gray-500 italic">
+                                                    Uses event details from theme settings.
+                                                </div>
+                                            )}
+
+                                            {node.data.actionType === 'speech' && (
+                                                <div className="bg-gray-50 p-2 rounded text-[10px] text-gray-500 italic">
+                                                    Opens modal for guests to leave wishes.
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-col gap-1 border-t pt-2">
+                                            <label className="text-[10px] text-gray-500 uppercase font-semibold">Alignment</label>
+                                            <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
+                                                {['left', 'center', 'right'].map((align) => (
+                                                    <button
+                                                        key={align}
+                                                        className={`p-1 rounded ${node.style.textAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
+                                                        onClick={() => updateNodeStyle(targetId, { textAlign: align })}
+                                                        title={align}
+                                                    >
+                                                        {align === 'left' && <AlignLeft size={14} />}
+                                                        {align === 'center' && <AlignCenter size={14} />}
+                                                        {align === 'right' && <AlignRight size={14} />}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1 mt-2">
+                                            <label className="text-xs text-gray-600">Font Family</label>
+                                            <select
+                                                className="border w-full p-1 text-sm"
+                                                value={node.style.fontFamily || 'sans'}
+                                                onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
+                                            >
+                                                <option value="sans">Sans Serif</option>
+                                                <option value="serif">Serif</option>
+                                                <option value="mono">Monospace</option>
+                                                <option value="cursive">Cursive</option>
+                                                <option value="fantasy">Fantasy</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Modal Configuration - Visible if action is not none */}
+                                        {node.data.actionType && node.data.actionType !== 'none' && node.data.actionType !== 'link' && (
+                                            <div className="flex flex-col gap-2 border-t pt-2 border-orange-200 bg-orange-50/50 p-2 rounded">
+                                                <label className="text-[10px] uppercase font-bold text-orange-600">Modal Container Style</label>
+
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Background Color</label>
+                                                    <input
+                                                        type="color"
+                                                        className="w-full h-8 cursor-pointer rounded border"
+                                                        value={node.data.modalBackgroundColor || '#ffffff'}
+                                                        onChange={(e) => updateNodeData(targetId, { modalBackgroundColor: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                <BorderControl
+                                                    label="Modal Border"
+                                                    values={{
+                                                        top: node.data.modalBorderTopWidth,
+                                                        right: node.data.modalBorderRightWidth,
+                                                        bottom: node.data.modalBorderBottomWidth,
+                                                        left: node.data.modalBorderLeftWidth,
+                                                        topColor: node.data.modalBorderTopColor,
+                                                        rightColor: node.data.modalBorderRightColor,
+                                                        bottomColor: node.data.modalBorderBottomColor,
+                                                        leftColor: node.data.modalBorderLeftColor,
+                                                    }}
+                                                    onValuesChange={(newValues) => {
+                                                        updateNodeData(targetId, {
+                                                            modalBorderTopWidth: newValues.top,
+                                                            modalBorderRightWidth: newValues.right,
+                                                            modalBorderBottomWidth: newValues.bottom,
+                                                            modalBorderLeftWidth: newValues.left,
+                                                            modalBorderTopColor: newValues.topColor,
+                                                            modalBorderRightColor: newValues.rightColor,
+                                                            modalBorderBottomColor: newValues.bottomColor,
+                                                            modalBorderLeftColor: newValues.leftColor,
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* Speech Specific Config */}
+                                        {node.data.actionType === 'speech' && (
+                                            <div className="flex flex-col gap-2 border-t pt-2 border-rose-200 bg-rose-50/50 p-2 rounded">
+                                                <label className="text-[10px] uppercase font-bold text-rose-600">Speech Form Config</label>
+
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Title Placeholder</label>
+                                                    <input type="text" className="border rounded p-1 text-xs" value={node.data.speechPlaceholderName} onChange={(e) => updateNodeData(targetId, { speechPlaceholderName: e.target.value })} placeholder="Your Name" />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Message Placeholder</label>
+                                                    <input type="text" className="border rounded p-1 text-xs" value={node.data.speechPlaceholderMessage} onChange={(e) => updateNodeData(targetId, { speechPlaceholderMessage: e.target.value })} placeholder="Write your wishes..." />
+                                                </div>
+
+                                                <div className="flex flex-col gap-2 mt-2 border-t border-rose-200 pt-2">
+                                                    <label className="text-[10px] font-semibold text-rose-600">Submit Button Style</label>
+
+                                                    <div className="flex flex-col gap-1">
+                                                        <label className="text-[10px] text-gray-500">Button Text</label>
+                                                        <input type="text" className="border rounded p-1 text-xs" value={node.data.speechSubmitText} onChange={(e) => updateNodeData(targetId, { speechSubmitText: e.target.value })} placeholder="Send Wishes" />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] text-gray-500">Font</label>
+                                                            <select
+                                                                className="border w-full p-1 text-[10px]"
+                                                                value={node.data.speechBtnFontFamily || 'sans'}
+                                                                onChange={(e) => updateNodeData(targetId, { speechBtnFontFamily: e.target.value })}
+                                                            >
+                                                                <option value="sans">Sans</option>
+                                                                <option value="serif">Serif</option>
+                                                                <option value="mono">Mono</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] text-gray-500">Size</label>
+                                                            <input type="text" className="border rounded p-1 text-xs" value={node.data.speechBtnFontSize || ''} onChange={(e) => updateNodeData(targetId, { speechBtnFontSize: e.target.value })} placeholder="14px" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] text-gray-500">Text Color</label>
+                                                            <input type="color" className="w-full h-6 border rounded" value={node.data.speechBtnColor || '#ffffff'} onChange={(e) => updateNodeData(targetId, { speechBtnColor: e.target.value })} />
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="text-[10px] text-gray-500">Bg Color</label>
+                                                            <input type="color" className="w-full h-6 border rounded" value={node.data.speechBtnBgColor || '#e11d48'} onChange={(e) => updateNodeData(targetId, { speechBtnBgColor: e.target.value })} />
+                                                        </div>
+                                                    </div>
+
+                                                    <BorderControl
+                                                        label="Submit Button Border"
+                                                        values={{
+                                                            top: node.data.speechBtnBorderTopWidth,
+                                                            right: node.data.speechBtnBorderRightWidth,
+                                                            bottom: node.data.speechBtnBorderBottomWidth,
+                                                            left: node.data.speechBtnBorderLeftWidth,
+                                                            topColor: node.data.speechBtnBorderTopColor,
+                                                            rightColor: node.data.speechBtnBorderRightColor,
+                                                            bottomColor: node.data.speechBtnBorderBottomColor,
+                                                            leftColor: node.data.speechBtnBorderLeftColor,
+                                                        }}
+                                                        onValuesChange={(newValues) => {
+                                                            updateNodeData(targetId, {
+                                                                speechBtnBorderTopWidth: newValues.top,
+                                                                speechBtnBorderRightWidth: newValues.right,
+                                                                speechBtnBorderBottomWidth: newValues.bottom,
+                                                                speechBtnBorderLeftWidth: newValues.left,
+                                                                speechBtnBorderTopColor: newValues.topColor,
+                                                                speechBtnBorderRightColor: newValues.rightColor,
+                                                                speechBtnBorderBottomColor: newValues.bottomColor,
+                                                                speechBtnBorderLeftColor: newValues.leftColor,
+                                                            });
+                                                        }}
+
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Door Settings */}
+                                {node.type === 'door' && (
+                                    <DoorSettings node={node} onUpdate={(data) => updateNodeData(targetId, data)} />
+                                )}
+
+                                {/* Image Widget Specifics */}
+                                {node.type === 'image' && (
+                                    <div className="flex flex-col gap-3">
                                         <div className="flex flex-col gap-1">
-                                            <label className="text-xs text-gray-600">Label</label>
+                                            <label className="text-xs text-gray-600">Image Source</label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="text"
+                                                    className="border rounded p-2 text-sm w-full"
+                                                    value={node.data.url || ''}
+                                                    onChange={(e) => updateNodeData(targetId, { url: e.target.value })}
+                                                    placeholder="Image URL"
+                                                />
+                                                <div className="relative">
+                                                    <button className="p-2 border rounded hover:bg-gray-50 text-gray-600" title="Upload Image">
+                                                        <Upload size={16} />
+                                                    </button>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                const url = URL.createObjectURL(file);
+                                                                updateNodeData(targetId, { url });
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs text-gray-600">Alt Text</label>
                                             <input
                                                 type="text"
                                                 className="border rounded p-2 text-sm w-full"
-                                                value={node.data.label || ''}
-                                                onChange={(e) => updateNodeData(targetId, { label: e.target.value })}
-                                                placeholder="Button Text"
+                                                value={node.data.alt || ''}
+                                                onChange={(e) => updateNodeData(targetId, { alt: e.target.value })}
+                                                placeholder="Description"
                                             />
                                         </div>
-                                    )}
+                                    </div>
+                                )}
 
-                                    {(node.data.displayType === 'icon' || node.data.displayType === 'both') && (
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-xs text-gray-600">Icon</label>
-                                            <select
-                                                className="border rounded p-1 text-sm bg-gray-50 mb-1"
-                                                value={node.data.icon || 'star'}
-                                                onChange={(e) => updateNodeData(targetId, { icon: e.target.value })}
-                                            >
-                                                <option value="link">Link</option>
-                                                <option value="calendar">Calendar</option>
-                                                <option value="rsvp">Mail (RSVP)</option>
-                                                <option value="speech">Speech</option>
-                                                <option value="heart">Heart</option>
-                                                <option value="star">Star</option>
-                                                <option value="map">Map Pin</option>
-                                                <option value="phone">Phone</option>
-                                                <option value="video">Video</option>
-                                            </select>
-                                            <input
-                                                type="text"
-                                                className="border rounded p-1 text-xs"
-                                                placeholder="Custom Icon URL (Optional)"
-                                                value={node.data.customIcon || ''}
-                                                onChange={(e) => updateNodeData(targetId, { customIcon: e.target.value })}
-                                            />
+                                {/* Modal Widget Specifics */}
+                                {node.type === 'modal' && (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] uppercase font-bold text-gray-500">Modal Type</label>
+                                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                                {node.data.modalType || 'calendar'}
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
 
-                                {/* Action Config */}
-                                <div className="flex flex-col gap-2 border-t pt-2">
-                                    <label className="text-[10px] uppercase font-bold text-gray-500">Action</label>
-                                    <select
-                                        className="border rounded p-2 text-sm w-full bg-blue-50/50"
-                                        value={node.data.actionType || 'none'}
-                                        onChange={(e) => updateNodeData(targetId, { actionType: e.target.value })}
-                                    >
-                                        <option value="none">None</option>
-                                        <option value="link">Redirect to Link</option>
-                                        <option value="calendar">Save Date</option>
-                                        <option value="rsvp">Open RSVP</option>
-                                        <option value="speech">Write Speech (Wishes)</option>
-                                    </select>
+                                        {/* Modal Container Style */}
+                                        <div className="flex flex-col gap-2 border-t pt-2 border-orange-200 bg-orange-50/50 p-2 rounded">
+                                            <label className="text-[10px] uppercase font-bold text-orange-600">Modal Container Style</label>
 
-                                    {node.data.actionType === 'link' && (
-                                        <div className="bg-gray-50 p-2 rounded space-y-2">
                                             <div className="flex flex-col gap-1">
-                                                <label className="text-[10px] text-gray-500">URL</label>
+                                                <label className="text-[10px] text-gray-500">Background Color</label>
+                                                <input
+                                                    type="color"
+                                                    className="w-full h-8 cursor-pointer rounded border"
+                                                    value={node.data.modalBackgroundColor || '#ffffff'}
+                                                    onChange={(e) => updateNodeData(targetId, { modalBackgroundColor: e.target.value })}
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-[10px] text-gray-500">Border Radius</label>
                                                 <input
                                                     type="text"
                                                     className="border rounded p-1 text-xs"
-                                                    placeholder="https://google.com"
-                                                    value={node.data.linkUrl || ''}
-                                                    onChange={(e) => updateNodeData(targetId, { linkUrl: e.target.value })}
+                                                    value={node.data.modalBorderRadius || '16px'}
+                                                    onChange={(e) => updateNodeData(targetId, { modalBorderRadius: e.target.value })}
+                                                    placeholder="16px"
                                                 />
                                             </div>
-                                            <div className="flex flex-col gap-1">
-                                                <label className="text-[10px] text-gray-500">Target</label>
-                                                <select
-                                                    className="border rounded p-1 text-xs"
-                                                    value={node.data.linkTarget || '_blank'}
-                                                    onChange={(e) => updateNodeData(targetId, { linkTarget: e.target.value })}
-                                                >
-                                                    <option value="_blank">New Tab</option>
-                                                    <option value="_self">Same Tab</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    )}
 
-                                    {node.data.actionType === 'calendar' && (
-                                        <div className="bg-gray-50 p-2 rounded text-[10px] text-gray-500 italic">
-                                            Uses event details from theme settings.
+                                            <BorderControl
+                                                label="Modal Border"
+                                                values={{
+                                                    top: node.data.modalBorderTopWidth,
+                                                    right: node.data.modalBorderRightWidth,
+                                                    bottom: node.data.modalBorderBottomWidth,
+                                                    left: node.data.modalBorderLeftWidth,
+                                                    topColor: node.data.modalBorderTopColor,
+                                                    rightColor: node.data.modalBorderRightColor,
+                                                    bottomColor: node.data.modalBorderBottomColor,
+                                                    leftColor: node.data.modalBorderLeftColor,
+                                                }}
+                                                onValuesChange={(newValues) => {
+                                                    updateNodeData(targetId, {
+                                                        modalBorderTopWidth: newValues.top,
+                                                        modalBorderRightWidth: newValues.right,
+                                                        modalBorderBottomWidth: newValues.bottom,
+                                                        modalBorderLeftWidth: newValues.left,
+                                                        modalBorderTopColor: newValues.topColor,
+                                                        modalBorderRightColor: newValues.rightColor,
+                                                        modalBorderBottomColor: newValues.bottomColor,
+                                                        modalBorderLeftColor: newValues.leftColor,
+                                                    });
+                                                }}
+                                            />
                                         </div>
-                                    )}
 
-                                    {node.data.actionType === 'speech' && (
-                                        <div className="bg-gray-50 p-2 rounded text-[10px] text-gray-500 italic">
-                                            Opens modal for guests to leave wishes.
-                                        </div>
-                                    )}
-                                </div>
+                                {/* Date & Time Format (for Calendar Modal) */}
+                                {node.data.modalType === 'calendar' && (
+                                    <div className="flex flex-col gap-2 border-t pt-2 border-blue-200 bg-blue-50/50 p-2 rounded">
+                                        <label className="text-[10px] uppercase font-bold text-blue-600">Date & Time Format</label>
 
-                                <div className="flex flex-col gap-1 border-t pt-2">
-                                    <label className="text-[10px] text-gray-500 uppercase font-semibold">Alignment</label>
-                                    <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
-                                        {['left', 'center', 'right'].map((align) => (
-                                            <button
-                                                key={align}
-                                                className={`p-1 rounded ${node.style.textAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
-                                                onClick={() => updateNodeStyle(targetId, { textAlign: align })}
-                                                title={align}
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[10px] text-gray-500">Date Format</label>
+                                            <select
+                                                className="border rounded p-1 text-xs"
+                                                value={node.data.dateFormat || 'dd full month name years'}
+                                                onChange={(e) => updateNodeData(targetId, { dateFormat: e.target.value })}
                                             >
-                                                {align === 'left' && <AlignLeft size={14} />}
-                                                {align === 'center' && <AlignCenter size={14} />}
-                                                {align === 'right' && <AlignRight size={14} />}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
+                                                <option value="dd/mm/yy">dd/mm/yy</option>
+                                                <option value="dd-mm-yy">dd-mm-yy</option>
+                                                <option value="dd.mm.yy">dd.mm.yy</option>
+                                                <option value="dd full month name years">dd full month name years</option>
+                                                <option value="dd month short years">dd month short years</option>
+                                                <option value="full date">Full Date</option>
+                                            </select>
+                                        </div>
 
-                                <div className="flex flex-col gap-1 mt-2">
-                                    <label className="text-xs text-gray-600">Font Family</label>
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[10px] text-gray-500">Time Format</label>
+                                            <select
+                                                className="border rounded p-1 text-xs"
+                                                value={node.data.timeFormat || 'start a.m/p.m - end a.m/p.m'}
+                                                onChange={(e) => updateNodeData(targetId, { timeFormat: e.target.value })}
+                                            >
+                                                <option value="start a.m/p.m - end a.m/p.m">start a.m/p.m - end a.m/p.m</option>
+                                                <option value="start hour:minute a.m/p.m - end hour:minute a.m/p.m">start hour:minute a.m/p.m - end hour:minute a.m/p.m</option>
+                                                <option value="morning/evening">Morning/Evening</option>
+                                                <option value="24-hour">24-Hour Format</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Text Element Styles */}
+                                <div className="flex flex-col gap-2 border-t pt-2 border-purple-200 bg-purple-50/50 p-2 rounded">
+                                    <label className="text-[10px] uppercase font-bold text-purple-600">Text Element Styles</label>
+
+                                    {/* Title Style */}
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-gray-500">Title</label>
+                                        <div className="grid grid-cols-2 gap-1">
+                                            <input
+                                                type="text"
+                                                className="border rounded p-1 text-xs"
+                                                placeholder="Font Size"
+                                                value={node.data.modalStyles?.title?.fontSize || ''}
+                                                onChange={(e) => {
+                                                    const styles = { ...(node.data.modalStyles || {}) };
+                                                    styles.title = { ...(styles.title || {}), fontSize: e.target.value };
+                                                    updateNodeData(targetId, { modalStyles: styles });
+                                                }}
+                                            />
+                                            <input
+                                                type="color"
+                                                className="w-full h-6 border rounded cursor-pointer"
+                                                value={node.data.modalStyles?.title?.color || '#be123c'}
+                                                onChange={(e) => {
+                                                    const styles = { ...(node.data.modalStyles || {}) };
+                                                    styles.title = { ...(styles.title || {}), color: e.target.value };
+                                                    updateNodeData(targetId, { modalStyles: styles });
+                                                }}
+                                            />
+                                        </div>
+                                        <select
+                                            className="border rounded p-1 text-xs"
+                                            value={node.data.modalStyles?.title?.fontFamily || 'sans'}
+                                            onChange={(e) => {
+                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                styles.title = { ...(styles.title || {}), fontFamily: e.target.value };
+                                                updateNodeData(targetId, { modalStyles: styles });
+                                            }}
+                                        >
+                                            <option value="sans">Sans Serif</option>
+                                            <option value="serif">Serif</option>
+                                            <option value="mono">Monospace</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Date Style (Calendar Modal) */}
+                                    {node.data.modalType === 'calendar' && (
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[10px] text-gray-500">Date Text</label>
+                                    <div className="grid grid-cols-2 gap-1">
+                                        <input
+                                            type="text"
+                                            className="border rounded p-1 text-xs"
+                                            placeholder="Font Size"
+                                            value={node.data.modalStyles?.date?.fontSize || ''}
+                                            onChange={(e) => {
+                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                styles.date = { ...(styles.date || {}), fontSize: e.target.value };
+                                                updateNodeData(targetId, { modalStyles: styles });
+                                            }}
+                                        />
+                                        <input
+                                            type="color"
+                                            className="w-full h-6 border rounded cursor-pointer"
+                                            value={node.data.modalStyles?.date?.color || '#1f2937'}
+                                            onChange={(e) => {
+                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                styles.date = { ...(styles.date || {}), color: e.target.value };
+                                                updateNodeData(targetId, { modalStyles: styles });
+                                            }}
+                                        />
+                                    </div>
                                     <select
-                                        className="border w-full p-1 text-sm"
-                                        value={node.style.fontFamily || 'sans'}
-                                        onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
+                                        className="border rounded p-1 text-xs"
+                                        value={node.data.modalStyles?.date?.fontFamily || 'sans'}
+                                        onChange={(e) => {
+                                            const styles = { ...(node.data.modalStyles || {}) };
+                                            styles.date = { ...(styles.date || {}), fontFamily: e.target.value };
+                                            updateNodeData(targetId, { modalStyles: styles });
+                                        }}
                                     >
                                         <option value="sans">Sans Serif</option>
                                         <option value="serif">Serif</option>
                                         <option value="mono">Monospace</option>
-                                        <option value="cursive">Cursive</option>
-                                        <option value="fantasy">Fantasy</option>
                                     </select>
-                                </div>
-
-                                {/* Modal Configuration - Visible if action is not none */}
-                                {node.data.actionType && node.data.actionType !== 'none' && node.data.actionType !== 'link' && (
-                                    <div className="flex flex-col gap-2 border-t pt-2 border-orange-200 bg-orange-50/50 p-2 rounded">
-                                        <label className="text-[10px] uppercase font-bold text-orange-600">Modal Container Style</label>
-
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Background Color</label>
-                                            <input
-                                                type="color"
-                                                className="w-full h-8 cursor-pointer rounded border"
-                                                value={node.data.modalBackgroundColor || '#ffffff'}
-                                                onChange={(e) => updateNodeData(targetId, { modalBackgroundColor: e.target.value })}
-                                            />
-                                        </div>
-
-                                        <BorderControl
-                                            label="Modal Border"
-                                            values={{
-                                                top: node.data.modalBorderTopWidth,
-                                                right: node.data.modalBorderRightWidth,
-                                                bottom: node.data.modalBorderBottomWidth,
-                                                left: node.data.modalBorderLeftWidth,
-                                                topColor: node.data.modalBorderTopColor,
-                                                rightColor: node.data.modalBorderRightColor,
-                                                bottomColor: node.data.modalBorderBottomColor,
-                                                leftColor: node.data.modalBorderLeftColor,
-                                            }}
-                                            onChange={(newValues) => {
-                                                updateNodeData(targetId, {
-                                                    modalBorderTopWidth: newValues.top,
-                                                    modalBorderRightWidth: newValues.right,
-                                                    modalBorderBottomWidth: newValues.bottom,
-                                                    modalBorderLeftWidth: newValues.left,
-                                                    modalBorderTopColor: newValues.topColor,
-                                                    modalBorderRightColor: newValues.rightColor,
-                                                    modalBorderBottomColor: newValues.bottomColor,
-                                                    modalBorderLeftColor: newValues.leftColor,
-                                                });
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Speech Specific Config */}
-                                {node.data.actionType === 'speech' && (
-                                    <div className="flex flex-col gap-2 border-t pt-2 border-rose-200 bg-rose-50/50 p-2 rounded">
-                                        <label className="text-[10px] uppercase font-bold text-rose-600">Speech Form Config</label>
-
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Title Placeholder</label>
-                                            <input type="text" className="border rounded p-1 text-xs" value={node.data.speechPlaceholderName} onChange={(e) => updateNodeData(targetId, { speechPlaceholderName: e.target.value })} placeholder="Your Name" />
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Message Placeholder</label>
-                                            <input type="text" className="border rounded p-1 text-xs" value={node.data.speechPlaceholderMessage} onChange={(e) => updateNodeData(targetId, { speechPlaceholderMessage: e.target.value })} placeholder="Write your wishes..." />
-                                        </div>
-
-                                        <div className="flex flex-col gap-2 mt-2 border-t border-rose-200 pt-2">
-                                            <label className="text-[10px] font-semibold text-rose-600">Submit Button Style</label>
-
-                                            <div className="flex flex-col gap-1">
-                                                <label className="text-[10px] text-gray-500">Button Text</label>
-                                                <input type="text" className="border rounded p-1 text-xs" value={node.data.speechSubmitText} onChange={(e) => updateNodeData(targetId, { speechSubmitText: e.target.value })} placeholder="Send Wishes" />
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-[10px] text-gray-500">Font</label>
-                                                    <select
-                                                        className="border w-full p-1 text-[10px]"
-                                                        value={node.data.speechBtnFontFamily || 'sans'}
-                                                        onChange={(e) => updateNodeData(targetId, { speechBtnFontFamily: e.target.value })}
-                                                    >
-                                                        <option value="sans">Sans</option>
-                                                        <option value="serif">Serif</option>
-                                                        <option value="mono">Mono</option>
-                                                    </select>
-                                                </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-[10px] text-gray-500">Size</label>
-                                                    <input type="text" className="border rounded p-1 text-xs" value={node.data.speechBtnFontSize || ''} onChange={(e) => updateNodeData(targetId, { speechBtnFontSize: e.target.value })} placeholder="14px" />
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-[10px] text-gray-500">Text Color</label>
-                                                    <input type="color" className="w-full h-6 border rounded" value={node.data.speechBtnColor || '#ffffff'} onChange={(e) => updateNodeData(targetId, { speechBtnColor: e.target.value })} />
-                                                </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-[10px] text-gray-500">Bg Color</label>
-                                                    <input type="color" className="w-full h-6 border rounded" value={node.data.speechBtnBgColor || '#e11d48'} onChange={(e) => updateNodeData(targetId, { speechBtnBgColor: e.target.value })} />
-                                                </div>
-                                            </div>
-
-                                            <BorderControl
-                                                label="Submit Button Border"
-                                                values={{
-                                                    top: node.data.speechBtnBorderTopWidth,
-                                                    right: node.data.speechBtnBorderRightWidth,
-                                                    bottom: node.data.speechBtnBorderBottomWidth,
-                                                    left: node.data.speechBtnBorderLeftWidth,
-                                                    topColor: node.data.speechBtnBorderTopColor,
-                                                    rightColor: node.data.speechBtnBorderRightColor,
-                                                    bottomColor: node.data.speechBtnBorderBottomColor,
-                                                    leftColor: node.data.speechBtnBorderLeftColor,
-                                                }}
-                                                onValuesChange={(newValues) => {
-                                                    updateNodeData(targetId, {
-                                                        speechBtnBorderTopWidth: newValues.top,
-                                                        speechBtnBorderRightWidth: newValues.right,
-                                                        speechBtnBorderBottomWidth: newValues.bottom,
-                                                        speechBtnBorderLeftWidth: newValues.left,
-                                                        speechBtnBorderTopColor: newValues.topColor,
-                                                        speechBtnBorderRightColor: newValues.rightColor,
-                                                        speechBtnBorderBottomColor: newValues.bottomColor,
-                                                        speechBtnBorderLeftColor: newValues.leftColor,
-                                                    });
-                                                }}
-
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Image Widget Specifics */}
-                        {node.type === 'image' && (
-                            <div className="flex flex-col gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs text-gray-600">Image Source</label>
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="text"
-                                            className="border rounded p-2 text-sm w-full"
-                                            value={node.data.url || ''}
-                                            onChange={(e) => updateNodeData(targetId, { url: e.target.value })}
-                                            placeholder="Image URL"
-                                        />
-                                        <div className="relative">
-                                            <button className="p-2 border rounded hover:bg-gray-50 text-gray-600" title="Upload Image">
-                                                <Upload size={16} />
-                                            </button>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                className="absolute inset-0 opacity-0 cursor-pointer"
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (file) {
-                                                        const url = URL.createObjectURL(file);
-                                                        updateNodeData(targetId, { url });
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs text-gray-600">Alt Text</label>
-                                    <input
-                                        type="text"
-                                        className="border rounded p-2 text-sm w-full"
-                                        value={node.data.alt || ''}
-                                        onChange={(e) => updateNodeData(targetId, { alt: e.target.value })}
-                                        placeholder="Description"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-
-                {/* === STYLE SETTINGS === */}
-                <div className="space-y-3 pt-4 border-t">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase">Style</h3>
-
-                    {/* Background Image (Section/Container) */}
-                    {(node.type === 'section' || node.type === 'container') && (
-                        <>
-                            <div className="flex flex-col gap-1 mb-2">
-                                <label className="text-xs text-gray-600">Background</label>
-                                <select
-                                    className="border rounded p-2 text-sm w-full"
-                                    value={node.style.gradientType ? 'gradient' : 'color'}
-                                    onChange={(e) => {
-                                        if (e.target.value === 'color') updateNodeStyle(targetId, { gradientType: undefined });
-                                        else updateNodeStyle(targetId, { gradientType: 'linear' });
-                                    }}
-                                >
-                                    <option value="color">Solid Color & Image</option>
-                                    <option value="gradient">Linear Gradient</option>
-                                </select>
-                            </div>
-
-                            {!node.style.gradientType ? (
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="color"
-                                            className="w-8 h-8 rounded cursor-pointer border-none"
-                                            value={node.style.backgroundColor || '#ffffff'}
-                                            onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
-                                        />
-                                        <input
-                                            type="text"
-                                            className="border rounded p-1 text-xs w-full"
-                                            value={node.style.backgroundColor || ''}
-                                            onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
-                                            placeholder="#ffffff"
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="text"
-                                            className="border rounded p-2 text-sm w-full pr-8 text-ellipsis"
-                                            value={node.style.backgroundImage || ''}
-                                            readOnly
-                                            placeholder="Image URL"
-                                        />
-                                        <div className="relative">
-                                            <button className="p-2 border rounded hover:bg-gray-50 text-gray-600">
-                                                <Upload size={14} />
-                                            </button>
-                                            <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleBackgroundUpload} />
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-2">
-                                    <select
-                                        className="border rounded p-2 text-sm w-full"
-                                        value={node.style.gradientDirection || 'to bottom'}
-                                        onChange={(e) => updateNodeStyle(targetId, { gradientDirection: e.target.value })}
-                                    >
-                                        <option value="to bottom">To Bottom</option>
-                                        <option value="to right">To Right</option>
-                                        <option value="to bottom right">Diagonal</option>
-                                    </select>
-                                    <div className="flex gap-2">
-                                        <input type="color" className="w-full h-8" value={node.style.gradientColor1 || '#ffffff'} onChange={(e) => updateNodeStyle(targetId, { gradientColor1: e.target.value })} />
-                                        <input type="color" className="w-full h-8" value={node.style.gradientColor2 || '#000000'} onChange={(e) => updateNodeStyle(targetId, { gradientColor2: e.target.value })} />
-                                    </div>
                                 </div>
                             )}
-                        </>
-                    )}
 
-                    {/* Section Height */}
-                    {node.type === 'section' && (
-                        <div className="flex flex-col gap-1 mt-2">
-                            <label className="text-xs text-gray-600">Height</label>
-                            <select
-                                className="border rounded p-2 text-sm w-full mb-1"
-                                value={['auto', 'full'].includes(node.style.height) ? node.style.height : 'custom'}
-                                onChange={(e) => updateNodeStyle(targetId, { height: e.target.value === 'custom' ? '300px' : e.target.value })}
-                            >
-                                <option value="auto">Auto</option>
-                                <option value="full">Full Screen</option>
-                                <option value="custom">Custom</option>
-                            </select>
-                        </div>
-                    )}
+                                    {/* Time Style (Calendar Modal) */}
+                                    {node.data.modalType === 'calendar' && (
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[10px] text-gray-500">Time Text</label>
+                                            <div className="grid grid-cols-2 gap-1">
+                                                <input
+                                                    type="text"
+                                                    className="border rounded p-1 text-xs"
+                                                    placeholder="Font Size"
+                                                    value={node.data.modalStyles?.time?.fontSize || ''}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.time = { ...(styles.time || {}), fontSize: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                />
+                                                <input
+                                                    type="color"
+                                                    className="w-full h-6 border rounded cursor-pointer"
+                                                    value={node.data.modalStyles?.time?.color || '#4b5563'}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.time = { ...(styles.time || {}), color: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                />
+                                            </div>
+                                            <select
+                                                className="border rounded p-1 text-xs"
+                                                value={node.data.modalStyles?.time?.fontFamily || 'sans'}
+                                                onChange={(e) => {
+                                                    const styles = { ...(node.data.modalStyles || {}) };
+                                                    styles.time = { ...(styles.time || {}), fontFamily: e.target.value };
+                                                    updateNodeData(targetId, { modalStyles: styles });
+                                                }}
+                                            >
+                                                <option value="sans">Sans Serif</option>
+                                                <option value="serif">Serif</option>
+                                                <option value="mono">Monospace</option>
+                                            </select>
+                                        </div>
+                                    )}
 
-                    {/* Padding & Margin */}
-                    <div className="grid grid-cols-2 gap-2">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-xs text-gray-600">Padding</label>
-                            <input
-                                type="text"
-                                className="border rounded p-2 text-sm w-full"
-                                value={node.style.padding || ''}
-                                onChange={(e) => updateNodeStyle(targetId, { padding: e.target.value })}
-                                placeholder="20px"
-                            />
-                        </div>
+                                    {/* Location Style (Location Modal) */}
+                                    {node.data.modalType === 'location' && (
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[10px] text-gray-500">Location Text</label>
+                                            <div className="grid grid-cols-2 gap-1">
+                                                <input
+                                                    type="text"
+                                                    className="border rounded p-1 text-xs"
+                                                    placeholder="Font Size"
+                                                    value={node.data.modalStyles?.location?.fontSize || ''}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.location = { ...(styles.location || {}), fontSize: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                />
+                                                <input
+                                                    type="color"
+                                                    className="w-full h-6 border rounded cursor-pointer"
+                                                    value={node.data.modalStyles?.location?.color || '#1f2937'}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.location = { ...(styles.location || {}), color: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                />
+                                            </div>
+                                            <select
+                                                className="border rounded p-1 text-xs"
+                                                value={node.data.modalStyles?.location?.fontFamily || 'sans'}
+                                                onChange={(e) => {
+                                                    const styles = { ...(node.data.modalStyles || {}) };
+                                                    styles.location = { ...(styles.location || {}), fontFamily: e.target.value };
+                                                    updateNodeData(targetId, { modalStyles: styles });
+                                                }}
+                                            >
+                                                <option value="sans">Sans Serif</option>
+                                                <option value="serif">Serif</option>
+                                                <option value="mono">Monospace</option>
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {/* Contact Name Style (Contact Modal) */}
+                                    {node.data.modalType === 'contact' && (
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-[10px] text-gray-500">Contact Name</label>
+                                            <div className="grid grid-cols-2 gap-1">
+                                                <input
+                                                    type="text"
+                                                    className="border rounded p-1 text-xs"
+                                                    placeholder="Font Size"
+                                                    value={node.data.modalStyles?.contactName?.fontSize || ''}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.contactName = { ...(styles.contactName || {}), fontSize: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                />
+                                                <input
+                                                    type="color"
+                                                    className="w-full h-6 border rounded cursor-pointer"
+                                                    value={node.data.modalStyles?.contactName?.color || '#be123c'}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.contactName = { ...(styles.contactName || {}), color: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                />
+                                            </div>
+                                            <select
+                                                className="border rounded p-1 text-xs"
+                                                value={node.data.modalStyles?.contactName?.fontFamily || 'sans'}
+                                                onChange={(e) => {
+                                                    const styles = { ...(node.data.modalStyles || {}) };
+                                                    styles.contactName = { ...(styles.contactName || {}), fontFamily: e.target.value };
+                                                    updateNodeData(targetId, { modalStyles: styles });
+                                                }}
+                                            >
+                                                <option value="sans">Sans Serif</option>
+                                                <option value="serif">Serif</option>
+                                                <option value="mono">Monospace</option>
+                                            </select>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                                {/* === STYLE SETTINGS === */}
+                                <div className="space-y-3 pt-4 border-t">
+                                    <h3 className="text-xs font-semibold text-gray-500 uppercase">Style</h3>
+
+                                    {/* Background Image (Section/Container) */}
+                                    {(node.type === 'section' || node.type === 'container') && (
+                                        <>
+                                            <div className="flex flex-col gap-1 mb-2">
+                                                <label className="text-xs text-gray-600">Background</label>
+                                                <select
+                                                    className="border rounded p-2 text-sm w-full"
+                                                    value={node.style.gradientType ? 'gradient' : 'color'}
+                                                    onChange={(e) => {
+                                                        if (e.target.value === 'color') updateNodeStyle(targetId, { gradientType: undefined });
+                                                        else updateNodeStyle(targetId, { gradientType: 'linear' });
+                                                    }}
+                                                >
+                                                    <option value="color">Solid Color & Image</option>
+                                                    <option value="gradient">Linear Gradient</option>
+                                                </select>
+                                            </div>
+
+                                            {!node.style.gradientType ? (
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="color"
+                                                            className="w-8 h-8 rounded cursor-pointer border-none"
+                                                            value={node.style.backgroundColor || '#ffffff'}
+                                                            onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs w-full"
+                                                            value={node.style.backgroundColor || ''}
+                                                            onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
+                                                            placeholder="#ffffff"
+                                                        />
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-2 text-sm w-full pr-8 text-ellipsis"
+                                                            value={node.style.backgroundImage || ''}
+                                                            readOnly
+                                                            placeholder="Image URL"
+                                                        />
+                                                        <div className="relative">
+                                                            <button className="p-2 border rounded hover:bg-gray-50 text-gray-600">
+                                                                <Upload size={14} />
+                                                            </button>
+                                                            <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleBackgroundUpload} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col gap-2">
+                                                    <select
+                                                        className="border rounded p-2 text-sm w-full"
+                                                        value={node.style.gradientDirection || 'to bottom'}
+                                                        onChange={(e) => updateNodeStyle(targetId, { gradientDirection: e.target.value })}
+                                                    >
+                                                        <option value="to bottom">To Bottom</option>
+                                                        <option value="to right">To Right</option>
+                                                        <option value="to bottom right">Diagonal</option>
+                                                    </select>
+                                                    <div className="flex gap-2">
+                                                        <input type="color" className="w-full h-8" value={node.style.gradientColor1 || '#ffffff'} onChange={(e) => updateNodeStyle(targetId, { gradientColor1: e.target.value })} />
+                                                        <input type="color" className="w-full h-8" value={node.style.gradientColor2 || '#000000'} onChange={(e) => updateNodeStyle(targetId, { gradientColor2: e.target.value })} />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {/* Section Height */}
+                                    {node.type === 'section' && (
+                                        <div className="flex flex-col gap-1 mt-2">
+                                            <label className="text-xs text-gray-600">Height</label>
+                                            <select
+                                                className="border rounded p-2 text-sm w-full mb-1"
+                                                value={['auto', 'full'].includes(node.style.height) ? node.style.height : 'custom'}
+                                                onChange={(e) => updateNodeStyle(targetId, { height: e.target.value === 'custom' ? '300px' : e.target.value })}
+                                            >
+                                                <option value="auto">Auto</option>
+                                                <option value="full">Full Screen</option>
+                                                <option value="custom">Custom</option>
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {/* Padding & Margin */}
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs text-gray-600">Padding</label>
+                                            <input
+                                                type="text"
+                                                className="border rounded p-2 text-sm w-full"
+                                                value={node.style.padding || ''}
+                                                onChange={(e) => updateNodeStyle(targetId, { padding: e.target.value })}
+                                                placeholder="20px"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* NEW: Display & Layout Controls (Section/Container) */}
+                                    {(node.type === 'section' || node.type === 'container') && (
+                                        <DisplayControl data={node.style} onChange={handleStyleChange} />
+                                    )}
+
+                                    {/* NEW: Border Controls (Section/Container/Button/Image) */}
+                                    {(node.type === 'section' || node.type === 'container' || node.type === 'button' || node.type === 'image') && (
+                                        <>
+                                            <BorderControl label="Border" prefix="border" data={node.style} onChange={handleStyleChange} />
+                                            <RadiusControl data={node.style} onChange={handleStyleChange} />
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
-
-                    {/* NEW: Display & Layout Controls (Section/Container) */}
-                    {(node.type === 'section' || node.type === 'container') && (
-                        <DisplayControl data={node.style} onChange={handleStyleChange} />
-                    )}
-
-                    {/* NEW: Border Controls (Section/Container/Button/Image) */}
-                    {(node.type === 'section' || node.type === 'container' || node.type === 'button' || node.type === 'image') && (
-                        <>
-
-                            <BorderControl label="Border" prefix="border" data={node.style} onChange={handleStyleChange} />
-                            <RadiusControl data={node.style} onChange={handleStyleChange} />
-                        </>
-                    )}
-                </div>
-            </div>
+                </>
+            )}
         </div>
+    );
+}
+
+export function PropertyPanelToggle({ isOpen, onToggle }: { isOpen: boolean, onToggle: () => void }) {
+    return (
+        <button
+            onClick={onToggle}
+            className={cn(
+                "absolute -left-6 top-4 z-50 bg-white border shadow-md p-1 rounded-l-md hover:bg-gray-50 text-gray-400",
+                !isOpen && "-left-6"
+            )}
+        >
+            {isOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
     );
 }

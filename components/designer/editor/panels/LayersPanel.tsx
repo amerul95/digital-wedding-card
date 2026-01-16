@@ -86,6 +86,7 @@ export function LayersPanel() {
                           size="icon-sm"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (!currentSectionId) return;
                             updateObject(currentSectionId, object.id, {
                               hidden: !object.hidden,
                             });
@@ -112,6 +113,7 @@ export function LayersPanel() {
                           size="icon-sm"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (!currentSectionId) return;
                             updateObject(currentSectionId, object.id, {
                               locked: !object.locked,
                             });
@@ -140,6 +142,7 @@ export function LayersPanel() {
                           size="icon-sm"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (!currentSectionId) return;
                             reorderObject(currentSectionId, object.id, 'up');
                           }}
                           disabled={actualIndex === objects.length - 1}
@@ -159,6 +162,7 @@ export function LayersPanel() {
                           size="icon-sm"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (!currentSectionId) return;
                             reorderObject(currentSectionId, object.id, 'down');
                           }}
                           disabled={actualIndex === 0}

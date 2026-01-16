@@ -2,12 +2,40 @@
 
 import React from "react";
 
-interface VideoModalProps {
-    videoUrl?: string; // YouTube, Vimeo, or direct URL
+interface ModalStyles {
+    title?: {
+        fontSize?: string | number;
+        color?: string;
+        fontFamily?: string;
+        fontWeight?: string;
+    };
+    message?: {
+        fontSize?: string | number;
+        color?: string;
+        fontFamily?: string;
+    };
 }
 
-export function VideoModal({ videoUrl }: VideoModalProps) {
-    if (!videoUrl) return <div className="text-center text-gray-500">No video available</div>;
+interface VideoModalProps {
+    videoUrl?: string; // YouTube, Vimeo, or direct URL
+    styles?: ModalStyles;
+}
+
+export function VideoModal({ videoUrl, styles = {} }: VideoModalProps) {
+    if (!videoUrl) {
+        return (
+            <div 
+                className="text-center text-gray-500"
+                style={{
+                    fontSize: styles.message?.fontSize || undefined,
+                    color: styles.message?.color || undefined,
+                    fontFamily: styles.message?.fontFamily || undefined,
+                }}
+            >
+                No video available
+            </div>
+        );
+    }
 
     // Simple helper to detect if it's an embeddable link or needs modification (basic support)
     // Real implementation might want robust embed handling for YT/Vimeo

@@ -11,6 +11,8 @@ import { ImageSliderWidget } from "@/components/editor/widgets/ImageSliderWidget
 import { CountdownWidget } from "@/components/editor/widgets/CountdownWidget";
 import { BottomNavWidget } from "@/components/editor/widgets/BottomNavWidget";
 import { ButtonWidget } from "@/components/editor/widgets/ButtonWidget";
+import { DoorWidget } from "@/components/editor/widgets/DoorWidget";
+import { ModalWidget } from "@/components/editor/widgets/ModalWidget";
 
 import { useClientStore, defaultClientData } from "@/components/studio/clientStore";
 
@@ -120,6 +122,10 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
         // Other widgets can be inline here or extracted similarly
         case 'button':
             return <ButtonWidget id={nodeId} data={processedData} style={node.style} />;
+        case 'door':
+            return <DoorWidget id={nodeId} data={processedData} style={node.style} />;
+        case 'modal':
+            return <ModalWidget id={nodeId} data={processedData} style={node.style} />;
         default:
             return (
                 <div

@@ -218,14 +218,12 @@ function renderObjectToLayer(layer: Konva.Layer, object: CanvasObject, pixelRati
     case 'image': {
       const imgObj = object as ImageObject;
       Konva.Image.fromURL(imgObj.src, (img) => {
-        img.setAttrs({
-          x: object.x * pixelRatio,
-          y: object.y * pixelRatio,
-          width: object.width * pixelRatio,
-          height: object.height * pixelRatio,
-          rotation: object.rotation,
-          opacity: object.opacity,
-        });
+        img.x(object.x * pixelRatio);
+        img.y(object.y * pixelRatio);
+        img.width(object.width * pixelRatio);
+        img.height(object.height * pixelRatio);
+        img.rotation(object.rotation);
+        img.opacity(object.opacity);
         layer.add(img);
         layer.draw();
         onImageLoad?.();
@@ -317,14 +315,12 @@ function renderObjectToGroup(group: Konva.Group, object: CanvasObject, scale: nu
     case 'image': {
       const imgObj = object as ImageObject;
       Konva.Image.fromURL(imgObj.src, (img) => {
-        img.setAttrs({
-          x: object.x,
-          y: object.y,
-          width: object.width,
-          height: object.height,
-          rotation: object.rotation,
-          opacity: object.opacity,
-        });
+        img.x(object.x);
+        img.y(object.y);
+        img.width(object.width);
+        img.height(object.height);
+        img.rotation(object.rotation);
+        img.opacity(object.opacity);
         group.add(img);
         onImageLoad?.();
       });

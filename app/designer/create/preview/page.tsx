@@ -95,6 +95,13 @@ export default function PreviewPage() {
     };
   }, [playerSettings.snapEnabled, viewport.viewportH]);
 
+  // Set audio volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = playerSettings.music.volume;
+    }
+  }, [playerSettings.music.volume]);
+
   // Audio controls
   const handlePlayPause = () => {
     if (!audioRef.current) return;
@@ -278,7 +285,6 @@ export default function PreviewPage() {
             ref={audioRef}
             src={playerSettings.music.src}
             loop={playerSettings.music.loop}
-            volume={playerSettings.music.volume}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
           />

@@ -37,7 +37,7 @@ export function TextEditOverlay({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const group = stage.findOne(`#${objectId}`);
+    const group = stage.findOne(`#${objectId}`) as Konva.Group | null;
     if (!group) return;
 
     // Find the actual Konva Text node inside the group
@@ -80,7 +80,8 @@ export function TextEditOverlay({
     textarea.style.transformOrigin = 'left top';
     // During editing, always use left align for textarea to ensure all text is visible
     textarea.style.textAlign = 'left';
-    textarea.style.color = textNode.fill();
+    const fill = textNode.fill();
+    textarea.style.color = typeof fill === 'string' ? fill : '#000000';
     textarea.style.letterSpacing = `${textNode.letterSpacing() * scaleX}px`;
     
     // Handle font style

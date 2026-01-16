@@ -5,7 +5,8 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useSensor, useSe
 import { Sidebar } from "@/components/editor/Sidebar";
 import { Canvas } from "@/components/editor/Canvas";
 import { TopBar } from "@/components/editor/TopBar";
-import { PropertyPanel } from "@/components/editor/PropertyPanel";
+import { PropertyPanel, PropertyPanelToggle } from "@/components/editor/PropertyPanel";
+import { RightSidebar, SidebarToggle } from "@/components/editor/RightSidebar";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -13,6 +14,8 @@ export function EditorLayout() {
     const addNode = useEditorStore((state) => state.addNode);
     const [activeDragItem, setActiveDragItem] = useState<any>(null);
     const [mounted, setMounted] = useState(false);
+    const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
+    const [propertyPanelOpen, setPropertyPanelOpen] = useState(true);
 
     useEffect(() => {
         setMounted(true);
@@ -72,13 +75,23 @@ export function EditorLayout() {
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            id="editor-dnd-context"
         >
             <div className="flex h-screen w-full flex-col overflow-hidden bg-gray-50">
                 <TopBar />
                 <div className="flex flex-1 overflow-hidden">
                     <Sidebar />
                     <Canvas />
-                    <PropertyPanel />
+                    <div className="relative">
+                        <PropertyPanel isOpen={propertyPanelOpen} />
+                        <PropertyPanelToggle 
+                            isOpen={propertyPanelOpen} 
+                            onToggle={() => setPropertyPanelOpen(!propertyPanelOpen)} 
+                        />
+                    </div>
+                    <div className="relative flex h-full">
+                        {/* RightSidebar moved to Canvas */}
+                    </div>
                 </div>
             </div>
             {mounted && createPortal(

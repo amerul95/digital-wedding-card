@@ -16,7 +16,7 @@ interface UseRafScrollOptions {
 }
 
 export function useRafScroll(
-  containerRef: React.RefObject<HTMLElement>,
+  containerRef: React.RefObject<HTMLElement | null>,
   options: UseRafScrollOptions
 ) {
   const { onScroll, enabled = true } = options;

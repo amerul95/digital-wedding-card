@@ -35,7 +35,7 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
 
     // Split styles
     const layoutStyle: React.CSSProperties = {};
-    const boxStyle: React.CSSProperties = {};
+    const boxStyle: React.CSSProperties & Record<string, any> = {};
 
     Object.entries(style || {}).forEach(([key, value]) => {
         if (LAYOUT_KEYS.includes(key)) {
@@ -55,7 +55,7 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
             backgroundRepeat: 'no-repeat',
         } : {}),
         ...(boxStyle.gradientType === 'linear' && boxStyle.gradientColor1 && boxStyle.gradientColor2 ? {
-            background: `linear-gradient(${style.gradientDirection || 'to bottom'}, ${boxStyle.gradientColor1}, ${boxStyle.gradientColor2})`,
+            background: `linear-gradient(${boxStyle.gradientDirection || 'to bottom'}, ${boxStyle.gradientColor1}, ${boxStyle.gradientColor2})`,
         } : {}),
     };
 
