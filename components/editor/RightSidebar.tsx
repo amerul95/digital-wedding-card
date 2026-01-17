@@ -67,14 +67,21 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
 
     const handleToggleVideo = (show: boolean) => {
         updateGlobalSettings({ showVideo: show });
-        const bottomNavId = Object.keys(nodes).find(key => nodes[key].type === 'bottom-nav');
-        if (bottomNavId) {
+        
+        // Find all bottom-nav widgets (in case there are multiple)
+        const bottomNavIds = Object.keys(nodes).filter(key => nodes[key].type === 'bottom-nav');
+        
+        bottomNavIds.forEach(bottomNavId => {
             const bottomNav = nodes[bottomNavId];
+            if (!bottomNav) return;
+            
             const items = bottomNav.data.items || [];
             const hasVideo = items.find((i: any) => i.type === 'video');
+            
             if (show && !hasVideo) {
+                // Add video item to menu
                 const newItem = {
-                    id: `item-video-${Date.now()}`,
+                    id: `item-video-${Date.now()}-${bottomNavId}`,
                     type: 'video',
                     label: 'Video',
                     icon: 'video',
@@ -83,9 +90,10 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
                 };
                 updateNodeData(bottomNavId, { items: [...items, newItem] });
             } else if (!show && hasVideo) {
+                // Remove all video items from menu
                 updateNodeData(bottomNavId, { items: items.filter((i: any) => i.type !== 'video') });
             }
-        }
+        });
     };
 
     const handleDoorSelection = () => {

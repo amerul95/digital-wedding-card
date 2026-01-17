@@ -4,7 +4,6 @@ import { useEditorStore } from "@/components/editor/store";
 import { cn } from "@/lib/utils";
 import { Home, Calendar, Image as ImageIcon, MessageSquare, Phone, MapPin, Video, Gift, Mail } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import { Modal } from "@/components/card/Modal";
 import { CalendarModal, ContactModal, LocationModal, RSVPModal } from "@/components/card/ModalContent";
 import { VideoModal } from "@/components/card/VideoModal";
 import { GiftModal } from "@/components/card/GiftModal";
@@ -23,13 +22,15 @@ function InlineModal({
     onClose, 
     children, 
     isPreview,
-    isVisible = true
+    isVisible = true,
+    activeItem
 }: { 
     isOpen: boolean; 
     onClose: () => void; 
     children: React.ReactNode;
     isPreview: boolean;
     isVisible?: boolean; // Controls if modal is visible (slid up) or hidden (below screen)
+    activeItem?: any; // The active modal item to check if it's video
 }) {
     if (!isOpen) return null;
     
@@ -49,11 +50,18 @@ function InlineModal({
                     pointerEvents: pointerEvents,
                     backgroundColor: 'transparent', // No blurry background
                 }}
-                onClick={onClose}
+                onClick={(e) => {
+                    // For video modal, don't close on background click - only hide via button
+                    // For other modals, close normally
+                    if (activeItem?.type !== 'video') {
+                        onClose();
+                    }
+                }}
             >
                 <div 
                     className="fixed left-1/2 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-rose-100 overflow-hidden"
                     onClick={(e) => e.stopPropagation()}
+                    data-modal-type={activeItem?.type === 'video' ? 'video' : undefined}
                     style={{
                         bottom: bottomPosition,
                         transform: 'translateX(-50%)',
@@ -71,11 +79,44 @@ function InlineModal({
         );
     }
     
-    // In editor mode, use regular fixed modal
+    // In editor mode, use same styling as preview (transparent background, no X button)
+    const pointerEvents = isVisible ? 'auto' : 'none';
+    const bottomPosition = isVisible ? '100px' : '-100%';
+    
     return (
-        <Modal onClose={onClose}>
-            {children}
-        </Modal>
+        <div 
+            className="fixed inset-0"
+            style={{
+                zIndex: 50,
+                pointerEvents: pointerEvents,
+                backgroundColor: 'transparent', // No blurry background
+            }}
+            onClick={(e) => {
+                // For video modal, don't close on background click - only hide via button
+                // For other modals, close normally
+                if (activeItem?.type !== 'video') {
+                    onClose();
+                }
+            }}
+        >
+            <div 
+                className="fixed left-1/2 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-rose-100 overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+                data-modal-type={activeItem?.type === 'video' ? 'video' : undefined}
+                style={{
+                    bottom: bottomPosition,
+                    transform: 'translateX(-50%)',
+                    transition: 'bottom 0.3s ease-out',
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
+                    padding: '1.5rem'
+                }}
+            >
+                <div className="relative z-10">
+                    {children}
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -260,6 +301,10 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
             visible: true
         });
     }
+    
+    // Get the video item for consistent ID checking
+    const videoItem = activeItems.find((i: any) => i.type === 'video');
+    const actualVideoItemId = videoItem?.id || videoItemId;
 
     // Auto-open video modal when preview page loads (if video is enabled)
     // Modal will be hidden below screen (bottom: -300px) so video can autoplay without disturbing the UI
@@ -375,20 +420,74 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
 
         // Open modal if functionality is enabled
         if (['contact', 'video', 'map', 'gift', 'calendar', 'rsvp'].includes(item.type)) {
-            // If modal is already open and visible, close it (toggle behavior)
-            if (activeModal === item.id && modalVisible) {
-                closeModal();
-            } else if (activeModal === item.id && !modalVisible) {
-                // Modal is open but hidden, slide it up
-                setModalVisible(true);
-            } else if (activeModal !== item.id) {
-                // Different modal, close current and open new one
-                if (activeModal) {
+            // Get current active item
+            const currentActiveItem = activeItems.find((i: any) => i.id === activeModal);
+            const isVideoItem = item.type === 'video';
+            
+            // Check if video modal is currently active - use the most reliable method
+            // First check by ID (most reliable), then by type
+            const activeModalIsVideoId = actualVideoItemId && activeModal === actualVideoItemId;
+            const activeItemIsVideoType = currentActiveItem?.type === 'video';
+            const videoModalIsActive = activeModalIsVideoId || activeItemIsVideoType;
+            
+            // Special handling for video modal - it never closes, just hides/shows
+            if (isVideoItem) {
+                // Check if video modal is currently active
+                if (videoModalIsActive) {
+                    // Video modal is active - toggle visibility explicitly
+                    if (modalVisible) {
+                        setModalVisible(false);
+                    } else {
+                        setModalVisible(true);
+                    }
+                } else {
+                    // Video modal not active yet, open it
+                    // If another modal is open, close it first
+                    if (activeModal) {
+                        setModalVisible(false);
+                        setTimeout(() => {
+                            setActiveModal(actualVideoItemId);
+                            setModalVisible(false); // Start hidden at bottom
+                            setTimeout(() => {
+                                setModalVisible(true);
+                            }, 50);
+                        }, 300);
+                    } else {
+                        // No modal open, open video modal from bottom
+                        setActiveModal(actualVideoItemId);
+                        setModalVisible(false); // Start hidden at bottom
+                        setTimeout(() => {
+                            setModalVisible(true);
+                        }, 50);
+                    }
+                }
+            } else {
+                // For other modals (contact, map, gift, calendar, rsvp) - normal close behavior
+                // But hide video modal if it's currently visible
+                if (videoModalIsActive) {
+                    // Video modal is active, switch to other modal
+                    // First hide the video modal
+                    setModalVisible(false);
+                    // Wait for hide animation, then switch modal content
+                    setTimeout(() => {
+                        setActiveModal(item.id);
+                        // Then show the new modal
+                        setTimeout(() => {
+                            setModalVisible(true);
+                        }, 50);
+                    }, 100);
+                } else if (activeModal === item.id && modalVisible) {
+                    // Same modal is visible, close it
+                    closeModal();
+                } else if (activeModal === item.id && !modalVisible) {
+                    // Same modal is hidden, slide it up
+                    setModalVisible(true);
+                } else if (activeModal && activeModal !== item.id) {
+                    // Different modal is active, close it and open new one
                     setModalVisible(false);
                     setTimeout(() => {
                         setActiveModal(item.id);
                         setModalVisible(false); // Start hidden at bottom
-                        // Small delay to ensure DOM update, then animate up
                         setTimeout(() => {
                             setModalVisible(true);
                         }, 50);
@@ -397,7 +496,6 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
                     // No modal open, open new one from bottom
                     setActiveModal(item.id);
                     setModalVisible(false); // Start hidden at bottom
-                    // Small delay to ensure DOM update, then animate up
                     setTimeout(() => {
                         setModalVisible(true);
                     }, 50);
@@ -508,11 +606,14 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
             case 'video':
                 // Use global background music URL if available, otherwise fallback to item config
                 // Video will be created and played when modal opens
+                // Use shared player from context to persist across modal open/close
                 return <VideoModal
                     videoUrl={globalSettings?.backgroundMusic?.url || item.videoUrl}
                     startTime={globalSettings?.backgroundMusic?.startTime || 0}
                     duration={globalSettings?.backgroundMusic?.duration || 0}
                     isVisible={modalVisible}
+                    playerRef={videoPlayerContext?.playerRef}
+                    containerRef={videoPlayerContext?.containerRef}
                 />;
             case 'gift':
                 return <GiftModal
@@ -584,10 +685,19 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
             {/* Render Modal if active */}
             {activeModal && activeItem && (
                 <InlineModal 
+                    key={activeModal} // Force re-render when activeModal changes
                     isOpen={!!activeModal} 
-                    onClose={closeModal}
+                    onClose={() => {
+                        // For video modal, just hide it instead of closing
+                        if (activeItem.type === 'video') {
+                            setModalVisible(false);
+                        } else {
+                            closeModal();
+                        }
+                    }}
                     isPreview={isPreview}
                     isVisible={modalVisible}
+                    activeItem={activeItem}
                 >
                     {renderModalContent(activeItem)}
                 </InlineModal>

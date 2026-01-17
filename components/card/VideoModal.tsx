@@ -120,9 +120,27 @@ export function VideoModal({ videoUrl, styles = {}, startTime = 0, duration = 0,
 
         const setupPlayer = async () => {
             try {
-                // If player already exists in local ref, don't create a new one
+                // If player already exists, reuse it instead of creating a new one
                 if (playerRef.current) {
-                    console.log("Player already exists");
+                    console.log("Player already exists, reusing existing player");
+                    // Move the iframe to the current container if needed
+                    try {
+                        const existingIframe = playerRef.current.getIframe?.();
+                        if (existingIframe && containerRef.current) {
+                            // Remove iframe from old location if it exists
+                            const oldParent = existingIframe.parentNode;
+                            if (oldParent && oldParent !== containerRef.current) {
+                                oldParent.removeChild(existingIframe);
+                            }
+                            // Add to new container if not already there
+                            if (!containerRef.current.contains(existingIframe)) {
+                                containerRef.current.appendChild(existingIframe);
+                            }
+                        }
+                    } catch (error) {
+                        console.log("Could not move iframe:", error);
+                    }
+                    // Don't restart video - let it continue from where it was
                     return;
                 }
 
@@ -140,7 +158,7 @@ export function VideoModal({ videoUrl, styles = {}, startTime = 0, duration = 0,
                 player = new (window as any).YT.Player(targetContainer, {
                     videoId: videoId,
                     playerVars: {
-                        autoplay: 1, // Autoplay when modal opens
+                        autoplay: 1, // Autoplay when modal opens for the first time
                         start: startTime || 0,
                         controls: 1, // Show YouTube's native controls
                         mute: 1, // Start muted to ensure autoplay works (will unmute after playing starts)
@@ -149,20 +167,42 @@ export function VideoModal({ videoUrl, styles = {}, startTime = 0, duration = 0,
                     },
                     events: {
                         onReady: (event: any) => {
-                            // Store player reference
+                            // Store player reference in both local and external refs
                             playerRef.current = event.target;
                             
-                            // Play video when modal opens
+                            // Only play video if it's not already playing (first time only)
                             try {
-                                event.target.playVideo();
-                                console.log("Video player ready and playing in modal");
+                                // Check current state - if already playing, don't restart
+                                const currentState = event.target.getPlayerState?.();
+                                const isPlaying = currentState === (window as any).YT.PlayerState.PLAYING;
+                                const isPaused = currentState === (window as any).YT.PlayerState.PAUSED;
+                                const isEnded = currentState === (window as any).YT.PlayerState.ENDED;
+                                
+                                if (isEnded) {
+                                    // Video ended, restart from beginning
+                                    event.target.seekTo(startTime || 0, true);
+                                    event.target.playVideo();
+                                    console.log("Video ended, restarting from start");
+                                } else if (!isPlaying && !isPaused) {
+                                    // Video hasn't started yet, play it
+                                    event.target.playVideo();
+                                    console.log("Video player ready and playing in modal");
+                                } else if (isPaused) {
+                                    // Video is paused, resume it (don't restart)
+                                    event.target.playVideo();
+                                    console.log("Video was paused, resuming playback");
+                                } else {
+                                    // Video already playing, continue from current position
+                                    console.log("Video already playing, continuing playback");
+                                }
                                 
                                 // Unmute after a short delay to ensure playback has started
-                                // This helps bypass autoplay restrictions
                                 setTimeout(() => {
                                     try {
-                                        event.target.unMute();
-                                        console.log("Video unmuted");
+                                        if (event.target.isMuted && event.target.isMuted()) {
+                                            event.target.unMute();
+                                            console.log("Video unmuted");
+                                        }
                                     } catch (error) {
                                         console.log("Could not unmute video");
                                     }
@@ -208,17 +248,12 @@ export function VideoModal({ videoUrl, styles = {}, startTime = 0, duration = 0,
         setupPlayer();
 
         return () => {
-            // Cleanup when component unmounts
+            // Cleanup timeout only, but keep player alive so video continues playing
             if (timeoutId) {
                 clearTimeout(timeoutId);
             }
-            if (player && player.destroy) {
-                try {
-                    player.destroy();
-                } catch (error) {
-                    // Ignore destroy errors
-                }
-            }
+            // Don't destroy player when component unmounts - let it continue playing
+            // Player will be reused if modal reopens
         };
     }, [isYoutube, videoId, startTime, duration, containerRef, onPlayerReady]);
 
