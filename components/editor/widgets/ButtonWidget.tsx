@@ -9,6 +9,8 @@ import { RSVPModal, CalendarModal } from "@/components/card/ModalContent";
 import { SpeechModal } from "@/components/card/SpeechModal";
 import { useRouter } from "next/navigation";
 import { useEvent } from "@/context/EventContext";
+import { motion } from "framer-motion";
+import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
 
 interface ButtonWidgetProps {
     id: string;
@@ -168,6 +170,15 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
 
     const isSelected = selectedId === id;
 
+    // Use animation hooks
+    const { widgetRef, controls, motionInitial, motionAnimate, animationVariants, useMotion } = useWidgetAnimations(
+        id,
+        data.initialAnimation,
+        data.scrollAnimation
+    );
+
+    const MotionDiv = motion.div as any;
+
     const wrapperStyle: React.CSSProperties = {
         display: 'flex',
         width: '100%',
@@ -288,7 +299,13 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
 
     return (
         <>
-            <div
+            <MotionDiv
+                ref={widgetRef}
+                {...(useMotion ? {
+                    animate: controls,
+                    initial: motionInitial,
+                    variants: animationVariants,
+                } : {})}
                 style={wrapperStyle}
                 onClick={handleClick}
                 className={cn("group relative", isSelected ? "ring-2 ring-blue-500 ring-offset-2 z-10" : "hover:ring-1 hover:ring-blue-300")}
@@ -305,7 +322,7 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
                         <span>{data.label || "Button"}</span>
                     )}
                 </button>
-            </div>
+            </MotionDiv>
 
             {showModal && (
                 <Modal onClose={closeModal} contentStyle={modalStyle}>

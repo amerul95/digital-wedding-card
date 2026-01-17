@@ -38,7 +38,7 @@ export function BottomNavBar({ className }: { className?: string }) {
     return (
         <div
             className={cn(
-                "absolute bottom-4 left-4 right-4 h-16 bg-white/90 backdrop-blur rounded-2xl flex items-center justify-around px-2 z-40 border border-white/20 transition-all duration-300 pointer-events-auto",
+                "absolute bottom-4 left-4 right-4 h-16 bg-white/90 backdrop-blur rounded-2xl flex items-center justify-around px-2 z-20 border border-white/20 transition-all duration-300 pointer-events-auto",
                 style.boxShadow || "shadow-lg", // Applied dynamically
                 className
             )}

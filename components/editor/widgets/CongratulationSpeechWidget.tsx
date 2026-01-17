@@ -4,6 +4,8 @@ import { useEditorStore } from "@/components/editor/store";
 import { cn } from "@/lib/utils";
 import { useClientStore } from "@/components/studio/clientStore";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
 
 interface CongratulationSpeechWidgetProps {
     id: string;
@@ -102,8 +104,23 @@ export function CongratulationSpeechWidget({ id, data, style }: CongratulationSp
         return () => clearInterval(scrollInterval);
     }, [currentScrollIndex, data.enableAutoScroll, data.autoScrollDelay, allSpeeches.length]);
 
+    // Use animation hooks
+    const { widgetRef, controls, motionInitial, motionAnimate, animationVariants, useMotion } = useWidgetAnimations(
+        id,
+        data.initialAnimation,
+        data.scrollAnimation
+    );
+
+    const MotionDiv = motion.div as any;
+
     return (
-        <div
+        <MotionDiv
+            ref={widgetRef}
+            {...(useMotion ? {
+                animate: controls,
+                initial: motionInitial,
+                variants: animationVariants,
+            } : {})}
             className={cn(
                 "relative transition-all group",
                 isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
@@ -136,6 +153,6 @@ export function CongratulationSpeechWidget({ id, data, style }: CongratulationSp
                     </div>
                 )}
             </div>
-        </div>
+        </MotionDiv>
     );
 }

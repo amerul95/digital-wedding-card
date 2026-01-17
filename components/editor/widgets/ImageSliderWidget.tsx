@@ -15,6 +15,8 @@ import 'swiper/css/effect-cube';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/effect-flip';
 import 'swiper/css/effect-cards';
+import { motion } from "framer-motion";
+import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
 
 interface ImageSliderWidgetProps {
     id: string;
@@ -60,8 +62,23 @@ export function ImageSliderWidget({ id, data, style }: ImageSliderWidgetProps) {
         ? { clickable: true, type: data.paginationType }
         : false;
 
+    // Use animation hooks
+    const { widgetRef, controls, motionInitial, motionAnimate, animationVariants, useMotion } = useWidgetAnimations(
+        id,
+        data.initialAnimation,
+        data.scrollAnimation
+    );
+
+    const MotionDiv = motion.div as any;
+
     return (
-        <div
+        <MotionDiv
+            ref={widgetRef}
+            {...(useMotion ? {
+                animate: controls,
+                initial: motionInitial,
+                variants: animationVariants,
+            } : {})}
             className={cn(
                 "relative transition-all group z-0", // Removed p-1 padding - now controlled by data properties
                 isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
@@ -99,6 +116,6 @@ export function ImageSliderWidget({ id, data, style }: ImageSliderWidgetProps) {
                     <span className="text-xs">Add images in properties</span>
                 </div>
             )}
-        </div>
+        </MotionDiv>
     );
 }

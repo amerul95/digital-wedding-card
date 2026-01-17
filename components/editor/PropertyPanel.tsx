@@ -2257,6 +2257,22 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                         </div>
                                     </div>
 
+                                    {/* Backdrop Filter (Section/Container) */}
+                                    {(node.type === 'section' || node.type === 'container') && (
+                                        <div className="space-y-1">
+                                            <label className="text-xs text-gray-600">Backdrop Blur</label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="range" min="0" max="100"
+                                                    className="flex-1"
+                                                    value={node.style.backdropBlur ?? 0}
+                                                    onChange={(e) => updateNodeStyle(targetId, { backdropBlur: parseInt(e.target.value) })}
+                                                />
+                                                <span className="text-xs w-12 text-right">{node.style.backdropBlur ?? 0}px</span>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* NEW: Display & Layout Controls (Section/Container) */}
                                     {(node.type === 'section' || node.type === 'container') && (
                                         <DisplayControl data={node.style} onChange={handleStyleChange} />
@@ -2268,6 +2284,54 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             <BorderControl label="Border" prefix="border" data={node.style} onChange={handleStyleChange} />
                                             <RadiusControl data={node.style} onChange={handleStyleChange} />
                                         </>
+                                    )}
+
+                                    {/* Animation Settings (Section/Container/Text/Button/Countdown/Slider/CongratulationSpeech) */}
+                                    {(node.type === 'section' || node.type === 'container' || 
+                                      node.type === 'text' || node.type === 'button' || 
+                                      node.type === 'countdown' || node.type === 'slider' || 
+                                      node.type === 'congratulation-speech') && (
+                                        <div className="space-y-3 pt-4 border-t">
+                                            <h3 className="text-xs font-semibold text-gray-500 uppercase">Animations</h3>
+                                            
+                                            {/* Initial Animation (when doors open / first section appears) */}
+                                            <div className="space-y-1">
+                                                <label className="text-xs text-gray-600">Initial Animation</label>
+                                                <select
+                                                    className="border rounded p-2 text-sm w-full"
+                                                    value={node.data.initialAnimation || 'none'}
+                                                    onChange={(e) => updateNodeData(targetId, { initialAnimation: e.target.value })}
+                                                >
+                                                    <option value="none">None</option>
+                                                    <option value="fadeIn">Fade In</option>
+                                                    <option value="slideUp">Slide Up</option>
+                                                    <option value="slideDown">Slide Down</option>
+                                                    <option value="slideLeft">Slide Left</option>
+                                                    <option value="slideRight">Slide Right</option>
+                                                    <option value="bounce">Bounce</option>
+                                                    <option value="scale">Scale</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Scroll Animation (when scrolling into view) */}
+                                            <div className="space-y-1">
+                                                <label className="text-xs text-gray-600">Scroll Animation</label>
+                                                <select
+                                                    className="border rounded p-2 text-sm w-full"
+                                                    value={node.data.scrollAnimation || 'none'}
+                                                    onChange={(e) => updateNodeData(targetId, { scrollAnimation: e.target.value })}
+                                                >
+                                                    <option value="none">None</option>
+                                                    <option value="fadeIn">Fade In</option>
+                                                    <option value="slideUp">Slide Up</option>
+                                                    <option value="slideDown">Slide Down</option>
+                                                    <option value="slideLeft">Slide Left</option>
+                                                    <option value="slideRight">Slide Right</option>
+                                                    <option value="bounce">Bounce</option>
+                                                    <option value="scale">Scale</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             </div>

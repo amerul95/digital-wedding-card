@@ -81,6 +81,19 @@ export function DoorSettings({ node, onUpdate }: DoorSettingsProps) {
                             <span className="text-xs w-8 text-right">{node.data.doorOpacity ?? 100}%</span>
                         </div>
                     </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[10px] text-gray-500">Blur</label>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="range" min="0" max="100"
+                                className="flex-1"
+                                value={node.data.doorBlur ?? 0}
+                                onChange={(e) => onUpdate({ doorBlur: parseInt(e.target.value) })}
+                            />
+                            <span className="text-xs w-8 text-right">{node.data.doorBlur ?? 0}px</span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Button Configuration Sub-section */}

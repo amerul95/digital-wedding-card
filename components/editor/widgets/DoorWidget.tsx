@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { SwingDoor } from "@/components/card/doorStyles/SwingDoor";
 import { SlideDoors } from "@/components/card/doorStyles/SlideDoors";
 import { EnvelopeDoors } from "@/components/card/doorStyles/EnvelopeDoors";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 import React, { useState, useEffect } from "react";
 
 interface DoorWidgetProps {
@@ -17,6 +18,7 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
     const viewOptions = useEditorStore((state) => state.viewOptions);
+    const { isPreview } = usePreview();
 
     // All hooks must be called before any early returns
     const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +39,10 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
 
     const handleOpen = () => {
         setIsOpen(true);
+        // Emit event for preview page to know doors are opening
+        if (isPreview) {
+            window.dispatchEvent(new CustomEvent('door-opened'));
+        }
     };
 
     const handleReplay = () => {
@@ -47,6 +53,10 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
     const handleAnimationComplete = () => {
         if (isOpen) {
             setShowDoors(false);
+            // Emit event when door animation completes
+            if (isPreview) {
+                window.dispatchEvent(new CustomEvent('door-animation-complete'));
+            }
         }
     };
 
@@ -66,6 +76,9 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
         onReplay: handleReplay,
         onAnimationComplete: handleAnimationComplete,
         color: data.doorColor || "#f43f5e",
+        opacity: data.doorOpacity ?? 100, // Pass doorOpacity to door components
+        blur: data.doorBlur ?? 0, // Pass doorBlur to door components
+        showReplayButton: !isPreview, // Only show replay button in editor mode, not preview
         // Animation Properties
         animationEffect: viewOptions.showAnimation ? (data.animationEffect || 'none') : 'none',
         effectColor: data.effectColor,
@@ -107,7 +120,8 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
                 right: style.right ?? 0,
                 bottom: style.bottom ?? 0,
                 width: style.width || '100%',
-                height: style.height || '100%',
+                height: '100vh', // Fixed viewport height, don't expand with content
+                maxHeight: '100vh', // Ensure it never exceeds viewport height
                 pointerEvents: 'none', // Allow clicks to pass through by default
             }}
         >

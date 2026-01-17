@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { useMobileFrame } from "@/components/editor/context/MobileFrameContext";
 import { usePreview } from "@/components/editor/context/PreviewContext";
+import { motion, useAnimation } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 interface SectionWidgetProps {
     id: string;
@@ -17,11 +19,84 @@ const LAYOUT_KEYS = [
     'display', 'flexDirection', 'justifyContent', 'alignItems', 'gap', 'gridTemplateColumns'
 ];
 
+// Helper function to get animation variants
+function getAnimationVariants(animationType: string | undefined) {
+    if (!animationType || animationType === 'none') {
+        return { initial: {}, animate: {}, exit: {} };
+    }
+
+    const common = {
+        initial: {} as any,
+        animate: { opacity: 1 } as any,
+        exit: { opacity: 0 } as any,
+        transition: { duration: 0.6, ease: "easeOut" } as any,
+    };
+
+    switch (animationType) {
+        case 'fadeIn':
+            return {
+                ...common,
+                initial: { opacity: 0 },
+            };
+        case 'slideUp':
+            return {
+                ...common,
+                initial: { opacity: 0, y: 50 },
+                animate: { opacity: 1, y: 0 },
+            };
+        case 'slideDown':
+            return {
+                ...common,
+                initial: { opacity: 0, y: -50 },
+                animate: { opacity: 1, y: 0 },
+            };
+        case 'slideLeft':
+            return {
+                ...common,
+                initial: { opacity: 0, x: 50 },
+                animate: { opacity: 1, x: 0 },
+            };
+        case 'slideRight':
+            return {
+                ...common,
+                initial: { opacity: 0, x: -50 },
+                animate: { opacity: 1, x: 0 },
+            };
+        case 'bounce':
+            return {
+                ...common,
+                initial: { opacity: 0, y: 50 },
+                animate: { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { type: "spring", stiffness: 300, damping: 20 }
+                },
+            };
+        case 'scale':
+            return {
+                ...common,
+                initial: { opacity: 0, scale: 0.8 },
+                animate: { opacity: 1, scale: 1 },
+            };
+        default:
+            return { initial: {}, animate: {}, exit: {} };
+    }
+}
+
 export function SectionWidget({ id, data, style, children }: SectionWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
+    const rootId = useEditorStore((state) => state.rootId);
+    const rootNode = useEditorStore((state) => rootId ? state.nodes[rootId] : null);
     const { isMobile, frameHeight } = useMobileFrame();
     const { isPreview } = usePreview();
+    const sectionRef = useRef<HTMLElement>(null);
+    const [isInView, setIsInView] = useState(false);
+    const [initialAnimationTriggered, setInitialAnimationTriggered] = useState(false);
+    const controls = useAnimation();
+
+    // Check if this is the first section
+    const isFirstSection = rootNode?.children?.[0] === id;
 
     const { setNodeRef, isOver } = useDroppable({
         id: id,
@@ -30,6 +105,12 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
         },
         disabled: isPreview, // Disable drag and drop in preview mode
     });
+
+    // Combine refs for droppable and animation
+    const combinedRef = (element: HTMLElement | null) => {
+        setNodeRef(element);
+        sectionRef.current = element;
+    };
 
     const handleClick = (e: React.MouseEvent) => {
         if (isPreview) return; // Don't allow selection in preview mode
@@ -68,10 +149,84 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
     // Ensure Section specific defaults are respected if not overwritten
     if (layoutStyle.display === undefined) layoutStyle.display = 'block';
 
+    // Apply backdrop blur if specified
+    const backdropBlur = (boxStyle as any).backdropBlur ?? 0;
+    const backdropBlurFilter = backdropBlur > 0 ? `blur(${backdropBlur}px)` : 'none';
+
+    // Get animation settings
+    const initialAnimation = data?.initialAnimation || 'none';
+    const scrollAnimation = data?.scrollAnimation || 'none';
+
+    // Get animation variants
+    const initialVariants = getAnimationVariants(initialAnimation);
+    const scrollVariants = getAnimationVariants(scrollAnimation);
+
+    // Intersection Observer for scroll animation
+    useEffect(() => {
+        if (isPreview && scrollAnimation !== 'none' && sectionRef.current) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            setIsInView(true);
+                            controls.start(scrollVariants.animate);
+                        }
+                    });
+                },
+                { threshold: 0.2 }
+            );
+
+            observer.observe(sectionRef.current);
+
+            return () => {
+                if (sectionRef.current) {
+                    observer.unobserve(sectionRef.current);
+                }
+            };
+        }
+    }, [isPreview, scrollAnimation, controls, scrollVariants]);
+
+    // Trigger initial animation when doors open (for first section)
+    useEffect(() => {
+        if (isPreview && isFirstSection && initialAnimation !== 'none' && !initialAnimationTriggered) {
+            // Delay to allow door animation to complete
+            const timer = setTimeout(() => {
+                setInitialAnimationTriggered(true);
+                controls.start(initialVariants.animate);
+            }, 2000); // 2 seconds after mount (door animation takes ~1.8s)
+
+            return () => clearTimeout(timer);
+        }
+    }, [isPreview, isFirstSection, initialAnimation, initialAnimationTriggered, controls, initialVariants]);
+
+    // Determine which animation to use
+    const shouldUseInitialAnimation = isFirstSection && initialAnimation !== 'none' && !isInView;
+    const animationVariants = shouldUseInitialAnimation ? initialVariants : 
+                             (scrollAnimation !== 'none' ? scrollVariants : { initial: {}, animate: {}, exit: {} });
+
+    // For initial animation, start with initial state
+    const motionInitial = shouldUseInitialAnimation && initialAnimationTriggered ? animationVariants.initial : 
+                         (scrollAnimation !== 'none' && !isInView ? animationVariants.initial : {});
+    
+    // For animate prop
+    const motionAnimate = (shouldUseInitialAnimation && initialAnimationTriggered) || 
+                         (scrollAnimation !== 'none' && isInView) ? animationVariants.animate : {};
+
+    // Use motion wrapper only in preview mode with animations
+    const useMotion = isPreview && (initialAnimation !== 'none' || scrollAnimation !== 'none');
+    
+    // Use motion.section for animations, regular section otherwise
+    const MotionSection = motion.section as any;
+
     return (
-        <section
-            ref={setNodeRef}
+        <MotionSection
+            ref={combinedRef}
             data-section-id={id}
+            {...(useMotion ? {
+                animate: controls,
+                initial: motionInitial,
+                variants: animationVariants,
+            } : {})}
             className={cn(
                 "relative w-full transition-all block", // Ensure block display for proper stacking
                 !isPreview && "group", // Only add group class in editor mode
@@ -85,20 +240,24 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
                 ...bgStyle,
                 // Ensure box-sizing is border-box so padding is included in height calculation
                 boxSizing: 'border-box',
+                backdropFilter: backdropBlurFilter,
+                WebkitBackdropFilter: backdropBlurFilter, // Safari support
                 // Height handling
-                // When height is 'full' and we're in mobile frame, use frame height instead of viewport height
-                // For 'auto' height in mobile frame, use 200px minHeight
+                // In preview mode, sections should be 100vh to enable scrolling (one section per viewport)
+                // In editor mode, respect the height settings
                 minHeight: boxStyle?.height === 'full' 
                     ? (isMobile && frameHeight > 0 ? `${frameHeight}px` : '100vh')
                     : (boxStyle?.height === 'auto' 
-                        ? (isMobile ? '200px' : (boxStyle?.minHeight || '150px'))
+                        ? (isPreview ? '100vh' : (isMobile ? '200px' : (boxStyle?.minHeight || '150px')))
                         : (boxStyle?.minHeight || '150px')),
                 // Set actual height when 'full' to prevent overflow
+                // In preview mode with 'auto' height, use 100vh so sections scroll one at a time
                 // With border-box, padding is included in the height, so section will be exactly frameHeight
-                // For 'auto', let it size naturally based on content
                 height: boxStyle?.height === 'full' 
                     ? (isMobile && frameHeight > 0 ? `${frameHeight}px` : '100vh')
-                    : (boxStyle?.height === 'auto' ? 'auto' : boxStyle?.height),
+                    : (boxStyle?.height === 'auto' 
+                        ? (isPreview ? '100vh' : 'auto')
+                        : boxStyle?.height),
                 // Padding applies to outer or inner? 
                 // Usually Padding fits on outer, affecting inner size.
                 // With border-box, this padding is included in the height above
@@ -130,6 +289,6 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
                     Empty Section
                 </div>
             )}
-        </section>
+        </MotionSection>
     );
 }

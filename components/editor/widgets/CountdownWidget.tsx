@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { useEffect, useState } from "react";
 import { useClientStore } from "@/components/studio/clientStore";
+import { motion } from "framer-motion";
+import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
 
 interface CountdownWidgetProps {
     id: string;
@@ -122,8 +124,23 @@ export function CountdownWidget({ id, data, style }: CountdownWidgetProps) {
 
     const showLabels = data.showLabels !== false; // Default to true if not set
 
+    // Use animation hooks
+    const { widgetRef, controls, motionInitial, motionAnimate, animationVariants, useMotion } = useWidgetAnimations(
+        id,
+        data.initialAnimation,
+        data.scrollAnimation
+    );
+
+    const MotionDiv = motion.div as any;
+
     return (
-        <div
+        <MotionDiv
+            ref={widgetRef}
+            {...(useMotion ? {
+                animate: controls,
+                initial: motionInitial,
+                variants: animationVariants,
+            } : {})}
             className={cn(
                 "relative transition-all group",
                 isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
@@ -152,6 +169,6 @@ export function CountdownWidget({ id, data, style }: CountdownWidgetProps) {
                     {showLabels && <div style={labelStyle}>Secs</div>}
                 </div>
             </div>
-        </div>
+        </MotionDiv>
     );
 }

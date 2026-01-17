@@ -107,8 +107,9 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
     const iconGap = navStyle.iconGap || '4px';
 
     // Base Styles
+    // z-20 to ensure it's behind door overlay (z-30) - door should always be on top
     const containerClasses = [
-        "flex items-center justify-around px-2 z-50 transition-all duration-300 pointer-events-auto",
+        "flex items-center justify-around px-2 z-20 transition-all duration-300 pointer-events-auto",
         "bg-white/90 backdrop-blur border border-white/20",
         navStyle.boxShadow || "shadow-lg",
         isSelected ? "ring-2 ring-blue-500" : "hover:ring-1 hover:ring-blue-300"

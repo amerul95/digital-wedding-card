@@ -59,6 +59,10 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
         } : {}),
     };
 
+    // Apply backdrop blur if specified
+    const backdropBlur = (boxStyle as any).backdropBlur ?? 0;
+    const backdropBlurFilter = backdropBlur > 0 ? `blur(${backdropBlur}px)` : 'none';
+
     return (
         <div
             ref={setNodeRef}
@@ -71,6 +75,8 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
                 ...boxStyle,
                 ...bgStyle,
                 padding: boxStyle?.padding || '16px',
+                backdropFilter: backdropBlurFilter,
+                WebkitBackdropFilter: backdropBlurFilter, // Safari support
             }}
             onClick={handleClick}
         >
