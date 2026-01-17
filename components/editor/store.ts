@@ -144,7 +144,9 @@ export const useEditorStore = create<EditorState>()(
 
         setCardScrollElement: (element) =>
             set((state) => {
-                state.cardScrollElement = element;
+                // DOM elements are non-draftable, so we need to assign directly
+                // Using Object.assign to bypass Immer's draft system for this field
+                (state as any).cardScrollElement = element;
             }),
 
         setBottomNavbarHeight: (height) =>

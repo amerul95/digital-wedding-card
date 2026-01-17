@@ -60,7 +60,7 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
 
     // Create a ref object from the stored element for Reveal component
     const cardScrollRef = React.useMemo(() => {
-        if (!cardScrollElement) return null;
+        if (!cardScrollElement) return undefined;
         return { current: cardScrollElement } as React.RefObject<HTMLElement>;
     }, [cardScrollElement]);
 

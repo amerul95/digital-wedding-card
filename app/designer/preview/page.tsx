@@ -6,6 +6,7 @@ import { NodeRenderer } from "@/components/editor/NodeRenderer";
 import { BottomNavBar } from "@/components/editor/canvas/BottomNavBar";
 import { SectionNavigator } from "@/components/editor/canvas/SectionNavigator";
 import { PreviewProvider } from "@/components/editor/context/PreviewContext";
+import { VideoPlayerProvider, useVideoPlayer } from "@/components/editor/context/VideoPlayerContext";
 
 export default function PreviewPage() {
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,9 @@ export default function PreviewPage() {
           useEditorStore.setState({
             nodes: parsed.nodes,
             rootId: parsed.rootId || 'root',
-            selectedId: null // Clear selection in preview
+            selectedId: null, // Clear selection in preview
+            globalSettings: parsed.globalSettings || useEditorStore.getState().globalSettings, // Load globalSettings (background music/video)
+            viewOptions: parsed.viewOptions || useEditorStore.getState().viewOptions // Load viewOptions
           });
         }
       } catch (e) {
@@ -54,14 +57,16 @@ export default function PreviewPage() {
 
   return (
     <PreviewProvider isPreview={true}>
-      <div className="min-h-screen bg-gray-100 flex justify-center">
-        <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative">
-          {/* Render Root */}
-          <PreviewRoot />
+      <VideoPlayerProvider>
+        <div className="min-h-screen bg-gray-100 flex justify-center">
+          <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative">
+            {/* Render Root */}
+            <PreviewRoot />
 
-          {/* Overlays - SectionNavigator hidden in preview mode */}
+            {/* Overlays - SectionNavigator hidden in preview mode */}
+          </div>
         </div>
-      </div>
+      </VideoPlayerProvider>
     </PreviewProvider>
   );
 }
@@ -79,6 +84,7 @@ function PreviewRoot() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const globalSettings = useEditorStore((state) => state.globalSettings);
+  const { playerRef, containerRef: videoContainerRef, setPlayer, setContainer } = useVideoPlayer();
 
   // Track if doors are open - start with doors closed
   const [doorsOpen, setDoorsOpen] = useState(false);

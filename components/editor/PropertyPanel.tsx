@@ -372,6 +372,82 @@ function SortableNavItem({ item, onRemove, onUpdate, isExpanded, onToggleExpand 
                         </div>
                     )}
 
+                    {/* Icon & Label Styling */}
+                    <div className="border-t pt-2 space-y-2">
+                        <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Icon & Label Styling</h5>
+                        
+                        {/* Icon Size */}
+                        <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-500">Icon Size (px)</label>
+                            <input
+                                type="number"
+                                className="border rounded p-1 text-xs"
+                                placeholder="20"
+                                value={item.iconSize || ''}
+                                onChange={(e) => onUpdate(item.id, { iconSize: e.target.value ? parseInt(e.target.value) : undefined })}
+                            />
+                        </div>
+
+                        {/* Label Font Styling */}
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Label Font Size</label>
+                                <input
+                                    type="text"
+                                    className="border rounded p-1 text-xs"
+                                    placeholder="10px"
+                                    value={item.labelFontSize || ''}
+                                    onChange={(e) => onUpdate(item.id, { labelFontSize: e.target.value })}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Label Font Weight</label>
+                                <select
+                                    className="border rounded p-1 text-xs"
+                                    value={item.labelFontWeight || 'normal'}
+                                    onChange={(e) => onUpdate(item.id, { labelFontWeight: e.target.value })}
+                                >
+                                    <option value="normal">Normal</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="100">Thin (100)</option>
+                                    <option value="200">Extra Light (200)</option>
+                                    <option value="300">Light (300)</option>
+                                    <option value="400">Regular (400)</option>
+                                    <option value="500">Medium (500)</option>
+                                    <option value="600">Semi Bold (600)</option>
+                                    <option value="700">Bold (700)</option>
+                                    <option value="800">Extra Bold (800)</option>
+                                    <option value="900">Black (900)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Label Font Family</label>
+                                <select
+                                    className="border rounded p-1 text-xs"
+                                    value={item.labelFontFamily || 'sans-serif'}
+                                    onChange={(e) => onUpdate(item.id, { labelFontFamily: e.target.value })}
+                                >
+                                    <option value="sans-serif">Sans Serif</option>
+                                    <option value="serif">Serif</option>
+                                    <option value="monospace">Monospace</option>
+                                    <option value="cursive">Cursive</option>
+                                    <option value="fantasy">Fantasy</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Label Font Color</label>
+                                <input
+                                    type="color"
+                                    className="border rounded w-full h-8"
+                                    value={item.labelFontColor || '#4b5563'}
+                                    onChange={(e) => onUpdate(item.id, { labelFontColor: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Specific Data inputs based on Type */}
                     <div className="border-t pt-2">

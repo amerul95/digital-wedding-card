@@ -12,7 +12,9 @@ export function TopBar() {
         const state = useEditorStore.getState();
         const previewData = {
             nodes: state.nodes,
-            rootId: state.rootId
+            rootId: state.rootId,
+            globalSettings: state.globalSettings, // Include globalSettings (background music/video settings)
+            viewOptions: state.viewOptions // Include viewOptions as well
         };
 
         // Save to localStorage
