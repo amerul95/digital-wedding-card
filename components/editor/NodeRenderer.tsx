@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEditorStore } from "@/components/editor/store";
 import { cn } from "@/lib/utils";
 import { SectionWidget } from "@/components/editor/widgets/SectionWidget";
@@ -14,6 +15,8 @@ import { ButtonWidget } from "@/components/editor/widgets/ButtonWidget";
 import { DoorWidget } from "@/components/editor/widgets/DoorWidget";
 import { ModalWidget } from "@/components/editor/widgets/ModalWidget";
 import { CongratulationSpeechWidget } from "@/components/editor/widgets/CongratulationSpeechWidget";
+import { Reveal } from "@/components/editor/Reveal";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 import { useClientStore, defaultClientData } from "@/components/studio/clientStore";
 
@@ -49,6 +52,17 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
     const node = useEditorStore((state) => state.nodes[nodeId]);
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
+    const cardScrollElement = useEditorStore((state) => state.cardScrollElement);
+    const bottomNavbarHeight = useEditorStore((state) => state.bottomNavbarHeight);
+    const doorStatus = useEditorStore((state) => state.doorStatus);
+    const viewOptions = useEditorStore((state) => state.viewOptions);
+    const { isPreview } = usePreview();
+
+    // Create a ref object from the stored element for Reveal component
+    const cardScrollRef = React.useMemo(() => {
+        if (!cardScrollElement) return null;
+        return { current: cardScrollElement } as React.RefObject<HTMLElement>;
+    }, [cardScrollElement]);
 
     // Client Data for placeholders
     const clientData = useClientStore((state) => state.clientData);
@@ -84,34 +98,75 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
         <NodeRenderer key={childId} nodeId={childId} />
     ));
 
+    // Helper to wrap content with Reveal if animation is enabled
+    const wrapWithReveal = (content: React.ReactNode) => {
+        const animation = node.animation;
+        const isAnimationEnabled = 
+            isPreview && 
+            viewOptions.showAnimation && 
+            animation?.enabled && 
+            animation.trigger !== "none";
+
+        if (!isAnimationEnabled) {
+            return content;
+        }
+
+        return (
+            <Reveal
+                rootRef={cardScrollRef}
+                bottomNavbarHeight={bottomNavbarHeight}
+                trigger={animation.trigger}
+                preset={animation.preset}
+                replay={animation.replay ?? false}
+                duration={animation.duration}
+                delay={animation.delay}
+                threshold={animation.threshold}
+                doorStatus={doorStatus}
+                enabled={animation.enabled}
+            >
+                {content}
+            </Reveal>
+        );
+    };
+
     // If completely hidden by client (and we assume this is final view or we want to simulate it)
     // We could return null. But for Designer mode, we might want to see it.
     // Let's stick to replacing placeholders for now.
 
     switch (node.type) {
         case 'section':
-            return (
+            return wrapWithReveal(
                 <SectionWidget id={nodeId} data={processedData} style={node.style}>
                     {content.length > 0 ? content : null}
                 </SectionWidget>
             );
         case 'container':
-            return (
+            return wrapWithReveal(
                 <ContainerWidget id={nodeId} data={processedData} style={node.style}>
                     {content.length > 0 ? content : null}
                 </ContainerWidget>
             );
         case 'text':
-            return <TextWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <TextWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'image':
-            return <ImageWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <ImageWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'couple-header':
             // Specific widget might fetch from clientData internally too, but props injection is safer
-            return <CoupleHeaderWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <CoupleHeaderWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'slider':
-            return <ImageSliderWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <ImageSliderWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'countdown':
-            return <CountdownWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <CountdownWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'bottom-nav':
             // Bottom Nav needs special handling for hidden items
             // processedData.items should be filtered if they match hiddenNavbarItemIds
@@ -122,15 +177,21 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
 
         // Other widgets can be inline here or extracted similarly
         case 'button':
-            return <ButtonWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <ButtonWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'door':
             return <DoorWidget id={nodeId} data={processedData} style={node.style} />;
         case 'modal':
-            return <ModalWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <ModalWidget id={nodeId} data={processedData} style={node.style} />
+            );
         case 'congratulation-speech':
-            return <CongratulationSpeechWidget id={nodeId} data={processedData} style={node.style} />;
+            return wrapWithReveal(
+                <CongratulationSpeechWidget id={nodeId} data={processedData} style={node.style} />
+            );
         default:
-            return (
+            return wrapWithReveal(
                 <div
                     className={cn("p-2 border border-red-200 bg-red-50 text-xs text-red-500", isSelected ? "ring-2 ring-blue-500" : "")}
                     onClick={handleClick}

@@ -7,7 +7,7 @@ import { NodeRenderer } from "@/components/editor/NodeRenderer";
 import { SectionNavigator } from "./SectionNavigator";
 import { MobileFrameProvider } from "@/components/editor/context/MobileFrameContext";
 import { usePreview } from "@/components/editor/context/PreviewContext";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import Snow from "@/components/card/effects/Snow";
 import Petals from "@/components/card/effects/PetalsFlow";
 import Bubbles from "@/components/card/effects/Bubbles";
@@ -22,6 +22,21 @@ export function CardStage({ isMobile }: CardStageProps) {
     const { isPreview } = usePreview();
     const nodes = useEditorStore((state) => state.nodes);
     const viewOptions = useEditorStore((state) => state.viewOptions);
+    const setCardScrollElement = useEditorStore((state) => state.setCardScrollElement);
+    const setBottomNavbarHeight = useEditorStore((state) => state.setBottomNavbarHeight);
+    const bottomNavbarHeight = useEditorStore((state) => state.bottomNavbarHeight);
+
+    // Callback to handle ref assignment - store element directly
+    const handleScrollRef = React.useCallback((el: HTMLDivElement | null) => {
+        setCardScrollElement(el);
+    }, [setCardScrollElement]);
+
+    // Set default navbar height on mount
+    useEffect(() => {
+        if (bottomNavbarHeight === 80) {
+            setBottomNavbarHeight(80);
+        }
+    }, [setBottomNavbarHeight, bottomNavbarHeight]);
 
     const { setNodeRef, isOver } = useDroppable({
         id: rootId,
@@ -51,7 +66,7 @@ export function CardStage({ isMobile }: CardStageProps) {
                 className={cn(
                     "relative transition-all duration-300 shadow-2xl bg-white border-gray-900 ring-1 ring-gray-900/5 flex flex-col transform-gpu",
                     isMobile
-                        ? "w-[375px] h-[812px] rounded-[40px] border-8 overflow-hidden flex-shrink-0"
+                        ? "w-[375px] h-[812px] rounded-[40px] border-8 overflow-hidden shrink-0"
                         : "w-full h-full max-w-6xl rounded-lg border border-gray-200 shadow-sm min-h-[500px]"
                 )}
             >
@@ -62,12 +77,18 @@ export function CardStage({ isMobile }: CardStageProps) {
 
                 {/* Screen Content */}
                 <div
-                    ref={setNodeRef}
+                    ref={(el) => {
+                        setNodeRef(el);
+                        handleScrollRef(el);
+                    }}
                     className={cn(
                         "w-full h-full overflow-y-auto scrollbar-hide bg-white relative",
                         isOver && "bg-blue-50"
                     )}
-                    style={rootNode?.style}
+                    style={{
+                        ...rootNode?.style,
+                        paddingBottom: `${bottomNavbarHeight}px`, // Add padding for navbar
+                    }}
                 >
                     <MobileFrameProvider isMobile={isMobile}>
                         <div className={cn("relative", isMobile ? "w-full" : "flex flex-1 min-h-full")}>

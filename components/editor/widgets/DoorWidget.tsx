@@ -18,6 +18,7 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
     const viewOptions = useEditorStore((state) => state.viewOptions);
+    const setDoorStatus = useEditorStore((state) => state.setDoorStatus);
     const { isPreview } = usePreview();
 
     // All hooks must be called before any early returns
@@ -39,6 +40,7 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
 
     const handleOpen = () => {
         setIsOpen(true);
+        setDoorStatus("opening");
         // Emit event for preview page to know doors are opening
         if (isPreview) {
             window.dispatchEvent(new CustomEvent('door-opened'));
@@ -48,11 +50,13 @@ export function DoorWidget({ id, data, style }: DoorWidgetProps) {
     const handleReplay = () => {
         setIsOpen(false);
         setShowDoors(true);
+        setDoorStatus("closed");
     };
 
     const handleAnimationComplete = () => {
         if (isOpen) {
             setShowDoors(false);
+            setDoorStatus("opened");
             // Emit event when door animation completes
             if (isPreview) {
                 window.dispatchEvent(new CustomEvent('door-animation-complete'));

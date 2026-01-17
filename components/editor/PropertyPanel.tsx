@@ -596,6 +596,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
 
     const updateNodeData = useEditorStore((state) => state.updateNodeData);
     const updateNodeStyle = useEditorStore((state) => state.updateNodeStyle);
+    const updateNodeAnimation = useEditorStore((state) => state.updateNodeAnimation);
     const removeNode = useEditorStore((state) => state.removeNode);
 
     // Special case: Show only animation settings
@@ -2286,51 +2287,126 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                         </>
                                     )}
 
-                                    {/* Animation Settings (Section/Container/Text/Button/Countdown/Slider/CongratulationSpeech) */}
+                                    {/* Motion Effects (Section/Container/Text/Button/Countdown/Slider/CongratulationSpeech) */}
                                     {(node.type === 'section' || node.type === 'container' || 
                                       node.type === 'text' || node.type === 'button' || 
                                       node.type === 'countdown' || node.type === 'slider' || 
                                       node.type === 'congratulation-speech') && (
                                         <div className="space-y-3 pt-4 border-t">
-                                            <h3 className="text-xs font-semibold text-gray-500 uppercase">Animations</h3>
+                                            <h3 className="text-xs font-semibold text-gray-500 uppercase">Motion Effects</h3>
                                             
-                                            {/* Initial Animation (when doors open / first section appears) */}
-                                            <div className="space-y-1">
-                                                <label className="text-xs text-gray-600">Initial Animation</label>
-                                                <select
-                                                    className="border rounded p-2 text-sm w-full"
-                                                    value={node.data.initialAnimation || 'none'}
-                                                    onChange={(e) => updateNodeData(targetId, { initialAnimation: e.target.value })}
-                                                >
-                                                    <option value="none">None</option>
-                                                    <option value="fadeIn">Fade In</option>
-                                                    <option value="slideUp">Slide Up</option>
-                                                    <option value="slideDown">Slide Down</option>
-                                                    <option value="slideLeft">Slide Left</option>
-                                                    <option value="slideRight">Slide Right</option>
-                                                    <option value="bounce">Bounce</option>
-                                                    <option value="scale">Scale</option>
-                                                </select>
+                                            {/* Enable Animation Toggle */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-xs text-gray-600">Enable Animation</label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                    checked={node.animation?.enabled || false}
+                                                    onChange={(e) => updateNodeAnimation(targetId, { enabled: e.target.checked })}
+                                                />
                                             </div>
 
-                                            {/* Scroll Animation (when scrolling into view) */}
-                                            <div className="space-y-1">
-                                                <label className="text-xs text-gray-600">Scroll Animation</label>
-                                                <select
-                                                    className="border rounded p-2 text-sm w-full"
-                                                    value={node.data.scrollAnimation || 'none'}
-                                                    onChange={(e) => updateNodeData(targetId, { scrollAnimation: e.target.value })}
-                                                >
-                                                    <option value="none">None</option>
-                                                    <option value="fadeIn">Fade In</option>
-                                                    <option value="slideUp">Slide Up</option>
-                                                    <option value="slideDown">Slide Down</option>
-                                                    <option value="slideLeft">Slide Left</option>
-                                                    <option value="slideRight">Slide Right</option>
-                                                    <option value="bounce">Bounce</option>
-                                                    <option value="scale">Scale</option>
-                                                </select>
-                                            </div>
+                                            {node.animation?.enabled && (
+                                                <>
+                                                    {/* Trigger */}
+                                                    <div className="space-y-1">
+                                                        <label className="text-xs text-gray-600">Trigger</label>
+                                                        <select
+                                                            className="border rounded p-2 text-sm w-full"
+                                                            value={node.animation?.trigger || 'none'}
+                                                            onChange={(e) => updateNodeAnimation(targetId, { trigger: e.target.value as any })}
+                                                        >
+                                                            <option value="none">None</option>
+                                                            <option value="scroll">On Scroll</option>
+                                                            <option value="door">After Door Opens</option>
+                                                            <option value="load">On Load</option>
+                                                        </select>
+                                                    </div>
+
+                                                    {/* Preset */}
+                                                    <div className="space-y-1">
+                                                        <label className="text-xs text-gray-600">Animation Style</label>
+                                                        <select
+                                                            className="border rounded p-2 text-sm w-full"
+                                                            value={node.animation?.preset || 'fadeUp'}
+                                                            onChange={(e) => updateNodeAnimation(targetId, { preset: e.target.value as any })}
+                                                        >
+                                                            <option value="fadeUp">Fade Up</option>
+                                                            <option value="fade">Fade</option>
+                                                            <option value="slideLeft">Slide Left</option>
+                                                            <option value="slideRight">Slide Right</option>
+                                                        </select>
+                                                    </div>
+
+                                                    {/* Replay Toggle */}
+                                                    {node.animation?.trigger === 'scroll' && (
+                                                        <div className="flex items-center justify-between">
+                                                            <label className="text-xs text-gray-600">Replay on Scroll</label>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                checked={node.animation?.replay || false}
+                                                                onChange={(e) => updateNodeAnimation(targetId, { replay: e.target.checked })}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {/* Advanced Options (Collapsible) */}
+                                                    <details className="group">
+                                                        <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 list-none">
+                                                            <span className="flex items-center gap-1">
+                                                                Advanced Options
+                                                                <ChevronDown size={12} className="group-open:rotate-180 transition-transform" />
+                                                            </span>
+                                                        </summary>
+                                                        <div className="mt-2 space-y-2 pl-2 border-l-2 border-gray-200">
+                                                            {/* Duration */}
+                                                            <div className="space-y-1">
+                                                                <label className="text-xs text-gray-600">Duration (seconds)</label>
+                                                                <input
+                                                                    type="number"
+                                                                    min="0.1"
+                                                                    max="3"
+                                                                    step="0.1"
+                                                                    className="border rounded p-1 text-xs w-full"
+                                                                    value={node.animation?.duration || 0.6}
+                                                                    onChange={(e) => updateNodeAnimation(targetId, { duration: parseFloat(e.target.value) || 0.6 })}
+                                                                />
+                                                            </div>
+
+                                                            {/* Delay */}
+                                                            <div className="space-y-1">
+                                                                <label className="text-xs text-gray-600">Delay (seconds)</label>
+                                                                <input
+                                                                    type="number"
+                                                                    min="0"
+                                                                    max="2"
+                                                                    step="0.1"
+                                                                    className="border rounded p-1 text-xs w-full"
+                                                                    value={node.animation?.delay || 0}
+                                                                    onChange={(e) => updateNodeAnimation(targetId, { delay: parseFloat(e.target.value) || 0 })}
+                                                                />
+                                                            </div>
+
+                                                            {/* Threshold (only for scroll) */}
+                                                            {node.animation?.trigger === 'scroll' && (
+                                                                <div className="space-y-1">
+                                                                    <label className="text-xs text-gray-600">Visibility Threshold (0-1)</label>
+                                                                    <input
+                                                                        type="number"
+                                                                        min="0"
+                                                                        max="1"
+                                                                        step="0.1"
+                                                                        className="border rounded p-1 text-xs w-full"
+                                                                        value={node.animation?.threshold || 0.1}
+                                                                        onChange={(e) => updateNodeAnimation(targetId, { threshold: parseFloat(e.target.value) || 0.1 })}
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </details>
+                                                </>
+                                            )}
                                         </div>
                                     )}
                                 </div>
