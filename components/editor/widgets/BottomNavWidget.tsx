@@ -39,6 +39,22 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
     ];
 
     const items = data.items || defaultItems;
+
+    // Inject video item if enabled in global settings
+    const activeItems = [...items];
+    if (globalSettings?.backgroundMusic?.showVideo && !activeItems.find((i: any) => i.type === 'video')) {
+        // Insert before the last item (assuming last item is usually less important or we want it near end)
+        // Or just push to end
+        activeItems.push({
+            id: 'video-global',
+            type: 'video',
+            label: 'Video',
+            icon: 'video',
+            iconType: 'default',
+            visible: true
+        });
+    }
+
     const navStyle = data.style || {};
     const layoutType = data.layoutType || 'float'; // 'float' | 'full'
 
@@ -183,7 +199,10 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
                 />;
             case 'video':
                 // Use global background music URL if available, otherwise fallback to item config (though we are removing item config)
-                return <VideoModal videoUrl={globalSettings?.backgroundMusic?.url || item.videoUrl} />;
+                return <VideoModal
+                    videoUrl={globalSettings?.backgroundMusic?.url || item.videoUrl}
+                    startTime={globalSettings?.backgroundMusic?.startTime || 0}
+                />;
             case 'gift':
                 return <GiftModal
                     bankName={item.giftBankName}
@@ -201,7 +220,7 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
         }
     };
 
-    const activeItem = items.find((i: any) => i.id === activeModal);
+    const activeItem = activeItems.find((i: any) => i.id === activeModal);
 
     return (
         <>
@@ -210,7 +229,7 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
                 style={mainStyle}
                 onClick={handleClick}
             >
-                {items.map((item: any, idx: number) => {
+                {activeItems.map((item: any, idx: number) => {
                     if (!item.visible) return null;
                     return (
                         <button

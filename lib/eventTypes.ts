@@ -24,15 +24,16 @@ export type EventData = {
   aturcaraHtml: string;         // TipTap HTML
   allowCongrats: boolean;       // Section 4 toggle
   congratsNote: string;         // Short description if disabled
-  
+
   // Section 5: Appearance
   doorStyle: "swing" | "slide" | "envelope";  // Door animation style
   doorColor: string;  // Door color (hex)
   effect: "none" | "snow" | "petals" | "bubbles";  // Background effect
   effectColor: string;  // Effect color (hex)
-  
+
   // Section 6: Song and Autoscroll
   autoScrollDelay: number;  // Delay in seconds before auto scroll starts (0-100)
+  startTime: number; // Start time for background music in seconds
   songUrl: string;  // YouTube URL for background song
 
   // Page 1 - Main & Opening
@@ -377,15 +378,16 @@ export const defaultEvent: EventData = {
 <p>3:00 petang - Majlis Bersurai</p>`,
   allowCongrats: true,
   congratsNote: "Tetamu boleh menulis ucapan tahniah.",
-  
+
   // Section 5: Appearance defaults
   doorStyle: "swing",
   doorColor: "#f43f5e",  // Rose-500
   effect: "none",
   effectColor: "#f43f5e",  // Rose-500 (used for petals, can be adjusted per effect)
-  
+
   // Section 6: Song and Autoscroll defaults
   autoScrollDelay: 5,  // 5 seconds delay by default
+  startTime: 0, // Start at 0 seconds by default
   songUrl: "",  // No song by default
 
   // Page 1 - Main & Opening defaults

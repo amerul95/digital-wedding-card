@@ -19,12 +19,13 @@ interface ModalStyles {
 interface VideoModalProps {
     videoUrl?: string; // YouTube, Vimeo, or direct URL
     styles?: ModalStyles;
+    startTime?: number;
 }
 
-export function VideoModal({ videoUrl, styles = {} }: VideoModalProps) {
+export function VideoModal({ videoUrl, styles = {}, startTime = 0 }: VideoModalProps) {
     if (!videoUrl) {
         return (
-            <div 
+            <div
                 className="text-center text-gray-500"
                 style={{
                     fontSize: styles.message?.fontSize || undefined,
@@ -45,12 +46,20 @@ export function VideoModal({ videoUrl, styles = {} }: VideoModalProps) {
     let embedUrl = videoUrl;
 
     if (isYoutube) {
+        let videoId = "";
         if (videoUrl.includes("watch?v=")) {
-            const videoId = videoUrl.split("watch?v=")[1].split("&")[0];
-            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            videoId = videoUrl.split("watch?v=")[1].split("&")[0];
         } else if (videoUrl.includes("youtu.be/")) {
-            const videoId = videoUrl.split("youtu.be/")[1];
-            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            videoId = videoUrl.split("youtu.be/")[1];
+        } else if (videoUrl.includes("embed/")) {
+            videoId = videoUrl.split("embed/")[1].split("?")[0];
+        }
+
+        if (videoId) {
+            embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            if (startTime > 0) {
+                embedUrl += `&start=${startTime}`;
+            }
         }
     } else if (isVimeo) {
         // Basic vimeo transform if needed, often just player.vimeo.com/video/ID

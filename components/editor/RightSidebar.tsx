@@ -109,7 +109,7 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
 
     const isDoorEnabled = doorNode ? !doorNode.data.isHidden : false;
     // Ensure isAnimationEnabled is always a boolean, never undefined
-    const isAnimationEnabled = doorNode 
+    const isAnimationEnabled = doorNode
         ? Boolean(doorNode.data?.animationEffect && doorNode.data.animationEffect !== 'none')
         : false;
 
@@ -229,6 +229,19 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
                             onChange={(e) => updateGlobalSettings({ autoscroll: e.target.checked })}
                         />
                     </div>
+                    {/* Autoscroll Delay */}
+                    {globalSettings.autoscroll && (
+                        <div className="flex flex-col gap-1 mt-2 pl-6 border-l-2 border-gray-100 ml-1.5">
+                            <label className="text-[10px] text-gray-500">Delay (Seconds)</label>
+                            <input
+                                type="number"
+                                className="border rounded p-2 text-xs"
+                                placeholder="0"
+                                value={globalSettings.autoscrollDelay}
+                                onChange={(e) => updateGlobalSettings({ autoscrollDelay: parseInt(e.target.value) || 0 })}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <hr />
@@ -258,6 +271,17 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
                             placeholder="0 (Unlimited)"
                             value={globalSettings.backgroundMusic.duration}
                             onChange={(e) => updateGlobalSettings({ duration: parseInt(e.target.value) || 0 })}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] text-gray-500">Start Time (Seconds)</label>
+                        <input
+                            type="number"
+                            className="border rounded p-2 text-xs"
+                            placeholder="0 (Start form beginning)"
+                            value={globalSettings.backgroundMusic.startTime}
+                            onChange={(e) => updateGlobalSettings({ startTime: parseInt(e.target.value) || 0 })}
                         />
                     </div>
 

@@ -59,6 +59,28 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
         } : {}),
     };
 
+    // Handle background opacity if present
+    if (!bgStyle.background && !bgStyle.backgroundImage && boxStyle.backgroundColor) {
+        const opacity = boxStyle.backgroundOpacity !== undefined ? parseFloat(boxStyle.backgroundOpacity) : 1;
+        if (opacity < 1) {
+            const hex = boxStyle.backgroundColor.toString();
+            // Convert hex to rgba
+            let r = 0, g = 0, b = 0;
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            } else if (hex.length === 7) {
+                r = parseInt(hex.substring(1, 3), 16);
+                g = parseInt(hex.substring(3, 5), 16);
+                b = parseInt(hex.substring(5, 7), 16);
+            }
+            bgStyle.backgroundColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            // Remove raw background color from boxStyle so it doesn't override
+            delete boxStyle.backgroundColor;
+        }
+    }
+
     // Apply backdrop blur if specified
     const backdropBlur = (boxStyle as any).backdropBlur ?? 0;
     const backdropBlurFilter = backdropBlur > 0 ? `blur(${backdropBlur}px)` : 'none';
@@ -67,7 +89,7 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
         <div
             ref={setNodeRef}
             className={cn(
-                "relative transition-all min-h-[80px] m-2 rounded border border-dashed",
+                "relative transition-all min-h-[20px] m-2 rounded border border-dashed",
                 isSelected ? "ring-2 ring-blue-500 border-blue-500 z-10" : "border-gray-300 hover:border-blue-300",
                 isOver ? "bg-blue-50/50" : "bg-transparent"
             )}

@@ -66,8 +66,8 @@ function getAnimationVariants(animationType: string | undefined) {
             return {
                 ...common,
                 initial: { opacity: 0, y: 50 },
-                animate: { 
-                    opacity: 1, 
+                animate: {
+                    opacity: 1,
                     y: 0,
                     transition: { type: "spring", stiffness: 300, damping: 20 }
                 },
@@ -146,6 +146,28 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
         } : {}),
     };
 
+    // Handle background opacity if present
+    if (!bgStyle.background && !bgStyle.backgroundImage && (boxStyle as any).backgroundColor) {
+        const opacity = (boxStyle as any).backgroundOpacity !== undefined ? parseFloat((boxStyle as any).backgroundOpacity) : 1;
+        if (opacity < 1) {
+            const hex = (boxStyle as any).backgroundColor.toString();
+            // Convert hex to rgba
+            let r = 0, g = 0, b = 0;
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            } else if (hex.length === 7) {
+                r = parseInt(hex.substring(1, 3), 16);
+                g = parseInt(hex.substring(3, 5), 16);
+                b = parseInt(hex.substring(5, 7), 16);
+            }
+            (bgStyle as any).backgroundColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            // Remove raw background color from boxStyle so it doesn't override
+            delete (boxStyle as any).backgroundColor;
+        }
+    }
+
     // Ensure Section specific defaults are respected if not overwritten
     if (layoutStyle.display === undefined) layoutStyle.display = 'block';
 
@@ -201,20 +223,20 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
 
     // Determine which animation to use
     const shouldUseInitialAnimation = isFirstSection && initialAnimation !== 'none' && !isInView;
-    const animationVariants = shouldUseInitialAnimation ? initialVariants : 
-                             (scrollAnimation !== 'none' ? scrollVariants : { initial: {}, animate: {}, exit: {} });
+    const animationVariants = shouldUseInitialAnimation ? initialVariants :
+        (scrollAnimation !== 'none' ? scrollVariants : { initial: {}, animate: {}, exit: {} });
 
     // For initial animation, start with initial state
-    const motionInitial = shouldUseInitialAnimation && initialAnimationTriggered ? animationVariants.initial : 
-                         (scrollAnimation !== 'none' && !isInView ? animationVariants.initial : {});
-    
+    const motionInitial = shouldUseInitialAnimation && initialAnimationTriggered ? animationVariants.initial :
+        (scrollAnimation !== 'none' && !isInView ? animationVariants.initial : {});
+
     // For animate prop
-    const motionAnimate = (shouldUseInitialAnimation && initialAnimationTriggered) || 
-                         (scrollAnimation !== 'none' && isInView) ? animationVariants.animate : {};
+    const motionAnimate = (shouldUseInitialAnimation && initialAnimationTriggered) ||
+        (scrollAnimation !== 'none' && isInView) ? animationVariants.animate : {};
 
     // Use motion wrapper only in preview mode with animations
     const useMotion = isPreview && (initialAnimation !== 'none' || scrollAnimation !== 'none');
-    
+
     // Use motion.section for animations, regular section otherwise
     const MotionSection = motion.section as any;
 
@@ -245,17 +267,17 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
                 // Height handling
                 // In preview mode, sections should be 100vh to enable scrolling (one section per viewport)
                 // In editor mode, respect the height settings
-                minHeight: boxStyle?.height === 'full' 
+                minHeight: boxStyle?.height === 'full'
                     ? (isMobile && frameHeight > 0 ? `${frameHeight}px` : '100vh')
-                    : (boxStyle?.height === 'auto' 
+                    : (boxStyle?.height === 'auto'
                         ? (isPreview ? '100vh' : (isMobile ? '200px' : (boxStyle?.minHeight || '150px')))
                         : (boxStyle?.minHeight || '150px')),
                 // Set actual height when 'full' to prevent overflow
                 // In preview mode with 'auto' height, use 100vh so sections scroll one at a time
                 // With border-box, padding is included in the height, so section will be exactly frameHeight
-                height: boxStyle?.height === 'full' 
+                height: boxStyle?.height === 'full'
                     ? (isMobile && frameHeight > 0 ? `${frameHeight}px` : '100vh')
-                    : (boxStyle?.height === 'auto' 
+                    : (boxStyle?.height === 'auto'
                         ? (isPreview ? '100vh' : 'auto')
                         : boxStyle?.height),
                 // Padding applies to outer or inner? 

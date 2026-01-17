@@ -1,5 +1,5 @@
 import { FooterButton } from "./UI";
-import { IconCalendar, IconPhone, IconPin, IconRSVP, IconGifts } from "./Icons";
+import { IconCalendar, IconPhone, IconPin, IconRSVP, IconGifts, IconVideo } from "./Icons";
 import { FooterIconConfig, FooterContainerConfig } from "../creator/ThemeTypes";
 
 interface FooterProps {
@@ -7,6 +7,8 @@ interface FooterProps {
   onContactClick: () => void;
   onLocationClick: () => void;
   onRSVPClick: () => void;
+  onGiftsClick?: () => void;
+  onVideoClick?: () => void;
   rsvpMode?: "rsvp-speech" | "speech-only" | "thirdparty" | "none";
 }
 
@@ -26,6 +28,7 @@ interface FooterIcons {
   pin?: string | FooterIconConfig;
   rsvp?: string | FooterIconConfig;
   gifts?: string | FooterIconConfig;
+  video?: string | FooterIconConfig;
 }
 
 export function Footer({
@@ -38,11 +41,13 @@ export function Footer({
   customIcons,
   containerConfig,
   onGiftsClick,
-}: FooterProps & { 
-  customStyle?: FooterStyle; 
+  onVideoClick,
+}: FooterProps & {
+  customStyle?: FooterStyle;
   customIcons?: FooterIcons;
   containerConfig?: FooterContainerConfig;
   onGiftsClick?: () => void;
+  onVideoClick?: () => void;
 }) {
   // Helper to normalize icon config
   const getIconConfig = (icon: string | FooterIconConfig | undefined): FooterIconConfig | null => {
@@ -57,7 +62,8 @@ export function Footer({
     { key: 'phone' as const, label: 'Contact', icon: <IconPhone />, onClick: onContactClick, defaultOrder: 2 },
     { key: 'pin' as const, label: 'Location', icon: <IconPin />, onClick: onLocationClick, defaultOrder: 3 },
     { key: 'rsvp' as const, label: 'RSVP', icon: <IconRSVP />, onClick: onRSVPClick, defaultOrder: 4, shouldShow: rsvpMode !== "none" && rsvpMode !== "speech-only" },
-    { key: 'gifts' as const, label: 'Gifts', icon: <IconGifts />, onClick: onGiftsClick || (() => {}), defaultOrder: 5 },
+    { key: 'gifts' as const, label: 'Gifts', icon: <IconGifts />, onClick: onGiftsClick || (() => { }), defaultOrder: 5 },
+    { key: 'video' as const, label: 'Music', icon: <IconVideo />, onClick: onVideoClick || (() => { }), defaultOrder: 6 },
   ].map(def => {
     const config = getIconConfig(customIcons?.[def.key]);
     // If customLabel is explicitly set:
@@ -93,15 +99,15 @@ export function Footer({
     })
     .sort((a, b) => a.order - b.order);
 
-  const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp' | 'gifts', defaultIcon: React.ReactNode) => {
+  const renderIcon = (type: 'calendar' | 'phone' | 'pin' | 'rsvp' | 'gifts' | 'video', defaultIcon: React.ReactNode) => {
     const iconValue = customIcons?.[type];
     const iconConfig = getIconConfig(iconValue);
     const customIconUrl = iconConfig?.url;
-    
+
     if (customIconUrl) {
       // Check if it's an SVG (data URL with svg+xml or starts with <svg)
       const isSVG = customIconUrl.includes('svg+xml') || (typeof customIconUrl === 'string' && customIconUrl.trim().startsWith('<svg'));
-      
+
       if (isSVG && customStyle?.color) {
         // For SVG, try to inject color into the SVG string
         try {
@@ -114,7 +120,7 @@ export function Footer({
               svgContent = decodeURIComponent(svgContent.split('svg+xml,')[1]);
             }
           }
-          
+
           // Replace fill and stroke attributes with the theme color
           const coloredSVG = svgContent
             .replace(/fill="[^"]*"/g, `fill="${customStyle.color}"`)
@@ -122,12 +128,12 @@ export function Footer({
             .replace(/stroke="[^"]*"/g, `stroke="${customStyle.color}"`)
             .replace(/stroke='[^']*'/g, `stroke='${customStyle.color}'`)
             .replace(/<svg/, `<svg fill="${customStyle.color}"`);
-          
+
           const svgDataUrl = `data:image/svg+xml;base64,${btoa(coloredSVG)}`;
           return (
-            <img 
-              src={svgDataUrl} 
-              alt={type} 
+            <img
+              src={svgDataUrl}
+              alt={type}
               className="w-6 h-6 object-contain"
             />
           );
@@ -136,14 +142,14 @@ export function Footer({
           console.error('Error processing SVG:', error);
         }
       }
-      
+
       // For regular images or if SVG processing failed
       return (
-        <img 
-          src={customIconUrl} 
-          alt={type} 
+        <img
+          src={customIconUrl}
+          alt={type}
           className="w-6 h-6 object-contain"
-          style={{ 
+          style={{
             filter: customStyle?.color && !isSVG ? `drop-shadow(0 0 0 ${customStyle.color})` : undefined,
           }}
         />
@@ -155,23 +161,23 @@ export function Footer({
   // Get footer background style
   const getFooterBackgroundStyle = (): React.CSSProperties => {
     if (!customStyle?.background) return {};
-    
+
     // If it's a gradient or color string, use directly
     if (customStyle.background.includes('gradient') || customStyle.background.startsWith('#')) {
       return { background: customStyle.background, border: 'none' };
     }
-    
+
     // If it's an image URL
     if (customStyle.background.startsWith('url(')) {
-      return { 
-        backgroundImage: customStyle.background, 
+      return {
+        backgroundImage: customStyle.background,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        border: 'none' 
+        border: 'none'
       };
     }
-    
+
     return { background: customStyle.background, border: 'none' };
   };
 
@@ -219,13 +225,13 @@ export function Footer({
   const containerWidth = containerConfig?.width === 'full' ? 'w-full' : containerConfig?.width === 'custom' ? '' : 'max-w-xs';
   const iconCount = Math.min(visibleIcons.length, 5);
   const gridColsClass = iconCount === 1 ? 'grid-cols-1' :
-                        iconCount === 2 ? 'grid-cols-2' :
-                        iconCount === 3 ? 'grid-cols-3' :
-                        iconCount === 4 ? 'grid-cols-4' :
-                        iconCount === 5 ? 'grid-cols-5' : 'grid-cols-3';
+    iconCount === 2 ? 'grid-cols-2' :
+      iconCount === 3 ? 'grid-cols-3' :
+        iconCount === 4 ? 'grid-cols-4' :
+          iconCount === 5 ? 'grid-cols-5' : 'grid-cols-3';
 
   return (
-    <div 
+    <div
       className="absolute left-0 right-0 z-20"
       style={{
         bottom: containerConfig?.bottomPosition !== undefined ? `${containerConfig.bottomPosition}px` : '12px',
@@ -240,11 +246,11 @@ export function Footer({
       >
         <div className={`grid ${gridColsClass} gap-2 ${!customStyle?.color ? "text-rose-700" : ""}`}>
           {visibleIcons.map((iconDef) => (
-            <FooterButton 
+            <FooterButton
               key={iconDef.key}
-              label={iconDef.label} 
-              onClick={iconDef.onClick} 
-              color={customStyle?.color} 
+              label={iconDef.label}
+              onClick={iconDef.onClick}
+              color={customStyle?.color}
               textColor={customStyle?.textColor}
               fontFamily={customStyle?.fontFamily}
               fontSize={customStyle?.fontSize}

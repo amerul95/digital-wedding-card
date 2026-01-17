@@ -51,7 +51,7 @@ export function CardStage({ isMobile }: CardStageProps) {
     const doorNodeId = doorNodeEntry ? doorNodeEntry[0] : null;
     const doorNode = doorNodeEntry ? doorNodeEntry[1] : null;
     const shouldShowDoor = doorNode && !doorNode.data.isHidden && viewOptions.showDoorOverlay;
-    
+
     // Animation effects from door node
     const animationEffect = doorNode?.data.animationEffect || 'none';
     const effectColor = doorNode?.data.effectColor || '#f43f5e';
@@ -82,7 +82,7 @@ export function CardStage({ isMobile }: CardStageProps) {
                         handleScrollRef(el);
                     }}
                     className={cn(
-                        "w-full h-full overflow-y-auto scrollbar-hide bg-white relative",
+                        "w-full h-full overflow-y-auto overflow-x-hidden scrollbar-hide bg-white relative",
                         isOver && "bg-blue-50"
                     )}
                     style={{

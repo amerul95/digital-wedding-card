@@ -681,50 +681,50 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                     <div className="flex flex-col gap-3">
                                         <div className="flex flex-col gap-1">
                                             <label className="text-xs text-gray-600">Content</label>
-                                    <RichTextEditor
-                                        content={node.data.content || ''}
-                                        onChange={(html) => updateNodeData(targetId, { content: html })}
-                                        fontSize={parseInt(node.style.fontSize) || 16}
-                                        onFontSizeChange={(size) => updateNodeStyle(targetId, { fontSize: `${size}px` })}
-                                        fontColor={node.style.color || '#000000'}
-                                        onFontColorChange={(color) => updateNodeStyle(targetId, { color })}
-                                        placeholder="Enter text..."
-                                        />
-                                    </div>
+                                            <RichTextEditor
+                                                content={node.data.content || ''}
+                                                onChange={(html) => updateNodeData(targetId, { content: html })}
+                                                fontSize={parseInt(node.style.fontSize) || 16}
+                                                onFontSizeChange={(size) => updateNodeStyle(targetId, { fontSize: `${size}px` })}
+                                                fontColor={node.style.color || '#000000'}
+                                                onFontColorChange={(color) => updateNodeStyle(targetId, { color })}
+                                                placeholder="Enter text..."
+                                            />
+                                        </div>
 
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-xs text-gray-600">Alignment (Wrapper)</label>
-                                        <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
-                                            {['left', 'center', 'right', 'justify'].map((align) => (
-                                                <button
-                                                    key={align}
-                                                    className={`p-1 rounded ${node.style.textAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
-                                                    onClick={() => updateNodeStyle(targetId, { textAlign: align })}
-                                                    title={align}
-                                                >
-                                                    {align === 'left' && <AlignLeft size={14} />}
-                                                    {align === 'center' && <AlignCenter size={14} />}
-                                                    {align === 'right' && <AlignRight size={14} />}
-                                                    {align === 'justify' && <AlignJustify size={14} />}
-                                                </button>
-                                            ))}
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs text-gray-600">Alignment (Wrapper)</label>
+                                            <div className="flex gap-1 bg-gray-100 p-1 rounded w-fit">
+                                                {['left', 'center', 'right', 'justify'].map((align) => (
+                                                    <button
+                                                        key={align}
+                                                        className={`p-1 rounded ${node.style.textAlign === align ? 'bg-white shadow' : 'text-gray-400'}`}
+                                                        onClick={() => updateNodeStyle(targetId, { textAlign: align })}
+                                                        title={align}
+                                                    >
+                                                        {align === 'left' && <AlignLeft size={14} />}
+                                                        {align === 'center' && <AlignCenter size={14} />}
+                                                        {align === 'right' && <AlignRight size={14} />}
+                                                        {align === 'justify' && <AlignJustify size={14} />}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <label className="text-xs text-gray-600">Font Family</label>
+                                            <select
+                                                className="border rounded p-2 text-sm"
+                                                value={node.style.fontFamily || 'sans'}
+                                                onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
+                                            >
+                                                <option value="sans">Sans Serif</option>
+                                                <option value="serif">Serif</option>
+                                                <option value="mono">Monospace</option>
+                                                <option value="cursive">Cursive</option>
+                                                <option value="fantasy">Fantasy</option>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-xs text-gray-600">Font Family</label>
-                                        <select
-                                            className="border rounded p-2 text-sm"
-                                            value={node.style.fontFamily || 'sans'}
-                                            onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
-                                        >
-                                            <option value="sans">Sans Serif</option>
-                                            <option value="serif">Serif</option>
-                                            <option value="mono">Monospace</option>
-                                            <option value="cursive">Cursive</option>
-                                            <option value="fantasy">Fantasy</option>
-                                        </select>
-                                    </div>
-                                </div>
                                 )}
 
                                 {/* Button Widget Specifics */}
@@ -1054,7 +1054,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             <h4 className="text-xs uppercase font-bold text-blue-600 flex items-center gap-2 border-b pb-2">
                                                 <Type size={14} /> Countdown Numbers Properties
                                             </h4>
-                                            
+
                                             {/* Font Color */}
                                             <div className="space-y-1">
                                                 <label className="text-[10px] text-gray-500">Font Color</label>
@@ -1242,7 +1242,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             <h4 className="text-xs uppercase font-bold text-purple-600 flex items-center gap-2 border-b pb-2">
                                                 <Settings size={14} /> Image Slider Settings
                                             </h4>
-                                            
+
                                             {/* Images List */}
                                             <div className="space-y-2">
                                                 <div className="flex items-center justify-between">
@@ -1461,7 +1461,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             {/* Speech Text Properties */}
                                             <div className="space-y-2 pt-2 border-t border-dashed">
                                                 <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Speech Text</h5>
-                                                
+
                                                 {/* Font Color */}
                                                 <div className="space-y-1">
                                                     <label className="text-[10px] text-gray-500">Font Color</label>
@@ -1555,7 +1555,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             {/* Author Text Properties */}
                                             <div className="space-y-2 pt-2 border-t border-dashed">
                                                 <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Author Text</h5>
-                                                
+
                                                 {/* Font Color */}
                                                 <div className="space-y-1">
                                                     <label className="text-[10px] text-gray-500">Font Color</label>
@@ -1665,7 +1665,7 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                                         <Plus size={12} /> Add New
                                                     </button>
                                                 </div>
-                                                
+
                                                 <div className="space-y-2 max-h-60 overflow-y-auto border rounded p-2 bg-gray-50">
                                                     {(node.data.mockupSpeeches || []).map((mockup: any, idx: number) => (
                                                         <div key={mockup.id || idx} className="flex flex-col gap-2 p-2 border border-gray-300 rounded bg-white">
@@ -1896,262 +1896,262 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             />
                                         </div>
 
-                                {/* Date & Time Format (for Calendar Modal) */}
-                                {node.data.modalType === 'calendar' && (
-                                    <div className="flex flex-col gap-2 border-t pt-2 border-blue-200 bg-blue-50/50 p-2 rounded">
-                                        <label className="text-[10px] uppercase font-bold text-blue-600">Date & Time Format</label>
+                                        {/* Date & Time Format (for Calendar Modal) */}
+                                        {node.data.modalType === 'calendar' && (
+                                            <div className="flex flex-col gap-2 border-t pt-2 border-blue-200 bg-blue-50/50 p-2 rounded">
+                                                <label className="text-[10px] uppercase font-bold text-blue-600">Date & Time Format</label>
 
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Date Format</label>
-                                            <select
-                                                className="border rounded p-1 text-xs"
-                                                value={node.data.dateFormat || 'dd full month name years'}
-                                                onChange={(e) => updateNodeData(targetId, { dateFormat: e.target.value })}
-                                            >
-                                                <option value="dd/mm/yy">dd/mm/yy</option>
-                                                <option value="dd-mm-yy">dd-mm-yy</option>
-                                                <option value="dd.mm.yy">dd.mm.yy</option>
-                                                <option value="dd full month name years">dd full month name years</option>
-                                                <option value="dd month short years">dd month short years</option>
-                                                <option value="full date">Full Date</option>
-                                            </select>
-                                        </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Date Format</label>
+                                                    <select
+                                                        className="border rounded p-1 text-xs"
+                                                        value={node.data.dateFormat || 'dd full month name years'}
+                                                        onChange={(e) => updateNodeData(targetId, { dateFormat: e.target.value })}
+                                                    >
+                                                        <option value="dd/mm/yy">dd/mm/yy</option>
+                                                        <option value="dd-mm-yy">dd-mm-yy</option>
+                                                        <option value="dd.mm.yy">dd.mm.yy</option>
+                                                        <option value="dd full month name years">dd full month name years</option>
+                                                        <option value="dd month short years">dd month short years</option>
+                                                        <option value="full date">Full Date</option>
+                                                    </select>
+                                                </div>
 
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Time Format</label>
-                                            <select
-                                                className="border rounded p-1 text-xs"
-                                                value={node.data.timeFormat || 'start a.m/p.m - end a.m/p.m'}
-                                                onChange={(e) => updateNodeData(targetId, { timeFormat: e.target.value })}
-                                            >
-                                                <option value="start a.m/p.m - end a.m/p.m">start a.m/p.m - end a.m/p.m</option>
-                                                <option value="start hour:minute a.m/p.m - end hour:minute a.m/p.m">start hour:minute a.m/p.m - end hour:minute a.m/p.m</option>
-                                                <option value="morning/evening">Morning/Evening</option>
-                                                <option value="24-hour">24-Hour Format</option>
-                                            </select>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Time Format</label>
+                                                    <select
+                                                        className="border rounded p-1 text-xs"
+                                                        value={node.data.timeFormat || 'start a.m/p.m - end a.m/p.m'}
+                                                        onChange={(e) => updateNodeData(targetId, { timeFormat: e.target.value })}
+                                                    >
+                                                        <option value="start a.m/p.m - end a.m/p.m">start a.m/p.m - end a.m/p.m</option>
+                                                        <option value="start hour:minute a.m/p.m - end hour:minute a.m/p.m">start hour:minute a.m/p.m - end hour:minute a.m/p.m</option>
+                                                        <option value="morning/evening">Morning/Evening</option>
+                                                        <option value="24-hour">24-Hour Format</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Text Element Styles */}
+                                        <div className="flex flex-col gap-2 border-t pt-2 border-purple-200 bg-purple-50/50 p-2 rounded">
+                                            <label className="text-[10px] uppercase font-bold text-purple-600">Text Element Styles</label>
+
+                                            {/* Title Style */}
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-[10px] text-gray-500">Title</label>
+                                                <div className="grid grid-cols-2 gap-1">
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-1 text-xs"
+                                                        placeholder="Font Size"
+                                                        value={node.data.modalStyles?.title?.fontSize || ''}
+                                                        onChange={(e) => {
+                                                            const styles = { ...(node.data.modalStyles || {}) };
+                                                            styles.title = { ...(styles.title || {}), fontSize: e.target.value };
+                                                            updateNodeData(targetId, { modalStyles: styles });
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="color"
+                                                        className="w-full h-6 border rounded cursor-pointer"
+                                                        value={node.data.modalStyles?.title?.color || '#be123c'}
+                                                        onChange={(e) => {
+                                                            const styles = { ...(node.data.modalStyles || {}) };
+                                                            styles.title = { ...(styles.title || {}), color: e.target.value };
+                                                            updateNodeData(targetId, { modalStyles: styles });
+                                                        }}
+                                                    />
+                                                </div>
+                                                <select
+                                                    className="border rounded p-1 text-xs"
+                                                    value={node.data.modalStyles?.title?.fontFamily || 'sans'}
+                                                    onChange={(e) => {
+                                                        const styles = { ...(node.data.modalStyles || {}) };
+                                                        styles.title = { ...(styles.title || {}), fontFamily: e.target.value };
+                                                        updateNodeData(targetId, { modalStyles: styles });
+                                                    }}
+                                                >
+                                                    <option value="sans">Sans Serif</option>
+                                                    <option value="serif">Serif</option>
+                                                    <option value="mono">Monospace</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Date Style (Calendar Modal) */}
+                                            {node.data.modalType === 'calendar' && (
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Date Text</label>
+                                                    <div className="grid grid-cols-2 gap-1">
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs"
+                                                            placeholder="Font Size"
+                                                            value={node.data.modalStyles?.date?.fontSize || ''}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.date = { ...(styles.date || {}), fontSize: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                        <input
+                                                            type="color"
+                                                            className="w-full h-6 border rounded cursor-pointer"
+                                                            value={node.data.modalStyles?.date?.color || '#1f2937'}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.date = { ...(styles.date || {}), color: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <select
+                                                        className="border rounded p-1 text-xs"
+                                                        value={node.data.modalStyles?.date?.fontFamily || 'sans'}
+                                                        onChange={(e) => {
+                                                            const styles = { ...(node.data.modalStyles || {}) };
+                                                            styles.date = { ...(styles.date || {}), fontFamily: e.target.value };
+                                                            updateNodeData(targetId, { modalStyles: styles });
+                                                        }}
+                                                    >
+                                                        <option value="sans">Sans Serif</option>
+                                                        <option value="serif">Serif</option>
+                                                        <option value="mono">Monospace</option>
+                                                    </select>
+                                                </div>
+                                            )}
+
+                                            {/* Time Style (Calendar Modal) */}
+                                            {node.data.modalType === 'calendar' && (
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Time Text</label>
+                                                    <div className="grid grid-cols-2 gap-1">
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs"
+                                                            placeholder="Font Size"
+                                                            value={node.data.modalStyles?.time?.fontSize || ''}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.time = { ...(styles.time || {}), fontSize: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                        <input
+                                                            type="color"
+                                                            className="w-full h-6 border rounded cursor-pointer"
+                                                            value={node.data.modalStyles?.time?.color || '#4b5563'}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.time = { ...(styles.time || {}), color: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <select
+                                                        className="border rounded p-1 text-xs"
+                                                        value={node.data.modalStyles?.time?.fontFamily || 'sans'}
+                                                        onChange={(e) => {
+                                                            const styles = { ...(node.data.modalStyles || {}) };
+                                                            styles.time = { ...(styles.time || {}), fontFamily: e.target.value };
+                                                            updateNodeData(targetId, { modalStyles: styles });
+                                                        }}
+                                                    >
+                                                        <option value="sans">Sans Serif</option>
+                                                        <option value="serif">Serif</option>
+                                                        <option value="mono">Monospace</option>
+                                                    </select>
+                                                </div>
+                                            )}
+
+                                            {/* Location Style (Location Modal) */}
+                                            {node.data.modalType === 'location' && (
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Location Text</label>
+                                                    <div className="grid grid-cols-2 gap-1">
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs"
+                                                            placeholder="Font Size"
+                                                            value={node.data.modalStyles?.location?.fontSize || ''}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.location = { ...(styles.location || {}), fontSize: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                        <input
+                                                            type="color"
+                                                            className="w-full h-6 border rounded cursor-pointer"
+                                                            value={node.data.modalStyles?.location?.color || '#1f2937'}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.location = { ...(styles.location || {}), color: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <select
+                                                        className="border rounded p-1 text-xs"
+                                                        value={node.data.modalStyles?.location?.fontFamily || 'sans'}
+                                                        onChange={(e) => {
+                                                            const styles = { ...(node.data.modalStyles || {}) };
+                                                            styles.location = { ...(styles.location || {}), fontFamily: e.target.value };
+                                                            updateNodeData(targetId, { modalStyles: styles });
+                                                        }}
+                                                    >
+                                                        <option value="sans">Sans Serif</option>
+                                                        <option value="serif">Serif</option>
+                                                        <option value="mono">Monospace</option>
+                                                    </select>
+                                                </div>
+                                            )}
+
+                                            {/* Contact Name Style (Contact Modal) */}
+                                            {node.data.modalType === 'contact' && (
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Contact Name</label>
+                                                    <div className="grid grid-cols-2 gap-1">
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-1 text-xs"
+                                                            placeholder="Font Size"
+                                                            value={node.data.modalStyles?.contactName?.fontSize || ''}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.contactName = { ...(styles.contactName || {}), fontSize: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                        <input
+                                                            type="color"
+                                                            className="w-full h-6 border rounded cursor-pointer"
+                                                            value={node.data.modalStyles?.contactName?.color || '#be123c'}
+                                                            onChange={(e) => {
+                                                                const styles = { ...(node.data.modalStyles || {}) };
+                                                                styles.contactName = { ...(styles.contactName || {}), color: e.target.value };
+                                                                updateNodeData(targetId, { modalStyles: styles });
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <select
+                                                        className="border rounded p-1 text-xs"
+                                                        value={node.data.modalStyles?.contactName?.fontFamily || 'sans'}
+                                                        onChange={(e) => {
+                                                            const styles = { ...(node.data.modalStyles || {}) };
+                                                            styles.contactName = { ...(styles.contactName || {}), fontFamily: e.target.value };
+                                                            updateNodeData(targetId, { modalStyles: styles });
+                                                        }}
+                                                    >
+                                                        <option value="sans">Sans Serif</option>
+                                                        <option value="serif">Serif</option>
+                                                        <option value="mono">Monospace</option>
+                                                    </select>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
-
-                                {/* Text Element Styles */}
-                                <div className="flex flex-col gap-2 border-t pt-2 border-purple-200 bg-purple-50/50 p-2 rounded">
-                                    <label className="text-[10px] uppercase font-bold text-purple-600">Text Element Styles</label>
-
-                                    {/* Title Style */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-[10px] text-gray-500">Title</label>
-                                        <div className="grid grid-cols-2 gap-1">
-                                            <input
-                                                type="text"
-                                                className="border rounded p-1 text-xs"
-                                                placeholder="Font Size"
-                                                value={node.data.modalStyles?.title?.fontSize || ''}
-                                                onChange={(e) => {
-                                                    const styles = { ...(node.data.modalStyles || {}) };
-                                                    styles.title = { ...(styles.title || {}), fontSize: e.target.value };
-                                                    updateNodeData(targetId, { modalStyles: styles });
-                                                }}
-                                            />
-                                            <input
-                                                type="color"
-                                                className="w-full h-6 border rounded cursor-pointer"
-                                                value={node.data.modalStyles?.title?.color || '#be123c'}
-                                                onChange={(e) => {
-                                                    const styles = { ...(node.data.modalStyles || {}) };
-                                                    styles.title = { ...(styles.title || {}), color: e.target.value };
-                                                    updateNodeData(targetId, { modalStyles: styles });
-                                                }}
-                                            />
-                                        </div>
-                                        <select
-                                            className="border rounded p-1 text-xs"
-                                            value={node.data.modalStyles?.title?.fontFamily || 'sans'}
-                                            onChange={(e) => {
-                                                const styles = { ...(node.data.modalStyles || {}) };
-                                                styles.title = { ...(styles.title || {}), fontFamily: e.target.value };
-                                                updateNodeData(targetId, { modalStyles: styles });
-                                            }}
-                                        >
-                                            <option value="sans">Sans Serif</option>
-                                            <option value="serif">Serif</option>
-                                            <option value="mono">Monospace</option>
-                                        </select>
-                                    </div>
-
-                                    {/* Date Style (Calendar Modal) */}
-                                    {node.data.modalType === 'calendar' && (
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Date Text</label>
-                                    <div className="grid grid-cols-2 gap-1">
-                                        <input
-                                            type="text"
-                                            className="border rounded p-1 text-xs"
-                                            placeholder="Font Size"
-                                            value={node.data.modalStyles?.date?.fontSize || ''}
-                                            onChange={(e) => {
-                                                const styles = { ...(node.data.modalStyles || {}) };
-                                                styles.date = { ...(styles.date || {}), fontSize: e.target.value };
-                                                updateNodeData(targetId, { modalStyles: styles });
-                                            }}
-                                        />
-                                        <input
-                                            type="color"
-                                            className="w-full h-6 border rounded cursor-pointer"
-                                            value={node.data.modalStyles?.date?.color || '#1f2937'}
-                                            onChange={(e) => {
-                                                const styles = { ...(node.data.modalStyles || {}) };
-                                                styles.date = { ...(styles.date || {}), color: e.target.value };
-                                                updateNodeData(targetId, { modalStyles: styles });
-                                            }}
-                                        />
-                                    </div>
-                                    <select
-                                        className="border rounded p-1 text-xs"
-                                        value={node.data.modalStyles?.date?.fontFamily || 'sans'}
-                                        onChange={(e) => {
-                                            const styles = { ...(node.data.modalStyles || {}) };
-                                            styles.date = { ...(styles.date || {}), fontFamily: e.target.value };
-                                            updateNodeData(targetId, { modalStyles: styles });
-                                        }}
-                                    >
-                                        <option value="sans">Sans Serif</option>
-                                        <option value="serif">Serif</option>
-                                        <option value="mono">Monospace</option>
-                                    </select>
-                                </div>
-                            )}
-
-                                    {/* Time Style (Calendar Modal) */}
-                                    {node.data.modalType === 'calendar' && (
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Time Text</label>
-                                            <div className="grid grid-cols-2 gap-1">
-                                                <input
-                                                    type="text"
-                                                    className="border rounded p-1 text-xs"
-                                                    placeholder="Font Size"
-                                                    value={node.data.modalStyles?.time?.fontSize || ''}
-                                                    onChange={(e) => {
-                                                        const styles = { ...(node.data.modalStyles || {}) };
-                                                        styles.time = { ...(styles.time || {}), fontSize: e.target.value };
-                                                        updateNodeData(targetId, { modalStyles: styles });
-                                                    }}
-                                                />
-                                                <input
-                                                    type="color"
-                                                    className="w-full h-6 border rounded cursor-pointer"
-                                                    value={node.data.modalStyles?.time?.color || '#4b5563'}
-                                                    onChange={(e) => {
-                                                        const styles = { ...(node.data.modalStyles || {}) };
-                                                        styles.time = { ...(styles.time || {}), color: e.target.value };
-                                                        updateNodeData(targetId, { modalStyles: styles });
-                                                    }}
-                                                />
-                                            </div>
-                                            <select
-                                                className="border rounded p-1 text-xs"
-                                                value={node.data.modalStyles?.time?.fontFamily || 'sans'}
-                                                onChange={(e) => {
-                                                    const styles = { ...(node.data.modalStyles || {}) };
-                                                    styles.time = { ...(styles.time || {}), fontFamily: e.target.value };
-                                                    updateNodeData(targetId, { modalStyles: styles });
-                                                }}
-                                            >
-                                                <option value="sans">Sans Serif</option>
-                                                <option value="serif">Serif</option>
-                                                <option value="mono">Monospace</option>
-                                            </select>
-                                        </div>
-                                    )}
-
-                                    {/* Location Style (Location Modal) */}
-                                    {node.data.modalType === 'location' && (
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Location Text</label>
-                                            <div className="grid grid-cols-2 gap-1">
-                                                <input
-                                                    type="text"
-                                                    className="border rounded p-1 text-xs"
-                                                    placeholder="Font Size"
-                                                    value={node.data.modalStyles?.location?.fontSize || ''}
-                                                    onChange={(e) => {
-                                                        const styles = { ...(node.data.modalStyles || {}) };
-                                                        styles.location = { ...(styles.location || {}), fontSize: e.target.value };
-                                                        updateNodeData(targetId, { modalStyles: styles });
-                                                    }}
-                                                />
-                                                <input
-                                                    type="color"
-                                                    className="w-full h-6 border rounded cursor-pointer"
-                                                    value={node.data.modalStyles?.location?.color || '#1f2937'}
-                                                    onChange={(e) => {
-                                                        const styles = { ...(node.data.modalStyles || {}) };
-                                                        styles.location = { ...(styles.location || {}), color: e.target.value };
-                                                        updateNodeData(targetId, { modalStyles: styles });
-                                                    }}
-                                                />
-                                            </div>
-                                            <select
-                                                className="border rounded p-1 text-xs"
-                                                value={node.data.modalStyles?.location?.fontFamily || 'sans'}
-                                                onChange={(e) => {
-                                                    const styles = { ...(node.data.modalStyles || {}) };
-                                                    styles.location = { ...(styles.location || {}), fontFamily: e.target.value };
-                                                    updateNodeData(targetId, { modalStyles: styles });
-                                                }}
-                                            >
-                                                <option value="sans">Sans Serif</option>
-                                                <option value="serif">Serif</option>
-                                                <option value="mono">Monospace</option>
-                                            </select>
-                                        </div>
-                                    )}
-
-                                    {/* Contact Name Style (Contact Modal) */}
-                                    {node.data.modalType === 'contact' && (
-                                        <div className="flex flex-col gap-1">
-                                            <label className="text-[10px] text-gray-500">Contact Name</label>
-                                            <div className="grid grid-cols-2 gap-1">
-                                                <input
-                                                    type="text"
-                                                    className="border rounded p-1 text-xs"
-                                                    placeholder="Font Size"
-                                                    value={node.data.modalStyles?.contactName?.fontSize || ''}
-                                                    onChange={(e) => {
-                                                        const styles = { ...(node.data.modalStyles || {}) };
-                                                        styles.contactName = { ...(styles.contactName || {}), fontSize: e.target.value };
-                                                        updateNodeData(targetId, { modalStyles: styles });
-                                                    }}
-                                                />
-                                                <input
-                                                    type="color"
-                                                    className="w-full h-6 border rounded cursor-pointer"
-                                                    value={node.data.modalStyles?.contactName?.color || '#be123c'}
-                                                    onChange={(e) => {
-                                                        const styles = { ...(node.data.modalStyles || {}) };
-                                                        styles.contactName = { ...(styles.contactName || {}), color: e.target.value };
-                                                        updateNodeData(targetId, { modalStyles: styles });
-                                                    }}
-                                                />
-                                            </div>
-                                            <select
-                                                className="border rounded p-1 text-xs"
-                                                value={node.data.modalStyles?.contactName?.fontFamily || 'sans'}
-                                                onChange={(e) => {
-                                                    const styles = { ...(node.data.modalStyles || {}) };
-                                                    styles.contactName = { ...(styles.contactName || {}), fontFamily: e.target.value };
-                                                    updateNodeData(targetId, { modalStyles: styles });
-                                                }}
-                                            >
-                                                <option value="sans">Sans Serif</option>
-                                                <option value="serif">Serif</option>
-                                                <option value="mono">Monospace</option>
-                                            </select>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
 
                                 {/* === STYLE SETTINGS === */}
                                 <div className="space-y-3 pt-4 border-t">
@@ -2190,6 +2190,25 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                                             value={node.style.backgroundColor || ''}
                                                             onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
                                                             placeholder="#ffffff"
+                                                        />
+                                                    </div>
+
+                                                    {/* Opacity Slider */}
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex justify-between items-center">
+                                                            <label className="text-[10px] text-gray-500">Opacity</label>
+                                                            <span className="text-[10px] text-gray-500">
+                                                                {Math.round((node.style.backgroundOpacity !== undefined ? parseFloat(node.style.backgroundOpacity) : 1) * 100)}%
+                                                            </span>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="1"
+                                                            step="0.01"
+                                                            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                                            value={node.style.backgroundOpacity !== undefined ? node.style.backgroundOpacity : 1}
+                                                            onChange={(e) => updateNodeStyle(targetId, { backgroundOpacity: e.target.value })}
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-2">
@@ -2288,127 +2307,127 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                     )}
 
                                     {/* Motion Effects (Section/Container/Text/Button/Countdown/Slider/CongratulationSpeech) */}
-                                    {(node.type === 'section' || node.type === 'container' || 
-                                      node.type === 'text' || node.type === 'button' || 
-                                      node.type === 'countdown' || node.type === 'slider' || 
-                                      node.type === 'congratulation-speech') && (
-                                        <div className="space-y-3 pt-4 border-t">
-                                            <h3 className="text-xs font-semibold text-gray-500 uppercase">Motion Effects</h3>
-                                            
-                                            {/* Enable Animation Toggle */}
-                                            <div className="flex items-center justify-between">
-                                                <label className="text-xs text-gray-600">Enable Animation</label>
-                                                <input
-                                                    type="checkbox"
-                                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                    checked={node.animation?.enabled || false}
-                                                    onChange={(e) => updateNodeAnimation(targetId, { enabled: e.target.checked })}
-                                                />
-                                            </div>
+                                    {(node.type === 'section' || node.type === 'container' ||
+                                        node.type === 'text' || node.type === 'button' ||
+                                        node.type === 'countdown' || node.type === 'slider' ||
+                                        node.type === 'congratulation-speech') && (
+                                            <div className="space-y-3 pt-4 border-t">
+                                                <h3 className="text-xs font-semibold text-gray-500 uppercase">Motion Effects</h3>
 
-                                            {node.animation?.enabled && (
-                                                <>
-                                                    {/* Trigger */}
-                                                    <div className="space-y-1">
-                                                        <label className="text-xs text-gray-600">Trigger</label>
-                                                        <select
-                                                            className="border rounded p-2 text-sm w-full"
-                                                            value={node.animation?.trigger || 'none'}
-                                                            onChange={(e) => updateNodeAnimation(targetId, { trigger: e.target.value as any })}
-                                                        >
-                                                            <option value="none">None</option>
-                                                            <option value="scroll">On Scroll</option>
-                                                            <option value="door">After Door Opens</option>
-                                                            <option value="load">On Load</option>
-                                                        </select>
-                                                    </div>
+                                                {/* Enable Animation Toggle */}
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-xs text-gray-600">Enable Animation</label>
+                                                    <input
+                                                        type="checkbox"
+                                                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        checked={node.animation?.enabled || false}
+                                                        onChange={(e) => updateNodeAnimation(targetId, { enabled: e.target.checked })}
+                                                    />
+                                                </div>
 
-                                                    {/* Preset */}
-                                                    <div className="space-y-1">
-                                                        <label className="text-xs text-gray-600">Animation Style</label>
-                                                        <select
-                                                            className="border rounded p-2 text-sm w-full"
-                                                            value={node.animation?.preset || 'fadeUp'}
-                                                            onChange={(e) => updateNodeAnimation(targetId, { preset: e.target.value as any })}
-                                                        >
-                                                            <option value="fadeUp">Fade Up</option>
-                                                            <option value="fade">Fade</option>
-                                                            <option value="slideLeft">Slide Left</option>
-                                                            <option value="slideRight">Slide Right</option>
-                                                        </select>
-                                                    </div>
-
-                                                    {/* Replay Toggle */}
-                                                    {node.animation?.trigger === 'scroll' && (
-                                                        <div className="flex items-center justify-between">
-                                                            <label className="text-xs text-gray-600">Replay on Scroll</label>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                                checked={node.animation?.replay || false}
-                                                                onChange={(e) => updateNodeAnimation(targetId, { replay: e.target.checked })}
-                                                            />
+                                                {node.animation?.enabled && (
+                                                    <>
+                                                        {/* Trigger */}
+                                                        <div className="space-y-1">
+                                                            <label className="text-xs text-gray-600">Trigger</label>
+                                                            <select
+                                                                className="border rounded p-2 text-sm w-full"
+                                                                value={node.animation?.trigger || 'none'}
+                                                                onChange={(e) => updateNodeAnimation(targetId, { trigger: e.target.value as any })}
+                                                            >
+                                                                <option value="none">None</option>
+                                                                <option value="scroll">On Scroll</option>
+                                                                <option value="door">After Door Opens</option>
+                                                                <option value="load">On Load</option>
+                                                            </select>
                                                         </div>
-                                                    )}
 
-                                                    {/* Advanced Options (Collapsible) */}
-                                                    <details className="group">
-                                                        <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 list-none">
-                                                            <span className="flex items-center gap-1">
-                                                                Advanced Options
-                                                                <ChevronDown size={12} className="group-open:rotate-180 transition-transform" />
-                                                            </span>
-                                                        </summary>
-                                                        <div className="mt-2 space-y-2 pl-2 border-l-2 border-gray-200">
-                                                            {/* Duration */}
-                                                            <div className="space-y-1">
-                                                                <label className="text-xs text-gray-600">Duration (seconds)</label>
+                                                        {/* Preset */}
+                                                        <div className="space-y-1">
+                                                            <label className="text-xs text-gray-600">Animation Style</label>
+                                                            <select
+                                                                className="border rounded p-2 text-sm w-full"
+                                                                value={node.animation?.preset || 'fadeUp'}
+                                                                onChange={(e) => updateNodeAnimation(targetId, { preset: e.target.value as any })}
+                                                            >
+                                                                <option value="fadeUp">Fade Up</option>
+                                                                <option value="fade">Fade</option>
+                                                                <option value="slideLeft">Slide Left</option>
+                                                                <option value="slideRight">Slide Right</option>
+                                                            </select>
+                                                        </div>
+
+                                                        {/* Replay Toggle */}
+                                                        {node.animation?.trigger === 'scroll' && (
+                                                            <div className="flex items-center justify-between">
+                                                                <label className="text-xs text-gray-600">Replay on Scroll</label>
                                                                 <input
-                                                                    type="number"
-                                                                    min="0.1"
-                                                                    max="3"
-                                                                    step="0.1"
-                                                                    className="border rounded p-1 text-xs w-full"
-                                                                    value={node.animation?.duration || 0.6}
-                                                                    onChange={(e) => updateNodeAnimation(targetId, { duration: parseFloat(e.target.value) || 0.6 })}
+                                                                    type="checkbox"
+                                                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                    checked={node.animation?.replay || false}
+                                                                    onChange={(e) => updateNodeAnimation(targetId, { replay: e.target.checked })}
                                                                 />
                                                             </div>
+                                                        )}
 
-                                                            {/* Delay */}
-                                                            <div className="space-y-1">
-                                                                <label className="text-xs text-gray-600">Delay (seconds)</label>
-                                                                <input
-                                                                    type="number"
-                                                                    min="0"
-                                                                    max="2"
-                                                                    step="0.1"
-                                                                    className="border rounded p-1 text-xs w-full"
-                                                                    value={node.animation?.delay || 0}
-                                                                    onChange={(e) => updateNodeAnimation(targetId, { delay: parseFloat(e.target.value) || 0 })}
-                                                                />
-                                                            </div>
-
-                                                            {/* Threshold (only for scroll) */}
-                                                            {node.animation?.trigger === 'scroll' && (
+                                                        {/* Advanced Options (Collapsible) */}
+                                                        <details className="group">
+                                                            <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 list-none">
+                                                                <span className="flex items-center gap-1">
+                                                                    Advanced Options
+                                                                    <ChevronDown size={12} className="group-open:rotate-180 transition-transform" />
+                                                                </span>
+                                                            </summary>
+                                                            <div className="mt-2 space-y-2 pl-2 border-l-2 border-gray-200">
+                                                                {/* Duration */}
                                                                 <div className="space-y-1">
-                                                                    <label className="text-xs text-gray-600">Visibility Threshold (0-1)</label>
+                                                                    <label className="text-xs text-gray-600">Duration (seconds)</label>
+                                                                    <input
+                                                                        type="number"
+                                                                        min="0.1"
+                                                                        max="3"
+                                                                        step="0.1"
+                                                                        className="border rounded p-1 text-xs w-full"
+                                                                        value={node.animation?.duration || 0.6}
+                                                                        onChange={(e) => updateNodeAnimation(targetId, { duration: parseFloat(e.target.value) || 0.6 })}
+                                                                    />
+                                                                </div>
+
+                                                                {/* Delay */}
+                                                                <div className="space-y-1">
+                                                                    <label className="text-xs text-gray-600">Delay (seconds)</label>
                                                                     <input
                                                                         type="number"
                                                                         min="0"
-                                                                        max="1"
+                                                                        max="2"
                                                                         step="0.1"
                                                                         className="border rounded p-1 text-xs w-full"
-                                                                        value={node.animation?.threshold || 0.1}
-                                                                        onChange={(e) => updateNodeAnimation(targetId, { threshold: parseFloat(e.target.value) || 0.1 })}
+                                                                        value={node.animation?.delay || 0}
+                                                                        onChange={(e) => updateNodeAnimation(targetId, { delay: parseFloat(e.target.value) || 0 })}
                                                                     />
                                                                 </div>
-                                                            )}
-                                                        </div>
-                                                    </details>
-                                                </>
-                                            )}
-                                        </div>
-                                    )}
+
+                                                                {/* Threshold (only for scroll) */}
+                                                                {node.animation?.trigger === 'scroll' && (
+                                                                    <div className="space-y-1">
+                                                                        <label className="text-xs text-gray-600">Visibility Threshold (0-1)</label>
+                                                                        <input
+                                                                            type="number"
+                                                                            min="0"
+                                                                            max="1"
+                                                                            step="0.1"
+                                                                            className="border rounded p-1 text-xs w-full"
+                                                                            value={node.animation?.threshold || 0.1}
+                                                                            onChange={(e) => updateNodeAnimation(targetId, { threshold: parseFloat(e.target.value) || 0.1 })}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </details>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
                                 </div>
                             </div>
                         )}

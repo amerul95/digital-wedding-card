@@ -39,7 +39,7 @@ const getAnimationVariants = (
             return {
                 initial: { opacity: 0, y: 30 },
                 animate: { opacity: 1, y: 0 },
-                exit: { opacity: 0, y: 30 },
+                exit: { opacity: 0, y: 30 }, // Fade down when exiting
             };
         case "fade":
             return {
@@ -49,15 +49,15 @@ const getAnimationVariants = (
             };
         case "slideLeft":
             return {
-                initial: { opacity: 0, x: 50 },
+                initial: { opacity: 0, x: 50 }, // Comes from right
                 animate: { opacity: 1, x: 0 },
-                exit: { opacity: 0, x: 50 },
+                exit: { opacity: 0, x: -50 }, // Exits to left (reverse)
             };
         case "slideRight":
             return {
-                initial: { opacity: 0, x: -50 },
+                initial: { opacity: 0, x: -50 }, // Comes from left
                 animate: { opacity: 1, x: 0 },
-                exit: { opacity: 0, x: -50 },
+                exit: { opacity: 0, x: 50 }, // Exits to right (reverse)
             };
         default:
             return {
@@ -119,12 +119,15 @@ export function Reveal({
         if (!enabled || trigger !== "scroll") return;
 
         const element = elementRef.current;
-        const root = rootRef?.current;
+        if (!element) return;
 
-        if (!element || !root) return;
+        // Use rootRef if available, otherwise use viewport (null)
+        const root = rootRef?.current || null;
 
-        // Calculate rootMargin to subtract bottom navbar height
-        const rootMargin = `0px 0px -${bottomNavbarHeight}px 0px`;
+        // Calculate rootMargin to trigger animation 90px from bottom
+        // This accounts for the bottom navbar and ensures content reveals at the right position
+        const rootMargin = `0px 0px -90px 0px`;
+
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -140,8 +143,9 @@ export function Reveal({
                                 setHasAnimated(true);
                             }, delay * 1000);
                         }
-                    } else if (replay && hasAnimated) {
-                        // Element left view and replay is enabled
+                    } else if (hasAnimated) {
+                        // Element left view - always replay for scroll trigger
+                        // This creates the reverse animation effect when scrolling up
                         controls.start("exit");
                         setHasAnimated(false);
                     }
@@ -188,7 +192,7 @@ export function Reveal({
     return (
         <motion.div
             ref={elementRef}
-            initial={variants.initial}
+            initial="initial"
             animate={controls}
             variants={variants}
             transition={{
@@ -198,6 +202,7 @@ export function Reveal({
             }}
             style={{
                 willChange: prefersReducedMotion ? undefined : "transform, opacity",
+                overflowX: "hidden", // Prevent horizontal scrollbar from slide animations
             }}
         >
             {children}

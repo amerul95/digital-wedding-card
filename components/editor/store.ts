@@ -46,10 +46,12 @@ export interface EditorNode {
 
 export interface GlobalSettings {
     autoscroll: boolean;
+    autoscrollDelay: number; // in seconds
     backgroundMusic: {
         url: string;
         showVideo: boolean;
         duration: number; // in seconds
+        startTime: number; // in seconds
     };
 }
 
@@ -109,10 +111,12 @@ const createInitialState = () => ({
     selectedId: null,
     globalSettings: {
         autoscroll: false,
+        autoscrollDelay: 0,
         backgroundMusic: {
             url: '',
             showVideo: false,
             duration: 0,
+            startTime: 0,
         },
     },
     viewOptions: {

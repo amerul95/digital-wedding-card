@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 
 interface YouTubePlayerProps {
   videoId: string;
+  startTime?: number;
   onReady?: () => void;
 }
 
-export function YouTubePlayer({ videoId, onReady }: YouTubePlayerProps) {
+export function YouTubePlayer({ videoId, startTime = 0, onReady }: YouTubePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const playerRef = useRef<any>(null);
@@ -15,7 +16,7 @@ export function YouTubePlayer({ videoId, onReady }: YouTubePlayerProps) {
 
   useEffect(() => {
     console.log('🎵 YouTubePlayer mounted with videoId:', videoId);
-    
+
     // Setup YouTube player when API is ready
     const createPlayer = () => {
       console.log('🎬 Creating YouTube player...');
@@ -33,6 +34,7 @@ export function YouTubePlayer({ videoId, onReady }: YouTubePlayerProps) {
             loop: 1,
             playlist: videoId,
             playsinline: 1,
+            start: startTime,
           },
           events: {
             onReady: (event: any) => {
@@ -56,7 +58,7 @@ export function YouTubePlayer({ videoId, onReady }: YouTubePlayerProps) {
         console.error('❌ Error creating player:', error);
       }
     };
-    
+
     // Check if API is already loaded
     if ((window as any).YT && (window as any).YT.Player) {
       console.log('✅ YouTube API already loaded, creating player immediately');
@@ -89,7 +91,7 @@ export function YouTubePlayer({ videoId, onReady }: YouTubePlayerProps) {
       console.log('❌ No player ref');
       return;
     }
-    
+
     if (isPlaying) {
       console.log('⏸️ Pausing video');
       playerRef.current.pauseVideo();
@@ -118,13 +120,13 @@ export function YouTubePlayer({ videoId, onReady }: YouTubePlayerProps) {
           {isPlaying ? (
             // Pause Icon
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-              <rect x="6" y="4" width="4" height="16" rx="1"/>
-              <rect x="14" y="4" width="4" height="16" rx="1"/>
+              <rect x="6" y="4" width="4" height="16" rx="1" />
+              <rect x="14" y="4" width="4" height="16" rx="1" />
             </svg>
           ) : (
             // Play Icon
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-              <path d="M8 5v14l11-7z"/>
+              <path d="M8 5v14l11-7z" />
             </svg>
           )}
         </button>
