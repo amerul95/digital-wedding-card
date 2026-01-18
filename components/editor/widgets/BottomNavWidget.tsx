@@ -58,19 +58,23 @@ function InlineModal({
                     }
                 }}
             >
-                <div 
-                    className="fixed left-1/2 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-rose-100 overflow-hidden"
-                    onClick={(e) => e.stopPropagation()}
-                    data-modal-type={activeItem?.type === 'video' ? 'video' : undefined}
-                    style={{
-                        bottom: bottomPosition,
-                        transform: 'translateX(-50%)',
-                        transition: 'bottom 0.3s ease-out',
-                        maxHeight: '80vh',
-                        overflowY: 'auto',
-                        padding: '1.5rem'
-                    }}
-                >
+            <div 
+                className="fixed left-1/2 w-full max-w-md rounded-2xl shadow-xl border border-rose-100 overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+                data-modal-type={activeItem?.type === 'video' ? 'video' : undefined}
+                style={{
+                    bottom: bottomPosition,
+                    transform: 'translateX(-50%)',
+                    transition: 'bottom 0.3s ease-out',
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
+                    backgroundColor: activeItem?.modalBackgroundColor || '#ffffff',
+                    paddingTop: activeItem?.modalPaddingTop || '1.5rem',
+                    paddingRight: activeItem?.modalPaddingRight || '1.5rem',
+                    paddingBottom: activeItem?.modalPaddingBottom || '1.5rem',
+                    paddingLeft: activeItem?.modalPaddingLeft || '1.5rem'
+                }}
+            >
                     <div className="relative z-10">
                         {children}
                     </div>
@@ -100,7 +104,7 @@ function InlineModal({
             }}
         >
             <div 
-                className="fixed left-1/2 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-rose-100 overflow-hidden"
+                className="fixed left-1/2 w-full max-w-md rounded-2xl shadow-xl border border-rose-100 overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
                 data-modal-type={activeItem?.type === 'video' ? 'video' : undefined}
                 style={{
@@ -109,7 +113,11 @@ function InlineModal({
                     transition: 'bottom 0.3s ease-out',
                     maxHeight: '80vh',
                     overflowY: 'auto',
-                    padding: '1.5rem'
+                    backgroundColor: activeItem?.modalBackgroundColor || '#ffffff',
+                    paddingTop: activeItem?.modalPaddingTop || '1.5rem',
+                    paddingRight: activeItem?.modalPaddingRight || '1.5rem',
+                    paddingBottom: activeItem?.modalPaddingBottom || '1.5rem',
+                    paddingLeft: activeItem?.modalPaddingLeft || '1.5rem'
                 }}
             >
                 <div className="relative z-10">
@@ -276,9 +284,8 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
 
     const isSelected = selectedId === id;
 
-    // Default items if none exist
+    // Default items if none exist (home removed)
     const defaultItems = [
-        { id: '1', type: 'home', label: 'Home', icon: 'home', iconType: 'default', visible: true },
         { id: '2', type: 'calendar', label: 'Date', icon: 'calendar', iconType: 'default', visible: true },
         { id: '3', type: 'contact', label: 'Contact', icon: 'phone', iconType: 'default', visible: true },
         { id: '4', type: 'gift', label: 'Gift', icon: 'gift', iconType: 'default', visible: true },
@@ -286,81 +293,12 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
 
     const items = data.items || defaultItems;
 
-    // Inject video item if enabled in global settings
-    const activeItems = [...items];
-    const videoItemId = 'video-global';
-    if (globalSettings?.backgroundMusic?.showVideo && !activeItems.find((i: any) => i.type === 'video')) {
-        // Insert before the last item (assuming last item is usually less important or we want it near end)
-        // Or just push to end
-        activeItems.push({
-            id: videoItemId,
-            type: 'video',
-            label: 'Video',
-            icon: 'video',
-            iconType: 'default',
-            visible: true
-        });
-    }
+    // Filter out home items and use items as-is (no auto-injection of video button)
+    const activeItems = items.filter((i: any) => i.type !== 'home');
     
-    // Get the video item for consistent ID checking
+    // Get the video item if it exists (for handling existing video items)
     const videoItem = activeItems.find((i: any) => i.type === 'video');
-    const actualVideoItemId = videoItem?.id || videoItemId;
-
-    // Auto-open video modal when preview page loads (if video is enabled)
-    // Modal will be hidden below screen (bottom: -300px) so video can autoplay without disturbing the UI
-    useEffect(() => {
-        if (!isPreview) return;
-        if (!globalSettings?.backgroundMusic?.showVideo) return;
-        if (!globalSettings?.backgroundMusic?.url) return;
-
-        // Wait for doors to open if there are doors
-        const checkDoorsAndOpenVideo = () => {
-            const doorButton = document.querySelector('button[aria-label*="Buka"]');
-            const hasDoor = doorButton !== null;
-            
-            if (hasDoor) {
-                // Wait for door-opened event
-                const handleDoorOpen = () => {
-                    setTimeout(() => {
-                        setActiveModal(videoItemId);
-                        setModalVisible(false); // Hide modal below screen initially
-                    }, 800);
-                    window.removeEventListener('door-opened', handleDoorOpen);
-                };
-                
-                window.addEventListener('door-opened', handleDoorOpen);
-                
-                // Also check if doors are already open
-                const checkInterval = setInterval(() => {
-                    const buttonStillVisible = document.querySelector('button[aria-label*="Buka"]');
-                    const buttonStyle = buttonStillVisible ? window.getComputedStyle(buttonStillVisible) : null;
-                    const isVisible = buttonStyle && buttonStyle.display !== 'none' && buttonStyle.opacity !== '0';
-                    
-                    if (!isVisible && buttonStillVisible === null) {
-                        clearInterval(checkInterval);
-                        setTimeout(() => {
-                            setActiveModal(videoItemId);
-                            setModalVisible(false); // Hide modal below screen initially
-                        }, 500);
-                    }
-                }, 200);
-                
-                return () => {
-                    window.removeEventListener('door-opened', handleDoorOpen);
-                    clearInterval(checkInterval);
-                };
-            } else {
-                // No doors, open video after a short delay
-                setTimeout(() => {
-                    setActiveModal(videoItemId);
-                    setModalVisible(false); // Hide modal below screen initially
-                }, 500);
-            }
-        };
-
-        const timer = setTimeout(checkDoorsAndOpenVideo, 200);
-        return () => clearTimeout(timer);
-    }, [isPreview, globalSettings?.backgroundMusic?.showVideo, globalSettings?.backgroundMusic?.url]);
+    const actualVideoItemId = videoItem?.id;
 
     const navStyle = data.style || {};
     const layoutType = data.layoutType || 'float'; // 'float' | 'full'
@@ -415,10 +353,16 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
 
     const handleItemClick = (e: React.MouseEvent, item: any) => {
         e.stopPropagation();
-        // Always select the widget when clicking inside it
-        selectNode(id);
+        
+        // In editor mode, select the item to show its properties
+        // In preview mode, open the modal
+        if (!isPreview) {
+            // Editor mode: just select the widget to show properties
+            selectNode(id);
+            return;
+        }
 
-        // Open modal if functionality is enabled
+        // Preview mode: open modal if functionality is enabled
         if (['contact', 'video', 'map', 'gift', 'calendar', 'rsvp'].includes(item.type)) {
             // Get current active item
             const currentActiveItem = activeItems.find((i: any) => i.id === activeModal);
@@ -589,19 +533,31 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
     };
 
     const renderModalContent = (item: any) => {
+        // Prepare modal styles from item properties
+        const modalStyles = {
+            title: {
+                fontSize: item.modalTitleFontSize || undefined,
+                color: item.modalTitleFontColor || undefined,
+                fontFamily: item.modalTitleFontFamily || undefined,
+                fontWeight: item.modalTitleFontWeight || undefined,
+            }
+        };
+
         switch (item.type) {
             case 'calendar':
                 // Creating dummy event data if not present, in real app this should come from item config or global event data
                 return <CalendarModal
                     event={item.eventData || { dateFull: 'Date not set', timeRange: '' }}
                     onDownloadICS={() => console.log("Download ICS")}
+                    styles={modalStyles}
                 />;
             case 'contact':
-                return <ContactModal contacts={item.contactList || []} />;
+                return <ContactModal contacts={item.contactList || []} styles={modalStyles} />;
             case 'map':
                 return <LocationModal
                     locationFull={item.locationAddress || 'No Address'}
                     mapQuery={item.locationMapQuery || item.locationAddress || ''}
+                    styles={modalStyles}
                 />;
             case 'video':
                 // Use global background music URL if available, otherwise fallback to item config
@@ -614,6 +570,7 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
                     isVisible={modalVisible}
                     playerRef={videoPlayerContext?.playerRef}
                     containerRef={videoPlayerContext?.containerRef}
+                    styles={modalStyles}
                 />;
             case 'gift':
                 return <GiftModal
@@ -621,11 +578,13 @@ export function BottomNavWidget({ id, data, style }: BottomNavWidgetProps) {
                     accountName={item.giftAccountName}
                     accountNumber={item.giftAccountNumber}
                     qrImage={item.giftQrImage}
+                    styles={modalStyles}
                 />;
             case 'rsvp':
                 return <RSVPModal
                     onSelectHadir={() => alert("Hadir selected")}
                     onSelectTidak={() => alert("Tidak Hadir selected")}
+                    styles={modalStyles}
                 />;
             default:
                 return null;

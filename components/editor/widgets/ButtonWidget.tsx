@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEvent } from "@/context/EventContext";
 import { motion } from "framer-motion";
 import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 interface ButtonWidgetProps {
     id: string;
@@ -28,6 +29,7 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
     const { event } = useEvent();
+    const { isPreview } = usePreview();
 
     // Get or create modal widget for this button
     const getOrCreateModalWidget = () => {
@@ -138,9 +140,17 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
     };
 
     const handleClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        selectNode(id);
+        if (!isPreview) {
+            // In editor mode, allow selection
+            e.stopPropagation();
+            selectNode(id);
+            return;
+        }
 
+        // In preview mode, don't allow selection, just execute actions
+        e.stopPropagation();
+
+        // In preview/studio mode, execute the action
         if (data.actionType === 'link' && data.linkUrl) {
             if (data.linkTarget === '_blank') {
                 window.open(data.linkUrl, '_blank');
@@ -168,7 +178,7 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
         selectNode(modalId); // Select modal widget when clicking on modal
     };
 
-    const isSelected = selectedId === id;
+    const isSelected = !isPreview && selectedId === id;
 
     // Use animation hooks
     const { widgetRef, controls, motionInitial, motionAnimate, animationVariants, useMotion } = useWidgetAnimations(
@@ -184,6 +194,10 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
         width: '100%',
         justifyContent: style.textAlign === 'center' ? 'center' : style.textAlign === 'right' ? 'flex-end' : 'flex-start',
         padding: '4px',
+        // If button has custom width, align wrapper accordingly
+        ...(style.width && style.width !== '100%' && style.width !== 'auto' ? {
+            justifyContent: style.textAlign === 'center' ? 'center' : style.textAlign === 'right' ? 'flex-end' : 'flex-start',
+        } : {})
     };
 
     const buttonStyle: React.CSSProperties = {
@@ -193,6 +207,7 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
         fontSize: style.fontSize || '14px',
         fontWeight: style.fontWeight || '500',
         fontFamily: style.fontFamily,
+        width: style.width || 'auto',
         borderTopWidth: style.borderTopWidth,
         borderRightWidth: style.borderRightWidth,
         borderBottomWidth: style.borderBottomWidth,
@@ -308,7 +323,7 @@ export function ButtonWidget({ id, data, style }: ButtonWidgetProps) {
                 } : {})}
                 style={wrapperStyle}
                 onClick={handleClick}
-                className={cn("group relative", isSelected ? "ring-2 ring-blue-500 ring-offset-2 z-10" : "hover:ring-1 hover:ring-blue-300")}
+                className={cn("group relative", !isPreview && (isSelected ? "ring-2 ring-blue-500 ring-offset-2 z-10" : "hover:ring-1 hover:ring-blue-300"))}
             >
                 <button
                     type="button"

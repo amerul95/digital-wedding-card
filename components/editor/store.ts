@@ -22,7 +22,8 @@ export type WidgetType =
     | 'bottom-nav'
     | 'door'
     | 'modal'
-    | 'congratulation-speech';
+    | 'congratulation-speech'
+    | 'attendance';
 
 export interface NodeAnimation {
     enabled: boolean;
@@ -46,7 +47,10 @@ export interface EditorNode {
 
 export interface GlobalSettings {
     autoscroll: boolean;
-    autoscrollDelay: number; // in seconds
+    autoscrollDelay: number; // in seconds - delay after door opens before autoscroll starts
+    autoscrollSpeed: number; // scroll speed (1-10, where 1 is slowest, 10 is fastest)
+    scrollAnimationBottomMargin: number; // in pixels - distance from bottom to trigger scroll animations
+    scrollAnimationThreshold: number; // 0-1 - percentage of element visible to trigger animation (default 0.1 = 10%)
     backgroundMusic: {
         url: string;
         showVideo: boolean;
@@ -112,6 +116,9 @@ const createInitialState = () => ({
     globalSettings: {
         autoscroll: false,
         autoscrollDelay: 0,
+        autoscrollSpeed: 5, // Default speed (medium)
+        scrollAnimationBottomMargin: 90, // Default 90px from bottom
+        scrollAnimationThreshold: 0.1, // Default 10% visibility
         backgroundMusic: {
             url: '',
             showVideo: false,

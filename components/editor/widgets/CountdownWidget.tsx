@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useClientStore } from "@/components/studio/clientStore";
 import { motion } from "framer-motion";
 import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 interface CountdownWidgetProps {
     id: string;
@@ -18,13 +19,15 @@ export function CountdownWidget({ id, data, style }: CountdownWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
     const clientData = useClientStore((state) => state.clientData);
+    const { isPreview } = usePreview();
 
     const handleClick = (e: React.MouseEvent) => {
+        if (isPreview) return; // Don't allow selection in preview mode
         e.stopPropagation();
         selectNode(id);
     };
 
-    const isSelected = selectedId === id;
+    const isSelected = !isPreview && selectedId === id;
 
     // Determine target date: use ceremony date from studio if available, otherwise use widget's targetDate
     const getTargetDate = () => {
@@ -143,7 +146,7 @@ export function CountdownWidget({ id, data, style }: CountdownWidgetProps) {
             } : {})}
             className={cn(
                 "relative transition-all group",
-                isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
+                !isPreview && (isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300"),
             )}
             style={containerStyle}
             onClick={handleClick}

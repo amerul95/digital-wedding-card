@@ -34,20 +34,34 @@ model User {
   id              String          @id @default(uuid())
   email           String          @unique
   password        String
-  roleId          Int?
+  roleId          Int?            // Keep for backward compatibility during migration
   createdAt       DateTime        @default(now())
   designer        Designer?
   passwordsResets PasswordReset[]
   sessions        Session[]
-  role            Role?           @relation(fields: [roleId], references: [id])
+  role            Role?           @relation("UserPrimaryRole", fields: [roleId], references: [id]) // Keep for backward compatibility
+  roles           UserRole[]      // Many-to-many relationship for multiple roles
   weddings        Wedding[]
   cart            Cart[]
 }
 
 model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
+  id    Int        @id @default(autoincrement())
+  name  String     @unique
+  users User[]     @relation("UserPrimaryRole") // Keep for backward compatibility
+  userRoles UserRole[] // Many-to-many relationship
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  roleId    Int      @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
 }
 
 model Wedding {

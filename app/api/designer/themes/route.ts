@@ -383,7 +383,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { name, config, defaultEventData, type = 'theme', isDuplicate = false } = body
+    const { name, config, defaultEventData, type = 'theme', isDuplicate = false, previewImageUrl } = body
 
     // For template type, auto-save theme and content if they don't exist FIRST
     // This must happen before generating the template's running number
@@ -531,6 +531,7 @@ export async function POST(req: Request) {
           color: config?.color || null,
           runningNumber,
         }),
+        previewImageUrl: previewImageUrl || null, // Store thumbnail if provided
         isPublished: false, // Default to draft
       } as any,
     })

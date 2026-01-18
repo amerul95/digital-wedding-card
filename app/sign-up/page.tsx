@@ -1,16 +1,18 @@
 "use client"
 
-import React, { Suspense } from 'react'
-import { SignUpForm } from '../features/SignUpForm'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useLoginModal } from '@/context/LoginModalContext'
 
 export default function SignUp() {
-    const signupRoute = process.env.SIGNUP_ROUTE!
+  const router = useRouter()
+  const { openModal } = useLoginModal()
 
-  return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <SignUpForm signUpRoute={signupRoute}/>
-      </Suspense>
-    </div>
-  )
+  // Redirect to open signup modal instead of showing page
+  useEffect(() => {
+    openModal('signup')
+    router.push('/')
+  }, [openModal, router])
+
+  return null
 }

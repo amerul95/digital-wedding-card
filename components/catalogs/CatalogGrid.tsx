@@ -1,6 +1,7 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CatalogCard from './CatalogCard'
+import axios from 'axios'
 
 interface CatalogItem {
   id: string
@@ -8,71 +9,42 @@ interface CatalogItem {
   designerName: string
   isFavourited: boolean
   year?: number | string
+  previewImage?: string | null
 }
 
-// Mock data - Replace with actual data from your API/database
-// Based on screenshot: Design E through Design L (8 designs)
-const mockCatalogs: CatalogItem[] = [
-  {
-    id: '1',
-    designName: 'Design E',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2024
-  },
-  {
-    id: '2',
-    designName: 'Design F',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2024
-  },
-  {
-    id: '3',
-    designName: 'Design G',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2025
-  },
-  {
-    id: '4',
-    designName: 'Design H',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2024
-  },
-  {
-    id: '5',
-    designName: 'Design I',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2025
-  },
-  {
-    id: '6',
-    designName: 'Design J',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2024
-  },
-  {
-    id: '7',
-    designName: 'Design K',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2025
-  },
-  {
-    id: '8',
-    designName: 'Design L',
-    designerName: 'By Payuk Lee',
-    isFavourited: false,
-    year: 2024
-  },
-]
-
 export default function CatalogGrid() {
-  const catalogs = mockCatalogs // Replace with actual data fetching
+  const [catalogs, setCatalogs] = useState<CatalogItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const response = await axios.get('/api/catalog/templates')
+        setCatalogs(response.data)
+      } catch (error) {
+        console.error('Error fetching templates:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTemplates()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className='mt-8 rounded-[30px] bg-[#F1F8F2] p-6'>
+        <div className='flex flex-col items-center justify-center min-h-[400px]'>
+          <p 
+            className='text-gray-900 mb-6 text-base'
+            style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+          >
+            Loading templates...
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className='mt-8 rounded-[30px] bg-[#F1F8F2] p-6'>
@@ -97,6 +69,7 @@ export default function CatalogGrid() {
               designerName={catalog.designerName}
               isFavourited={catalog.isFavourited}
               year={catalog.year}
+              previewImage={catalog.previewImage}
             />
           ))}
         </div>

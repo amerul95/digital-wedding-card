@@ -3,6 +3,7 @@
 import { useEditorStore } from "@/components/editor/store";
 import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 interface ContainerWidgetProps {
     id: string;
@@ -18,20 +19,23 @@ const LAYOUT_KEYS = [
 export function ContainerWidget({ id, data, style, children }: ContainerWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
+    const { isPreview } = usePreview();
 
     const { setNodeRef, isOver } = useDroppable({
         id: id,
         data: {
             type: 'container',
-        }
+        },
+        disabled: isPreview, // Disable drag and drop in preview mode
     });
 
     const handleClick = (e: React.MouseEvent) => {
+        if (isPreview) return; // Don't allow selection in preview mode
         e.stopPropagation();
         selectNode(id);
     };
 
-    const isSelected = selectedId === id;
+    const isSelected = !isPreview && selectedId === id;
 
     // Split styles
     const layoutStyle: React.CSSProperties = {};
@@ -89,9 +93,11 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
         <div
             ref={setNodeRef}
             className={cn(
-                "relative transition-all min-h-[20px] m-2 rounded border border-dashed",
-                isSelected ? "ring-2 ring-blue-500 border-blue-500 z-10" : "border-gray-300 hover:border-blue-300",
-                isOver ? "bg-blue-50/50" : "bg-transparent"
+                "relative transition-all min-h-[20px] m-2 rounded",
+                !isPreview && "border border-dashed",
+                !isPreview && (isSelected ? "ring-2 ring-blue-500 border-blue-500 z-10" : "border-gray-300 hover:border-blue-300"),
+                !isPreview && isOver && "bg-blue-50/50",
+                isPreview && "border-0"
             )}
             style={{
                 ...boxStyle,
@@ -102,13 +108,15 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
             }}
             onClick={handleClick}
         >
-            {/* Label for the container */}
-            <div className={cn(
-                "absolute -top-3 left-2 bg-gray-200 text-gray-600 text-[9px] px-1.5 py-0.5 rounded opacity-0 transition-opacity uppercase font-bold tracking-wider pointer-events-none z-20",
-                isSelected || isOver ? "opacity-100" : "group-hover:opacity-100"
-            )}>
-                Container
-            </div>
+            {/* Label for the container - only show in editor mode */}
+            {!isPreview && (
+                <div className={cn(
+                    "absolute -top-3 left-2 bg-gray-200 text-gray-600 text-[9px] px-1.5 py-0.5 rounded opacity-0 transition-opacity uppercase font-bold tracking-wider pointer-events-none z-20",
+                    isSelected || isOver ? "opacity-100" : "group-hover:opacity-100"
+                )}>
+                    Container
+                </div>
+            )}
 
             {/* Inner Content Wrapper - Recieves Layout Styles */}
             <div
@@ -118,7 +126,7 @@ export function ContainerWidget({ id, data, style, children }: ContainerWidgetPr
                 {children}
             </div>
 
-            {!children && (
+            {!children && !isPreview && (
                 <div className="h-full flex items-center justify-center text-xs text-gray-300 pointer-events-none">
                     Drop items
                 </div>

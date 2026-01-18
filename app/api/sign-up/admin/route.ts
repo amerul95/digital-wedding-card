@@ -57,7 +57,12 @@ export async function POST(req: Request) {
       data: {
         email,
         password: hashedPassword,
-        roleId: adminRole.id
+        roleId: adminRole.id, // Keep for backward compatibility
+        roles: {
+          create: {
+            roleId: adminRole.id
+          }
+        }
       }
     })
 

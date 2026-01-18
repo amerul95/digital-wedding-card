@@ -4,6 +4,7 @@ import { useEditorStore } from "@/components/editor/store";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 interface TextWidgetProps {
     id: string;
@@ -15,13 +16,15 @@ export function TextWidget({ id, data, style }: TextWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
     const updateNodeData = useEditorStore((state) => state.updateNodeData);
+    const { isPreview } = usePreview();
 
     const handleClick = (e: React.MouseEvent) => {
+        if (isPreview) return; // Don't allow selection in preview mode
         e.stopPropagation();
         selectNode(id);
     };
 
-    const isSelected = selectedId === id;
+    const isSelected = !isPreview && selectedId === id;
 
     // Use animation hooks
     const { widgetRef, controls, motionInitial, motionAnimate, animationVariants, useMotion } = useWidgetAnimations(
@@ -43,7 +46,7 @@ export function TextWidget({ id, data, style }: TextWidgetProps) {
             } : {})}
             className={cn(
                 "relative transition-all p-2 group",
-                isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
+                !isPreview && (isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300"),
             )}
             style={style}
             onClick={handleClick}

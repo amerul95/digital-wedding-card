@@ -134,6 +134,17 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
         }
     });
 
+    // Check if individual padding properties are set
+    const hasIndividualPadding = boxStyle.paddingTop || boxStyle.paddingRight || boxStyle.paddingBottom || boxStyle.paddingLeft;
+    
+    // If individual padding is set, exclude shorthand padding to avoid conflicts
+    const boxStyleWithoutPadding: React.CSSProperties = hasIndividualPadding 
+        ? (() => {
+            const { padding, ...rest } = boxStyle as any;
+            return rest;
+        })()
+        : boxStyle;
+
     const bgStyle: React.CSSProperties = {
         ...(boxStyle.backgroundImage ? {
             backgroundImage: `url(${boxStyle.backgroundImage})`,
@@ -258,7 +269,7 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
                 !boxStyle.backgroundImage && "bg-white", // Default white if no image
             )}
             style={{
-                ...boxStyle,
+                ...boxStyleWithoutPadding,
                 ...bgStyle,
                 // Ensure box-sizing is border-box so padding is included in height calculation
                 boxSizing: 'border-box',
@@ -283,7 +294,18 @@ export function SectionWidget({ id, data, style, children }: SectionWidgetProps)
                 // Padding applies to outer or inner? 
                 // Usually Padding fits on outer, affecting inner size.
                 // With border-box, this padding is included in the height above
-                padding: boxStyle?.padding || '20px 0',
+                // Support individual padding properties or shorthand
+                ...(boxStyle?.paddingTop || boxStyle?.paddingRight || boxStyle?.paddingBottom || boxStyle?.paddingLeft
+                    ? {
+                        paddingTop: boxStyle.paddingTop || '0px',
+                        paddingRight: boxStyle.paddingRight || '0px',
+                        paddingBottom: boxStyle.paddingBottom || '0px',
+                        paddingLeft: boxStyle.paddingLeft || '0px',
+                    }
+                    : {
+                        padding: boxStyle?.padding || '20px 0',
+                    }
+                ),
             }}
             onClick={handleClick}
         >

@@ -12,6 +12,8 @@ import {
   FieldError
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 import { z } from "zod"
 import { useForm } from "@tanstack/react-form"
@@ -25,6 +27,9 @@ const SignUpFormSchema = z.object({
     message: "Please enter a valid email"
   }).min(2, {
     message: "Please enter your email"
+  }),
+  phone: z.string().min(1, {
+    message: "Phone number is required"
   }),
   password: z.string().min(6, {
     message: "Password must be at least 6 characters"
@@ -57,6 +62,7 @@ export function SignUpForm({
   const form = useForm({
     defaultValues: {
       email: "",
+      phone: "",
       password: "",
       confirmPassword: ""
     } as SignUpFormValues,
@@ -69,6 +75,7 @@ export function SignUpForm({
       try {
         const response = await axios.post("/api/sign-up", {
           email: validationResult.data.email,
+          phone: validationResult.data.phone,
           password: validationResult.data.password
         }, {
           headers: { "Content-Type": "application/json" }
@@ -86,8 +93,8 @@ export function SignUpForm({
   })
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
+    <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
+      <Card className="overflow-hidden p-0 w-full max-w-[613px] mx-auto">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8" onSubmit={(e) => {
             e.preventDefault()
@@ -126,6 +133,37 @@ export function SignUpForm({
                       autoComplete="email"
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
+                    )}
+                  </Field>
+                )}
+              </form.Field>
+
+              <form.Field
+                name="phone"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = SignUpFormSchema.shape.phone.safeParse(value)
+                    if (result.success) return undefined
+                    const firstError = result.error.issues?.[0]
+                    return firstError?.message
+                  },
+                }}
+              >
+                {(field) => (
+                  <Field data-invalid={field.state.meta.errors.length > 0}>
+                    <FieldLabel htmlFor={field.name}>Phone Number</FieldLabel>
+                    <div className="phone-input-wrapper">
+                      <PhoneInput
+                        international
+                        defaultCountry="MY"
+                        value={field.state.value}
+                        onChange={(value) => field.handleChange(value || "")}
+                        onBlur={field.handleBlur}
+                        className="!w-full [&>input]:!w-full [&>input]:!px-4 [&>input]:!py-2.5 [&>input]:!rounded-lg [&>input]:!border [&>input]:!border-gray-300 [&>input]:!bg-white [&>input]:!text-gray-900 [&>input]:focus:outline-none [&>input]:focus:ring-2 [&>input]:focus:ring-gray-400 [&>input]:focus:border-transparent"
+                      />
+                    </div>
                     {field.state.meta.errors.length > 0 && (
                       <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
                     )}

@@ -1,6 +1,8 @@
 'use client'
 import React, { useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { ThumbnailPreview } from './ThumbnailPreview'
 
 interface CatalogCardProps {
   id: string
@@ -8,6 +10,7 @@ interface CatalogCardProps {
   designerName: string
   isFavourited: boolean
   year?: number | string
+  previewImage?: string | null
 }
 
 export default function CatalogCard({
@@ -15,8 +18,10 @@ export default function CatalogCard({
   designName,
   designerName,
   isFavourited: initialIsFavourited,
-  year
+  year,
+  previewImage
 }: CatalogCardProps) {
+  const router = useRouter()
   const [isFavourited, setIsFavourited] = useState(initialIsFavourited)
 
   const handleFavourite = () => {
@@ -24,19 +29,19 @@ export default function CatalogCard({
     // TODO: Update favourite status in database
   }
 
-  const handleEdit = () => {
-    // TODO: Navigate to edit page
-    console.log('Edit design:', id)
+  const handleTryNow = () => {
+    // Navigate to studio page with template ID
+    router.push(`/studio?templateId=${id}`)
   }
 
   const handlePreview = () => {
-    // TODO: Navigate to preview page
-    console.log('Preview design:', id)
+    // Open preview page with template ID in new tab (for client preview)
+    window.open(`/preview?templateId=${id}`, '_blank')
   }
 
   return (
     <div className='flex flex-col items-center'>
-      {/* Mobile Phone Mockup */}
+      {/* Mobile Phone Mockup with Card Thumbnail */}
       <div className='relative w-[118px] h-[237px] mb-3'>
         <Image 
           src="/profile/mobile.png" 
@@ -45,6 +50,15 @@ export default function CatalogCard({
           height={237}
           className='object-contain'
         />
+        {/* Card Thumbnail Preview */}
+        <div className='absolute top-[14px] left-[7px] w-[104px] h-[217px] overflow-hidden rounded-[8px]'>
+          <ThumbnailPreview
+            templateId={id}
+            previewImageUrl={previewImage}
+            width={104}
+            height={217}
+          />
+        </div>
       </div>
 
       {/* Design Name */}
@@ -108,24 +122,26 @@ export default function CatalogCard({
           )}
         </button>
 
-        {/* Edit Icon */}
+        {/* Try Now Button */}
         <button
-          onClick={handleEdit}
+          onClick={handleTryNow}
           className='w-10 h-10 rounded-full bg-white border border-gray-300 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors'
+          title="Try Now"
         >
           <Image 
             src="/favourites/edit.png" 
-            alt="Edit" 
+            alt="Try Now" 
             width={16} 
             height={16}
             className='object-contain'
           />
         </button>
 
-        {/* Preview/Next Icon */}
+        {/* Preview Button */}
         <button
           onClick={handlePreview}
           className='w-10 h-10 rounded-full bg-white border border-gray-300 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors'
+          title="Preview"
         >
           <Image 
             src="/favourites/next.png" 

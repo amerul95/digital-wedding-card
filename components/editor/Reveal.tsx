@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useAnimation, useReducedMotion } from "framer-motion";
+import { useEditorStore } from "@/components/editor/store";
 
 export type AnimationTrigger = "scroll" | "door" | "load" | "none";
 export type AnimationPreset = "fadeUp" | "fade" | "slideLeft" | "slideRight";
@@ -86,8 +87,13 @@ export function Reveal({
     const prefersReducedMotion = useReducedMotion();
     const [hasAnimated, setHasAnimated] = useState(false);
     const [isInView, setIsInView] = useState(false);
+    const globalSettings = useEditorStore((state) => state.globalSettings);
 
     const variants = getAnimationVariants(preset, !!prefersReducedMotion);
+    
+    // Use global settings for scroll animation, fallback to props/defaults
+    const scrollBottomMargin = globalSettings?.scrollAnimationBottomMargin ?? 90;
+    const scrollThreshold = globalSettings?.scrollAnimationThreshold ?? threshold;
 
     // Handle "load" trigger - animate immediately
     useEffect(() => {
@@ -124,9 +130,9 @@ export function Reveal({
         // Use rootRef if available, otherwise use viewport (null)
         const root = rootRef?.current || null;
 
-        // Calculate rootMargin to trigger animation 90px from bottom
+        // Calculate rootMargin to trigger animation based on global settings
         // This accounts for the bottom navbar and ensures content reveals at the right position
-        const rootMargin = `0px 0px -90px 0px`;
+        const rootMargin = `0px 0px -${scrollBottomMargin}px 0px`;
 
 
         const observer = new IntersectionObserver(
@@ -154,7 +160,7 @@ export function Reveal({
             {
                 root,
                 rootMargin,
-                threshold,
+                threshold: scrollThreshold,
             }
         );
 
@@ -168,7 +174,8 @@ export function Reveal({
         trigger,
         rootRef,
         bottomNavbarHeight,
-        threshold,
+        scrollThreshold,
+        scrollBottomMargin,
         delay,
         replay,
         hasAnimated,

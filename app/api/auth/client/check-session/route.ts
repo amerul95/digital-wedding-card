@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { jwtVerify } from "jose"
+import prisma from "@/lib/prisma"
 
 const JWT_SECRET = process.env.JWT_SECRET || ""
 
@@ -18,7 +19,24 @@ export async function GET() {
     
     // Client can be any user without admin/designer role
     if (payload.role && payload.role !== "admin" && payload.role !== "designer") {
-      return NextResponse.json({ authenticated: true })
+      // Get user info from database
+      const userId = payload.id as string
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          email: true,
+        },
+      })
+
+      // Extract name from email if available, or use email
+      const email = user?.email || payload.email as string || ''
+      const name = email.split('@')[0]
+
+      return NextResponse.json({ 
+        authenticated: true,
+        email: email,
+        name: name
+      })
     }
 
     return NextResponse.json({ authenticated: false })

@@ -108,8 +108,8 @@ export function CardStage({ isMobile }: CardStageProps) {
 
                                 {rootNode?.children.length === 0 && (
                                     <div className={cn(
-                                        "flex flex-col items-center justify-center text-gray-400 p-8 text-center border-2 border-dashed border-gray-200 m-4 rounded-xl",
-                                        isMobile ? "min-h-[812px]" : "h-full"
+                                        "flex flex-col items-center justify-center text-gray-400 p-8 text-center border-2 border-dashed border-gray-200 rounded-xl",
+                                        isMobile ? "m-4 min-h-[716px]" : "h-full m-4"
                                     )}>
                                         <p>Drop sections here</p>
                                     </div>

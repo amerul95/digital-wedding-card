@@ -522,6 +522,133 @@ function SortableNavItem({ item, onRemove, onUpdate, isExpanded, onToggleExpand 
                             <p className="text-[10px] text-gray-400 italic">Standard Action.</p>
                         )}
                     </div>
+
+                    {/* Modal Styling - Only for items that show modals */}
+                    {['contact', 'video', 'map', 'gift', 'calendar', 'rsvp'].includes(item.type) && (
+                        <div className="border-t pt-2 mt-2 space-y-2">
+                            <h5 className="text-[10px] font-semibold text-gray-500 uppercase">Modal Styling</h5>
+                            
+                            {/* Background Color */}
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Background Color</label>
+                                <input
+                                    type="color"
+                                    className="border rounded w-full h-8"
+                                    value={item.modalBackgroundColor || '#ffffff'}
+                                    onChange={(e) => onUpdate(item.id, { modalBackgroundColor: e.target.value })}
+                                />
+                            </div>
+
+                            {/* Padding Controls */}
+                            <div className="space-y-2">
+                                <label className="text-[10px] text-gray-500">Padding</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[9px] text-gray-400">Top</label>
+                                        <input
+                                            type="text"
+                                            className="border rounded p-1 text-xs"
+                                            placeholder="24px"
+                                            value={item.modalPaddingTop || ''}
+                                            onChange={(e) => onUpdate(item.id, { modalPaddingTop: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[9px] text-gray-400">Right</label>
+                                        <input
+                                            type="text"
+                                            className="border rounded p-1 text-xs"
+                                            placeholder="24px"
+                                            value={item.modalPaddingRight || ''}
+                                            onChange={(e) => onUpdate(item.id, { modalPaddingRight: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[9px] text-gray-400">Bottom</label>
+                                        <input
+                                            type="text"
+                                            className="border rounded p-1 text-xs"
+                                            placeholder="24px"
+                                            value={item.modalPaddingBottom || ''}
+                                            onChange={(e) => onUpdate(item.id, { modalPaddingBottom: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[9px] text-gray-400">Left</label>
+                                        <input
+                                            type="text"
+                                            className="border rounded p-1 text-xs"
+                                            placeholder="24px"
+                                            value={item.modalPaddingLeft || ''}
+                                            onChange={(e) => onUpdate(item.id, { modalPaddingLeft: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Title Text Styling */}
+                            <div className="border-t pt-2 mt-2 space-y-2">
+                                <h6 className="text-[10px] font-semibold text-gray-500">Title Text Styling</h6>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-gray-500">Font Size</label>
+                                        <input
+                                            type="text"
+                                            className="border rounded p-1 text-xs"
+                                            placeholder="18px"
+                                            value={item.modalTitleFontSize || ''}
+                                            onChange={(e) => onUpdate(item.id, { modalTitleFontSize: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-gray-500">Font Weight</label>
+                                        <select
+                                            className="border rounded p-1 text-xs"
+                                            value={item.modalTitleFontWeight || 'bold'}
+                                            onChange={(e) => onUpdate(item.id, { modalTitleFontWeight: e.target.value })}
+                                        >
+                                            <option value="normal">Normal</option>
+                                            <option value="bold">Bold</option>
+                                            <option value="100">Thin (100)</option>
+                                            <option value="200">Extra Light (200)</option>
+                                            <option value="300">Light (300)</option>
+                                            <option value="400">Regular (400)</option>
+                                            <option value="500">Medium (500)</option>
+                                            <option value="600">Semi Bold (600)</option>
+                                            <option value="700">Bold (700)</option>
+                                            <option value="800">Extra Bold (800)</option>
+                                            <option value="900">Black (900)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-gray-500">Font Family</label>
+                                        <select
+                                            className="border rounded p-1 text-xs"
+                                            value={item.modalTitleFontFamily || 'sans-serif'}
+                                            onChange={(e) => onUpdate(item.id, { modalTitleFontFamily: e.target.value })}
+                                        >
+                                            <option value="sans-serif">Sans Serif</option>
+                                            <option value="serif">Serif</option>
+                                            <option value="monospace">Monospace</option>
+                                            <option value="cursive">Cursive</option>
+                                            <option value="fantasy">Fantasy</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-gray-500">Font Color</label>
+                                        <input
+                                            type="color"
+                                            className="border rounded w-full h-8"
+                                            value={item.modalTitleFontColor || '#000000'}
+                                            onChange={(e) => onUpdate(item.id, { modalTitleFontColor: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
@@ -529,7 +656,6 @@ function SortableNavItem({ item, onRemove, onUpdate, isExpanded, onToggleExpand 
 }
 
 const defaultNavbarItems = [
-    { id: '1', type: 'home', label: 'Home', icon: 'home', iconType: 'default', visible: true },
     { id: '2', type: 'calendar', label: 'Date', icon: 'calendar', iconType: 'default', visible: true },
     { id: '3', type: 'contact', label: 'Contact', icon: 'phone', iconType: 'default', visible: true },
     { id: '4', type: 'gift', label: 'Gift', icon: 'gift', iconType: 'default', visible: true },
@@ -975,19 +1101,154 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col gap-1 mt-2">
-                                            <label className="text-xs text-gray-600">Font Family</label>
-                                            <select
-                                                className="border w-full p-1 text-sm"
-                                                value={node.style.fontFamily || 'sans'}
-                                                onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
-                                            >
-                                                <option value="sans">Sans Serif</option>
-                                                <option value="serif">Serif</option>
-                                                <option value="mono">Monospace</option>
-                                                <option value="cursive">Cursive</option>
-                                                <option value="fantasy">Fantasy</option>
-                                            </select>
+                                        {/* Button Size & Background */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-blue-600 flex items-center gap-2 border-b pb-2">
+                                                <Square size={14} /> Button Size & Background
+                                            </h4>
+
+                                            {/* Width */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Width</label>
+                                                <div className="flex gap-2">
+                                                    <select
+                                                        className="flex-1 text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                        value={node.style.width === '100%' ? 'full' : node.style.width === 'auto' || !node.style.width ? 'auto' : 'custom'}
+                                                        onChange={(e) => {
+                                                            if (e.target.value === 'full') {
+                                                                updateNodeStyle(targetId, { width: '100%' });
+                                                            } else if (e.target.value === 'auto') {
+                                                                updateNodeStyle(targetId, { width: 'auto' });
+                                                            } else {
+                                                                // When selecting custom, keep existing width or set default
+                                                                const currentWidth = node.style.width;
+                                                                if (!currentWidth || currentWidth === '100%' || currentWidth === 'auto') {
+                                                                    updateNodeStyle(targetId, { width: '200px' });
+                                                                }
+                                                            }
+                                                        }}
+                                                    >
+                                                        <option value="auto">Auto</option>
+                                                        <option value="full">Full Width</option>
+                                                        <option value="custom">Custom</option>
+                                                    </select>
+                                                </div>
+                                                {/* Show custom width input when "custom" is selected */}
+                                                {node.style.width && node.style.width !== '100%' && node.style.width !== 'auto' && (
+                                                    <div className="flex flex-col gap-1 mt-1">
+                                                        <label className="text-[10px] text-gray-500">Custom Width (px)</label>
+                                                        <input
+                                                            type="text"
+                                                            className="border rounded p-2 text-sm w-full"
+                                                            value={node.style.width?.replace('px', '') || ''}
+                                                            onChange={(e) => {
+                                                                const value = e.target.value;
+                                                                updateNodeStyle(targetId, { width: value ? `${value}px` : '200px' });
+                                                            }}
+                                                            placeholder="200"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Background Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Background Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.style.backgroundColor || '#111827'}
+                                                        onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.style.backgroundColor || '#111827'}
+                                                        onChange={(e) => updateNodeStyle(targetId, { backgroundColor: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Label Typography */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-green-600 flex items-center gap-2 border-b pb-2">
+                                                <Type size={14} /> Label Typography
+                                            </h4>
+
+                                            {/* Font Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.style.color || '#ffffff'}
+                                                        onChange={(e) => updateNodeStyle(targetId, { color: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.style.color || '#ffffff'}
+                                                        onChange={(e) => updateNodeStyle(targetId, { color: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Font Size */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Size (px)</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.style.fontSize?.replace('px', '') || 14}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        updateNodeStyle(targetId, { fontSize: value ? `${value}px` : '14px' });
+                                                    }}
+                                                    min="8"
+                                                    max="100"
+                                                />
+                                            </div>
+
+                                            {/* Font Weight */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Weight</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.style.fontWeight || '500'}
+                                                    onChange={(e) => updateNodeStyle(targetId, { fontWeight: e.target.value })}
+                                                >
+                                                    <option value="normal">Normal</option>
+                                                    <option value="500">500 (Medium)</option>
+                                                    <option value="bold">Bold</option>
+                                                    <option value="100">100 (Thin)</option>
+                                                    <option value="200">200 (Extra Light)</option>
+                                                    <option value="300">300 (Light)</option>
+                                                    <option value="400">400 (Regular)</option>
+                                                    <option value="600">600 (Semi Bold)</option>
+                                                    <option value="700">700 (Bold)</option>
+                                                    <option value="800">800 (Extra Bold)</option>
+                                                    <option value="900">900 (Black)</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Font Family */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Family</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.style.fontFamily || 'sans'}
+                                                    onChange={(e) => updateNodeStyle(targetId, { fontFamily: e.target.value })}
+                                                >
+                                                    <option value="sans">Sans Serif</option>
+                                                    <option value="serif">Serif</option>
+                                                    <option value="mono">Monospace</option>
+                                                    <option value="cursive">Cursive</option>
+                                                    <option value="fantasy">Fantasy</option>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         {/* Modal Configuration - Visible if action is not none */}
@@ -1494,6 +1755,239 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                                         />
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Attendance Widget Specifics */}
+                                {node.type === 'attendance' && (
+                                    <div className="flex flex-col gap-3">
+                                        {/* Numbers Properties */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-blue-600 flex items-center gap-2 border-b pb-2">
+                                                <Type size={14} /> Number Properties
+                                            </h4>
+
+                                            {/* Attending Number Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Attending Number Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.data.attendingNumberColor || '#16a34a'}
+                                                        onChange={(e) => updateNodeData(targetId, { attendingNumberColor: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.data.attendingNumberColor || '#16a34a'}
+                                                        onChange={(e) => updateNodeData(targetId, { attendingNumberColor: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Not Attending Number Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Not Attending Number Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.data.notAttendingNumberColor || '#dc2626'}
+                                                        onChange={(e) => updateNodeData(targetId, { notAttendingNumberColor: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.data.notAttendingNumberColor || '#dc2626'}
+                                                        onChange={(e) => updateNodeData(targetId, { notAttendingNumberColor: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Font Size */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Size (px)</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.numberFontSize || 24}
+                                                    onChange={(e) => updateNodeData(targetId, { numberFontSize: parseInt(e.target.value) || 24 })}
+                                                    min="8"
+                                                    max="200"
+                                                />
+                                            </div>
+
+                                            {/* Font Weight */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Weight</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.numberFontWeight || 'bold'}
+                                                    onChange={(e) => updateNodeData(targetId, { numberFontWeight: e.target.value })}
+                                                >
+                                                    <option value="normal">Normal</option>
+                                                    <option value="bold">Bold</option>
+                                                    <option value="100">100 (Thin)</option>
+                                                    <option value="200">200 (Extra Light)</option>
+                                                    <option value="300">300 (Light)</option>
+                                                    <option value="400">400 (Regular)</option>
+                                                    <option value="500">500 (Medium)</option>
+                                                    <option value="600">600 (Semi Bold)</option>
+                                                    <option value="700">700 (Bold)</option>
+                                                    <option value="800">800 (Extra Bold)</option>
+                                                    <option value="900">900 (Black)</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Font Family */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Family</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.numberFontFamily || 'sans'}
+                                                    onChange={(e) => updateNodeData(targetId, { numberFontFamily: e.target.value })}
+                                                >
+                                                    <option value="sans">Sans Serif</option>
+                                                    <option value="serif">Serif</option>
+                                                    <option value="mono">Monospace</option>
+                                                    <option value="cursive">Cursive</option>
+                                                    <option value="fantasy">Fantasy</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {/* Text Labels Properties */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-green-600 flex items-center gap-2 border-b pb-2">
+                                                <Type size={14} /> Text Labels Properties
+                                            </h4>
+
+                                            {/* Attend Label Text */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Attend Label Text</label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.attendLabel || 'Attending'}
+                                                    onChange={(e) => updateNodeData(targetId, { attendLabel: e.target.value })}
+                                                    placeholder="Attending"
+                                                />
+                                            </div>
+
+                                            {/* Not Attend Label Text */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Not Attend Label Text</label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.notAttendLabel || 'Not Attending'}
+                                                    onChange={(e) => updateNodeData(targetId, { notAttendLabel: e.target.value })}
+                                                    placeholder="Not Attending"
+                                                />
+                                            </div>
+
+                                            {/* Font Color */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        className="h-8 w-8 cursor-pointer rounded border p-0"
+                                                        value={node.data.labelColor || '#6b7280'}
+                                                        onChange={(e) => updateNodeData(targetId, { labelColor: e.target.value })}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 text-xs border rounded px-2"
+                                                        value={node.data.labelColor || '#6b7280'}
+                                                        onChange={(e) => updateNodeData(targetId, { labelColor: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Font Size */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Size (px)</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.labelFontSize || 12}
+                                                    onChange={(e) => updateNodeData(targetId, { labelFontSize: parseInt(e.target.value) || 12 })}
+                                                    min="8"
+                                                    max="100"
+                                                />
+                                            </div>
+
+                                            {/* Font Weight */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Weight</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.labelFontWeight || 'normal'}
+                                                    onChange={(e) => updateNodeData(targetId, { labelFontWeight: e.target.value })}
+                                                >
+                                                    <option value="normal">Normal</option>
+                                                    <option value="bold">Bold</option>
+                                                    <option value="100">100 (Thin)</option>
+                                                    <option value="200">200 (Extra Light)</option>
+                                                    <option value="300">300 (Light)</option>
+                                                    <option value="400">400 (Regular)</option>
+                                                    <option value="500">500 (Medium)</option>
+                                                    <option value="600">600 (Semi Bold)</option>
+                                                    <option value="700">700 (Bold)</option>
+                                                    <option value="800">800 (Extra Bold)</option>
+                                                    <option value="900">900 (Black)</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Font Family */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Font Family</label>
+                                                <select
+                                                    className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
+                                                    value={node.data.labelFontFamily || 'sans'}
+                                                    onChange={(e) => updateNodeData(targetId, { labelFontFamily: e.target.value })}
+                                                >
+                                                    <option value="sans">Sans Serif</option>
+                                                    <option value="serif">Serif</option>
+                                                    <option value="mono">Monospace</option>
+                                                    <option value="cursive">Cursive</option>
+                                                    <option value="fantasy">Fantasy</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {/* Layout Properties */}
+                                        <div className="space-y-3 border rounded-lg p-3 bg-white shadow-sm">
+                                            <h4 className="text-xs uppercase font-bold text-orange-600 flex items-center gap-2 border-b pb-2">
+                                                <Layout size={14} /> Layout Properties
+                                            </h4>
+
+                                            {/* Gap Between Attend and Not Attend */}
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] text-gray-500">Gap Between Attend & Not Attend (px)</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full text-xs border rounded px-2 py-1"
+                                                    value={node.data.gap || 24}
+                                                    onChange={(e) => updateNodeData(targetId, { gap: parseInt(e.target.value) || 24 })}
+                                                    min="0"
+                                                />
+                                                <p className="text-[9px] text-gray-400 mt-1">Space between attending and not attending sections</p>
+                                            </div>
+
+                                            {/* Show Separator */}
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] text-gray-500">Show Separator</label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-4 h-4 cursor-pointer"
+                                                    checked={node.data.showSeparator !== false}
+                                                    onChange={(e) => updateNodeData(targetId, { showSeparator: e.target.checked })}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -2330,28 +2824,101 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                             <select
                                                 className="border rounded p-2 text-sm w-full mb-1"
                                                 value={['auto', 'full'].includes(node.style.height) ? node.style.height : 'custom'}
-                                                onChange={(e) => updateNodeStyle(targetId, { height: e.target.value === 'custom' ? '300px' : e.target.value })}
+                                                onChange={(e) => {
+                                                    if (e.target.value === 'custom') {
+                                                        // Keep current height if it's already custom, otherwise set to 300px
+                                                        const currentHeight = node.style.height;
+                                                        updateNodeStyle(targetId, { height: (currentHeight && !['auto', 'full'].includes(currentHeight)) ? currentHeight : '300px' });
+                                                    } else {
+                                                        updateNodeStyle(targetId, { height: e.target.value });
+                                                    }
+                                                }}
                                             >
                                                 <option value="auto">Auto</option>
                                                 <option value="full">Full Screen</option>
                                                 <option value="custom">Custom</option>
                                             </select>
+                                            {/* Show custom height input when "custom" is selected */}
+                                            {!['auto', 'full'].includes(node.style.height) && (
+                                                <div className="flex flex-col gap-1 mt-1">
+                                                    <label className="text-[10px] text-gray-500">Height (px)</label>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-2 text-sm w-full"
+                                                        value={node.style.height?.replace('px', '') || ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            // Allow empty input, but save with px when not empty
+                                                            updateNodeStyle(targetId, { height: value ? `${value}px` : '300px' });
+                                                        }}
+                                                        placeholder="300"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     )}
 
-                                    {/* Padding & Margin */}
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="flex flex-col gap-1">
+                                    {/* Padding & Margin - Individual Controls for Section */}
+                                    {node.type === 'section' ? (
+                                        <div className="space-y-2">
                                             <label className="text-xs text-gray-600">Padding</label>
-                                            <input
-                                                type="text"
-                                                className="border rounded p-2 text-sm w-full"
-                                                value={node.style.padding || ''}
-                                                onChange={(e) => updateNodeStyle(targetId, { padding: e.target.value })}
-                                                placeholder="20px"
-                                            />
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Top</label>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-2 text-sm"
+                                                        value={node.style.paddingTop || ''}
+                                                        onChange={(e) => updateNodeStyle(targetId, { paddingTop: e.target.value })}
+                                                        placeholder="0px"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Right</label>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-2 text-sm"
+                                                        value={node.style.paddingRight || ''}
+                                                        onChange={(e) => updateNodeStyle(targetId, { paddingRight: e.target.value })}
+                                                        placeholder="0px"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Bottom</label>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-2 text-sm"
+                                                        value={node.style.paddingBottom || ''}
+                                                        onChange={(e) => updateNodeStyle(targetId, { paddingBottom: e.target.value })}
+                                                        placeholder="0px"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[10px] text-gray-500">Left</label>
+                                                    <input
+                                                        type="text"
+                                                        className="border rounded p-2 text-sm"
+                                                        value={node.style.paddingLeft || ''}
+                                                        onChange={(e) => updateNodeStyle(targetId, { paddingLeft: e.target.value })}
+                                                        placeholder="0px"
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs text-gray-600">Padding</label>
+                                                <input
+                                                    type="text"
+                                                    className="border rounded p-2 text-sm w-full"
+                                                    value={node.style.padding || ''}
+                                                    onChange={(e) => updateNodeStyle(targetId, { padding: e.target.value })}
+                                                    placeholder="20px"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Backdrop Filter (Section/Container) */}
                                     {(node.type === 'section' || node.type === 'container') && (
@@ -2382,11 +2949,11 @@ export function PropertyPanel({ isOpen }: PropertyPanelProps) {
                                         </>
                                     )}
 
-                                    {/* Motion Effects (Section/Container/Text/Button/Countdown/Slider/CongratulationSpeech) */}
+                                    {/* Motion Effects (Section/Container/Text/Button/Countdown/Slider/CongratulationSpeech/Attendance) */}
                                     {(node.type === 'section' || node.type === 'container' ||
                                         node.type === 'text' || node.type === 'button' ||
                                         node.type === 'countdown' || node.type === 'slider' ||
-                                        node.type === 'congratulation-speech') && (
+                                        node.type === 'congratulation-speech' || node.type === 'attendance') && (
                                             <div className="space-y-3 pt-4 border-t">
                                                 <h3 className="text-xs font-semibold text-gray-500 uppercase">Motion Effects</h3>
 

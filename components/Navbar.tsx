@@ -1,17 +1,52 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useLoginModal } from '@/context/LoginModalContext'
+import axios from 'axios'
 
 export default function NavBar() {
   const { openModal } = useLoginModal()
   const pathname = usePathname()
+  const router = useRouter()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
+
+  // Check authentication and get user info
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get('/api/auth/client/check-session')
+        if (response.data.authenticated) {
+          setIsAuthenticated(true)
+          // Try to get user name from JWT token (if available in response)
+          if (response.data.name) {
+            setUserName(response.data.name)
+          } else if (response.data.email) {
+            // Use email if name not available
+            const emailName = response.data.email.split('@')[0]
+            setUserName(emailName)
+          }
+        } else {
+          setIsAuthenticated(false)
+          setUserName(null)
+        }
+      } catch (error) {
+        setIsAuthenticated(false)
+        setUserName(null)
+      }
+    }
+    checkAuth()
+  }, [pathname])
 
   const handleSignInClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    openModal()
+    if (isAuthenticated) {
+      router.push('/profile')
+    } else {
+      openModal()
+    }
   }
 
   const getNavLinkClassName = (path: string) => {
@@ -85,8 +120,8 @@ export default function NavBar() {
         </Link>
       </div>
 
-      {/* Right Side - Sign In & Profile */}
-      <div className="flex items-center gap-4 flex-shrink-0">
+      {/* Right Side - Sign In & Profile (Grouped) */}
+      <div className="flex items-center gap-2 flex-shrink-0">
         <div className="w-px h-6 bg-[#d3d3d3]"></div>
         <a
           href="#"
@@ -94,7 +129,7 @@ export default function NavBar() {
           className="text-[#4a4a4a] uppercase font-bold hover:text-[#2d5016] transition-colors cursor-pointer whitespace-nowrap"
           style={{ fontSize: '14px' }}
         >
-          Sign In
+          {isAuthenticated && userName ? userName : 'Sign In'}
         </a>
         <Link
           href="/profile"

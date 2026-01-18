@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
 // Helper function to get cookie name based on route
-export function getCookieName(route: "client" | "designer" | "admin"): string {
+export function getCookieName(route: "client" | "designer" | "admin" | "unified"): string {
   switch (route) {
     case "client":
       return "next-auth.session-token.client"
@@ -11,6 +11,9 @@ export function getCookieName(route: "client" | "designer" | "admin"): string {
       return "next-auth.session-token.designer"
     case "admin":
       return "next-auth.session-token.admin"
+    case "unified":
+      // Unified login will detect role and use appropriate cookie
+      return "next-auth.session-token.client"
     default:
       return "next-auth.session-token.client"
   }

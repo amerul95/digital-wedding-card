@@ -7,7 +7,7 @@ import { getCookieName } from "./config"
 const JWT_SECRET = process.env.JWT_SECRET || ""
 
 export async function signIn(
-  route: "client" | "designer" | "admin",
+  route: "client" | "designer" | "admin" | "unified",
   emailOrUsername: string,
   password: string
 ) {
@@ -21,7 +21,9 @@ export async function signIn(
     // For other routes, use email as normal
     const user = await prisma.user.findUnique({
       where: { email: emailOrUsername },
-      include: { role: true },
+      include: { 
+        role: true, // Keep for backward compatibility
+      },
     })
 
     if (!user) {
@@ -41,25 +43,94 @@ export async function signIn(
       return { success: false, error: errorMessage }
     }
 
-    // Check role based on route
-    if (route === "admin") {
-      if (user.role?.name !== "admin") {
-        return { success: false, error: "Access denied. Admin role required." }
+    // Get all user roles from UserRole table (many-to-many relationship)
+    // Query directly to avoid Prisma type issues until client is regenerated
+    let userRoles: string[] = []
+    try {
+      const userRoleRecords = await (prisma as any).userRole.findMany({
+        where: { userId: user.id },
+        include: { role: true }
+      })
+      userRoles = (userRoleRecords || []).map((ur: any) => ur.role?.name).filter(Boolean)
+    } catch (error) {
+      // UserRole table might not exist yet if migration hasn't been run
+      // Fall back to old roleId field
+      console.log("UserRole table query failed, using roleId fallback:", error)
+    }
+    
+    // For backward compatibility, also check the old roleId field
+    // If user has roles in UserRole table, use those; otherwise fall back to old role field
+    const allRoles = userRoles.length > 0 
+      ? userRoles 
+      : (user.role?.name ? [user.role.name] : ["client"])
+    
+    // Check if user has client role (everyone is a client by default)
+    const hasClientRole = allRoles.includes("client") || allRoles.length === 0
+    const hasDesignerRole = allRoles.includes("designer")
+    const hasAdminRole = allRoles.includes("admin")
+
+    // For unified login, set cookie ONLY for primary role (best practice)
+    if (route === "unified") {
+      const cookieStore = await cookies()
+      const userRolesForToken = allRoles.length > 0 ? allRoles : ["client"]
+      
+      // Determine primary role for redirect (priority: admin > designer > client)
+      let primaryRole: "admin" | "designer" | "client" = "client"
+      if (hasAdminRole) {
+        primaryRole = "admin"
+      } else if (hasDesignerRole) {
+        primaryRole = "designer"
       }
-    } else if (route === "designer") {
-      if (user.role?.name !== "designer") {
-        return { success: false, error: "Access denied. Designer role required." }
-      }
-    } else if (route === "client") {
-      // Client can be any user without specific role or with client role
-      if (user.role?.name === "admin" || user.role?.name === "designer") {
-        return { success: false, error: "Please use the correct login page for your role." }
+
+      // Set cookie ONLY for the primary role (best practice - principle of least privilege)
+      const primaryToken = jwt.sign(
+        { id: user.id, email: user.email, role: primaryRole, roles: userRolesForToken },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      )
+      cookieStore.set({
+        name: getCookieName(primaryRole as "client" | "designer" | "admin"),
+        value: primaryToken,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: "lax",
+      })
+
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: primaryRole,
+          roles: userRolesForToken,
+        },
+        redirectRoute: primaryRole,
+        allRoles: userRolesForToken,
       }
     }
 
-    // Create JWT token
+    // For specific route logins, check if user has the required role
+    if (route === "admin") {
+      if (!hasAdminRole) {
+        return { success: false, error: "Access denied. Admin role required." }
+      }
+    } else if (route === "designer") {
+      if (!hasDesignerRole) {
+        return { success: false, error: "Access denied. Designer role required." }
+      }
+    } else if (route === "client") {
+      // Client access is allowed for everyone
+      // No need to check specific role
+    }
+
+    // Create JWT token with all roles
+    const userRolesForToken = allRoles.length > 0 ? allRoles : ["client"]
+    const routeRole = route === "admin" ? "admin" : route === "designer" ? "designer" : "client"
+    
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role?.name || "client" },
+      { id: user.id, email: user.email, role: routeRole, roles: userRolesForToken },
       JWT_SECRET,
       { expiresIn: "7d" }
     )
@@ -81,7 +152,8 @@ export async function signIn(
       user: {
         id: user.id,
         email: user.email,
-        role: user.role?.name || "client",
+        role: routeRole,
+        roles: userRolesForToken,
       },
     }
   } catch (error) {

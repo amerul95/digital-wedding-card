@@ -60,7 +60,7 @@ export function LoginForm({
       }
 
       try {
-        const response = await axios.post("/api/auth/client/login", {
+        const response = await axios.post("/api/auth/unified/login", {
           email: validationResult.data.email,
           password: validationResult.data.password,
         }, {
@@ -69,7 +69,9 @@ export function LoginForm({
 
         if (response.status === 200) {
           toast.success("Login successful")
-          router.push(decodedRedirect)
+          // Use redirect from response if available, otherwise use the redirect param
+          const redirectUrl = response.data.redirect || decodedRedirect
+          router.push(redirectUrl)
         }
       } catch (error: any) {
         const message = error?.response?.data?.error || "Invalid email or password"

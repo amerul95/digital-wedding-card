@@ -7,6 +7,8 @@ import { BottomNavBar } from "@/components/editor/canvas/BottomNavBar";
 import { SectionNavigator } from "@/components/editor/canvas/SectionNavigator";
 import { PreviewProvider } from "@/components/editor/context/PreviewContext";
 import { VideoPlayerProvider, useVideoPlayer } from "@/components/editor/context/VideoPlayerContext";
+import { BackgroundVideoPlayer } from "@/components/card/BackgroundVideoPlayer";
+import { MusicController } from "@/components/card/MusicController";
 
 export default function PreviewPage() {
   const [loading, setLoading] = useState(true);
@@ -23,11 +25,18 @@ export default function PreviewPage() {
           // Manually hydrate the store
           // We can't use store.setState directly because of immer middleware potentially?
           // actually zustand store.setState works fine.
+          const currentGlobalSettings = useEditorStore.getState().globalSettings;
           useEditorStore.setState({
             nodes: parsed.nodes,
             rootId: parsed.rootId || 'root',
             selectedId: null, // Clear selection in preview
-            globalSettings: parsed.globalSettings || useEditorStore.getState().globalSettings, // Load globalSettings (background music/video)
+            globalSettings: {
+              ...currentGlobalSettings,
+              ...(parsed.globalSettings || {}),
+              // Ensure new fields have defaults if not present
+              scrollAnimationBottomMargin: parsed.globalSettings?.scrollAnimationBottomMargin ?? currentGlobalSettings.scrollAnimationBottomMargin ?? 90,
+              scrollAnimationThreshold: parsed.globalSettings?.scrollAnimationThreshold ?? currentGlobalSettings.scrollAnimationThreshold ?? 0.1,
+            },
             viewOptions: parsed.viewOptions || useEditorStore.getState().viewOptions // Load viewOptions
           });
         }
@@ -59,7 +68,7 @@ export default function PreviewPage() {
     <PreviewProvider isPreview={true}>
       <VideoPlayerProvider>
         <div className="min-h-screen bg-gray-100 flex justify-center">
-          <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative">
+          <div className="w-full max-w-md bg-white h-screen shadow-2xl relative overflow-hidden">
             {/* Render Root */}
             <PreviewRoot />
 
@@ -84,57 +93,139 @@ function PreviewRoot() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const globalSettings = useEditorStore((state) => state.globalSettings);
+  const setCardScrollElement = useEditorStore((state) => state.setCardScrollElement);
+  const setDoorStatus = useEditorStore((state) => state.setDoorStatus);
   const { playerRef, containerRef: videoContainerRef, setPlayer, setContainer } = useVideoPlayer();
 
   // Track if doors are open - start with doors closed
   const [doorsOpen, setDoorsOpen] = useState(false);
   const [showDoors, setShowDoors] = useState(hasDoor ? true : false);
+  const [doorAnimationComplete, setDoorAnimationComplete] = useState(false);
 
-  // Autoscroll Effect
+  // Set card scroll element for animations and autoscroll
   useEffect(() => {
-    // Only run if autoscroll is enabled, doors are open, and we have a valid delay
-    if (!doorsOpen || !globalSettings?.autoscroll) return;
+    if (containerRef.current) {
+      setCardScrollElement(containerRef.current);
+    }
+    return () => {
+      setCardScrollElement(null);
+    };
+  }, [setCardScrollElement]);
 
-    // Default to 5 seconds if not set (though store defaults to 0, which might mean immediate? User asked for 5s default in prompt context implies safety)
-    // The store default is 0. If user inputs 5, it is 5.
+  // Ensure animations are enabled and set initial door status
+  useEffect(() => {
+    const currentViewOptions = useEditorStore.getState().viewOptions;
+    if (!currentViewOptions.showAnimation) {
+      useEditorStore.setState({
+        viewOptions: { ...currentViewOptions, showAnimation: true }
+      });
+    }
+    
+    // Set initial door status
+    if (hasDoor) {
+      setDoorStatus("closed");
+    } else {
+      setDoorStatus("opened");
+    }
+
+    // Debug: Log autoscroll settings
+    console.log('[Preview] Autoscroll settings:', {
+      autoscroll: globalSettings?.autoscroll,
+      delay: globalSettings?.autoscrollDelay,
+      speed: globalSettings?.autoscrollSpeed,
+      hasDoor,
+      doorsOpen
+    });
+  }, [hasDoor, setDoorStatus, globalSettings]);
+
+  // Autoscroll Effect - Only start after door animation is 100% complete
+  useEffect(() => {
+    // Only run if autoscroll is enabled, doors animation is complete, and we have a valid delay
+    if (!doorAnimationComplete || !globalSettings?.autoscroll) {
+      return;
+    }
+
+    // Delay after door animation completes before starting autoscroll (in milliseconds)
     const delay = (globalSettings.autoscrollDelay || 0) * 1000;
 
     const scrollTimer = setTimeout(() => {
       const container = containerRef.current;
-      if (!container) return;
+      if (!container) {
+        console.log('[Autoscroll] No container found');
+        return;
+      }
 
-      const maxScroll = container.scrollHeight - container.clientHeight;
-      if (maxScroll <= 0) return;
-
-      // Slow smooth scroll similar to CeremonyCard
-      const scrollDuration = 30000; // 30 seconds to scroll to bottom
-      const startTime = performance.now();
-      const startScroll = container.scrollTop;
-
-      const animateScroll = (currentTime: number) => {
-        // Check if user manually intervened? (Complex, skip for now)
-
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / scrollDuration, 1);
-
-        // Ease-in-out
-        const easeProgress = progress < 0.5
-          ? 2 * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-        container.scrollTop = startScroll + (maxScroll * easeProgress);
-
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
+      // Function to check and start autoscroll
+      const checkAndStartScroll = (attempts = 0) => {
+        // Wait for content to be rendered - check multiple times
+        // Force a reflow to ensure accurate measurements
+        container.scrollTop = 0;
+        const maxScroll = container.scrollHeight - container.clientHeight;
+        
+        if (maxScroll <= 0) {
+          // Content might not be rendered yet, try again after a short delay
+          if (attempts < 20) {
+            setTimeout(() => checkAndStartScroll(attempts + 1), 200);
+            return;
+          }
+          console.log('[Autoscroll] No scrollable content after retries', {
+            scrollHeight: container.scrollHeight,
+            clientHeight: container.clientHeight,
+            maxScroll,
+            attempts
+          });
+          return;
         }
+
+        console.log('[Autoscroll] Starting scroll', {
+          scrollHeight: container.scrollHeight,
+          clientHeight: container.clientHeight,
+          maxScroll,
+          speed: globalSettings.autoscrollSpeed
+        });
+
+        // Calculate scroll duration based on speed (1-10)
+        // Speed 1 = 60 seconds (slowest)
+        // Speed 5 = 12 seconds (medium)
+        // Speed 10 = 6 seconds (fastest)
+        const speed = globalSettings.autoscrollSpeed || 5;
+        const scrollDuration = (60 / speed) * 1000; // Convert to milliseconds
+        
+        const startTime = performance.now();
+        const startScroll = container.scrollTop;
+
+        const animateScroll = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / scrollDuration, 1);
+
+          // Ease-in-out
+          const easeProgress = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+          container.scrollTop = startScroll + (maxScroll * easeProgress);
+
+          if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+          } else {
+            console.log('[Autoscroll] Scroll completed');
+          }
+        };
+
+        requestAnimationFrame(animateScroll);
       };
 
-      requestAnimationFrame(animateScroll);
+      // Wait for DOM to settle after door animation, then check for scrollable content
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          checkAndStartScroll();
+        });
+      });
 
     }, delay);
 
     return () => clearTimeout(scrollTimer);
-  }, [doorsOpen, globalSettings?.autoscroll, globalSettings?.autoscrollDelay]);
+  }, [doorAnimationComplete, globalSettings?.autoscroll, globalSettings?.autoscrollDelay, globalSettings?.autoscrollSpeed]);
 
   // Listen for door open events from DoorWidget
   useEffect(() => {
@@ -142,18 +233,27 @@ function PreviewRoot() {
       // No door, show content immediately
       setDoorsOpen(true);
       setShowDoors(false);
+      setDoorAnimationComplete(true); // No animation, so mark as complete
+      setDoorStatus("opened");
       return;
     }
 
     // Listen for custom events from DoorWidget when doors open
     const handleDoorOpen = () => {
+      console.log('[Preview] Door opened event received - animation starting');
       setDoorsOpen(true);
+      setDoorStatus("opening");
+      setDoorAnimationComplete(false); // Reset to false when door starts opening
     };
 
     const handleDoorAnimationComplete = () => {
+      console.log('[Preview] Door animation complete - autoscroll can start');
       setShowDoors(false);
+      setDoorStatus("opened");
+      setDoorAnimationComplete(true); // Mark animation as complete - this triggers autoscroll
     };
 
+    console.log('[Preview] Setting up door event listener');
     // Listen for door state changes via custom events
     window.addEventListener('door-opened', handleDoorOpen);
     window.addEventListener('door-animation-complete', handleDoorAnimationComplete);
@@ -162,7 +262,7 @@ function PreviewRoot() {
       window.removeEventListener('door-opened', handleDoorOpen);
       window.removeEventListener('door-animation-complete', handleDoorAnimationComplete);
     };
-  }, [hasDoor]);
+  }, [hasDoor, setDoorStatus]);
 
   // Fallback: Monitor door state by checking DOM
   useEffect(() => {
@@ -199,15 +299,12 @@ function PreviewRoot() {
   return (
     <div
       ref={containerRef}
+      className={`h-screen relative ${doorsClosed ? '' : 'scrollbar-hide'}`}
       style={{
         ...rootNode.style,
         overflow: doorsClosed ? 'hidden' : 'auto',
-        height: doorsClosed ? '100vh' : 'auto',
-        maxHeight: doorsClosed ? '100vh' : 'none',
-        position: 'relative', // Ensure relative positioning
-        width: '100%',        // Ensure width
+        height: '100vh',
       }}
-      className={doorsClosed ? "min-h-screen relative overflow-hidden" : "min-h-screen relative"}
     >
       {/* Content wrapper - visible but not interactive when doors are closed (for blur effect) */}
       <div
@@ -230,6 +327,25 @@ function PreviewRoot() {
       {/* Render door separately on top */}
       {hasDoor && doorNodeEntry && (
         <NodeRenderer nodeId={doorNodeEntry[0]} />
+      )}
+
+      {/* Background Video Player - autoplays on load */}
+      {globalSettings?.backgroundMusic?.url && (
+        <BackgroundVideoPlayer
+          videoUrl={globalSettings.backgroundMusic.url}
+          startTime={globalSettings.backgroundMusic.startTime || 0}
+          duration={globalSettings.backgroundMusic.duration || 0}
+          playerRef={playerRef}
+          onPlayerReady={(player) => {
+            setPlayer(player);
+            // Container is managed internally by BackgroundVideoPlayer
+          }}
+        />
+      )}
+
+      {/* Music Controller - button with dropdown for play/pause */}
+      {globalSettings?.backgroundMusic?.url && (
+        <MusicController playerRef={playerRef} />
       )}
     </div>
   );

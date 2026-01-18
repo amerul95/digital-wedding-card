@@ -65,36 +65,6 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
         }
     };
 
-    const handleToggleVideo = (show: boolean) => {
-        updateGlobalSettings({ showVideo: show });
-        
-        // Find all bottom-nav widgets (in case there are multiple)
-        const bottomNavIds = Object.keys(nodes).filter(key => nodes[key].type === 'bottom-nav');
-        
-        bottomNavIds.forEach(bottomNavId => {
-            const bottomNav = nodes[bottomNavId];
-            if (!bottomNav) return;
-            
-            const items = bottomNav.data.items || [];
-            const hasVideo = items.find((i: any) => i.type === 'video');
-            
-            if (show && !hasVideo) {
-                // Add video item to menu
-                const newItem = {
-                    id: `item-video-${Date.now()}-${bottomNavId}`,
-                    type: 'video',
-                    label: 'Video',
-                    icon: 'video',
-                    iconType: 'default',
-                    visible: true
-                };
-                updateNodeData(bottomNavId, { items: [...items, newItem] });
-            } else if (!show && hasVideo) {
-                // Remove all video items from menu
-                updateNodeData(bottomNavId, { items: items.filter((i: any) => i.type !== 'video') });
-            }
-        });
-    };
 
     const handleDoorSelection = () => {
         if (doorNodeId) selectNode(doorNodeId);
@@ -237,19 +207,89 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
                             onChange={(e) => updateGlobalSettings({ autoscroll: e.target.checked })}
                         />
                     </div>
-                    {/* Autoscroll Delay */}
+                    {/* Autoscroll Settings */}
                     {globalSettings.autoscroll && (
-                        <div className="flex flex-col gap-1 mt-2 pl-6 border-l-2 border-gray-100 ml-1.5">
-                            <label className="text-[10px] text-gray-500">Delay (Seconds)</label>
+                        <div className="space-y-2 mt-2 pl-6 border-l-2 border-gray-100 ml-1.5">
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Delay (Seconds)</label>
+                                <input
+                                    type="number"
+                                    className="border rounded p-2 text-xs"
+                                    placeholder="0"
+                                    min="0"
+                                    value={globalSettings.autoscrollDelay}
+                                    onChange={(e) => updateGlobalSettings({ autoscrollDelay: parseInt(e.target.value) || 0 })}
+                                />
+                                <p className="text-[10px] text-gray-400">
+                                    Time to wait after door opens before starting autoscroll
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label className="text-[10px] text-gray-500">Speed (1-10)</label>
+                                <input
+                                    type="number"
+                                    className="border rounded p-2 text-xs"
+                                    placeholder="5"
+                                    min="1"
+                                    max="10"
+                                    value={globalSettings.autoscrollSpeed}
+                                    onChange={(e) => {
+                                        const speed = parseInt(e.target.value) || 5;
+                                        const clampedSpeed = Math.max(1, Math.min(10, speed));
+                                        updateGlobalSettings({ autoscrollSpeed: clampedSpeed });
+                                    }}
+                                />
+                                <p className="text-[10px] text-gray-400">
+                                    1 = slowest, 10 = fastest
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <hr />
+
+                {/* Scroll Animation Settings Section */}
+                <div className="space-y-3">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase flex items-center gap-2">
+                        <Eye size={14} /> Scroll Animation
+                    </h3>
+                    <div className="space-y-2 pl-6 border-l-2 border-gray-100 ml-1.5">
+                        <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-500">Bottom Margin (px)</label>
                             <input
                                 type="number"
                                 className="border rounded p-2 text-xs"
-                                placeholder="0"
-                                value={globalSettings.autoscrollDelay}
-                                onChange={(e) => updateGlobalSettings({ autoscrollDelay: parseInt(e.target.value) || 0 })}
+                                placeholder="90"
+                                min="0"
+                                value={globalSettings.scrollAnimationBottomMargin}
+                                onChange={(e) => updateGlobalSettings({ scrollAnimationBottomMargin: parseInt(e.target.value) || 90 })}
                             />
+                            <p className="text-[10px] text-gray-400">
+                                Distance from bottom of viewport to trigger scroll animations
+                            </p>
                         </div>
-                    )}
+                        <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-500">Visibility Threshold (0-1)</label>
+                            <input
+                                type="number"
+                                className="border rounded p-2 text-xs"
+                                placeholder="0.1"
+                                min="0"
+                                max="1"
+                                step="0.05"
+                                value={globalSettings.scrollAnimationThreshold}
+                                onChange={(e) => {
+                                    const threshold = parseFloat(e.target.value) || 0.1;
+                                    const clampedThreshold = Math.max(0, Math.min(1, threshold));
+                                    updateGlobalSettings({ scrollAnimationThreshold: clampedThreshold });
+                                }}
+                            />
+                            <p className="text-[10px] text-gray-400">
+                                0.1 = 10% visible, 0.5 = 50% visible, 1.0 = 100% visible
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <hr />
@@ -272,14 +312,32 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <label className="text-[10px] text-gray-500">Duration (Seconds)</label>
-                        <input
-                            type="number"
+                        <label className="text-[10px] text-gray-500">Duration</label>
+                        <select
                             className="border rounded p-2 text-xs"
-                            placeholder="0 (Unlimited)"
-                            value={globalSettings.backgroundMusic.duration}
-                            onChange={(e) => updateGlobalSettings({ duration: parseInt(e.target.value) || 0 })}
-                        />
+                            value={globalSettings.backgroundMusic.duration === 0 ? 'full' : 'custom'}
+                            onChange={(e) => {
+                                if (e.target.value === 'full') {
+                                    updateGlobalSettings({ duration: 0 });
+                                } else {
+                                    // Keep current custom value or set to a default
+                                    const currentDuration = globalSettings.backgroundMusic.duration || 60;
+                                    updateGlobalSettings({ duration: currentDuration });
+                                }
+                            }}
+                        >
+                            <option value="full">Full Duration</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        {globalSettings.backgroundMusic.duration !== 0 && (
+                            <input
+                                type="number"
+                                className="border rounded p-2 text-xs mt-1"
+                                placeholder="Duration in seconds"
+                                value={globalSettings.backgroundMusic.duration}
+                                onChange={(e) => updateGlobalSettings({ duration: parseInt(e.target.value) || 0 })}
+                            />
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -290,15 +348,6 @@ export function RightSidebar({ isMobile, setIsMobile }: RightSidebarProps) {
                             placeholder="0 (Start form beginning)"
                             value={globalSettings.backgroundMusic.startTime}
                             onChange={(e) => updateGlobalSettings({ startTime: parseInt(e.target.value) || 0 })}
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between bg-blue-50 p-2 rounded border border-blue-100">
-                        <label className="text-xs text-blue-800 font-medium">Show Video Button</label>
-                        <input
-                            type="checkbox"
-                            checked={globalSettings.backgroundMusic.showVideo}
-                            onChange={(e) => handleToggleVideo(e.target.checked)}
                         />
                     </div>
                 </div>

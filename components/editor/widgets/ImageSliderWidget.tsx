@@ -17,6 +17,7 @@ import 'swiper/css/effect-flip';
 import 'swiper/css/effect-cards';
 import { motion } from "framer-motion";
 import { useWidgetAnimations } from "@/components/editor/utils/animationUtils";
+import { usePreview } from "@/components/editor/context/PreviewContext";
 
 interface ImageSliderWidgetProps {
     id: string;
@@ -28,13 +29,15 @@ export function ImageSliderWidget({ id, data, style }: ImageSliderWidgetProps) {
     const selectNode = useEditorStore((state) => state.selectNode);
     const selectedId = useEditorStore((state) => state.selectedId);
     const updateNodeData = useEditorStore((state) => state.updateNodeData);
+    const { isPreview } = usePreview();
 
     const handleClick = (e: React.MouseEvent) => {
+        if (isPreview) return; // Don't allow selection in preview mode
         e.stopPropagation();
         selectNode(id);
     };
 
-    const isSelected = selectedId === id;
+    const isSelected = !isPreview && selectedId === id;
     const images = data.images || [];
 
     // Container width handling
@@ -81,7 +84,7 @@ export function ImageSliderWidget({ id, data, style }: ImageSliderWidgetProps) {
             } : {})}
             className={cn(
                 "relative transition-all group z-0", // Removed p-1 padding - now controlled by data properties
-                isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300",
+                !isPreview && (isSelected ? "ring-2 ring-blue-500 z-10" : "hover:ring-1 hover:ring-blue-300"),
             )}
             style={containerStyle}
             onClick={handleClick}

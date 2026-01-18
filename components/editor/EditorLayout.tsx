@@ -72,6 +72,11 @@ export function EditorLayout() {
                     // Default congratulation speech data
                     enableAutoScroll: type === 'congratulation-speech' ? false : undefined,
                     autoScrollDelay: type === 'congratulation-speech' ? 3000 : undefined,
+                    // Default attendance data
+                    attendLabel: type === 'attendance' ? 'Attending' : undefined,
+                    notAttendLabel: type === 'attendance' ? 'Not Attending' : undefined,
+                    gap: type === 'attendance' ? 24 : undefined,
+                    showSeparator: type === 'attendance' ? true : undefined,
                 },
                 style: {},
             };

@@ -46,7 +46,7 @@ export default function ContactForm() {
   })
 
   return (
-    <div className='w-full max-w-[480px] ml-[200px]'>
+    <div className='w-full max-w-[480px]'>
       {/* Title */}
       <h1
         className='text-2xl font-bold text-[#36463A] mb-4 text-center'
@@ -189,7 +189,7 @@ export default function ContactForm() {
         </form.Field>
 
         {/* Send Button */}
-        <div className='flex justify-end'>
+        <div className='flex justify-start'>
           <button
             type='submit'
             disabled={form.state.isSubmitting}
