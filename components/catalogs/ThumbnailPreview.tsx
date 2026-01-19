@@ -30,13 +30,14 @@ export function ThumbnailPreview({
   height = 237,
   className = ''
 }: ThumbnailPreviewProps) {
-  // If editorData is available, prefer rendering the section over preview image
-  // This ensures we show the actual current state with correct background colors
-  const preferRenderOverImage = !!editorData
+  // Prioritize server-generated thumbnails over live rendering
+  // Server-generated thumbnails are more accurate and faster to load
+  // Only use live rendering as fallback when no thumbnail exists
+  const preferRenderOverImage = false // Always prefer server-generated thumbnails when available
   
   const [isLoading, setIsLoading] = useState(!previewImageUrl && !editorData)
-  // When editorData is available, always render the section (ignore preview image)
-  const [shouldRenderFallback, setShouldRenderFallback] = useState(!previewImageUrl || preferRenderOverImage)
+  // Only render fallback if no preview image exists
+  const [shouldRenderFallback, setShouldRenderFallback] = useState(!previewImageUrl)
   const containerRef = useRef<HTMLDivElement>(null)
   
   // Use local state for nodes to avoid conflicts between multiple thumbnail instances
@@ -105,8 +106,11 @@ export function ThumbnailPreview({
         viewOptions: { ...editorData.viewOptions, showDoorOverlay: false }
       })
       
-      // When editorData is available, always prefer rendering over preview image
-      setShouldRenderFallback(true)
+      // Only use fallback if no preview image exists
+      // Server-generated thumbnails are preferred
+      if (!previewImageUrl) {
+        setShouldRenderFallback(true)
+      }
       setIsLoading(false)
     }
   }, [editorData, templateId])
@@ -166,46 +170,9 @@ export function ThumbnailPreview({
     }
   }, [firstSectionId, shouldRenderFallback, nodes])
 
-  // If we have a preview image and editorData is NOT available, use it
-  // Otherwise, prefer rendering the section to show accurate background colors
-  if (previewImageUrl && !shouldRenderFallback && !preferRenderOverImage) {
-    console.warn('🖼️ [ThumbnailPreview] Using preview image:', previewImageUrl.substring(0, 50))
-    // Use regular img tag for data URLs (base64), Image component for regular URLs
-    const isDataUrl = previewImageUrl.startsWith('data:')
-    
-    return (
-      <div 
-        className={`relative ${className} overflow-hidden rounded-lg`}
-        style={{ width: `${width}px`, height: `${height}px` }}
-      >
-        {isDataUrl ? (
-          <img
-            src={previewImageUrl}
-            alt="Card preview"
-            className="w-full h-full object-cover"
-            onError={() => {
-              // Fallback to rendering if image fails to load
-              setShouldRenderFallback(true)
-            }}
-          />
-        ) : (
-          <Image
-            src={previewImageUrl}
-            alt="Card preview"
-            fill
-            className="object-cover rounded-lg"
-            onError={() => {
-              // Fallback to rendering if image fails to load
-              setShouldRenderFallback(true)
-            }}
-          />
-        )}
-      </div>
-    )
-  }
-
   // Effect to override SectionWidget's bg-white class and ensure proper rendering
   // This handles both background colors and ensures background images are visible
+  // CRITICAL: This hook must be called before any conditional returns
   useEffect(() => {
     if (!shouldRenderFallback || isLoading || !firstSectionId) return
     
@@ -275,74 +242,54 @@ export function ThumbnailPreview({
             // Also check if styles are in the style attribute string
             const colorMatch = parentInlineStyle.match(/color:\s*([^;]+)/i)
             const alignMatch = parentInlineStyle.match(/text-align:\s*([^;]+)/i)
-            
             if (colorMatch) textColor = colorMatch[1].trim()
             if (alignMatch) textAlign = alignMatch[1].trim()
             
             console.warn(`📝 [ThumbnailPreview] Text element ${index}:`, {
-              textContent: textEl.textContent?.substring(0, 20),
-              parentInlineStyle: parentInlineStyle.substring(0, 100),
               textColor,
               textAlign,
+              parentStyle: parentInlineStyle,
               computedColor: parentComputedStyle.color,
               computedAlign: parentComputedStyle.textAlign
             })
             
-            // Apply styles to the inner text div with !important to override prose class
-            if (textColor && textColor !== 'rgb(0, 0, 0)' && textColor !== 'rgb(0, 0, 0)' && textColor !== 'black' && textColor !== '#000000') {
-              textEl.style.setProperty('color', textColor, 'important')
-              // Also apply to all child elements (p tags, etc.)
-              textEl.querySelectorAll('*').forEach((child: any) => {
-                child.style.setProperty('color', textColor, 'important')
-              })
+            // Apply styles with !important to override prose defaults
+            if (textColor && textColor !== 'rgb(0, 0, 0)' && textColor !== 'black') {
+              ;(textEl as HTMLElement).style.setProperty('color', textColor, 'important')
             }
-            if (textAlign && textAlign !== 'left' && textAlign !== 'start') {
-              textEl.style.setProperty('text-align', textAlign, 'important')
-              // Also apply to all child elements
-              textEl.querySelectorAll('*').forEach((child: any) => {
-                child.style.setProperty('text-align', textAlign, 'important')
-              })
+            if (textAlign && textAlign !== 'left') {
+              ;(textEl as HTMLElement).style.setProperty('text-align', textAlign, 'important')
             }
-          }
-          
-          // Ensure text elements can display full content
-          textEl.style.overflow = 'visible'
-          textEl.style.textOverflow = 'clip'
-          textEl.style.whiteSpace = 'pre-wrap'
-          textEl.style.wordWrap = 'break-word'
-          textEl.style.maxWidth = '100%'
-          textEl.style.width = '100%'
-        })
-        
-        // Also check for any elements that might be cutting off text
-        const allElements = sectionElement.querySelectorAll('*')
-        allElements.forEach((el: any) => {
-          const computedStyle = window.getComputedStyle(el)
-          // If an element has overflow hidden and might be cutting text, make it visible
-          if (computedStyle.overflow === 'hidden' && el.textContent && el.textContent.trim().length > 0) {
-            // Only change if it's not the section itself
-            if (el !== sectionElement) {
-              el.style.overflow = 'visible'
-            }
+            
+            // Ensure text is fully visible
+            ;(textEl as HTMLElement).style.setProperty('overflow', 'visible', 'important')
+            ;(textEl as HTMLElement).style.setProperty('text-overflow', 'clip', 'important')
+            ;(textEl as HTMLElement).style.setProperty('white-space', 'pre-wrap', 'important')
+            ;(textEl as HTMLElement).style.setProperty('word-wrap', 'break-word', 'important')
+            ;(textEl as HTMLElement).style.setProperty('max-width', '100%', 'important')
+            ;(textEl as HTMLElement).style.setProperty('width', '100%', 'important')
           }
         })
         
-        // If there's a background image, ensure it's visible
+        // Handle background image
         if (hasBackgroundImage) {
-          // SectionWidget should already have the background image set
-          // Just ensure the bg-white class doesn't override it
+          // Remove bg-white class if it exists
           sectionElement.classList.remove('bg-white')
-          // Ensure background image is applied
-          if (sectionStyle.backgroundImage) {
-            sectionElement.style.setProperty('background-image', `url(${sectionStyle.backgroundImage})`, 'important')
-            sectionElement.style.setProperty('background-size', 'cover', 'important')
-            sectionElement.style.setProperty('background-position', 'center', 'important')
-            sectionElement.style.setProperty('background-repeat', 'no-repeat', 'important')
-          }
+          
+          // Set background image with !important
+          sectionElement.style.setProperty('background-image', sectionStyle.backgroundImage || '', 'important')
+          sectionElement.style.setProperty('background-size', sectionStyle.backgroundSize || 'cover', 'important')
+          sectionElement.style.setProperty('background-position', sectionStyle.backgroundPosition || 'center', 'important')
+          sectionElement.style.setProperty('background-repeat', sectionStyle.backgroundRepeat || 'no-repeat', 'important')
+          
           console.warn('🖼️ [ThumbnailPreview] Applied background image')
         } else if (sectionBgColor) {
-          // Override the bg-white class by setting inline style with !important
+          // Remove bg-white class if it exists
+          sectionElement.classList.remove('bg-white')
+          
+          // Set background color with !important
           sectionElement.style.setProperty('background-color', sectionBgColor, 'important')
+          
           console.warn('🎨 [ThumbnailPreview] Applied background color:', sectionBgColor)
         }
       } else {
@@ -353,16 +300,70 @@ export function ThumbnailPreview({
     return () => clearTimeout(timeout)
   }, [shouldRenderFallback, isLoading, firstSectionId, nodes, templateId, width, height])
 
-  // Fallback: Render first section
-  if (shouldRenderFallback && !isLoading && firstSectionId) {
-    // Ensure the store has the correct nodes for this template before rendering
-    // This is critical when multiple thumbnails render simultaneously
+  // If we have a preview image and editorData is NOT available, use it
+  // Otherwise, prefer rendering the section to show accurate background colors
+  if (previewImageUrl && !shouldRenderFallback && !preferRenderOverImage) {
+    console.warn('🖼️ [ThumbnailPreview] Using preview image:', previewImageUrl.substring(0, 50))
+    // Use regular img tag for all thumbnails (data URLs and local files)
+    // Next.js Image component has issues with local files in /thumbnails/
+    const isDataUrl = previewImageUrl.startsWith('data:')
+    const isLocalFile = previewImageUrl.startsWith('/thumbnails/')
+    
+    return (
+      <div 
+        className={`relative ${className} overflow-hidden rounded-lg`}
+        style={{ width: `${width}px`, height: `${height}px` }}
+      >
+        {/* Use regular img tag for data URLs and local files */}
+        {(isDataUrl || isLocalFile) ? (
+          <img
+            src={previewImageUrl}
+            alt="Card preview"
+            className="w-full h-full object-cover rounded-lg"
+            onError={() => {
+              // Fallback to rendering if image fails to load
+              console.warn('🖼️ [ThumbnailPreview] Image failed to load, falling back to render')
+              setShouldRenderFallback(true)
+            }}
+          />
+        ) : (
+          // Only use Next.js Image for external URLs
+          <Image
+            src={previewImageUrl}
+            alt="Card preview"
+            fill
+            className="object-cover rounded-lg"
+            onError={() => {
+              // Fallback to rendering if image fails to load
+              console.warn('🖼️ [ThumbnailPreview] Image failed to load, falling back to render')
+              setShouldRenderFallback(true)
+            }}
+          />
+        )}
+      </div>
+    )
+  }
+
+  // Update the global store in useEffect (not during render) to avoid React warnings
+  // This ensures NodeRenderer has the correct nodes for this template
+  // CRITICAL: Update store whenever localNodes change, not just when rendering
+  useEffect(() => {
     if (Object.keys(localNodes).length > 0 && currentTemplateIdRef.current === templateId) {
       useEditorStore.setState({
         nodes: localNodes,
         rootId: localRootId
       })
+      console.warn('✅ [ThumbnailPreview] Store updated with nodes:', {
+        nodeCount: Object.keys(localNodes).length,
+        rootId: localRootId,
+        firstSectionId,
+        firstSectionChildren: localNodes[firstSectionId]?.children?.length || 0
+      })
     }
+  }, [localNodes, localRootId, templateId, firstSectionId])
+
+  // Fallback: Render first section
+  if (shouldRenderFallback && !isLoading && firstSectionId) {
     
     // Get the section node to check its background properties
     const sectionNode = nodes[firstSectionId]
@@ -380,17 +381,28 @@ export function ThumbnailPreview({
       ? sectionBgColor 
       : 'transparent'
     
+    // Get the actual node from the store (NodeRenderer reads from store, not localNodes)
+    const storeNodes = useEditorStore.getState().nodes
+    const storeNode = storeNodes[firstSectionId]
+    const actualSectionNode = storeNode || sectionNode
+    
     console.warn('🎨 [ThumbnailPreview] Rendering fallback section:', {
       firstSectionId,
       sectionNode: sectionNode ? 'exists' : 'missing',
+      storeNode: storeNode ? 'exists' : 'missing',
+      actualSectionNode: actualSectionNode ? 'exists' : 'missing',
       sectionStyle: Object.keys(sectionStyle),
       sectionBgColor,
       hasBackgroundImage,
       backgroundImageUrl: hasBackgroundImage ? sectionStyle.backgroundImage?.substring(0, 50) + '...' : null,
       hasGradient,
       containerBgColor,
-      hasChildren: sectionNode?.children?.length > 0,
-      childrenCount: sectionNode?.children?.length || 0
+      hasChildren: actualSectionNode?.children?.length > 0,
+      childrenCount: actualSectionNode?.children?.length || 0,
+      childrenIds: actualSectionNode?.children || [],
+      allStoreNodeIds: Object.keys(storeNodes),
+      storeHasSection: !!storeNodes[firstSectionId],
+      storeSectionChildren: storeNodes[firstSectionId]?.children || []
     })
     
     // Calculate the scale factor and actual dimensions

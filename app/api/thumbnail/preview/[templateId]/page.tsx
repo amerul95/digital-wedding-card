@@ -18,6 +18,18 @@ export default function ThumbnailPreviewPage({ params }: { params: Promise<{ tem
   const [error, setError] = useState<string | null>(null)
   const [templateId, setTemplateId] = useState<string | null>(null)
 
+  // CRITICAL: All hooks must be called before any conditional returns
+  // This ensures hooks are called in the same order on every render
+  const nodes = useEditorStore((state) => state.nodes)
+  const rootId = useEditorStore((state) => state.rootId)
+  const rootNode = rootId ? nodes[rootId] : null
+
+  // Find first section (excluding door) - calculate this before early returns
+  const firstSectionId = rootNode?.children?.find((childId: string) => {
+    const child = nodes[childId]
+    return child && child.type === 'section'
+  })
+
   // Handle both sync and async params (Next.js 13+ vs 15+)
   useEffect(() => {
     if (params && typeof params === 'object' && 'then' in params) {
@@ -34,32 +46,13 @@ export default function ThumbnailPreviewPage({ params }: { params: Promise<{ tem
   useEffect(() => {
     const loadTemplate = async () => {
       try {
-        // Try designer API first (works for both published and unpublished)
-        let response
-        try {
-          response = await axios.get(`/api/designer/themes/${templateId}`)
-        } catch (err: any) {
-          // Fallback to catalog API if designer API fails
-          if (err.response?.status === 404 || err.response?.status === 401) {
-            response = await axios.get(`/api/catalog/templates/${templateId}`)
-          } else {
-            throw err
-          }
-        }
+        // Use the public thumbnail API endpoint (no auth required)
+        const response = await axios.get(`/api/thumbnail/template/${templateId}`)
 
-        if (response.data?.editorData) {
+        if (response.data?.success && response.data?.editorData) {
           const editorData = response.data.editorData
           
           // Hydrate the store
-          useEditorStore.setState({
-            nodes: editorData.nodes || {},
-            rootId: editorData.rootId || 'root',
-            selectedId: null,
-            globalSettings: editorData.globalSettings || {},
-            viewOptions: { ...editorData.viewOptions, showDoorOverlay: false },
-          })
-        } else if (response.data?.config?.editorData) {
-          const editorData = response.data.config.editorData
           useEditorStore.setState({
             nodes: editorData.nodes || {},
             rootId: editorData.rootId || 'root',
@@ -72,7 +65,7 @@ export default function ThumbnailPreviewPage({ params }: { params: Promise<{ tem
         }
       } catch (err: any) {
         console.error('Error loading template:', err)
-        setError(err.message || 'Failed to load template')
+        setError(err.response?.data?.error || err.message || 'Failed to load template')
       } finally {
         setLoading(false)
       }
@@ -83,7 +76,7 @@ export default function ThumbnailPreviewPage({ params }: { params: Promise<{ tem
     }
   }, [templateId])
   
-  // Don't render until we have templateId
+  // Now we can do conditional returns AFTER all hooks have been called
   if (!templateId) {
     return (
       <div style={{ width: '375px', height: '667px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
@@ -91,16 +84,6 @@ export default function ThumbnailPreviewPage({ params }: { params: Promise<{ tem
       </div>
     )
   }
-
-  const nodes = useEditorStore((state) => state.nodes)
-  const rootId = useEditorStore((state) => state.rootId)
-  const rootNode = rootId ? nodes[rootId] : null
-
-  // Find first section (excluding door)
-  const firstSectionId = rootNode?.children?.find((childId: string) => {
-    const child = nodes[childId]
-    return child && child.type === 'section'
-  })
 
   if (loading) {
     return (

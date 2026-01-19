@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import Image from 'next/image'
 import { useLoginModal } from '@/context/LoginModalContext'
 import PhoneInput from 'react-phone-number-input'
@@ -8,7 +8,7 @@ import axios from 'axios'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 
-export default function AuthModal() {
+function AuthModalContent() {
   const { isOpen, mode, closeModal, switchMode } = useLoginModal()
   const router = useRouter()
   const pathname = usePathname()
@@ -365,5 +365,13 @@ export default function AuthModal() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthModal() {
+  return (
+    <Suspense fallback={null}>
+      <AuthModalContent />
+    </Suspense>
   )
 }

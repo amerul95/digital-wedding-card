@@ -1,11 +1,11 @@
 "use client";
 
 import { EditorLayout } from "@/components/editor/EditorLayout";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEditorStore } from "@/components/editor/store";
 
-export default function CreateThemePage() {
+function CreateThemePageContent() {
     const searchParams = useSearchParams();
     const themeId = searchParams.get('id');
     const [isLoading, setIsLoading] = useState(!!themeId);
@@ -56,5 +56,17 @@ export default function CreateThemePage() {
 
     return (
         <EditorLayout />
+    );
+}
+
+export default function CreateThemePage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center h-screen">
+                <div className="text-gray-500">Loading...</div>
+            </div>
+        }>
+            <CreateThemePageContent />
+        </Suspense>
     );
 }
