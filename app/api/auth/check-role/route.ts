@@ -23,12 +23,12 @@ export async function GET(req: Request) {
     const userId = await getUserIdFromAnyCookie()
 
     if (!userId) {
-      // User not authenticated at all - redirect to login
+      // User not authenticated at all - redirect to appropriate login
       const loginUrl = requiredRole === "admin" 
         ? "/admin/login"
         : requiredRole === "designer"
         ? "/designer/login"
-        : "/login"
+        : "/" // Client login is handled by modal on home page
       
       return NextResponse.redirect(new URL(loginUrl, req.url))
     }
@@ -37,14 +37,21 @@ export async function GET(req: Request) {
     const hasRole = await checkAndSetRoleCookie(userId, requiredRole)
 
     if (!hasRole) {
-      // User doesn't have this role - redirect to their primary dashboard or login
-      return NextResponse.redirect(new URL("/login", req.url))
+      // User doesn't have this role - redirect to home page with error message
+      // For admin/designer roles, redirect to their specific login page
+      const redirectUrl = requiredRole === "admin" 
+        ? "/admin/login"
+        : requiredRole === "designer"
+        ? "/designer/login"
+        : "/" // Client login is handled by modal on home page
+      
+      return NextResponse.redirect(new URL(redirectUrl, req.url))
     }
 
     // User has the role and cookie is now set - redirect to requested URL
     return NextResponse.redirect(new URL(redirectUrl, req.url))
   } catch (error) {
     console.error("Check role error:", error)
-    return NextResponse.redirect(new URL("/login", req.url))
+    return NextResponse.redirect(new URL("/", req.url))
   }
 }

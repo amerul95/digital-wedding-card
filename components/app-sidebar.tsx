@@ -82,21 +82,18 @@ export function AppSidebar() {
     fetchDesigner()
   }, [])
 
-  const getFirstName = (fullName: string | null) => {
-    if (!fullName) return null
-    return fullName.split(" ")[0]
-  }
-
   return (
     <Sidebar>
       <SidebarHeader>
         <div className="flex flex-col gap-1 px-2 py-1.5">
           <h2 className="text-lg font-semibold">Designer Dashboard</h2>
           {isLoading ? (
-            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-32" />
           ) : designerName ? (
-            <p className="text-sm text-muted-foreground">{getFirstName(designerName)}</p>
-          ) : null}
+            <p className="text-sm text-muted-foreground font-medium">{designerName}</p>
+          ) : (
+            <p className="text-sm text-muted-foreground">Designer</p>
+          )}
         </div>
       </SidebarHeader>
       <SidebarContent>

@@ -5,12 +5,14 @@ import { useLoginModal } from '@/context/LoginModalContext'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 
 export default function AuthModal() {
   const { isOpen, mode, closeModal, switchMode } = useLoginModal()
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('')
@@ -18,6 +20,7 @@ export default function AuthModal() {
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   // Signup form state
+  const [signupFullName, setSignupFullName] = useState('')
   const [signupEmail, setSignupEmail] = useState('')
   const [signupPhone, setSignupPhone] = useState('')
   const [signupPassword, setSignupPassword] = useState('')
@@ -29,7 +32,11 @@ export default function AuthModal() {
     setIsLoggingIn(true)
     
     try {
-      const response = await axios.post("/api/auth/unified/login", {
+      // Get current page URL for redirect
+      const currentUrl = pathname || window.location.pathname
+      const redirectParam = searchParams?.get('redirect') || currentUrl
+      
+      const response = await axios.post(`/api/auth/unified/login?redirect=${encodeURIComponent(redirectParam)}`, {
         email: loginEmail,
         password: loginPassword,
       }, {
@@ -40,8 +47,8 @@ export default function AuthModal() {
         toast.success("Login successful")
         closeModal()
         
-        // Redirect based on user role
-        const redirectUrl = response.data.redirect || "/dashboard"
+        // Redirect to current page or the redirect param, fallback to home
+        const redirectUrl = redirectParam !== '/dashboard' ? redirectParam : "/"
         router.push(redirectUrl)
         router.refresh()
       }
@@ -64,7 +71,12 @@ export default function AuthModal() {
     setIsSigningUp(true)
     
     try {
+      // Get current page URL for redirect
+      const currentUrl = pathname || window.location.pathname
+      const redirectParam = searchParams?.get('redirect') || currentUrl
+      
       const response = await axios.post("/api/sign-up", {
+        fullName: signupFullName,
         email: signupEmail,
         phone: signupPhone,
         password: signupPassword
@@ -75,6 +87,9 @@ export default function AuthModal() {
       if (response.status === 201) {
         toast.success(response.data.message || "User created successfully")
         closeModal()
+        // Redirect to current page, fallback to home
+        const redirectUrl = redirectParam !== '/dashboard' ? redirectParam : "/"
+        router.push(redirectUrl)
         router.refresh()
       }
     } catch (error: any) {
@@ -255,6 +270,18 @@ export default function AuthModal() {
               >
                 SIGN UP
               </h2>
+
+              <div className='mb-3'>
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={signupFullName}
+                  onChange={(e) => setSignupFullName(e.target.value)}
+                  className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm'
+                  style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+                  required
+                />
+              </div>
 
               <div className='mb-3'>
                 <input

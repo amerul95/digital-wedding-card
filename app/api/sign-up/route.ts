@@ -9,16 +9,22 @@ import bcrypt from 'bcryptjs';
 const JWT_SECRET = process.env.JWT_SECRET || ""
 
 type BodyProps = {
+    fullName?: string;
     email:string;
-    password:string
+    password:string;
+    phone?: string;
 }
 const SchemaSignUpForm = z.object({
+    fullName: z.string().min(2, {
+        message: "Full name is required"
+    }).optional(),
     email:z.email({message:"Please enter valid email"}).min(2,{
         message:"email is required"
     }),
     password:z.string().min(2,{
         message:"password is required"
     }),
+    phone: z.string().optional(),
 })
 export async function POST(req:Request){
     // parse body 
@@ -32,7 +38,7 @@ export async function POST(req:Request){
         )
     }
 
-    const {email,password} = parsed.data
+    const {fullName, email, password, phone} = parsed.data
 
     // check for existing user
     const existingUser = await prisma.user.findUnique({
@@ -76,9 +82,22 @@ export async function POST(req:Request){
     // optional remove before returning
     const {password:_, ...safeUser} = user
 
-    const token = jwt.sign(
-        {id: user.id, email:user.email, role: "client"},JWT_SECRET,{expiresIn:"7d"}
-    )
+    // Include fullName and phone in JWT token if provided
+    const tokenPayload: any = {
+        id: user.id, 
+        email: user.email, 
+        role: "client"
+    }
+    
+    if (fullName) {
+        tokenPayload.name = fullName
+    }
+    
+    if (phone) {
+        tokenPayload.phone = phone
+    }
+
+    const token = jwt.sign(tokenPayload, JWT_SECRET, {expiresIn:"7d"})
 
     // Use client cookie name
     ;(await cookies()).set({

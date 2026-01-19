@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import { getCookieName } from "@/lib/auth/config";
+
+const JWT_SECRET = process.env.JWT_SECRET || "";
 
 const SchemaSignUpForm = z.object({
   fullName: z.string().min(2, {
@@ -13,9 +18,7 @@ const SchemaSignUpForm = z.object({
   password: z.string().min(6, {
     message: "password must be at least 6 characters"
   }),
-  address: z.string().min(5, {
-    message: "Address is required"
-  }),
+  address: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -77,8 +80,27 @@ export async function POST(req: Request) {
       data: {
         userId: user.id,
         name: fullName,
-        address: address
+        address: address || null
       }
+    })
+
+    // Create JWT token for automatic sign-in
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: "designer" },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    )
+
+    // Set authentication cookie
+    const cookieName = getCookieName("designer")
+    ;(await cookies()).set({
+      name: cookieName,
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      sameSite: "lax"
     })
 
     return NextResponse.json(

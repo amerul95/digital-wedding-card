@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { z } from "zod"
 
+const ROOT_ADMIN_EMAIL = "mirolesuperman@gmail.com"
+
 const assignRolesSchema = z.object({
   userId: z.string().uuid(),
   roleNames: z.array(z.enum(["admin", "designer", "client"])).min(1)
@@ -32,6 +34,17 @@ export async function POST(req: Request) {
         { error: "User not found" },
         { status: 404 }
       )
+    }
+
+    // Prevent role removal from root admin
+    if (user.email === ROOT_ADMIN_EMAIL) {
+      // Ensure admin role is always present
+      if (!roleNames.includes("admin")) {
+        return NextResponse.json(
+          { error: "Cannot remove admin role from root admin user" },
+          { status: 403 }
+        )
+      }
     }
 
     // Get all role IDs

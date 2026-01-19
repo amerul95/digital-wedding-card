@@ -94,6 +94,11 @@ export type CartItem = $Result.DefaultSelection<Prisma.$CartItemPayload>
  */
 export type Designer = $Result.DefaultSelection<Prisma.$DesignerPayload>
 /**
+ * Model DesignerRoleRequest
+ * 
+ */
+export type DesignerRoleRequest = $Result.DefaultSelection<Prisma.$DesignerRoleRequestPayload>
+/**
  * Model ThemeSale
  * 
  */
@@ -426,6 +431,16 @@ export class PrismaClient<
     * ```
     */
   get designer(): Prisma.DesignerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.designerRoleRequest`: Exposes CRUD operations for the **DesignerRoleRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DesignerRoleRequests
+    * const designerRoleRequests = await prisma.designerRoleRequest.findMany()
+    * ```
+    */
+  get designerRoleRequest(): Prisma.DesignerRoleRequestDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.themeSale`: Exposes CRUD operations for the **ThemeSale** model.
@@ -903,6 +918,7 @@ export namespace Prisma {
     Cart: 'Cart',
     CartItem: 'CartItem',
     Designer: 'Designer',
+    DesignerRoleRequest: 'DesignerRoleRequest',
     ThemeSale: 'ThemeSale',
     WithdrawalRequest: 'WithdrawalRequest'
   };
@@ -923,7 +939,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "session" | "passwordReset" | "user" | "role" | "userRole" | "wedding" | "theme" | "song" | "rsvp" | "donation" | "transferType" | "galleryImage" | "product" | "cart" | "cartItem" | "designer" | "themeSale" | "withdrawalRequest"
+      modelProps: "session" | "passwordReset" | "user" | "role" | "userRole" | "wedding" | "theme" | "song" | "rsvp" | "donation" | "transferType" | "galleryImage" | "product" | "cart" | "cartItem" | "designer" | "designerRoleRequest" | "themeSale" | "withdrawalRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2111,6 +2127,80 @@ export namespace Prisma {
           }
         }
       }
+      DesignerRoleRequest: {
+        payload: Prisma.$DesignerRoleRequestPayload<ExtArgs>
+        fields: Prisma.DesignerRoleRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DesignerRoleRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DesignerRoleRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.DesignerRoleRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DesignerRoleRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>
+          }
+          findMany: {
+            args: Prisma.DesignerRoleRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>[]
+          }
+          create: {
+            args: Prisma.DesignerRoleRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>
+          }
+          createMany: {
+            args: Prisma.DesignerRoleRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DesignerRoleRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.DesignerRoleRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>
+          }
+          update: {
+            args: Prisma.DesignerRoleRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.DesignerRoleRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DesignerRoleRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DesignerRoleRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.DesignerRoleRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DesignerRoleRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.DesignerRoleRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDesignerRoleRequest>
+          }
+          groupBy: {
+            args: Prisma.DesignerRoleRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DesignerRoleRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DesignerRoleRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<DesignerRoleRequestCountAggregateOutputType> | number
+          }
+        }
+      }
       ThemeSale: {
         payload: Prisma.$ThemeSalePayload<ExtArgs>
         fields: Prisma.ThemeSaleFieldRefs
@@ -2371,6 +2461,7 @@ export namespace Prisma {
     cart?: CartOmit
     cartItem?: CartItemOmit
     designer?: DesignerOmit
+    designerRoleRequest?: DesignerRoleRequestOmit
     themeSale?: ThemeSaleOmit
     withdrawalRequest?: WithdrawalRequestOmit
   }
@@ -2458,6 +2549,7 @@ export namespace Prisma {
     roles: number
     weddings: number
     cart: number
+    designerRoleRequests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2466,6 +2558,7 @@ export namespace Prisma {
     roles?: boolean | UserCountOutputTypeCountRolesArgs
     weddings?: boolean | UserCountOutputTypeCountWeddingsArgs
     cart?: boolean | UserCountOutputTypeCountCartArgs
+    designerRoleRequests?: boolean | UserCountOutputTypeCountDesignerRoleRequestsArgs
   }
 
   // Custom InputTypes
@@ -2512,6 +2605,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CartWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDesignerRoleRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DesignerRoleRequestWhereInput
   }
 
 
@@ -5191,6 +5291,7 @@ export namespace Prisma {
     roles?: boolean | User$rolesArgs<ExtArgs>
     weddings?: boolean | User$weddingsArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
+    designerRoleRequests?: boolean | User$designerRoleRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5229,6 +5330,7 @@ export namespace Prisma {
     roles?: boolean | User$rolesArgs<ExtArgs>
     weddings?: boolean | User$weddingsArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
+    designerRoleRequests?: boolean | User$designerRoleRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5248,6 +5350,7 @@ export namespace Prisma {
       roles: Prisma.$UserRolePayload<ExtArgs>[]
       weddings: Prisma.$WeddingPayload<ExtArgs>[]
       cart: Prisma.$CartPayload<ExtArgs>[]
+      designerRoleRequests: Prisma.$DesignerRoleRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5656,6 +5759,7 @@ export namespace Prisma {
     roles<T extends User$rolesArgs<ExtArgs> = {}>(args?: Subset<T, User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     weddings<T extends User$weddingsArgs<ExtArgs> = {}>(args?: Subset<T, User$weddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     cart<T extends User$cartArgs<ExtArgs> = {}>(args?: Subset<T, User$cartArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    designerRoleRequests<T extends User$designerRoleRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$designerRoleRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6241,6 +6345,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CartScalarFieldEnum | CartScalarFieldEnum[]
+  }
+
+  /**
+   * User.designerRoleRequests
+   */
+  export type User$designerRoleRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    where?: DesignerRoleRequestWhereInput
+    orderBy?: DesignerRoleRequestOrderByWithRelationInput | DesignerRoleRequestOrderByWithRelationInput[]
+    cursor?: DesignerRoleRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DesignerRoleRequestScalarFieldEnum | DesignerRoleRequestScalarFieldEnum[]
   }
 
   /**
@@ -21445,6 +21573,1103 @@ export namespace Prisma {
 
 
   /**
+   * Model DesignerRoleRequest
+   */
+
+  export type AggregateDesignerRoleRequest = {
+    _count: DesignerRoleRequestCountAggregateOutputType | null
+    _min: DesignerRoleRequestMinAggregateOutputType | null
+    _max: DesignerRoleRequestMaxAggregateOutputType | null
+  }
+
+  export type DesignerRoleRequestMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    fullName: string | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+  }
+
+  export type DesignerRoleRequestMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    fullName: string | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+  }
+
+  export type DesignerRoleRequestCountAggregateOutputType = {
+    id: number
+    userId: number
+    fullName: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    reviewedAt: number
+    reviewedBy: number
+    _all: number
+  }
+
+
+  export type DesignerRoleRequestMinAggregateInputType = {
+    id?: true
+    userId?: true
+    fullName?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+  }
+
+  export type DesignerRoleRequestMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    fullName?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+  }
+
+  export type DesignerRoleRequestCountAggregateInputType = {
+    id?: true
+    userId?: true
+    fullName?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    _all?: true
+  }
+
+  export type DesignerRoleRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DesignerRoleRequest to aggregate.
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DesignerRoleRequests to fetch.
+     */
+    orderBy?: DesignerRoleRequestOrderByWithRelationInput | DesignerRoleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DesignerRoleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DesignerRoleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DesignerRoleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DesignerRoleRequests
+    **/
+    _count?: true | DesignerRoleRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DesignerRoleRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DesignerRoleRequestMaxAggregateInputType
+  }
+
+  export type GetDesignerRoleRequestAggregateType<T extends DesignerRoleRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateDesignerRoleRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDesignerRoleRequest[P]>
+      : GetScalarType<T[P], AggregateDesignerRoleRequest[P]>
+  }
+
+
+
+
+  export type DesignerRoleRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DesignerRoleRequestWhereInput
+    orderBy?: DesignerRoleRequestOrderByWithAggregationInput | DesignerRoleRequestOrderByWithAggregationInput[]
+    by: DesignerRoleRequestScalarFieldEnum[] | DesignerRoleRequestScalarFieldEnum
+    having?: DesignerRoleRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DesignerRoleRequestCountAggregateInputType | true
+    _min?: DesignerRoleRequestMinAggregateInputType
+    _max?: DesignerRoleRequestMaxAggregateInputType
+  }
+
+  export type DesignerRoleRequestGroupByOutputType = {
+    id: string
+    userId: string
+    fullName: string
+    status: string
+    createdAt: Date
+    updatedAt: Date
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    _count: DesignerRoleRequestCountAggregateOutputType | null
+    _min: DesignerRoleRequestMinAggregateOutputType | null
+    _max: DesignerRoleRequestMaxAggregateOutputType | null
+  }
+
+  type GetDesignerRoleRequestGroupByPayload<T extends DesignerRoleRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DesignerRoleRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DesignerRoleRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DesignerRoleRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], DesignerRoleRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DesignerRoleRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    fullName?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["designerRoleRequest"]>
+
+  export type DesignerRoleRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    fullName?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["designerRoleRequest"]>
+
+  export type DesignerRoleRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    fullName?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["designerRoleRequest"]>
+
+  export type DesignerRoleRequestSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    fullName?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+  }
+
+  export type DesignerRoleRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "fullName" | "status" | "createdAt" | "updatedAt" | "reviewedAt" | "reviewedBy", ExtArgs["result"]["designerRoleRequest"]>
+  export type DesignerRoleRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type DesignerRoleRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type DesignerRoleRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $DesignerRoleRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DesignerRoleRequest"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      fullName: string
+      status: string
+      createdAt: Date
+      updatedAt: Date
+      reviewedAt: Date | null
+      reviewedBy: string | null
+    }, ExtArgs["result"]["designerRoleRequest"]>
+    composites: {}
+  }
+
+  type DesignerRoleRequestGetPayload<S extends boolean | null | undefined | DesignerRoleRequestDefaultArgs> = $Result.GetResult<Prisma.$DesignerRoleRequestPayload, S>
+
+  type DesignerRoleRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DesignerRoleRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DesignerRoleRequestCountAggregateInputType | true
+    }
+
+  export interface DesignerRoleRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DesignerRoleRequest'], meta: { name: 'DesignerRoleRequest' } }
+    /**
+     * Find zero or one DesignerRoleRequest that matches the filter.
+     * @param {DesignerRoleRequestFindUniqueArgs} args - Arguments to find a DesignerRoleRequest
+     * @example
+     * // Get one DesignerRoleRequest
+     * const designerRoleRequest = await prisma.designerRoleRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DesignerRoleRequestFindUniqueArgs>(args: SelectSubset<T, DesignerRoleRequestFindUniqueArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DesignerRoleRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DesignerRoleRequestFindUniqueOrThrowArgs} args - Arguments to find a DesignerRoleRequest
+     * @example
+     * // Get one DesignerRoleRequest
+     * const designerRoleRequest = await prisma.designerRoleRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DesignerRoleRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, DesignerRoleRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DesignerRoleRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestFindFirstArgs} args - Arguments to find a DesignerRoleRequest
+     * @example
+     * // Get one DesignerRoleRequest
+     * const designerRoleRequest = await prisma.designerRoleRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DesignerRoleRequestFindFirstArgs>(args?: SelectSubset<T, DesignerRoleRequestFindFirstArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DesignerRoleRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestFindFirstOrThrowArgs} args - Arguments to find a DesignerRoleRequest
+     * @example
+     * // Get one DesignerRoleRequest
+     * const designerRoleRequest = await prisma.designerRoleRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DesignerRoleRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, DesignerRoleRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DesignerRoleRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DesignerRoleRequests
+     * const designerRoleRequests = await prisma.designerRoleRequest.findMany()
+     * 
+     * // Get first 10 DesignerRoleRequests
+     * const designerRoleRequests = await prisma.designerRoleRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const designerRoleRequestWithIdOnly = await prisma.designerRoleRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DesignerRoleRequestFindManyArgs>(args?: SelectSubset<T, DesignerRoleRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DesignerRoleRequest.
+     * @param {DesignerRoleRequestCreateArgs} args - Arguments to create a DesignerRoleRequest.
+     * @example
+     * // Create one DesignerRoleRequest
+     * const DesignerRoleRequest = await prisma.designerRoleRequest.create({
+     *   data: {
+     *     // ... data to create a DesignerRoleRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends DesignerRoleRequestCreateArgs>(args: SelectSubset<T, DesignerRoleRequestCreateArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DesignerRoleRequests.
+     * @param {DesignerRoleRequestCreateManyArgs} args - Arguments to create many DesignerRoleRequests.
+     * @example
+     * // Create many DesignerRoleRequests
+     * const designerRoleRequest = await prisma.designerRoleRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DesignerRoleRequestCreateManyArgs>(args?: SelectSubset<T, DesignerRoleRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DesignerRoleRequests and returns the data saved in the database.
+     * @param {DesignerRoleRequestCreateManyAndReturnArgs} args - Arguments to create many DesignerRoleRequests.
+     * @example
+     * // Create many DesignerRoleRequests
+     * const designerRoleRequest = await prisma.designerRoleRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DesignerRoleRequests and only return the `id`
+     * const designerRoleRequestWithIdOnly = await prisma.designerRoleRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DesignerRoleRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, DesignerRoleRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DesignerRoleRequest.
+     * @param {DesignerRoleRequestDeleteArgs} args - Arguments to delete one DesignerRoleRequest.
+     * @example
+     * // Delete one DesignerRoleRequest
+     * const DesignerRoleRequest = await prisma.designerRoleRequest.delete({
+     *   where: {
+     *     // ... filter to delete one DesignerRoleRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DesignerRoleRequestDeleteArgs>(args: SelectSubset<T, DesignerRoleRequestDeleteArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DesignerRoleRequest.
+     * @param {DesignerRoleRequestUpdateArgs} args - Arguments to update one DesignerRoleRequest.
+     * @example
+     * // Update one DesignerRoleRequest
+     * const designerRoleRequest = await prisma.designerRoleRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DesignerRoleRequestUpdateArgs>(args: SelectSubset<T, DesignerRoleRequestUpdateArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DesignerRoleRequests.
+     * @param {DesignerRoleRequestDeleteManyArgs} args - Arguments to filter DesignerRoleRequests to delete.
+     * @example
+     * // Delete a few DesignerRoleRequests
+     * const { count } = await prisma.designerRoleRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DesignerRoleRequestDeleteManyArgs>(args?: SelectSubset<T, DesignerRoleRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DesignerRoleRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DesignerRoleRequests
+     * const designerRoleRequest = await prisma.designerRoleRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DesignerRoleRequestUpdateManyArgs>(args: SelectSubset<T, DesignerRoleRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DesignerRoleRequests and returns the data updated in the database.
+     * @param {DesignerRoleRequestUpdateManyAndReturnArgs} args - Arguments to update many DesignerRoleRequests.
+     * @example
+     * // Update many DesignerRoleRequests
+     * const designerRoleRequest = await prisma.designerRoleRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DesignerRoleRequests and only return the `id`
+     * const designerRoleRequestWithIdOnly = await prisma.designerRoleRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DesignerRoleRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, DesignerRoleRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DesignerRoleRequest.
+     * @param {DesignerRoleRequestUpsertArgs} args - Arguments to update or create a DesignerRoleRequest.
+     * @example
+     * // Update or create a DesignerRoleRequest
+     * const designerRoleRequest = await prisma.designerRoleRequest.upsert({
+     *   create: {
+     *     // ... data to create a DesignerRoleRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DesignerRoleRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DesignerRoleRequestUpsertArgs>(args: SelectSubset<T, DesignerRoleRequestUpsertArgs<ExtArgs>>): Prisma__DesignerRoleRequestClient<$Result.GetResult<Prisma.$DesignerRoleRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DesignerRoleRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestCountArgs} args - Arguments to filter DesignerRoleRequests to count.
+     * @example
+     * // Count the number of DesignerRoleRequests
+     * const count = await prisma.designerRoleRequest.count({
+     *   where: {
+     *     // ... the filter for the DesignerRoleRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends DesignerRoleRequestCountArgs>(
+      args?: Subset<T, DesignerRoleRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DesignerRoleRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DesignerRoleRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DesignerRoleRequestAggregateArgs>(args: Subset<T, DesignerRoleRequestAggregateArgs>): Prisma.PrismaPromise<GetDesignerRoleRequestAggregateType<T>>
+
+    /**
+     * Group by DesignerRoleRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DesignerRoleRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DesignerRoleRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DesignerRoleRequestGroupByArgs['orderBy'] }
+        : { orderBy?: DesignerRoleRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DesignerRoleRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDesignerRoleRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DesignerRoleRequest model
+   */
+  readonly fields: DesignerRoleRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DesignerRoleRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DesignerRoleRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DesignerRoleRequest model
+   */
+  interface DesignerRoleRequestFieldRefs {
+    readonly id: FieldRef<"DesignerRoleRequest", 'String'>
+    readonly userId: FieldRef<"DesignerRoleRequest", 'String'>
+    readonly fullName: FieldRef<"DesignerRoleRequest", 'String'>
+    readonly status: FieldRef<"DesignerRoleRequest", 'String'>
+    readonly createdAt: FieldRef<"DesignerRoleRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"DesignerRoleRequest", 'DateTime'>
+    readonly reviewedAt: FieldRef<"DesignerRoleRequest", 'DateTime'>
+    readonly reviewedBy: FieldRef<"DesignerRoleRequest", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DesignerRoleRequest findUnique
+   */
+  export type DesignerRoleRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which DesignerRoleRequest to fetch.
+     */
+    where: DesignerRoleRequestWhereUniqueInput
+  }
+
+  /**
+   * DesignerRoleRequest findUniqueOrThrow
+   */
+  export type DesignerRoleRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which DesignerRoleRequest to fetch.
+     */
+    where: DesignerRoleRequestWhereUniqueInput
+  }
+
+  /**
+   * DesignerRoleRequest findFirst
+   */
+  export type DesignerRoleRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which DesignerRoleRequest to fetch.
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DesignerRoleRequests to fetch.
+     */
+    orderBy?: DesignerRoleRequestOrderByWithRelationInput | DesignerRoleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DesignerRoleRequests.
+     */
+    cursor?: DesignerRoleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DesignerRoleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DesignerRoleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DesignerRoleRequests.
+     */
+    distinct?: DesignerRoleRequestScalarFieldEnum | DesignerRoleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * DesignerRoleRequest findFirstOrThrow
+   */
+  export type DesignerRoleRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which DesignerRoleRequest to fetch.
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DesignerRoleRequests to fetch.
+     */
+    orderBy?: DesignerRoleRequestOrderByWithRelationInput | DesignerRoleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DesignerRoleRequests.
+     */
+    cursor?: DesignerRoleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DesignerRoleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DesignerRoleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DesignerRoleRequests.
+     */
+    distinct?: DesignerRoleRequestScalarFieldEnum | DesignerRoleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * DesignerRoleRequest findMany
+   */
+  export type DesignerRoleRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which DesignerRoleRequests to fetch.
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DesignerRoleRequests to fetch.
+     */
+    orderBy?: DesignerRoleRequestOrderByWithRelationInput | DesignerRoleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DesignerRoleRequests.
+     */
+    cursor?: DesignerRoleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DesignerRoleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DesignerRoleRequests.
+     */
+    skip?: number
+    distinct?: DesignerRoleRequestScalarFieldEnum | DesignerRoleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * DesignerRoleRequest create
+   */
+  export type DesignerRoleRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DesignerRoleRequest.
+     */
+    data: XOR<DesignerRoleRequestCreateInput, DesignerRoleRequestUncheckedCreateInput>
+  }
+
+  /**
+   * DesignerRoleRequest createMany
+   */
+  export type DesignerRoleRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DesignerRoleRequests.
+     */
+    data: DesignerRoleRequestCreateManyInput | DesignerRoleRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DesignerRoleRequest createManyAndReturn
+   */
+  export type DesignerRoleRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many DesignerRoleRequests.
+     */
+    data: DesignerRoleRequestCreateManyInput | DesignerRoleRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DesignerRoleRequest update
+   */
+  export type DesignerRoleRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DesignerRoleRequest.
+     */
+    data: XOR<DesignerRoleRequestUpdateInput, DesignerRoleRequestUncheckedUpdateInput>
+    /**
+     * Choose, which DesignerRoleRequest to update.
+     */
+    where: DesignerRoleRequestWhereUniqueInput
+  }
+
+  /**
+   * DesignerRoleRequest updateMany
+   */
+  export type DesignerRoleRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DesignerRoleRequests.
+     */
+    data: XOR<DesignerRoleRequestUpdateManyMutationInput, DesignerRoleRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which DesignerRoleRequests to update
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * Limit how many DesignerRoleRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DesignerRoleRequest updateManyAndReturn
+   */
+  export type DesignerRoleRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update DesignerRoleRequests.
+     */
+    data: XOR<DesignerRoleRequestUpdateManyMutationInput, DesignerRoleRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which DesignerRoleRequests to update
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * Limit how many DesignerRoleRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DesignerRoleRequest upsert
+   */
+  export type DesignerRoleRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DesignerRoleRequest to update in case it exists.
+     */
+    where: DesignerRoleRequestWhereUniqueInput
+    /**
+     * In case the DesignerRoleRequest found by the `where` argument doesn't exist, create a new DesignerRoleRequest with this data.
+     */
+    create: XOR<DesignerRoleRequestCreateInput, DesignerRoleRequestUncheckedCreateInput>
+    /**
+     * In case the DesignerRoleRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DesignerRoleRequestUpdateInput, DesignerRoleRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * DesignerRoleRequest delete
+   */
+  export type DesignerRoleRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+    /**
+     * Filter which DesignerRoleRequest to delete.
+     */
+    where: DesignerRoleRequestWhereUniqueInput
+  }
+
+  /**
+   * DesignerRoleRequest deleteMany
+   */
+  export type DesignerRoleRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DesignerRoleRequests to delete
+     */
+    where?: DesignerRoleRequestWhereInput
+    /**
+     * Limit how many DesignerRoleRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DesignerRoleRequest without action
+   */
+  export type DesignerRoleRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DesignerRoleRequest
+     */
+    select?: DesignerRoleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DesignerRoleRequest
+     */
+    omit?: DesignerRoleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignerRoleRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model ThemeSale
    */
 
@@ -23988,6 +25213,20 @@ export namespace Prisma {
   export type DesignerScalarFieldEnum = (typeof DesignerScalarFieldEnum)[keyof typeof DesignerScalarFieldEnum]
 
 
+  export const DesignerRoleRequestScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    fullName: 'fullName',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    reviewedAt: 'reviewedAt',
+    reviewedBy: 'reviewedBy'
+  };
+
+  export type DesignerRoleRequestScalarFieldEnum = (typeof DesignerRoleRequestScalarFieldEnum)[keyof typeof DesignerRoleRequestScalarFieldEnum]
+
+
   export const ThemeSaleScalarFieldEnum: {
     id: 'id',
     themeId: 'themeId',
@@ -24300,6 +25539,7 @@ export namespace Prisma {
     roles?: UserRoleListRelationFilter
     weddings?: WeddingListRelationFilter
     cart?: CartListRelationFilter
+    designerRoleRequests?: DesignerRoleRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -24315,6 +25555,7 @@ export namespace Prisma {
     roles?: UserRoleOrderByRelationAggregateInput
     weddings?: WeddingOrderByRelationAggregateInput
     cart?: CartOrderByRelationAggregateInput
+    designerRoleRequests?: DesignerRoleRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -24333,6 +25574,7 @@ export namespace Prisma {
     roles?: UserRoleListRelationFilter
     weddings?: WeddingListRelationFilter
     cart?: CartListRelationFilter
+    designerRoleRequests?: DesignerRoleRequestListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -25326,6 +26568,76 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Designer"> | Date | string
   }
 
+  export type DesignerRoleRequestWhereInput = {
+    AND?: DesignerRoleRequestWhereInput | DesignerRoleRequestWhereInput[]
+    OR?: DesignerRoleRequestWhereInput[]
+    NOT?: DesignerRoleRequestWhereInput | DesignerRoleRequestWhereInput[]
+    id?: StringFilter<"DesignerRoleRequest"> | string
+    userId?: StringFilter<"DesignerRoleRequest"> | string
+    fullName?: StringFilter<"DesignerRoleRequest"> | string
+    status?: StringFilter<"DesignerRoleRequest"> | string
+    createdAt?: DateTimeFilter<"DesignerRoleRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"DesignerRoleRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"DesignerRoleRequest"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"DesignerRoleRequest"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type DesignerRoleRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fullName?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type DesignerRoleRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DesignerRoleRequestWhereInput | DesignerRoleRequestWhereInput[]
+    OR?: DesignerRoleRequestWhereInput[]
+    NOT?: DesignerRoleRequestWhereInput | DesignerRoleRequestWhereInput[]
+    userId?: StringFilter<"DesignerRoleRequest"> | string
+    fullName?: StringFilter<"DesignerRoleRequest"> | string
+    status?: StringFilter<"DesignerRoleRequest"> | string
+    createdAt?: DateTimeFilter<"DesignerRoleRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"DesignerRoleRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"DesignerRoleRequest"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"DesignerRoleRequest"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type DesignerRoleRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fullName?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    _count?: DesignerRoleRequestCountOrderByAggregateInput
+    _max?: DesignerRoleRequestMaxOrderByAggregateInput
+    _min?: DesignerRoleRequestMinOrderByAggregateInput
+  }
+
+  export type DesignerRoleRequestScalarWhereWithAggregatesInput = {
+    AND?: DesignerRoleRequestScalarWhereWithAggregatesInput | DesignerRoleRequestScalarWhereWithAggregatesInput[]
+    OR?: DesignerRoleRequestScalarWhereWithAggregatesInput[]
+    NOT?: DesignerRoleRequestScalarWhereWithAggregatesInput | DesignerRoleRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DesignerRoleRequest"> | string
+    userId?: StringWithAggregatesFilter<"DesignerRoleRequest"> | string
+    fullName?: StringWithAggregatesFilter<"DesignerRoleRequest"> | string
+    status?: StringWithAggregatesFilter<"DesignerRoleRequest"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"DesignerRoleRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DesignerRoleRequest"> | Date | string
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"DesignerRoleRequest"> | Date | string | null
+    reviewedBy?: StringNullableWithAggregatesFilter<"DesignerRoleRequest"> | string | null
+  }
+
   export type ThemeSaleWhereInput = {
     AND?: ThemeSaleWhereInput | ThemeSaleWhereInput[]
     OR?: ThemeSaleWhereInput[]
@@ -25615,6 +26927,7 @@ export namespace Prisma {
     roles?: UserRoleCreateNestedManyWithoutUserInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -25629,6 +26942,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -25643,6 +26957,7 @@ export namespace Prisma {
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -25657,6 +26972,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -26690,6 +28006,82 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DesignerRoleRequestCreateInput = {
+    id?: string
+    fullName: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    user: UserCreateNestedOneWithoutDesignerRoleRequestsInput
+  }
+
+  export type DesignerRoleRequestUncheckedCreateInput = {
+    id?: string
+    userId: string
+    fullName: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+  }
+
+  export type DesignerRoleRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutDesignerRoleRequestsNestedInput
+  }
+
+  export type DesignerRoleRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DesignerRoleRequestCreateManyInput = {
+    id?: string
+    userId: string
+    fullName: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+  }
+
+  export type DesignerRoleRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DesignerRoleRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ThemeSaleCreateInput = {
     id?: string
     productId: string
@@ -27030,6 +28422,12 @@ export namespace Prisma {
     none?: CartWhereInput
   }
 
+  export type DesignerRoleRequestListRelationFilter = {
+    every?: DesignerRoleRequestWhereInput
+    some?: DesignerRoleRequestWhereInput
+    none?: DesignerRoleRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -27052,6 +28450,10 @@ export namespace Prisma {
   }
 
   export type CartOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DesignerRoleRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -27852,6 +29254,64 @@ export namespace Prisma {
     walletBalance?: SortOrder
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type DesignerRoleRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fullName?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+  }
+
+  export type DesignerRoleRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fullName?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+  }
+
+  export type DesignerRoleRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fullName?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type DesignerScalarRelationFilter = {
     is?: DesignerWhereInput
     isNot?: DesignerWhereInput
@@ -27928,17 +29388,6 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type WithdrawalRequestCountOrderByAggregateInput = {
     id?: SortOrder
     requestNumber?: SortOrder
@@ -28011,20 +29460,6 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -28114,6 +29549,13 @@ export namespace Prisma {
     connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
   }
 
+  export type DesignerRoleRequestCreateNestedManyWithoutUserInput = {
+    create?: XOR<DesignerRoleRequestCreateWithoutUserInput, DesignerRoleRequestUncheckedCreateWithoutUserInput> | DesignerRoleRequestCreateWithoutUserInput[] | DesignerRoleRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DesignerRoleRequestCreateOrConnectWithoutUserInput | DesignerRoleRequestCreateOrConnectWithoutUserInput[]
+    createMany?: DesignerRoleRequestCreateManyUserInputEnvelope
+    connect?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+  }
+
   export type DesignerUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<DesignerCreateWithoutUserInput, DesignerUncheckedCreateWithoutUserInput>
     connectOrCreate?: DesignerCreateOrConnectWithoutUserInput
@@ -28153,6 +29595,13 @@ export namespace Prisma {
     connectOrCreate?: CartCreateOrConnectWithoutUserInput | CartCreateOrConnectWithoutUserInput[]
     createMany?: CartCreateManyUserInputEnvelope
     connect?: CartWhereUniqueInput | CartWhereUniqueInput[]
+  }
+
+  export type DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<DesignerRoleRequestCreateWithoutUserInput, DesignerRoleRequestUncheckedCreateWithoutUserInput> | DesignerRoleRequestCreateWithoutUserInput[] | DesignerRoleRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DesignerRoleRequestCreateOrConnectWithoutUserInput | DesignerRoleRequestCreateOrConnectWithoutUserInput[]
+    createMany?: DesignerRoleRequestCreateManyUserInputEnvelope
+    connect?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
   }
 
   export type DesignerUpdateOneWithoutUserNestedInput = {
@@ -28245,6 +29694,20 @@ export namespace Prisma {
     deleteMany?: CartScalarWhereInput | CartScalarWhereInput[]
   }
 
+  export type DesignerRoleRequestUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DesignerRoleRequestCreateWithoutUserInput, DesignerRoleRequestUncheckedCreateWithoutUserInput> | DesignerRoleRequestCreateWithoutUserInput[] | DesignerRoleRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DesignerRoleRequestCreateOrConnectWithoutUserInput | DesignerRoleRequestCreateOrConnectWithoutUserInput[]
+    upsert?: DesignerRoleRequestUpsertWithWhereUniqueWithoutUserInput | DesignerRoleRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DesignerRoleRequestCreateManyUserInputEnvelope
+    set?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    disconnect?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    delete?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    connect?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    update?: DesignerRoleRequestUpdateWithWhereUniqueWithoutUserInput | DesignerRoleRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DesignerRoleRequestUpdateManyWithWhereWithoutUserInput | DesignerRoleRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DesignerRoleRequestScalarWhereInput | DesignerRoleRequestScalarWhereInput[]
+  }
+
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -28331,6 +29794,20 @@ export namespace Prisma {
     update?: CartUpdateWithWhereUniqueWithoutUserInput | CartUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: CartUpdateManyWithWhereWithoutUserInput | CartUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: CartScalarWhereInput | CartScalarWhereInput[]
+  }
+
+  export type DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DesignerRoleRequestCreateWithoutUserInput, DesignerRoleRequestUncheckedCreateWithoutUserInput> | DesignerRoleRequestCreateWithoutUserInput[] | DesignerRoleRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DesignerRoleRequestCreateOrConnectWithoutUserInput | DesignerRoleRequestCreateOrConnectWithoutUserInput[]
+    upsert?: DesignerRoleRequestUpsertWithWhereUniqueWithoutUserInput | DesignerRoleRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DesignerRoleRequestCreateManyUserInputEnvelope
+    set?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    disconnect?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    delete?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    connect?: DesignerRoleRequestWhereUniqueInput | DesignerRoleRequestWhereUniqueInput[]
+    update?: DesignerRoleRequestUpdateWithWhereUniqueWithoutUserInput | DesignerRoleRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DesignerRoleRequestUpdateManyWithWhereWithoutUserInput | DesignerRoleRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DesignerRoleRequestScalarWhereInput | DesignerRoleRequestScalarWhereInput[]
   }
 
   export type UserCreateNestedManyWithoutRoleInput = {
@@ -29369,6 +30846,24 @@ export namespace Prisma {
     deleteMany?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutDesignerRoleRequestsInput = {
+    create?: XOR<UserCreateWithoutDesignerRoleRequestsInput, UserUncheckedCreateWithoutDesignerRoleRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDesignerRoleRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type UserUpdateOneRequiredWithoutDesignerRoleRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutDesignerRoleRequestsInput, UserUncheckedCreateWithoutDesignerRoleRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDesignerRoleRequestsInput
+    upsert?: UserUpsertWithoutDesignerRoleRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDesignerRoleRequestsInput, UserUpdateWithoutDesignerRoleRequestsInput>, UserUncheckedUpdateWithoutDesignerRoleRequestsInput>
+  }
+
   export type CartCreateNestedOneWithoutThemeSalesInput = {
     create?: XOR<CartCreateWithoutThemeSalesInput, CartUncheckedCreateWithoutThemeSalesInput>
     connectOrCreate?: CartCreateOrConnectWithoutThemeSalesInput
@@ -29427,10 +30922,6 @@ export namespace Prisma {
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type DesignerUpdateOneRequiredWithoutWithdrawalRequestsNestedInput = {
@@ -29678,6 +31169,31 @@ export namespace Prisma {
     _max?: NestedEnumCartStatusFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumWithdrawalStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.WithdrawalStatus | EnumWithdrawalStatusFieldRefInput<$PrismaModel>
     in?: $Enums.WithdrawalStatus[] | ListEnumWithdrawalStatusFieldRefInput<$PrismaModel>
@@ -29694,17 +31210,6 @@ export namespace Prisma {
     gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedEnumWithdrawalStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -29733,20 +31238,6 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
@@ -29758,6 +31249,7 @@ export namespace Prisma {
     roles?: UserRoleCreateNestedManyWithoutUserInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -29771,6 +31263,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -29800,6 +31293,7 @@ export namespace Prisma {
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -29813,6 +31307,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPasswordsResetsInput = {
@@ -29826,6 +31321,7 @@ export namespace Prisma {
     roles?: UserRoleCreateNestedManyWithoutUserInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordsResetsInput = {
@@ -29839,6 +31335,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordsResetsInput = {
@@ -29868,6 +31365,7 @@ export namespace Prisma {
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordsResetsInput = {
@@ -29881,6 +31379,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DesignerCreateWithoutUserInput = {
@@ -30089,6 +31588,36 @@ export namespace Prisma {
 
   export type CartCreateManyUserInputEnvelope = {
     data: CartCreateManyUserInput | CartCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DesignerRoleRequestCreateWithoutUserInput = {
+    id?: string
+    fullName: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+  }
+
+  export type DesignerRoleRequestUncheckedCreateWithoutUserInput = {
+    id?: string
+    fullName: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+  }
+
+  export type DesignerRoleRequestCreateOrConnectWithoutUserInput = {
+    where: DesignerRoleRequestWhereUniqueInput
+    create: XOR<DesignerRoleRequestCreateWithoutUserInput, DesignerRoleRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type DesignerRoleRequestCreateManyUserInputEnvelope = {
+    data: DesignerRoleRequestCreateManyUserInput | DesignerRoleRequestCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -30304,6 +31833,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Cart"> | Date | string
   }
 
+  export type DesignerRoleRequestUpsertWithWhereUniqueWithoutUserInput = {
+    where: DesignerRoleRequestWhereUniqueInput
+    update: XOR<DesignerRoleRequestUpdateWithoutUserInput, DesignerRoleRequestUncheckedUpdateWithoutUserInput>
+    create: XOR<DesignerRoleRequestCreateWithoutUserInput, DesignerRoleRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type DesignerRoleRequestUpdateWithWhereUniqueWithoutUserInput = {
+    where: DesignerRoleRequestWhereUniqueInput
+    data: XOR<DesignerRoleRequestUpdateWithoutUserInput, DesignerRoleRequestUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DesignerRoleRequestUpdateManyWithWhereWithoutUserInput = {
+    where: DesignerRoleRequestScalarWhereInput
+    data: XOR<DesignerRoleRequestUpdateManyMutationInput, DesignerRoleRequestUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type DesignerRoleRequestScalarWhereInput = {
+    AND?: DesignerRoleRequestScalarWhereInput | DesignerRoleRequestScalarWhereInput[]
+    OR?: DesignerRoleRequestScalarWhereInput[]
+    NOT?: DesignerRoleRequestScalarWhereInput | DesignerRoleRequestScalarWhereInput[]
+    id?: StringFilter<"DesignerRoleRequest"> | string
+    userId?: StringFilter<"DesignerRoleRequest"> | string
+    fullName?: StringFilter<"DesignerRoleRequest"> | string
+    status?: StringFilter<"DesignerRoleRequest"> | string
+    createdAt?: DateTimeFilter<"DesignerRoleRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"DesignerRoleRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"DesignerRoleRequest"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"DesignerRoleRequest"> | string | null
+  }
+
   export type UserCreateWithoutRoleInput = {
     id?: string
     email: string
@@ -30315,6 +31874,7 @@ export namespace Prisma {
     roles?: UserRoleCreateNestedManyWithoutUserInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -30328,6 +31888,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -30416,6 +31977,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRolesInput = {
@@ -30429,6 +31991,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRolesInput = {
@@ -30474,6 +32037,7 @@ export namespace Prisma {
     role?: RoleUpdateOneWithoutUsersNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRolesInput = {
@@ -30487,6 +32051,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutUserRolesInput = {
@@ -30676,6 +32241,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     roles?: UserRoleCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWeddingsInput = {
@@ -30689,6 +32255,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWeddingsInput = {
@@ -30917,6 +32484,7 @@ export namespace Prisma {
     role?: RoleUpdateOneWithoutUsersNestedInput
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWeddingsInput = {
@@ -30930,6 +32498,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CartUpsertWithWhereUniqueWithoutWeddingInput = {
@@ -31991,6 +33560,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     roles?: UserRoleCreateNestedManyWithoutUserInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCartInput = {
@@ -32004,6 +33574,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCartInput = {
@@ -32112,6 +33683,7 @@ export namespace Prisma {
     role?: RoleUpdateOneWithoutUsersNestedInput
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCartInput = {
@@ -32125,6 +33697,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WeddingUpsertWithoutCartInput = {
@@ -32315,6 +33888,7 @@ export namespace Prisma {
     roles?: UserRoleCreateNestedManyWithoutUserInput
     weddings?: WeddingCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDesignerInput = {
@@ -32328,6 +33902,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedManyWithoutUserInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDesignerInput = {
@@ -32471,6 +34046,7 @@ export namespace Prisma {
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDesignerInput = {
@@ -32484,6 +34060,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ThemeUpsertWithWhereUniqueWithoutDesignerInput = {
@@ -32568,6 +34145,78 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
     approvedAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
     cancelledAt?: DateTimeNullableFilter<"WithdrawalRequest"> | Date | string | null
+  }
+
+  export type UserCreateWithoutDesignerRoleRequestsInput = {
+    id?: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    designer?: DesignerCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    role?: RoleCreateNestedOneWithoutUsersInput
+    roles?: UserRoleCreateNestedManyWithoutUserInput
+    weddings?: WeddingCreateNestedManyWithoutUserInput
+    cart?: CartCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDesignerRoleRequestsInput = {
+    id?: string
+    email: string
+    password: string
+    roleId?: number | null
+    createdAt?: Date | string
+    designer?: DesignerUncheckedCreateNestedOneWithoutUserInput
+    passwordsResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    weddings?: WeddingUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDesignerRoleRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDesignerRoleRequestsInput, UserUncheckedCreateWithoutDesignerRoleRequestsInput>
+  }
+
+  export type UserUpsertWithoutDesignerRoleRequestsInput = {
+    update: XOR<UserUpdateWithoutDesignerRoleRequestsInput, UserUncheckedUpdateWithoutDesignerRoleRequestsInput>
+    create: XOR<UserCreateWithoutDesignerRoleRequestsInput, UserUncheckedCreateWithoutDesignerRoleRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDesignerRoleRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDesignerRoleRequestsInput, UserUncheckedUpdateWithoutDesignerRoleRequestsInput>
+  }
+
+  export type UserUpdateWithoutDesignerRoleRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    role?: RoleUpdateOneWithoutUsersNestedInput
+    roles?: UserRoleUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUpdateManyWithoutUserNestedInput
+    cart?: CartUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDesignerRoleRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    roleId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    designer?: DesignerUncheckedUpdateOneWithoutUserNestedInput
+    passwordsResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CartCreateWithoutThemeSalesInput = {
@@ -32933,6 +34582,16 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DesignerRoleRequestCreateManyUserInput = {
+    id?: string
+    fullName: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+  }
+
   export type PasswordResetUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     resetToken?: StringFieldUpdateOperationsInput | string
@@ -33086,6 +34745,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DesignerRoleRequestUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DesignerRoleRequestUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DesignerRoleRequestUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type UserCreateManyRoleInput = {
     id?: string
     email: string
@@ -33110,6 +34799,7 @@ export namespace Prisma {
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     weddings?: WeddingUpdateManyWithoutUserNestedInput
     cart?: CartUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -33123,6 +34813,7 @@ export namespace Prisma {
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     weddings?: WeddingUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateManyWithoutUserNestedInput
+    designerRoleRequests?: DesignerRoleRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutRoleInput = {

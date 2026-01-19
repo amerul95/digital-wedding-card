@@ -31,18 +31,19 @@ model PasswordReset {
 }
 
 model User {
-  id              String          @id @default(uuid())
-  email           String          @unique
-  password        String
-  roleId          Int?            // Keep for backward compatibility during migration
-  createdAt       DateTime        @default(now())
-  designer        Designer?
-  passwordsResets PasswordReset[]
-  sessions        Session[]
-  role            Role?           @relation("UserPrimaryRole", fields: [roleId], references: [id]) // Keep for backward compatibility
-  roles           UserRole[]      // Many-to-many relationship for multiple roles
-  weddings        Wedding[]
-  cart            Cart[]
+  id                    String                @id @default(uuid())
+  email                 String                @unique
+  password              String
+  roleId                Int?                  // Keep for backward compatibility during migration
+  createdAt             DateTime              @default(now())
+  designer              Designer?
+  passwordsResets       PasswordReset[]
+  sessions              Session[]
+  role                  Role?                 @relation("UserPrimaryRole", fields: [roleId], references: [id]) // Keep for backward compatibility
+  roles                 UserRole[]            // Many-to-many relationship for multiple roles
+  weddings              Wedding[]
+  cart                  Cart[]
+  designerRoleRequests  DesignerRoleRequest[]
 }
 
 model Role {
@@ -227,6 +228,20 @@ model Designer {
   themes            Theme[]
   sales             ThemeSale[]
   withdrawalRequests WithdrawalRequest[]
+}
+
+model DesignerRoleRequest {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  fullName    String   @map("full_name")
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  reviewedAt  DateTime? @map("reviewed_at")
+  reviewedBy  String?  @map("reviewed_by")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("designer_role_requests")
 }
 
 model ThemeSale {

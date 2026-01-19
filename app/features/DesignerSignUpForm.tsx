@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Field,
   FieldDescription,
@@ -13,69 +13,79 @@ import {
 import { Input } from "@/components/ui/input"
 import { z } from "zod"
 import { useForm } from "@tanstack/react-form"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import axios from "axios"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import Link from "next/link"
 
-const SignUpFormSchema = z.object({
-  fullName: z.string().min(2, {
-    message: "Full name must be at least 2 characters"
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email"
-  }).min(2, {
-    message: "Please enter your email"
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters"
-  }),
-  confirmPassword: z.string().min(6, {
-    message: "Please confirm your password"
-  }),
-  address: z.string().min(5, {
-    message: "Address must be at least 5 characters"
-  })
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"]
+// Individual field schema for validation
+const emailSchema = z.string().email({
+  message: "Please enter a valid email address"
+}).min(1, {
+  message: "Email is required"
 })
 
-type SignUpFormValues = z.infer<typeof SignUpFormSchema>
+const RequestFormSchema = z.object({
+  email: emailSchema
+})
+
+type RequestFormValues = z.infer<typeof RequestFormSchema>
 
 export function DesignerSignUpForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirect = searchParams.get("redirect")
-  const decodedRedirect = redirect ? decodeURIComponent(redirect) : "/designer/dashboard"
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasPendingRequest, setHasPendingRequest] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userEmail, setUserEmail] = useState("")
+
+  useEffect(() => {
+    const checkAuthAndRequest = async () => {
+      try {
+        // Check if user is authenticated
+        const sessionResponse = await axios.get("/api/auth/client/check-session")
+        if (sessionResponse.data.authenticated) {
+          setIsAuthenticated(true)
+          setUserEmail(sessionResponse.data.user?.email || "")
+          
+          // Check if user has pending request
+          const requestResponse = await axios.get("/api/client/request-designer-role")
+          if (requestResponse.data.hasPendingRequest) {
+            setHasPendingRequest(true)
+          }
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch (error) {
+        setIsAuthenticated(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    checkAuthAndRequest()
+  }, [])
 
   const form = useForm({
     defaultValues: {
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      address: ""
-    } as SignUpFormValues,
+      email: userEmail
+    } as RequestFormValues,
     onSubmit: async ({ value }) => {
-      const validationResult = SignUpFormSchema.safeParse(value)
+      const validationResult = RequestFormSchema.safeParse(value)
       if (!validationResult.success) {
         return
       }
 
       try {
-        const response = await axios.post("/api/sign-up/designer", {
-          fullName: validationResult.data.fullName,
-          email: validationResult.data.email,
-          password: validationResult.data.password,
-          address: validationResult.data.address
+        const response = await axios.post("/api/client/request-designer-role", {
+          email: validationResult.data.email
         }, {
           headers: { "Content-Type": "application/json" }
         })
 
         if (response.status === 201) {
-          toast.success(response.data.message || "Account created successfully")
-          router.push("/designer/login")
+          toast.success(response.data.message || "Designer role request submitted successfully")
+          setHasPendingRequest(true)
+          form.reset()
         }
       } catch (error: any) {
         const message = error?.response?.data?.error || "Something went wrong"
@@ -84,59 +94,93 @@ export function DesignerSignUpForm() {
     },
   })
 
+  // Update form when userEmail is loaded
+  useEffect(() => {
+    if (userEmail) {
+      form.setFieldValue("email", userEmail)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userEmail])
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">Loading...</div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Request Designer Role</CardTitle>
+          <CardDescription>
+            You must be logged in as a client to request designer role
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-4 items-center">
+            <p className="text-muted-foreground text-center">
+              Please sign up or log in as a client first, then you can request to become a designer.
+            </p>
+            <div className="flex gap-2">
+              <Button asChild>
+                <Link href="/">Go to Home</Link>
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (hasPendingRequest) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Request Designer Role</CardTitle>
+          <CardDescription>
+            Your request is pending approval
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-4 items-center">
+            <p className="text-muted-foreground text-center">
+              You have already submitted a designer role request. Please wait for admin approval.
+            </p>
+            <Button asChild variant="outline">
+              <Link href="/">Go to Home</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <div className={cn("flex flex-col gap-6")}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={(e) => {
+      <Card>
+        <CardHeader>
+          <CardTitle>Request Designer Role</CardTitle>
+          <CardDescription>
+            Submit a request to become a designer. Your request will be reviewed by an admin.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
             form.handleSubmit()
           }}>
             <FieldGroup>
-              <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Designer Sign Up</h1>
-                <p className="text-muted-foreground text-balance">
-                  Create your designer account
-                </p>
-              </div>
-              
-              <form.Field
-                name="fullName"
-                validators={{
-                  onChange: ({ value }) => {
-                    const result = SignUpFormSchema.shape.fullName.safeParse(value)
-                    if (result.success) return undefined
-                    const firstError = result.error.issues?.[0]
-                    return firstError?.message || "Invalid full name"
-                  },
-                }}
-              >
-                {(field) => (
-                  <Field data-invalid={field.state.meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      type="text"
-                      autoComplete="name"
-                      aria-invalid={field.state.meta.errors.length > 0}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
-                    )}
-                  </Field>
-                )}
-              </form.Field>
-
               <form.Field
                 name="email"
                 validators={{
                   onChange: ({ value }) => {
-                    const result = SignUpFormSchema.shape.email.safeParse(value)
+                    const result = emailSchema.safeParse(value)
                     if (result.success) return undefined
                     const firstError = result.error.issues?.[0]
                     return firstError?.message || "Invalid email"
@@ -154,104 +198,7 @@ export function DesignerSignUpForm() {
                       onBlur={field.handleBlur}
                       type="email"
                       autoComplete="email"
-                      aria-invalid={field.state.meta.errors.length > 0}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
-                    )}
-                  </Field>
-                )}
-              </form.Field>
-
-              <form.Field
-                name="password"
-                validators={{
-                  onChange: ({ value }) => {
-                    const result = SignUpFormSchema.shape.password.safeParse(value)
-                    if (result.success) return undefined
-                    const firstError = result.error.issues?.[0]
-                    return firstError?.message || "Invalid password"
-                  },
-                }}
-              >
-                {(field) => (
-                  <Field data-invalid={field.state.meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      type="password"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      autoComplete="new-password"
-                      aria-invalid={field.state.meta.errors.length > 0}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
-                    )}
-                  </Field>
-                )}
-              </form.Field>
-
-              <form.Field
-                name="confirmPassword"
-                validators={{
-                  onChange: ({ value }) => {
-                    // Get password value from form state directly
-                    const password = form.state.values.password
-                    if (value && password && value !== password) {
-                      return "Passwords do not match"
-                    }
-                    const result = SignUpFormSchema.shape.confirmPassword.safeParse(value)
-                    if (result.success) return undefined
-                    const firstError = result.error.issues?.[0]
-                    return firstError?.message || "Invalid password confirmation"
-                  },
-                }}
-              >
-                {(field) => (
-                  <Field data-invalid={field.state.meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      type="password"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      autoComplete="new-password"
-                      aria-invalid={field.state.meta.errors.length > 0}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <FieldError errors={field.state.meta.errors.filter((err): err is string => typeof err === 'string').map(err => ({ message: err }))} />
-                    )}
-                  </Field>
-                )}
-              </form.Field>
-
-              <form.Field
-                name="address"
-                validators={{
-                  onChange: ({ value }) => {
-                    const result = SignUpFormSchema.shape.address.safeParse(value)
-                    if (result.success) return undefined
-                    const firstError = result.error.issues?.[0]
-                    return firstError?.message || "Invalid address"
-                  },
-                }}
-              >
-                {(field) => (
-                  <Field data-invalid={field.state.meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.name}>Address</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      type="text"
-                      autoComplete="street-address"
+                      placeholder="Enter your email"
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (
@@ -262,29 +209,18 @@ export function DesignerSignUpForm() {
               </form.Field>
 
               <Field>
-                <Button type="submit" disabled={form.state.isSubmitting}>
-                  {form.state.isSubmitting ? "Signing up..." : "Sign Up"}
+                <Button type="submit" disabled={form.state.isSubmitting} className="w-full">
+                  {form.state.isSubmitting ? "Submitting..." : "Submit Request"}
                 </Button>
               </Field>
               
               <FieldDescription className="text-center">
-                Already have an account? <a href="/designer/login">Login</a>
+                After submission, please wait for admin approval. You will be notified once your request is reviewed.
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
-            <img
-              src="/assets/placeholder.svg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
     </div>
   )
 }

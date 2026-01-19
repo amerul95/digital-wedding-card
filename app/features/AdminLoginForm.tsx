@@ -19,8 +19,10 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 const formSchema = z.object({
-  username: z.string().min(1, {
-    message: "Username is required"
+  email: z.string().email({
+    message: "Please enter a valid email address"
+  }).min(1, {
+    message: "Email is required"
   }),
   password: z.string().min(1, {
     message: "Please enter your password"
@@ -37,7 +39,7 @@ export function AdminLoginForm() {
 
   const form = useForm({
     defaultValues: {
-      username: "",
+      email: "",
       password: ""
     } as LoginFormValues,
     onSubmit: async ({ value }) => {
@@ -47,7 +49,7 @@ export function AdminLoginForm() {
       }
       try {
         const response = await axios.post("/api/auth/admin/login", {
-          username: validationResult.data.username,
+          email: validationResult.data.email,
           password: validationResult.data.password,
         }, {
           headers: { "Content-Type": "application/json" }
@@ -58,7 +60,7 @@ export function AdminLoginForm() {
           router.push(decodedRedirect)
         }
       } catch (error: any) {
-        const message = error?.response?.data?.error || "Invalid username or password"
+        const message = error?.response?.data?.error || "Invalid email or password"
         toast.error(message)
       }
     },
@@ -82,27 +84,27 @@ export function AdminLoginForm() {
               </div>
               
               <form.Field
-                name="username"
+                name="email"
                 validators={{
                   onChange: ({ value }) => {
-                    const result = formSchema.shape.username.safeParse(value)
+                    const result = formSchema.shape.email.safeParse(value)
                     if (result.success) return undefined
                     const firstError = result.error.issues?.[0]
-                    return firstError?.message || "Invalid username"
+                    return firstError?.message || "Invalid email"
                   },
                 }}
               >
                 {(field) => (
                   <Field data-invalid={field.state.meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                     <Input
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
-                      type="text"
-                      autoComplete="username"
+                      type="email"
+                      autoComplete="email"
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     {field.state.meta.errors.length > 0 && (

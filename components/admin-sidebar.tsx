@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   CreditCard,
+  UserPlus,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -56,6 +57,11 @@ const menuItems = [
     title: "Payments",
     url: "/admin/dashboard/payments",
     icon: CreditCard,
+  },
+  {
+    title: "Designer Requests",
+    url: "/admin/dashboard/designer-requests",
+    icon: UserPlus,
   },
   {
     title: "Settings",

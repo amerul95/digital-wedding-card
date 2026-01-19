@@ -27,20 +27,14 @@ export async function signIn(
     })
 
     if (!user) {
-      const errorMessage = route === "admin" 
-        ? "Invalid username or password" 
-        : "Invalid email or password"
-      return { success: false, error: errorMessage }
+      return { success: false, error: "Invalid email or password" }
     }
 
     // Verify password
     const isValid = await bcrypt.compare(password, user.password)
 
     if (!isValid) {
-      const errorMessage = route === "admin" 
-        ? "Invalid username or password" 
-        : "Invalid email or password"
-      return { success: false, error: errorMessage }
+      return { success: false, error: "Invalid email or password" }
     }
 
     // Get all user roles from UserRole table (many-to-many relationship)

@@ -27,12 +27,12 @@ export default function DesignerLoginPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-4xl">
-        <Suspense fallback={<div>Loading...</div>}>
-          <DesignerLoginForm />
-        </Suspense>
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
       </div>
-    </div>
+    }>
+      <DesignerLoginForm />
+    </Suspense>
   )
 }

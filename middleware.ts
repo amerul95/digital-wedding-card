@@ -75,19 +75,19 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(checkRoleUrl)
       }
       
-      // Not authenticated at all - redirect to login
-      const loginUrl = new URL('/login', req.url)
-      loginUrl.searchParams.set('redirect', url)
-      return NextResponse.redirect(loginUrl)
+      // Not authenticated at all - redirect to home (login is handled by modal)
+      const homeUrl = new URL('/', req.url)
+      homeUrl.searchParams.set('redirect', url)
+      return NextResponse.redirect(homeUrl)
     }
     
     // Client cookie exists - verify it
     const decoded = await verifyToken(token)
     // Client access is allowed for everyone (all users can be clients)
     if (!decoded) {
-      const loginUrl = new URL('/login', req.url)
-      loginUrl.searchParams.set('redirect', url)
-      return NextResponse.redirect(loginUrl)
+      const homeUrl = new URL('/', req.url)
+      homeUrl.searchParams.set('redirect', url)
+      return NextResponse.redirect(homeUrl)
     }
   }
 

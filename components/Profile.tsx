@@ -1,9 +1,160 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 export default function Profile() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'favourites'>('profile')
+  
+  // Profile data state
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    country: 'MY'
+  })
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true)
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
+  
+  // Password state
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
+
+  // Fetch profile data on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch("/api/client/profile")
+        if (response.ok) {
+          const data = await response.json()
+          setProfileData({
+            name: data.name || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            country: 'MY' // Default country
+          })
+        } else {
+          toast.error("Failed to load profile data")
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error)
+        toast.error("Failed to load profile data")
+      } finally {
+        setIsLoadingProfile(false)
+      }
+    }
+    fetchProfile()
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/client/logout", { method: "POST" })
+      router.push("/")
+      // Force a page reload to clear any client-side state
+      window.location.href = "/"
+    } catch (error) {
+      console.error("Logout error:", error)
+      // Still redirect even if API call fails
+      router.push("/")
+      window.location.href = "/"
+    }
+  }
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsUpdatingProfile(true)
+
+    try {
+      const response = await fetch("/api/client/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: profileData.name,
+          phone: profileData.phone
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(data.message || "Profile updated successfully")
+        // Refresh profile data
+        const refreshResponse = await fetch("/api/client/profile")
+        if (refreshResponse.ok) {
+          const refreshedData = await refreshResponse.json()
+          setProfileData({
+            name: refreshedData.name || '',
+            email: refreshedData.email || '',
+            phone: refreshedData.phone || '',
+            country: profileData.country
+          })
+        }
+        // Refresh page to update NavBar with new name
+        router.refresh()
+      } else {
+        toast.error(data.error || "Failed to update profile")
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error)
+      toast.error("An error occurred while updating profile")
+    } finally {
+      setIsUpdatingProfile(false)
+    }
+  }
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("New password and confirm password do not match")
+      return
+    }
+
+    setIsUpdatingPassword(true)
+
+    try {
+      const response = await fetch("/api/client/password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+          confirmPassword: passwordData.confirmPassword
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(data.message || "Password updated successfully")
+        // Clear password fields
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        })
+      } else {
+        toast.error(data.error || "Failed to update password")
+      }
+    } catch (error) {
+      console.error("Error updating password:", error)
+      toast.error("An error occurred while updating password")
+    } finally {
+      setIsUpdatingPassword(false)
+    }
+  }
 
   return (
     <div className='max-w-7xl mx-auto min-h-screen flex px-10'>
@@ -21,8 +172,15 @@ export default function Profile() {
             }`}
             style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
           >
-            <div className='w-5 h-5'>
-              <Image src="/profile/profile.png" alt="Profile" width={20} height={20} />
+            <div className='w-5 h-5 relative flex items-center justify-center'>
+              <Image 
+                src="/profile/profile.png" 
+                alt="Profile" 
+                width={20} 
+                height={20}
+                className="object-contain"
+                unoptimized
+              />
             </div>
             <span className='font-semibold uppercase text-sm'>MY PROFILE</span>
           </button>
@@ -37,8 +195,15 @@ export default function Profile() {
             }`}
             style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
           >
-            <div className='w-5 h-5'>
-              <Image src="/profile/orders.png" alt="Orders" width={20} height={20} />
+            <div className='w-5 h-5 relative flex items-center justify-center'>
+              <Image 
+                src="/profile/orders.png" 
+                alt="Orders" 
+                width={20} 
+                height={20}
+                className="object-contain"
+                unoptimized
+              />
             </div>
             <span className='font-semibold uppercase text-sm'>ORDERS</span>
           </button>
@@ -53,8 +218,15 @@ export default function Profile() {
             }`}
             style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
           >
-            <div className='w-5 h-5'>
-              <Image src="/profile/favourites.png" alt="Favourites" width={20} height={20} />
+            <div className='w-5 h-5 relative flex items-center justify-center'>
+              <Image 
+                src="/profile/favourites.png" 
+                alt="Favourites" 
+                width={20} 
+                height={20}
+                className="object-contain"
+                unoptimized
+              />
             </div>
             <span className='font-semibold uppercase text-sm'>FAVOURITES</span>
           </button>
@@ -63,11 +235,19 @@ export default function Profile() {
         {/* LOG OUT */}
         <div className='px-6 py-4'>
           <button
+            onClick={handleLogout}
             className='w-full flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors'
             style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
           >
-            <div className='w-5 h-5'>
-              <Image src="/profile/logout.png" alt="Logout" width={20} height={20} />
+            <div className='w-5 h-5 relative flex items-center justify-center'>
+              <Image 
+                src="/profile/logout.png" 
+                alt="Logout" 
+                width={20} 
+                height={20}
+                className="object-contain"
+                unoptimized
+              />
             </div>
             <span className='font-semibold uppercase text-sm'>LOG OUT</span>
           </button>
@@ -87,7 +267,7 @@ export default function Profile() {
             </h1>
 
             {/* Personal Information Form */}
-            <div className='mb-12'>
+            <form onSubmit={handleProfileUpdate} className='mb-12'>
               <div className='space-y-4 max-w-2xl'>
                 {/* Name Field */}
                 <div>
@@ -101,9 +281,12 @@ export default function Profile() {
                   <input
                     type='text'
                     id='name'
-                    defaultValue='Faruq Razali'
+                    value={profileData.name}
+                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                     className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+                    placeholder="Enter your full name"
+                    disabled={isLoadingProfile}
                   />
                 </div>
 
@@ -119,7 +302,7 @@ export default function Profile() {
                   <input
                     type='email'
                     id='email'
-                    defaultValue='faruqrazali94@gmail.com'
+                    value={profileData.email}
                     disabled
                     className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 cursor-not-allowed'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
@@ -135,20 +318,14 @@ export default function Profile() {
                   >
                     Phone Number
                   </label>
-                  <div className='flex gap-3'>
-                    <select
-                      id='country'
-                      className='px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent'
-                      style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
-                    >
-                      <option>Country</option>
-                      <option>Malaysia (+60)</option>
-                    </select>
-                    <input
-                      type='tel'
-                      id='phone'
-                      defaultValue='60123456789'
-                      className='flex-1 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent'
+                  <div className='w-full border border-gray-300 rounded-lg bg-white flex items-center focus-within:ring-2 focus-within:ring-gray-400 focus-within:border-transparent transition-all overflow-hidden'>
+                    <PhoneInput
+                      international
+                      defaultCountry="MY"
+                      value={profileData.phone}
+                      onChange={(value) => setProfileData({ ...profileData, phone: value || "" })}
+                      disabled={isLoadingProfile}
+                      className="w-full flex items-center [&_.PhoneInputCountry]:border-0 [&_.PhoneInputCountry]:mr-2 [&_.PhoneInputCountry]:ml-2 [&_.PhoneInputCountry]:flex-shrink-0 [&_select.PhoneInputCountrySelect]:border-0 [&_select.PhoneInputCountrySelect]:bg-transparent [&_select.PhoneInputCountrySelect]:text-gray-900 [&_select.PhoneInputCountrySelect]:text-sm [&_select.PhoneInputCountrySelect]:cursor-pointer [&_select.PhoneInputCountrySelect]:focus:outline-none [&_input.PhoneInputInput]:border-0 [&_input.PhoneInputInput]:flex-1 [&_input.PhoneInputInput]:px-2 [&_input.PhoneInputInput]:py-2.5 [&_input.PhoneInputInput]:bg-transparent [&_input.PhoneInputInput]:text-gray-900 [&_input.PhoneInputInput]:focus:outline-none [&_input.PhoneInputInput]:focus:ring-0"
                       style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
                     />
                   </div>
@@ -157,18 +334,19 @@ export default function Profile() {
                 {/* Update Button */}
                 <div className='pt-4'>
                   <button
-                    type='button'
-                    className='w-full px-6 py-3 rounded-lg bg-[#327442] text-white font-semibold uppercase hover:bg-[#285a35] transition-colors'
+                    type='submit'
+                    disabled={isUpdatingProfile || isLoadingProfile}
+                    className='w-full px-6 py-3 rounded-lg bg-[#327442] text-white font-semibold uppercase hover:bg-[#285a35] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
                   >
-                    UPDATE
+                    {isUpdatingProfile ? 'UPDATING...' : 'UPDATE'}
                   </button>
                 </div>
               </div>
-            </div>
+            </form>
 
             {/* Password Update Form */}
-            <div>
+            <form onSubmit={handlePasswordUpdate}>
               <div className='space-y-4 max-w-2xl'>
                 {/* Current Password Field */}
                 <div>
@@ -182,8 +360,11 @@ export default function Profile() {
                   <input
                     type='password'
                     id='currentPassword'
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                     className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+                    required
                   />
                 </div>
 
@@ -199,8 +380,12 @@ export default function Profile() {
                   <input
                     type='password'
                     id='newPassword'
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                     className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+                    minLength={6}
+                    required
                   />
                 </div>
 
@@ -216,23 +401,28 @@ export default function Profile() {
                   <input
                     type='password'
                     id='confirmPassword'
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                     className='w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
+                    minLength={6}
+                    required
                   />
                 </div>
 
                 {/* Update Button */}
                 <div className='pt-4'>
                   <button
-                    type='button'
-                    className='w-full px-6 py-3 rounded-lg bg-[#327442] text-white font-semibold uppercase hover:bg-[#285a35] transition-colors'
+                    type='submit'
+                    disabled={isUpdatingPassword}
+                    className='w-full px-6 py-3 rounded-lg bg-[#327442] text-white font-semibold uppercase hover:bg-[#285a35] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                     style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
                   >
-                    UPDATE
+                    {isUpdatingPassword ? 'UPDATING...' : 'UPDATE'}
                   </button>
                 </div>
               </div>
-            </div>
+            </form>
           </>
         )}
 

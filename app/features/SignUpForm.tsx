@@ -83,7 +83,7 @@ export function SignUpForm({
 
         if (response.status === 201) {
           toast.success(response.data.message || "User created successfully")
-          router.push("/login")
+          router.push(decodedRedirect)
         }
       } catch (error: any) {
         const message = error?.response?.data?.error || "Something went wrong"

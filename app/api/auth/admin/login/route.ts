@@ -4,16 +4,16 @@ import { signIn } from "@/lib/auth/helpers"
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { username, password } = body
+    const { email, password } = body
 
-    if (!username || !password) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: "Username and password are required" },
+        { error: "Email and password are required" },
         { status: 400 }
       )
     }
 
-    const result = await signIn("admin", username, password)
+    const result = await signIn("admin", email, password)
     
     if (!result.success) {
       return NextResponse.json(

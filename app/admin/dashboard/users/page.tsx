@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Users, UserCheck, UserX } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface User {
   id: string
@@ -18,6 +19,8 @@ interface User {
   orders: number
   status: 'active' | 'inactive'
 }
+
+const ROOT_ADMIN_EMAIL = 'mirolesuperman@gmail.com'
 
 export default function UsersPage() {
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all')
@@ -48,9 +51,48 @@ export default function UsersPage() {
     return statusMatch && roleMatch
   })
 
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+
   const totalUsers = users.length
   const activeUsers = users.filter(u => u.status === 'active').length
   const inactiveUsers = users.filter(u => u.status === 'inactive').length
+
+  const handleDelete = async (userId: string, userEmail: string) => {
+    if (userEmail === ROOT_ADMIN_EMAIL) {
+      toast.error('Cannot delete root admin user')
+      return
+    }
+
+    if (!confirm(`Are you sure you want to delete user ${userEmail}? This action cannot be undone.`)) {
+      return
+    }
+
+    setIsDeleting(userId)
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success('User deleted successfully')
+        // Refresh users list
+        const usersResponse = await fetch('/api/admin/users')
+        if (usersResponse.ok) {
+          const usersData = await usersResponse.json()
+          setUsers(usersData)
+        }
+      } else {
+        toast.error(data.error || 'Failed to delete user')
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      toast.error('An error occurred while deleting user')
+    } finally {
+      setIsDeleting(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -188,7 +230,16 @@ export default function UsersPage() {
               ) : (
                 filteredUsers.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.email}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        {user.email}
+                        {user.email === ROOT_ADMIN_EMAIL && (
+                          <Badge variant="outline" className="text-xs">
+                            Root Admin
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Badge variant={
                         user.role === 'designer' ? 'secondary' :
@@ -208,7 +259,15 @@ export default function UsersPage() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button variant="ghost" size="sm">Edit</Button>
-                        <Button variant="ghost" size="sm" className="text-destructive">Delete</Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-destructive"
+                          disabled={user.email === ROOT_ADMIN_EMAIL || isDeleting === user.id}
+                          onClick={() => handleDelete(user.id, user.email)}
+                        >
+                          {isDeleting === user.id ? 'Deleting...' : 'Delete'}
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

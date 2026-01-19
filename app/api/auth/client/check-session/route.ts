@@ -28,9 +28,10 @@ export async function GET() {
         },
       })
 
-      // Extract name from email if available, or use email
       const email = user?.email || payload.email as string || ''
-      const name = email.split('@')[0]
+      
+      // Use name from JWT token if available, otherwise extract from email
+      const name = (payload.name as string) || email.split('@')[0]
 
       return NextResponse.json({ 
         authenticated: true,

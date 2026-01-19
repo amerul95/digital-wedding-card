@@ -13,6 +13,10 @@ export async function POST(req: Request) {
       )
     }
 
+    // Get redirect URL from query params if provided
+    const url = new URL(req.url)
+    const redirectParam = url.searchParams.get("redirect")
+
     const result = await signIn("unified", email, password)
     
     if (!result.success) {
@@ -22,15 +26,17 @@ export async function POST(req: Request) {
       )
     }
 
-    // Determine redirect URL based on primary role
-    // If user has multiple roles, redirect to highest priority (admin > designer > client)
-    let redirectUrl = "/dashboard"
-    if (result.allRoles?.includes("admin")) {
-      redirectUrl = "/admin/dashboard"
-    } else if (result.allRoles?.includes("designer")) {
-      redirectUrl = "/designer/dashboard"
-    } else {
-      redirectUrl = "/dashboard"
+    // Determine redirect URL: use redirect param if provided, otherwise based on role
+    let redirectUrl = redirectParam || "/"
+    if (!redirectParam) {
+      // If no redirect param, use role-based redirect
+      if (result.allRoles?.includes("admin")) {
+        redirectUrl = "/admin/dashboard"
+      } else if (result.allRoles?.includes("designer")) {
+        redirectUrl = "/designer/dashboard"
+      } else {
+        redirectUrl = "/"
+      }
     }
 
     if (!result.user) {
