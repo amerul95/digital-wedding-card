@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Allow serving static files from public/thumbnails
+  async rewrites() {
+    return [
+      {
+        source: '/thumbnails/:path*',
+        destination: '/thumbnails/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

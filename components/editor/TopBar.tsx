@@ -12,6 +12,7 @@ import axios from "axios";
 import html2canvas from "html2canvas";
 import { NodeRenderer } from "@/components/editor/NodeRenderer";
 import { PreviewProvider } from "@/components/editor/context/PreviewContext";
+import { toast } from "sonner";
 
 export function TopBar() {
     const router = useRouter();
@@ -20,7 +21,28 @@ export function TopBar() {
     const [themeName, setThemeName] = useState("wedding");
     const [color, setColor] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+    const [editingThemeId, setEditingThemeId] = useState<string | null>(null);
     const thumbnailRef = useRef<HTMLDivElement>(null);
+
+    // Check if we're editing an existing theme
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (id) {
+            setEditingThemeId(id);
+            // Load existing template data
+            fetch(`/api/designer/themes/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.config) {
+                        setTemplateName(data.name || "");
+                        setThemeName(data.config.themeName || "wedding");
+                        setColor(data.config.color || "");
+                    }
+                })
+                .catch(err => console.error('Error loading template:', err));
+        }
+    }, []);
 
     /**
      * Generates a thumbnail of the first section (excluding door)
@@ -76,21 +98,46 @@ export function TopBar() {
         // Save to localStorage
         localStorage.setItem("wedding-card-preview-data", JSON.stringify(previewData));
 
-        // Open preview in new tab
-        window.open("/designer/preview", "_blank");
+        // Open preview in new tab - use unified /preview page
+        window.open("/preview", "_blank");
     };
 
     const handleSave = async () => {
         if (!templateName.trim() || !themeName.trim() || !color.trim()) {
-            alert("Please fill in all required fields (Template Name, Theme Name, and Color)");
+            toast.error("Please fill in all required fields (Template Name, Theme Name, and Color)");
             return;
         }
 
         setIsSaving(true);
 
         try {
-            // Generate thumbnail before saving
-            const thumbnailDataUrl = await generateThumbnail();
+            // Try server-side thumbnail generation first (Option A)
+            // Falls back to client-side html2canvas if server-side fails
+            let thumbnailDataUrl: string | null = null;
+            
+            // For new templates, use client-side generation first
+            // Then after saving, we can regenerate with server-side
+            if (!editingThemeId) {
+                console.log('[TopBar] New template - using client-side thumbnail generation');
+                thumbnailDataUrl = await generateThumbnail();
+            } else {
+                // For existing templates, try server-side first
+                try {
+                    console.log('[TopBar] Attempting server-side thumbnail generation for template:', editingThemeId);
+                    const thumbnailResponse = await axios.post('/api/thumbnail/generate', {
+                        templateId: editingThemeId,
+                    });
+                    
+                    if (thumbnailResponse.data?.thumbnailUrl) {
+                        thumbnailDataUrl = thumbnailResponse.data.thumbnailUrl;
+                        console.log('[TopBar] Server-side thumbnail generated:', thumbnailDataUrl);
+                    }
+                } catch (serverError: any) {
+                    console.warn('[TopBar] Server-side thumbnail generation failed, falling back to html2canvas:', serverError.message);
+                    // Fall back to client-side generation
+                    thumbnailDataUrl = await generateThumbnail();
+                }
+            }
 
             // Get all editor data from store
             const state = useEditorStore.getState();
@@ -108,27 +155,79 @@ export function TopBar() {
                 editorData: editorData, // Include all editor data (nodes, settings, etc.)
             };
 
-            // Save template to API with thumbnail
-            const response = await axios.post('/api/designer/themes', {
-                name: templateName.trim(),
-                config: config,
-                type: 'template',
-                defaultEventData: null,
-                previewImageUrl: thumbnailDataUrl, // Include generated thumbnail
-            });
+            let response;
+            if (editingThemeId) {
+                // Update existing template
+                console.log('[TopBar] Updating template:', editingThemeId);
+                response = await axios.put(`/api/designer/themes/${editingThemeId}`, {
+                    name: templateName.trim(),
+                    config: config,
+                    type: 'template',
+                    defaultEventData: null,
+                    previewImageUrl: thumbnailDataUrl,
+                });
+            } else {
+                // Create new template
+                console.log('[TopBar] Creating new template with config:', { 
+                    name: templateName.trim(), 
+                    type: 'template',
+                    themeName: config.themeName,
+                    color: config.color,
+                    hasEditorData: !!config.editorData,
+                    nodeCount: Object.keys(config.editorData?.nodes || {}).length
+                });
+                response = await axios.post('/api/designer/themes', {
+                    name: templateName.trim(),
+                    config: config,
+                    type: 'template',
+                    defaultEventData: null,
+                    previewImageUrl: thumbnailDataUrl,
+                });
+            }
 
-            if (response.status === 201) {
-                alert("Template saved successfully! It will appear in the catalog.");
-                setShowSaveDialog(false);
-                setTemplateName("");
-                setColor("");
+            console.log('[TopBar] Save response:', response.status, response.data);
+
+            if (response.status === 201 || response.status === 200) {
+                const savedTemplateId = response.data?.theme?.id || editingThemeId
+                
+                // After saving, try to generate server-side thumbnail for better quality
+                // This is optional - the client-side thumbnail is already saved
+                if (savedTemplateId && !editingThemeId) {
+                    // New template - try to regenerate with server-side after a short delay
+                    setTimeout(async () => {
+                        try {
+                            console.log('[TopBar] Regenerating thumbnail server-side for new template:', savedTemplateId);
+                            const thumbnailResponse = await axios.post('/api/thumbnail/generate', {
+                                templateId: savedTemplateId,
+                            });
+                            
+                            if (thumbnailResponse.data?.thumbnailUrl) {
+                                console.log('[TopBar] Server-side thumbnail regenerated:', thumbnailResponse.data.thumbnailUrl);
+                                // Optionally update the template with the new thumbnail
+                                // But the client-side one is already saved, so this is just for quality improvement
+                            }
+                        } catch (err) {
+                            console.warn('[TopBar] Failed to regenerate thumbnail server-side:', err);
+                            // Not critical - client-side thumbnail is already saved
+                        }
+                    }, 2000); // Wait 2 seconds for template to be fully saved
+                }
+                
+                const message = editingThemeId 
+                    ? "Template updated successfully! It will appear in your themes list."
+                    : "Template saved successfully! It will appear in your themes list. Note: Templates need to be published to appear in the catalog.";
+                toast.success(message);
+                // Keep dialog open and preserve inputs
+                // Don't clear form or close dialog
+                // Optionally redirect to themes page
+                // router.push('/designer/dashboard/themes');
             } else {
                 throw new Error(response.data?.error || "Failed to save template");
             }
         } catch (error: any) {
             console.error("Error saving template:", error);
             const errorMessage = error.response?.data?.error || error.message || "Failed to save template. Please try again.";
-            alert(errorMessage);
+            toast.error(`Error: ${errorMessage}`);
         } finally {
             setIsSaving(false);
         }

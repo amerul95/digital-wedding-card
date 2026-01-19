@@ -238,58 +238,8 @@ async function generateCustomId(
     const themeLetter = getThemeLetter(themeName)
     const colorCode = getColorCode(color)
 
-    // For template, get the latest content running number for this designer
-    // This represents which content version this template uses
-    const latestContents = await prisma.theme.findMany({
-      where: {
-        designerId,
-        configJson: { not: null },
-      },
-      orderBy: { createdAt: 'desc' },
-      select: { configJson: true },
-    })
-
-    let contentCode = '001'
-    // Find the latest content type and get its running number
-    for (const latestContent of latestContents) {
-      if (latestContent.configJson) {
-        try {
-          const contentConfig = JSON.parse(latestContent.configJson)
-          if (contentConfig.type === 'content') {
-            // Get running number from config or calculate it
-            if (contentConfig.runningNumber) {
-              contentCode = contentConfig.runningNumber.toString().padStart(3, '0')
-            } else {
-              // Calculate from existing contents
-              const contentRunningNumber = await getNextRunningNumber(designerId, 'content')
-              contentCode = (contentRunningNumber - 1).toString().padStart(3, '0') || '001'
-            }
-            break
-          }
-        } catch {
-          continue
-        }
-      }
-    }
-    
-    // If no content found, use 001
-    if (contentCode === '001') {
-      const allContents = latestContents.filter((t) => {
-        if (!t.configJson) return false
-        try {
-          const cfg = JSON.parse(t.configJson)
-          return cfg.type === 'content'
-        } catch {
-          return false
-        }
-      })
-      if (allContents.length > 0) {
-        // Use the count as running number
-        contentCode = allContents.length.toString().padStart(3, '0')
-      }
-    }
-
-    return `${designerCode}-${themeLetter}-${contentCode}-${year}-${runningCode}-${colorCode}`
+    // Simplified template ID format: DesignerCode-ThemeLetter-Year-RunningNumber-ColorCode
+    return `${designerCode}-${themeLetter}-${year}-${runningCode}-${colorCode}`
   }
 
   return `${designerCode}-${runningCode}`
@@ -354,6 +304,7 @@ export async function GET() {
           earnings: earnings,
           previewImage: theme.previewImageUrl || null,
           config: config,
+          editorData: config?.editorData || null, // Include editorData for preview rendering
           type: type, // 'theme', 'content', or 'template'
           customId: config?.customId || null,
           year: year, // Extract year for templates
@@ -385,8 +336,7 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { name, config, defaultEventData, type = 'theme', isDuplicate = false, previewImageUrl } = body
 
-    // For template type, auto-save theme and content if they don't exist FIRST
-    // This must happen before generating the template's running number
+    // For template type, validate required fields
     if (type === 'template') {
       if (!config?.themeName) {
         return NextResponse.json(
@@ -400,94 +350,9 @@ export async function POST(req: Request) {
           { status: 400 }
         )
       }
-
-      // Check if theme exists for this designer with same themeName
-      const existingThemes = await prisma.theme.findMany({
-        where: {
-          designerId,
-        },
-        select: { configJson: true },
-      })
-
-      let themeExists = existingThemes.some((t) => {
-        if (!t.configJson) return false
-        try {
-          const cfg = JSON.parse(t.configJson)
-          return cfg.type === 'theme' && cfg.themeName === config.themeName
-        } catch {
-          return false
-        }
-      })
-
-      // Auto-create theme if it doesn't exist
-      if (!themeExists) {
-        const themeRunningNumber = await getNextRunningNumber(designerId, 'theme', config.themeName)
-        const themeCustomId = await generateCustomId(designerId, 'theme', config)
-        
-        const themeConfig = {
-          ...config,
-          type: 'theme',
-          defaultEventData: null,
-        }
-
-        const themeDisplay = config.themeName.charAt(0).toUpperCase() + config.themeName.slice(1)
-        await prisma.theme.create({
-          data: {
-            name: `${themeDisplay} Theme ${themeRunningNumber.toString().padStart(3, '0')}`,
-            designerId,
-            configJson: JSON.stringify({
-              ...themeConfig,
-              runningNumber: themeRunningNumber,
-              customId: themeCustomId,
-              themeName: config.themeName,
-            }),
-            isPublished: false,
-          } as any,
-        })
-      }
-
-      // Check if content exists
-      const existingContents = await prisma.theme.findMany({
-        where: { designerId },
-        select: { configJson: true },
-      })
-
-      let contentExists = existingContents.some((t) => {
-        if (!t.configJson) return false
-        try {
-          const cfg = JSON.parse(t.configJson)
-          return cfg.type === 'content'
-        } catch {
-          return false
-        }
-      })
-
-      // Auto-create content if it doesn't exist
-      if (!contentExists && defaultEventData) {
-        const contentRunningNumber = await getNextRunningNumber(designerId, 'content')
-        const contentCustomId = await generateCustomId(designerId, 'content')
-        
-        const contentConfig = {
-          type: 'content',
-          defaultEventData: defaultEventData,
-        }
-
-        await prisma.theme.create({
-          data: {
-            name: `Content ${contentRunningNumber.toString().padStart(3, '0')}`,
-            designerId,
-            configJson: JSON.stringify({
-              ...contentConfig,
-              runningNumber: contentRunningNumber,
-              customId: contentCustomId,
-            }),
-            isPublished: false,
-          } as any,
-        })
-      }
     }
 
-    // Generate custom ID and running number AFTER auto-creating theme/content (for templates)
+    // Generate custom ID and running number for templates only
     const runningNumber = await getNextRunningNumber(designerId, type, config?.themeName)
     const customId = await generateCustomId(designerId, type, config)
 

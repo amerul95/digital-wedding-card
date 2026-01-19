@@ -53,6 +53,15 @@ export function TextWidget({ id, data, style }: TextWidgetProps) {
         >
             <div
                 className="outline-none min-h-[1em] prose prose-sm max-w-none"
+                style={{
+                    // Ensure text styles from parent are applied
+                    color: style?.color || 'inherit',
+                    textAlign: style?.textAlign || 'inherit',
+                    // Ensure text is not cut off
+                    overflow: 'visible',
+                    wordWrap: 'break-word',
+                    whiteSpace: 'pre-wrap'
+                }}
                 dangerouslySetInnerHTML={{ __html: data.content || '<p>Start typing...</p>' }}
             />
         </MotionDiv>

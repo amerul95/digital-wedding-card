@@ -120,6 +120,22 @@ export function DoorSettings({ node, onUpdate }: DoorSettingsProps) {
                     </div>
 
                     <div className="space-y-1">
+                        <label className="text-[10px] text-gray-500">Button Animation</label>
+                        <select
+                            className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-rose-200 transition-colors"
+                            value={node.data.doorButtonAnimation || "none"}
+                            onChange={(e) => onUpdate({ doorButtonAnimation: e.target.value })}
+                        >
+                            <option value="none">None</option>
+                            <option value="pulse">Pulse</option>
+                            <option value="bounce">Bounce</option>
+                            <option value="shake">Shake</option>
+                            <option value="glow">Glow</option>
+                            <option value="float">Float</option>
+                        </select>
+                    </div>
+
+                    <div className="space-y-1">
                         <label className="text-[10px] text-gray-500">Type</label>
                         <select
                             className="w-full text-xs border rounded p-1"

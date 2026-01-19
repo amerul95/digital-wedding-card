@@ -104,6 +104,11 @@ function PreviewRoot() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [doorsOpen, setDoorsOpen] = useState(false);
   const [doorAnimationComplete, setDoorAnimationComplete] = useState(false);
+  const [autoscrollDisabled, setAutoscrollDisabled] = useState(false);
+  const autoscrollAnimationRef = useRef<number | null>(null);
+  const isUserScrollingRef = useRef(false);
+  const autoscrollDisabledRef = useRef(false);
+  const isProgrammaticScrollRef = useRef(false);
 
   const doorNodeEntry = Object.entries(nodes).find(([_, n]) => n.type === 'door');
   const doorNode = doorNodeEntry ? doorNodeEntry[1] : null;
@@ -145,10 +150,99 @@ function PreviewRoot() {
     };
   }, [setCardScrollElement]);
 
+  // Detect manual scrolling and disable autoscroll
+  // Only listen to direct user interaction events, not scroll events
+  // (scroll events fire for both programmatic and user-initiated scrolling)
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const disableAutoscroll = () => {
+      if (autoscrollAnimationRef.current !== null) {
+        cancelAnimationFrame(autoscrollAnimationRef.current);
+        autoscrollAnimationRef.current = null;
+        autoscrollDisabledRef.current = true;
+        setAutoscrollDisabled(true);
+        isProgrammaticScrollRef.current = false;
+        console.log('[Autoscroll] Disabled due to user interaction');
+      }
+    };
+
+    // Listen to direct user interaction events
+    container.addEventListener('wheel', disableAutoscroll, { passive: true });
+    container.addEventListener('touchstart', disableAutoscroll, { passive: true });
+    container.addEventListener('mousedown', disableAutoscroll, { passive: true });
+    
+    // Also listen for scrollbar dragging (mousedown on scrollbar area)
+    // This is a fallback for when user drags the scrollbar
+    let scrollTimeout: NodeJS.Timeout;
+    let lastScrollTop = container.scrollTop;
+    let lastScrollTime = Date.now();
+    
+    const handleScroll = () => {
+      const now = Date.now();
+      const currentScrollTop = container.scrollTop;
+      const scrollDelta = Math.abs(currentScrollTop - lastScrollTop);
+      
+      // Only consider it manual if:
+      // 1. It's not a programmatic scroll
+      // 2. The scroll delta is significant (>10px)
+      // 3. Autoscroll is currently running
+      // 4. The scroll happened quickly (within 100ms of last scroll, indicating user dragging)
+      if (
+        !isProgrammaticScrollRef.current &&
+        scrollDelta > 10 &&
+        autoscrollAnimationRef.current !== null &&
+        (now - lastScrollTime) < 100
+      ) {
+        disableAutoscroll();
+      }
+      
+      lastScrollTop = currentScrollTop;
+      lastScrollTime = now;
+      
+      // Clear any pending timeout
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        // Reset tracking after scroll stops
+      }, 200);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener('wheel', disableAutoscroll);
+      container.removeEventListener('touchstart', disableAutoscroll);
+      container.removeEventListener('mousedown', disableAutoscroll);
+      container.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, []);
+
   // Autoscroll Effect - Only start after door animation is 100% complete
   useEffect(() => {
-    // Only run if autoscroll is enabled, door animation is complete, and we have a valid delay
-    if (!doorAnimationComplete || !globalSettings?.autoscroll) {
+    console.log('[Autoscroll] Effect triggered', {
+      doorAnimationComplete,
+      autoscroll: globalSettings?.autoscroll,
+      autoscrollDisabled,
+      autoscrollDisabledRef: autoscrollDisabledRef.current,
+      delay: globalSettings?.autoscrollDelay,
+      speed: globalSettings?.autoscrollSpeed
+    });
+
+    // Only run if autoscroll is enabled, door animation is complete, not disabled, and we have a valid delay
+    if (!doorAnimationComplete || !globalSettings?.autoscroll || autoscrollDisabled || autoscrollDisabledRef.current) {
+      console.log('[Autoscroll] Conditions not met, skipping', {
+        doorAnimationComplete,
+        autoscrollEnabled: globalSettings?.autoscroll,
+        autoscrollDisabled,
+        autoscrollDisabledRef: autoscrollDisabledRef.current
+      });
+      // Clean up any running animation
+      if (autoscrollAnimationRef.current) {
+        cancelAnimationFrame(autoscrollAnimationRef.current);
+        autoscrollAnimationRef.current = null;
+      }
       return;
     }
 
@@ -157,15 +251,23 @@ function PreviewRoot() {
 
     const scrollTimer = setTimeout(() => {
       const container = containerRef.current;
-      if (!container) {
-        console.log('[Autoscroll] No container found');
+      if (!container || autoscrollDisabled || autoscrollDisabledRef.current) {
+        console.log('[Autoscroll] No container found or autoscroll disabled');
         return;
       }
 
       // Function to check and start autoscroll
       const checkAndStartScroll = (attempts = 0) => {
+        // Check if autoscroll was disabled
+        if (autoscrollDisabledRef.current) {
+          console.log('[Autoscroll] Aborted - disabled by user');
+          return;
+        }
+
         // Wait for content to be rendered - check multiple times
         // Force a reflow to ensure accurate measurements
+        // Mark as programmatic before resetting scroll
+        isProgrammaticScrollRef.current = true;
         container.scrollTop = 0;
         const maxScroll = container.scrollHeight - container.clientHeight;
         
@@ -202,6 +304,13 @@ function PreviewRoot() {
         const startScroll = container.scrollTop;
 
         const animateScroll = (currentTime: number) => {
+          // Check if autoscroll was disabled during animation (use ref for immediate check)
+          if (autoscrollDisabledRef.current || isUserScrollingRef.current) {
+            console.log('[Autoscroll] Stopped - disabled by user');
+            autoscrollAnimationRef.current = null;
+            return;
+          }
+
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / scrollDuration, 1);
 
@@ -210,16 +319,20 @@ function PreviewRoot() {
             ? 2 * progress * progress
             : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
+          // Mark as programmatic scroll before updating
+          isProgrammaticScrollRef.current = true;
           container.scrollTop = startScroll + (maxScroll * easeProgress);
 
-          if (progress < 1) {
-            requestAnimationFrame(animateScroll);
+          if (progress < 1 && !autoscrollDisabledRef.current && !isUserScrollingRef.current) {
+            autoscrollAnimationRef.current = requestAnimationFrame(animateScroll);
           } else {
-            console.log('[Autoscroll] Scroll completed');
+            console.log('[Autoscroll] Scroll completed or stopped');
+            autoscrollAnimationRef.current = null;
+            isProgrammaticScrollRef.current = false;
           }
         };
 
-        requestAnimationFrame(animateScroll);
+        autoscrollAnimationRef.current = requestAnimationFrame(animateScroll);
       };
 
       // Wait for DOM to settle after door animation, then check for scrollable content
@@ -231,8 +344,14 @@ function PreviewRoot() {
 
     }, delay);
 
-    return () => clearTimeout(scrollTimer);
-  }, [doorAnimationComplete, globalSettings?.autoscroll, globalSettings?.autoscrollDelay, globalSettings?.autoscrollSpeed]);
+    return () => {
+      clearTimeout(scrollTimer);
+      if (autoscrollAnimationRef.current) {
+        cancelAnimationFrame(autoscrollAnimationRef.current);
+        autoscrollAnimationRef.current = null;
+      }
+    };
+  }, [doorAnimationComplete, globalSettings?.autoscroll, globalSettings?.autoscrollDelay, globalSettings?.autoscrollSpeed, autoscrollDisabled]);
 
   useEffect(() => {
     if (!hasDoor) {

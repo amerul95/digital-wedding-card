@@ -2,12 +2,12 @@
 
 ## Overview
 
-The `/designer/dashboard/create-theme-2` page is a Next.js route that serves as an entry point to the Wedding Card Editor v2.0. This page provides a visual, drag-and-drop interface for designers to create and customize wedding invitation cards with a modern, component-based architecture.
+The `/designer/dashboard/create-theme` page is a Next.js route that serves as an entry point to the Wedding Card Editor v2.0. This page provides a visual, drag-and-drop interface for designers to create and customize wedding invitation cards with a modern, component-based architecture.
 
 ## Page Structure
 
 ### Route File
-- **Location**: `app/designer/dashboard/create-theme-2/page.tsx`
+- **Location**: `app/designer/dashboard/create-theme/page.tsx`
 - **Type**: Client Component (Next.js App Router)
 - **Complexity**: Minimal wrapper component
 
@@ -357,7 +357,7 @@ components/editor/
 
 ## Usage
 
-1. Navigate to `/designer/dashboard/create-theme-2`
+1. Navigate to `/designer/dashboard/create-theme`
 2. Drag widgets from sidebar to canvas
 3. Click widgets to edit properties
 4. Use preview to see mobile/desktop views

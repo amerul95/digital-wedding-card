@@ -119,6 +119,14 @@ export async function PUT(
       )
     }
 
+    // Prevent editing published templates (only admin can edit published templates)
+    if (existingTheme.isPublished) {
+      return NextResponse.json(
+        { error: "Published templates cannot be edited. Please contact admin." },
+        { status: 403 }
+      )
+    }
+
     // Parse existing config to preserve customId, runningNumber, etc.
     let existingConfig: any = {}
     try {

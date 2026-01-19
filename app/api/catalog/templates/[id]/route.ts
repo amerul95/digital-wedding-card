@@ -1,5 +1,33 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { jwtVerify } from "jose";
+
+const JWT_SECRET = process.env.JWT_SECRET || "";
+
+async function isAdmin() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("next-auth.session-token.admin")?.value;
+
+    if (!token || !JWT_SECRET) {
+      return false;
+    }
+
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+    const userId = payload.id as string;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { role: true },
+    });
+
+    return user?.role?.name === "admin";
+  } catch {
+    return false;
+  }
+}
 
 export async function GET(
   req: Request,
@@ -7,11 +35,13 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const adminAccess = await isAdmin();
 
+    // Admins can view any template (published or unpublished), regular users only published
     const theme = await prisma.theme.findFirst({
       where: {
         id,
-        isPublished: true,
+        ...(adminAccess ? {} : { isPublished: true }),
       },
       select: {
         id: true,

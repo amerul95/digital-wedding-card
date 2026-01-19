@@ -72,23 +72,6 @@ export function AnimationSettings() {
                         </div>
                     </div>
                 )}
-
-                {/* Button Animation */}
-                <div className="space-y-1 pt-2 border-t border-dashed">
-                    <label className="text-[10px] font-semibold text-gray-700">Button Animation</label>
-                    <select
-                        className="w-full text-xs p-2 border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-blue-200 transition-colors"
-                        value={doorNode.data.doorButtonAnimation || "none"}
-                        onChange={(e) => handleUpdate({ doorButtonAnimation: e.target.value })}
-                    >
-                        <option value="none">None</option>
-                        <option value="pulse">Pulse</option>
-                        <option value="bounce">Bounce</option>
-                        <option value="shake">Shake</option>
-                        <option value="glow">Glow</option>
-                        <option value="float">Float</option>
-                    </select>
-                </div>
             </div>
         </div>
     );

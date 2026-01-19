@@ -2,7 +2,7 @@
 
 ## What is This Page?
 
-The `/designer/dashboard/create-theme-2` page is a **visual wedding card editor** that allows designers to create and customize wedding invitation cards using a modern drag-and-drop interface. This is version 2.0 of the editor, providing a more intuitive and powerful editing experience compared to the original theme creation page.
+The `/designer/dashboard/create-theme` page is a **visual wedding card editor** that allows designers to create and customize wedding invitation cards using a modern drag-and-drop interface. This is version 2.0 of the editor, providing a more intuitive and powerful editing experience compared to the original theme creation page.
 
 ## Purpose
 
@@ -85,7 +85,7 @@ This page serves as the primary tool for designers to:
 
 ## Quick Access
 
-- **Route**: `/designer/dashboard/create-theme-2`
-- **Component**: `app/designer/dashboard/create-theme-2/page.tsx`
+- **Route**: `/designer/dashboard/create-theme`
+- **Component**: `app/designer/dashboard/create-theme/page.tsx`
 - **Main Layout**: `components/editor/EditorLayout.tsx`
 - **State Store**: `components/editor/store.ts`

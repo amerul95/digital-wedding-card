@@ -210,7 +210,7 @@ export function NodeRenderer({ nodeId }: { nodeId: string }) {
     // Designer preview should always use defaultClientData, not persisted store
     const isDesignerPreview = typeof window !== 'undefined' && (
         window.location.pathname.includes('/designer/preview') ||
-        window.location.pathname.includes('/designer/dashboard/create-theme-2')
+        window.location.pathname.includes('/designer/dashboard/create-theme')
     );
     
     // Use defaultClientData in designer preview, otherwise use persisted clientData
